@@ -1,12 +1,13 @@
 """
-Duanxianxia premarket scoring — v6.2
+Duanxianxia premarket scoring — v6.3
 
-Aligned to the real capture schema observed in samples/2026-04-23/.
-Tuned from openclaw's 2026-04-24 mid-day live run; see
-projects/duanxianxia/docs/premarket-v6-2-tuning.md.
+v6.3 adds theme-name canonicalization to close the naming gap between
+kaipan 主标签名称 (today) and fupan 题材名称 (T-1). See
+projects/duanxianxia/docs/premarket-v6-3-theme-aliases.md for the
+diagnosis (from openclaw's 2026-04-24 live run) and rationale.
 
-Public API (stable across v6 → v6.2):
-    VERSION = "premarket_5table_v6.2"
+Public API (stable across v6 → v6.3):
+    VERSION = "premarket_5table_v6.3"
     load_premarket_config(path=None, project_root=None) -> dict
     build_premarket_analysis_v6(report, project_root=None, config=None) -> dict
     build_premarket_analysis  — alias
@@ -21,14 +22,14 @@ import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Set, Tuple
 
 try:
     import yaml  # type: ignore
 except ImportError:  # pragma: no cover
     yaml = None  # type: ignore
 
-VERSION = "premarket_5table_v6.2"
+VERSION = "premarket_5table_v6.3"
 DEFAULT_CONFIG_PATH = Path("projects/duanxianxia/config/premarket_scoring.yaml")
 
 _QXLIVE_KEYS: frozenset = frozenset({
@@ -146,6 +147,71 @@ def load_premarket_config(path: Optional[Path | str] = None,
         cfg_path = (root / cfg_path).resolve()
     with cfg_path.open("r", encoding="utf-8") as fh:
         return yaml.safe_load(fh) or {}
+
+
+# ---------------------------------------------------------------------------
+# v6.3: theme alias canonicalization
+# ---------------------------------------------------------------------------
+def _build_theme_canon_map(config: Optional[Mapping[str, Any]]) -> Dict[str, str]:
+    """Read theme_overlay.theme_aliases groups and build name -> canonical map.
+
+    Each group is a list; the first element is the canonical form and all
+    members (including the canonical) map to it. Later groups override earlier
+    ones on conflicts (shouldn't happen in well-formed config).
+    Empty or missing aliases -> returns {}. In that case all matching falls
+    back to plain string equality (identical to v6.2 behavior).
+    """
+    if not config:
+        return {}
+    groups = ((config.get("theme_overlay") or {}).get("theme_aliases")) or []
+    canon: Dict[str, str] = {}
+    for g in groups:
+        if not isinstance(g, (list, tuple)) or not g:
+            continue
+        canonical = str(g[0]).strip() if g[0] is not None else ""
+        if not canonical:
+            continue
+        for name in g:
+            if name is None:
+                continue
+            s = str(name).strip()
+            if s:
+                canon[s] = canonical
+    return canon
+
+
+def _canonicalize(name: Any, canon_map: Mapping[str, str]) -> str:
+    if name is None:
+        return ""
+    s = str(name).strip()
+    if not s:
+        return ""
+    return canon_map.get(s, s)
+
+
+def _theme_names_match(a: str, b: str,
+                       canon_map: Mapping[str, str],
+                       *, fuzzy: bool = False, fuzzy_min: int = 3) -> bool:
+    """True if two theme names should be considered the same theme.
+
+    Order of checks:
+      1. exact string equality (fast path)
+      2. canonical form equality via alias table
+      3. (opt-in) bidirectional substring with min length guard
+    """
+    if not a or not b:
+        return False
+    if a == b:
+        return True
+    ca = _canonicalize(a, canon_map)
+    cb = _canonicalize(b, canon_map)
+    if ca and cb and ca == cb:
+        return True
+    if fuzzy:
+        shorter, longer = (ca, cb) if len(ca) <= len(cb) else (cb, ca)
+        if len(shorter) >= fuzzy_min and shorter in longer:
+            return True
+    return False
 
 
 # ---------------------------------------------------------------------------
@@ -357,12 +423,7 @@ def _build_theme_catalog(plate_summary_rows: Sequence[Mapping[str, Any]],
 # Previous trading day inference + capture loader
 # ---------------------------------------------------------------------------
 def _infer_prev_trading_day(capture_dir: Path) -> Optional[str]:
-    """Pick the most recent sibling date dir strictly before capture_dir.name.
-
-    Example: /.../captures/2026-04-24 → '2026-04-23' if that sibling exists.
-    Returns None if capture_dir doesn't look like a YYYY-MM-DD dir, parent
-    doesn't exist, or no earlier sibling is found.
-    """
+    """Pick the most recent sibling date dir strictly before capture_dir.name."""
     capture_dir = Path(capture_dir)
     parent = capture_dir.parent
     if not parent.exists():
@@ -625,18 +686,38 @@ def _merge_candidates(report: Mapping[str, Any]) -> Dict[str, _Candidate]:
 
 # ---------------------------------------------------------------------------
 # Theme evaluation per candidate
+# v6.3: uses canon_map + optional fuzzy substring fallback
 # ---------------------------------------------------------------------------
 def _evaluate_theme_for_candidate(candidate: _Candidate,
                                   themes: Sequence[Mapping[str, Any]],
-                                  *, config: Optional[Mapping[str, Any]] = None
+                                  *,
+                                  config: Optional[Mapping[str, Any]] = None,
+                                  canon_map: Optional[Mapping[str, str]] = None,
                                   ) -> Tuple[float, List[str], List[str]]:
     cfg = ((config or {}).get("theme_overlay") or {})
     match_bonus = float(cfg.get("match_bonus", 5) or 0.0)
     sub_bonus = float(cfg.get("subplate_match_bonus", 3) or 0.0)
+    fuzzy = bool(cfg.get("fuzzy_substring", False))
+    fuzzy_min = int(cfg.get("fuzzy_substring_min_len", 3) or 3)
+    cmap = canon_map or {}
 
-    cand_concept_set = {c.strip() for c in candidate.concepts if c and c.strip()}
-    if not cand_concept_set:
+    cand_raw: List[str] = [c.strip() for c in candidate.concepts if c and c.strip()]
+    if not cand_raw:
         return 0.0, [], []
+    cand_canon: Set[str] = {_canonicalize(c, cmap) for c in cand_raw}
+    cand_canon.discard("")
+
+    def _hits_candidate(name: str) -> bool:
+        if not name:
+            return False
+        canon = _canonicalize(name, cmap)
+        if canon and canon in cand_canon:
+            return True
+        if fuzzy:
+            for c in cand_raw:
+                if _theme_names_match(name, c, cmap, fuzzy=True, fuzzy_min=fuzzy_min):
+                    return True
+        return False
 
     matched_themes: List[str] = []
     matched_subs: List[str] = []
@@ -645,12 +726,12 @@ def _evaluate_theme_for_candidate(candidate: _Candidate,
         th_name = th.get("name")
         if not th_name:
             continue
-        if th_name in cand_concept_set:
+        if _hits_candidate(th_name):
             matched_themes.append(th_name)
             score += match_bonus
         for sp in th.get("subplates") or []:
             sp_name = sp.get("name") if isinstance(sp, Mapping) else None
-            if sp_name and sp_name in cand_concept_set:
+            if sp_name and _hits_candidate(sp_name):
                 matched_subs.append(sp_name)
                 score += sub_bonus
     return score, matched_themes, matched_subs
@@ -732,25 +813,68 @@ def _compute_risk_penalty(cand: _Candidate, themes: Sequence[Mapping[str, Any]],
     return total, breakdown
 
 
-def _yesterday_bonus(cand: _Candidate, yesterday: Mapping[str, Any],
-                    matched_themes: Sequence[str], *,
-                    config: Mapping[str, Any]) -> Tuple[float, Dict[str, Any]]:
+# ---------------------------------------------------------------------------
+# Yesterday bonus
+# v6.3: source set is matched_themes UNION candidate.concepts, both
+# canonicalized via canon_map, optional fuzzy fallback.
+# ---------------------------------------------------------------------------
+def _yesterday_bonus(cand: _Candidate,
+                     yesterday: Mapping[str, Any],
+                     matched_themes: Sequence[str],
+                     *,
+                     config: Mapping[str, Any],
+                     canon_map: Optional[Mapping[str, str]] = None,
+                     ) -> Tuple[float, Dict[str, Any]]:
     cfg = config.get("yesterday_postmarket") or {}
+    theme_cfg = config.get("theme_overlay") or {}
     theme_w = float(cfg.get("theme_weight", 3) or 0.0)
     leader_w = float(cfg.get("leader_weight", 5) or 0.0)
     ltgd_w = float(cfg.get("ltgd_weight", 2) or 0.0)
+    fuzzy = bool(theme_cfg.get("fuzzy_substring", False))
+    fuzzy_min = int(theme_cfg.get("fuzzy_substring_min_len", 3) or 3)
+    cmap = canon_map or {}
 
-    hot_themes = {t["name"] for t in (yesterday.get("hot_themes") or []) if t.get("name")}
+    # v6.3: UNION of today's matched_themes + candidate's raw concepts.
+    # This catches cases where a candidate concept IS a fupan hot_theme but
+    # happens to not be a kaipan plate today (so it never entered matched_themes).
+    cand_theme_raw: List[str] = []
+    seen: Set[str] = set()
+    for src_list in (matched_themes, cand.concepts):
+        for t in src_list or []:
+            s = str(t).strip() if t else ""
+            if s and s not in seen:
+                seen.add(s)
+                cand_theme_raw.append(s)
+    cand_theme_canon: Set[str] = {_canonicalize(t, cmap) for t in cand_theme_raw}
+    cand_theme_canon.discard("")
+
+    hot_raw: List[str] = []
+    hot_seen: Set[str] = set()
+    for t in (yesterday.get("hot_themes") or []):
+        name = t.get("name") if isinstance(t, Mapping) else None
+        if name and name not in hot_seen:
+            hot_seen.add(name)
+            hot_raw.append(name)
+    hot_canon: Set[str] = {_canonicalize(t, cmap) for t in hot_raw}
+    hot_canon.discard("")
+
     leader_map = yesterday.get("leader_map") or {}
     ltgd_codes = yesterday.get("ltgd_codes") or {}
 
+    matched_hot_canon: Set[str] = cand_theme_canon & hot_canon
+    if fuzzy:
+        for a in cand_theme_raw:
+            for b in hot_raw:
+                if _theme_names_match(a, b, cmap, fuzzy=True, fuzzy_min=fuzzy_min):
+                    matched_hot_canon.add(_canonicalize(b, cmap) or b)
+                    break
+
     info: Dict[str, Any] = {}
     score = 0.0
-    matched_hot = [t for t in matched_themes if t in hot_themes]
-    if matched_hot:
-        b = theme_w * len(matched_hot)
+    if matched_hot_canon:
+        b = theme_w * len(matched_hot_canon)
         score += b
-        info["hot_themes"] = matched_hot
+        info["hot_themes"] = sorted(matched_hot_canon)
         info["hot_theme_bonus"] = b
     if str(cand.code) in leader_map:
         score += leader_w
@@ -776,7 +900,6 @@ def _compute_source_hit_bonus(cand: _Candidate, *, config: Mapping[str, Any]) ->
 
 
 def _compute_direction_consistency(cand: _Candidate, *, config: Mapping[str, Any]) -> float:
-    """v6.2: requires both auction and latest change pct >= min_pct (default 0)."""
     cfg = config.get("direction_consistency") or {}
     min_pct = float(cfg.get("min_pct", 0.0) or 0.0)
     if cand.auction_change_pct is not None and cand.latest_change_pct is not None:
@@ -795,6 +918,9 @@ def build_premarket_analysis_v6(report: Mapping[str, Any],
                                 config: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
     cfg = dict(config) if config is not None else load_premarket_config(project_root=project_root)
     root = Path(project_root) if project_root else Path.cwd()
+
+    # v6.3: build canon map once; pass to both theme evaluation and yesterday bonus.
+    canon_map = _build_theme_canon_map(cfg)
 
     qx_rows = _dataset_rows(report, "home.qxlive.top_metrics")
     regime, regime_detail = _classify_regime(qx_rows, phase="premarket", config=cfg)
@@ -828,9 +954,10 @@ def build_premarket_analysis_v6(report: Mapping[str, Any],
         hit_s = _compute_source_hit_bonus(cand, config=cfg)
         dir_s = _compute_direction_consistency(cand, config=cfg)
         theme_s, matched_themes, matched_subs = _evaluate_theme_for_candidate(
-            cand, themes, config=cfg)
+            cand, themes, config=cfg, canon_map=canon_map)
         risk_s, risk_bd = _compute_risk_penalty(cand, themes, matched_themes, config=cfg)
-        yest_s, yest_info = _yesterday_bonus(cand, yesterday, matched_themes, config=cfg)
+        yest_s, yest_info = _yesterday_bonus(
+            cand, yesterday, matched_themes, config=cfg, canon_map=canon_map)
 
         raw_total = (rank_s + num_s + hit_s + dir_s + theme_s + risk_s + yest_s)
         total = raw_total * regime_mult
@@ -889,6 +1016,10 @@ def build_premarket_analysis_v6(report: Mapping[str, Any],
                 src: sum(1 for c in pool.values() if src in c.sources)
                 for src in ("vratio", "qiangchou", "net_amount", "fengdan")
             },
+            "alias_groups": len((
+                (cfg.get("theme_overlay") or {}).get("theme_aliases") or []
+            )),
+            "alias_entries": len(canon_map),
         }
     return result
 
@@ -918,7 +1049,7 @@ def _load_capture_dir_as_report(capture_dir: Path) -> Dict[str, Any]:
 
 
 def _main(argv: Optional[Sequence[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="Duanxianxia premarket v6.2 smoke test")
+    parser = argparse.ArgumentParser(description="Duanxianxia premarket v6.3 smoke test")
     parser.add_argument("capture_dir", help="Path to captures/<date>/ or samples/<date>/")
     parser.add_argument("--config", default=None, help="Path to premarket_scoring.yaml")
     parser.add_argument("--project-root", default=".", help="Project root (for resolving T-1 captures)")
@@ -947,11 +1078,16 @@ def _main(argv: Optional[Sequence[str]] = None) -> int:
           f"hot_themes={len(result['yesterday']['hot_themes'])} "
           f"leaders={result['yesterday']['leader_count']} "
           f"ltgd={result['yesterday']['ltgd_count']}")
+    if result.get("debug"):
+        print(f"alias_groups={result['debug'].get('alias_groups')} "
+              f"alias_entries={result['debug'].get('alias_entries')}")
     print("-" * 80)
     for i, c in enumerate(result["candidates"][: args.top], start=1):
+        yest = c.get("yesterday") or {}
+        yest_tag = f" yest:{yest.get('hot_theme_bonus',0)+yest.get('leader_bonus',0)+yest.get('ltgd_bonus',0):.0f}" if yest else ""
         print(f"{i:2d}. {c['code']} {c['name'] or '':<10} "
               f"score={c['score']:.2f}  sources={','.join(c['sources'])}  "
-              f"themes={','.join(c['matched_themes'][:3])}")
+              f"themes={','.join(c['matched_themes'][:3])}{yest_tag}")
     return 0
 
 

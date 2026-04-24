@@ -1,10 +1,12 @@
-# Premarket scoring config — v6.2
-# Tuned from openclaw's 2026-04-24 mid-day live run. See
-# projects/duanxianxia/docs/premarket-v6-2-tuning.md for per-threshold rationale.
-version: "premarket_5table_v6.2"
+# Premarket scoring config — v6.3
+# v6.3 adds theme-name canonicalization to close the naming gap between
+# kaipan 主标签名称 (today) and fupan 题材名称 (T-1), which openclaw's
+# 2026-04-24 run surfaced as the root cause of yesterday bonus not firing.
+# See projects/duanxianxia/docs/premarket-v6-3-theme-aliases.md.
+version: "premarket_5table_v6.3"
 
 # -------------------------------------------------------------------------
-# Rank-based bonuses per auction source — validated in 2026-04-24, unchanged
+# Rank-based bonuses per auction source — unchanged since v6.1
 # -------------------------------------------------------------------------
 rank_scores:
   vratio:
@@ -25,7 +27,7 @@ rank_scores:
     decay: linear
 
 # -------------------------------------------------------------------------
-# Numeric-signal bonuses — validated in 2026-04-24, unchanged
+# Numeric-signal bonuses — unchanged since v6.1
 # -------------------------------------------------------------------------
 numeric_signals:
   volume_ratio_multiple:
@@ -55,8 +57,7 @@ numeric_signals:
     strong_score: 6
 
 # -------------------------------------------------------------------------
-# Cross-source confirmation bonus
-# v6.2: two_sources dropped 3 → 2 (was too automatic — 9/10 top-10 got it)
+# Cross-source confirmation bonus — unchanged since v6.2
 # -------------------------------------------------------------------------
 source_hit_bonuses:
   two_sources: 2
@@ -64,8 +65,7 @@ source_hit_bonuses:
   four_sources: 10
 
 # -------------------------------------------------------------------------
-# Direction consistency
-# v6.2: added min_pct=2.0 (previously fired for any auction>0 AND latest>0)
+# Direction consistency — unchanged since v6.2
 # -------------------------------------------------------------------------
 direction_consistency:
   min_pct: 2.0
@@ -80,8 +80,11 @@ untradable:
 
 # -------------------------------------------------------------------------
 # Theme overlay
-# v6.2: widened top_n 15 → 25, lowered strength_floor 1.0 → 0.5,
-# raised match_bonus 4 → 5, subplate_match_bonus 2 → 3
+# v6.3 additions:
+#   - theme_aliases: groups of equivalent names; first element is canonical.
+#     Applied in both (a) candidate concept ↔ kaipan plate matching and
+#     (b) today's matched_themes ↔ fupan hot_themes matching.
+#   - fuzzy_substring (opt-in): bidirectional substring match fallback.
 # -------------------------------------------------------------------------
 theme_overlay:
   strength_floor: 0.5
@@ -90,9 +93,23 @@ theme_overlay:
   use_subplates: true
   match_bonus: 5
   subplate_match_bonus: 3
+  # Each inner list is a group of names treated as equivalent. The first
+  # element is the canonical form (only matters for debug output). Add/remove
+  # groups here; no code change required. Leave empty to disable aliases.
+  theme_aliases:
+    - ["业绩增长", "一季报增长", "年报增长", "业绩预增", "预增", "半年报增长"]
+    - ["半导体产业链", "芯片", "集成电路", "元器件"]
+    - ["光通信", "通信", "光模块", "CPO"]
+    - ["华为", "华为海思", "华为产业链", "鸿蒙"]
+    - ["算力", "算力概念", "AI算力", "AI服务器", "IDC"]
+  # Opt-in: when true, two theme names match if one contains the other and
+  # the shorter has >= fuzzy_substring_min_len characters. Default off since
+  # it can over-trigger on short names.
+  fuzzy_substring: false
+  fuzzy_substring_min_len: 3
 
 # -------------------------------------------------------------------------
-# Risk penalty — unchanged (fired correctly on 688041 海光信息)
+# Risk penalty — unchanged
 # -------------------------------------------------------------------------
 risk_penalty:
   crowded_zt_count: 8
@@ -131,7 +148,7 @@ market_regime:
     hot: 1.1
 
 # -------------------------------------------------------------------------
-# Yesterday (T-1) postmarket anchoring
+# Yesterday (T-1) postmarket anchoring — unchanged since v6.1
 # -------------------------------------------------------------------------
 yesterday_postmarket:
   min_board_count: 2

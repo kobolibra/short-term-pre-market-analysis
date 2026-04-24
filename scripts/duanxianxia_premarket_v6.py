@@ -1,28 +1,22 @@
 """
-Duanxianxia premarket scoring — v6.1
+Duanxianxia premarket scoring — v6.2
 
 Aligned to the real capture schema observed in samples/2026-04-23/.
-See projects/duanxianxia/docs/premarket-v6-field-mapping.md for the
-field-level code ↔ data ↔ page map.
+Tuned from openclaw's 2026-04-24 mid-day live run; see
+projects/duanxianxia/docs/premarket-v6-2-tuning.md.
 
-Public API (stable across v6 → v6.1):
-    VERSION = "premarket_5table_v6.1"
+Public API (stable across v6 → v6.2):
+    VERSION = "premarket_5table_v6.2"
     load_premarket_config(path=None, project_root=None) -> dict
     build_premarket_analysis_v6(report, project_root=None, config=None) -> dict
     build_premarket_analysis  — alias
-    compute_premarket_analysis — alias (same signature)
-
-The entry point accepts an already-parsed ``report`` object (the output of
-scripts/duanxianxia_batch.py's CaptureReport.to_dict()) and returns a scoring
-dict. It can also be called from __main__ on a capture directory for smoke
-testing against sample data.
+    compute_premarket_analysis — alias
 """
 from __future__ import annotations
 
 import argparse
 import json
 import math
-import os
 import re
 import sys
 from dataclasses import dataclass, field
@@ -31,27 +25,25 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 try:
     import yaml  # type: ignore
-except ImportError:  # pragma: no cover — yaml is expected in prod
+except ImportError:  # pragma: no cover
     yaml = None  # type: ignore
 
-VERSION = "premarket_5table_v6.1"
+VERSION = "premarket_5table_v6.2"
 DEFAULT_CONFIG_PATH = Path("projects/duanxianxia/config/premarket_scoring.yaml")
 
-# Metric keys in home.qxlive.top_metrics / review.daily.top_metrics.
 _QXLIVE_KEYS: frozenset = frozenset({
     "QX", "ZT", "DT", "KQXY", "HSLN", "LBGD", "SZ", "XD",
     "PB", "ZTBX", "LBBX", "PBBX",
 })
 
+_NUMERIC_CLEAN_RE = re.compile(r"[%,\s]")
+_DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
 
 # ---------------------------------------------------------------------------
 # Small parsers
 # ---------------------------------------------------------------------------
-_NUMERIC_CLEAN_RE = re.compile(r"[%,\s]")
-
-
 def _parse_float(value: Any) -> Optional[float]:
-    """Tolerant float parser — strings, ints, None, empty-string all handled."""
     if value is None or value == "":
         return None
     if isinstance(value, bool):
@@ -77,10 +69,6 @@ def _parse_int(value: Any) -> Optional[int]:
 
 
 def _parse_chinese_amount_to_yi(text: Any) -> Optional[float]:
-    """Parse '32.3亿' / '4860万' / '+2.3亿' / '-1.5亿' / '-' → float in 亿.
-
-    Returns None for '-', empty, or unparseable.
-    """
     if text is None:
         return None
     s = str(text).strip()
@@ -103,7 +91,6 @@ def _parse_chinese_amount_to_yi(text: Any) -> Optional[float]:
 
 
 def _parse_chinese_amount_to_wan(text: Any) -> Optional[float]:
-    """Parse Chinese amount to 万 (keeps sign)."""
     yi = _parse_chinese_amount_to_yi(text)
     if yi is None:
         return None
@@ -111,7 +98,6 @@ def _parse_chinese_amount_to_wan(text: Any) -> Optional[float]:
 
 
 def _split_concepts(raw: Any) -> List[str]:
-    """Normalise the `concept` field — pipe, 、, or single-string."""
     if raw is None:
         return []
     if isinstance(raw, list):
@@ -128,7 +114,6 @@ def _split_concepts(raw: Any) -> List[str]:
 
 
 def _rank_score(rank: Optional[int], top_n: int, max_score: float) -> float:
-    """Linear-decay score: rank 1 → max_score, rank top_n → 0; beyond top_n → 0."""
     if rank is None or top_n <= 0 or max_score <= 0:
         return 0.0
     if rank < 1 or rank > top_n:
@@ -164,11 +149,9 @@ def load_premarket_config(path: Optional[Path | str] = None,
 
 
 # ---------------------------------------------------------------------------
-# Report helpers — tolerate both raw capture dicts and CaptureReport.to_dict()
+# Report helpers
 # ---------------------------------------------------------------------------
 def _dataset_rows(report: Mapping[str, Any], key: str) -> List[Dict[str, Any]]:
-    """Return rows for a dataset key in either `report['datasets'][key]['rows']`
-    or `report[key]['rows']` or `report[key]` (if a list)."""
     if not report:
         return []
     ds = None
@@ -205,16 +188,11 @@ def _dataset_meta(report: Mapping[str, Any], key: str) -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# Market regime classification
+# Market regime
 # ---------------------------------------------------------------------------
 def _classify_regime(top_metrics_rows: Sequence[Mapping[str, Any]],
                      *, phase: str = "premarket",
                      config: Optional[Mapping[str, Any]] = None) -> Tuple[str, Dict[str, Any]]:
-    """Vote across QX / HSLN / KQXY / ZTBX / LBBX / PBBX / PB using thresholds.
-
-    Reads each row's ``raw_chart_tail_value`` (numeric) if present, else
-    parses ``value`` (string — may include %, 亿/万, signs).
-    """
     reg_cfg = ((config or {}).get("market_regime") or {})
     votes = {"cold": 0, "hot": 0}
     per_metric: Dict[str, Dict[str, Any]] = {}
@@ -242,15 +220,9 @@ def _classify_regime(top_metrics_rows: Sequence[Mapping[str, Any]],
                     vote = "hot"
                 per_metric[key] = {"value": q, "vote": vote}
         elif key == "HSLN":
-            # Premarket: "+2.3亿" / "-1.5亿". Postmarket review: raw_chart_tail_value is a bare number.
-            yi: Optional[float]
-            if phase == "premarket":
-                yi = _parse_chinese_amount_to_yi(raw)
-            else:
-                yi = _parse_float(raw)
+            yi = _parse_chinese_amount_to_yi(raw) if phase == "premarket" else _parse_float(raw)
             if yi is not None:
-                cfg = reg_cfg.get("HSLN_premarket" if phase == "premarket" else "HSLN_postmarket", {}) \
-                    or reg_cfg.get("HSLN_premarket", {})
+                cfg = reg_cfg.get("HSLN_premarket", {})
                 if yi <= cfg.get("cold_max", -1.5):
                     vote = "cold"
                 elif yi >= cfg.get("hot_min", 2.0):
@@ -260,7 +232,6 @@ def _classify_regime(top_metrics_rows: Sequence[Mapping[str, Any]],
             k = _parse_float(raw)
             if k is not None:
                 cfg = reg_cfg.get("KQXY", {})
-                # higher KQXY = more cold
                 if k >= cfg.get("cold_min", 60):
                     vote = "cold"
                 elif k <= cfg.get("hot_max", 35):
@@ -321,14 +292,12 @@ def _classify_regime(top_metrics_rows: Sequence[Mapping[str, Any]],
 def _build_theme_catalog(plate_summary_rows: Sequence[Mapping[str, Any]],
                          *, plate_meta: Optional[Mapping[str, Any]] = None,
                          config: Optional[Mapping[str, Any]] = None) -> List[Dict[str, Any]]:
-    """Parse home.kaipan.plate.summary rows (all Chinese keys)."""
     cfg = ((config or {}).get("theme_overlay") or {})
-    strength_floor = float(cfg.get("strength_floor", 1.0) or 0.0)
+    strength_floor = float(cfg.get("strength_floor", 0.5) or 0.0)
     min_inflow_wan = float(cfg.get("main_inflow_min_wan", 2000) or 0.0)
-    top_n = int(cfg.get("top_n_themes", 15) or 15)
+    top_n = int(cfg.get("top_n_themes", 25) or 25)
     use_subplates = bool(cfg.get("use_subplates", True))
 
-    # Build subplate map from meta.top_plates[].subplates[]
     subplate_index: Dict[str, List[Dict[str, Any]]] = {}
     if use_subplates and plate_meta:
         for tp in (plate_meta.get("top_plates") or []):
@@ -353,7 +322,6 @@ def _build_theme_catalog(plate_summary_rows: Sequence[Mapping[str, Any]],
         inflow_yuan = _parse_float(r.get("主力流入真实金额"))
         zt_count = _parse_int(r.get("涨停数量") or r.get("zt_count")) or 0
 
-        # Fallback subplate list from 子标签列表 (pipe or 、 separated) or 子标签名称 array
         sub_list_raw = r.get("子标签列表") or r.get("子标签名称")
         fallback_sub: List[Dict[str, Any]] = []
         if isinstance(sub_list_raw, list):
@@ -386,11 +354,36 @@ def _build_theme_catalog(plate_summary_rows: Sequence[Mapping[str, Any]],
 
 
 # ---------------------------------------------------------------------------
-# Yesterday (T-1) postmarket signals
+# Previous trading day inference + capture loader
 # ---------------------------------------------------------------------------
+def _infer_prev_trading_day(capture_dir: Path) -> Optional[str]:
+    """Pick the most recent sibling date dir strictly before capture_dir.name.
+
+    Example: /.../captures/2026-04-24 → '2026-04-23' if that sibling exists.
+    Returns None if capture_dir doesn't look like a YYYY-MM-DD dir, parent
+    doesn't exist, or no earlier sibling is found.
+    """
+    capture_dir = Path(capture_dir)
+    parent = capture_dir.parent
+    if not parent.exists():
+        return None
+    current = capture_dir.name
+    if not _DATE_DIR_RE.match(current):
+        return None
+    candidates: List[str] = []
+    for p in parent.iterdir():
+        if not p.is_dir():
+            continue
+        name = p.name
+        if _DATE_DIR_RE.match(name) and name < current:
+            candidates.append(name)
+    if not candidates:
+        return None
+    return sorted(candidates)[-1]
+
+
 def _resolve_prev_trading_day_captures(project_root: Path,
                                        prev_date: Optional[str]) -> Dict[str, Dict[str, Any]]:
-    """Load T-1 capture datasets. Directory names use DOTS, not underscores."""
     if not prev_date:
         return {}
     captures_dir = Path(project_root) / "captures" / str(prev_date)
@@ -436,7 +429,6 @@ def _evaluate_yesterday_signals(prev_captures: Mapping[str, Any],
         if isinstance(raw, list):
             ltgd_rows = list(raw)
 
-    # Group fupan by 题材名称
     theme_map: Dict[str, List[Dict[str, Any]]] = {}
     for r in fupan_rows:
         theme = r.get("题材名称")
@@ -514,7 +506,7 @@ def _is_untradable_v6(candidate: Mapping[str, Any],
 
 
 # ---------------------------------------------------------------------------
-# Merge candidates across 4 auction sources
+# Merge candidates
 # ---------------------------------------------------------------------------
 @dataclass
 class _Candidate:
@@ -541,7 +533,6 @@ def _merge_candidates(report: Mapping[str, Any]) -> Dict[str, _Candidate]:
             pool[code] = _Candidate(code=code)
         return pool[code]
 
-    # --- vratio ---
     for row in _dataset_rows(report, "auction.jjyd.vratio"):
         code = row.get("code")
         if not code:
@@ -561,10 +552,8 @@ def _merge_candidates(report: Mapping[str, Any]) -> Dict[str, _Candidate]:
             cand.latest_change_pct = _parse_float(row.get("latest_change_pct"))
         cand.add_concepts(_split_concepts(row.get("concept")))
 
-    # --- qiangchou (group == "grab") ---
     for row in _dataset_rows(report, "auction.jjyd.qiangchou"):
         if str(row.get("group") or "").lower() not in ("grab", "qiangchou"):
-            # captures use "grab"; accept either for safety
             continue
         code = row.get("code")
         if not code:
@@ -583,7 +572,6 @@ def _merge_candidates(report: Mapping[str, Any]) -> Dict[str, _Candidate]:
             cand.latest_change_pct = _parse_float(row.get("latest_change_pct"))
         cand.add_concepts(_split_concepts(row.get("concept")))
 
-    # --- net_amount ---
     for row in _dataset_rows(report, "auction.jjyd.net_amount"):
         code = row.get("code")
         if not code:
@@ -604,10 +592,8 @@ def _merge_candidates(report: Mapping[str, Any]) -> Dict[str, _Candidate]:
         cand.add_concepts(_split_concepts(row.get("concept")))
         cand.add_concepts([c for c in (row.get("concept_1"), row.get("concept_2")) if c])
 
-    # --- fengdan (live) ---
     for row in _dataset_rows(report, "auction.jjlive.fengdan"):
         if str(row.get("section_kind") or "").lower() != "live":
-            # allow empty section_kind for robustness
             if row.get("section_kind") not in (None, ""):
                 continue
         code = row.get("code")
@@ -624,7 +610,7 @@ def _merge_candidates(report: Mapping[str, Any]) -> Dict[str, _Candidate]:
             "amount_915_yi": a915,
             "amount_920_yi": a920,
             "amount_925_yi": a925,
-            "fengdan_925_yi": a925,  # alias for config key
+            "fengdan_925_yi": a925,
         }
         if cand.board_label is None:
             cand.board_label = row.get("board_label")
@@ -645,8 +631,8 @@ def _evaluate_theme_for_candidate(candidate: _Candidate,
                                   *, config: Optional[Mapping[str, Any]] = None
                                   ) -> Tuple[float, List[str], List[str]]:
     cfg = ((config or {}).get("theme_overlay") or {})
-    match_bonus = float(cfg.get("match_bonus", 4) or 0.0)
-    sub_bonus = float(cfg.get("subplate_match_bonus", 2) or 0.0)
+    match_bonus = float(cfg.get("match_bonus", 5) or 0.0)
+    sub_bonus = float(cfg.get("subplate_match_bonus", 3) or 0.0)
 
     cand_concept_set = {c.strip() for c in candidate.concepts if c and c.strip()}
     if not cand_concept_set:
@@ -785,14 +771,17 @@ def _compute_source_hit_bonus(cand: _Candidate, *, config: Mapping[str, Any]) ->
     if n == 3:
         return float(cfg.get("three_sources", 6) or 0.0)
     if n == 2:
-        return float(cfg.get("two_sources", 3) or 0.0)
+        return float(cfg.get("two_sources", 2) or 0.0)
     return 0.0
 
 
 def _compute_direction_consistency(cand: _Candidate, *, config: Mapping[str, Any]) -> float:
+    """v6.2: requires both auction and latest change pct >= min_pct (default 0)."""
     cfg = config.get("direction_consistency") or {}
+    min_pct = float(cfg.get("min_pct", 0.0) or 0.0)
     if cand.auction_change_pct is not None and cand.latest_change_pct is not None:
-        if cand.auction_change_pct > 0 and cand.latest_change_pct > 0:
+        if cand.auction_change_pct >= min_pct and cand.latest_change_pct >= min_pct \
+                and cand.auction_change_pct > 0 and cand.latest_change_pct > 0:
             return float(cfg.get("score", 2) or 0.0)
     return 0.0
 
@@ -804,32 +793,26 @@ def build_premarket_analysis_v6(report: Mapping[str, Any],
                                 *,
                                 project_root: Optional[Path | str] = None,
                                 config: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
-    """Main entry point — consumes a capture report, returns a scoring dict."""
     cfg = dict(config) if config is not None else load_premarket_config(project_root=project_root)
     root = Path(project_root) if project_root else Path.cwd()
 
-    # 1. Regime
     qx_rows = _dataset_rows(report, "home.qxlive.top_metrics")
     regime, regime_detail = _classify_regime(qx_rows, phase="premarket", config=cfg)
     regime_mult = float(((cfg.get("market_regime") or {}).get("regime_multipliers") or {})
                         .get(regime, 1.0) or 1.0)
 
-    # 2. Themes
     plate_rows = _dataset_rows(report, "home.kaipan.plate.summary")
     plate_meta = _dataset_meta(report, "home.kaipan.plate.summary")
     themes = _build_theme_catalog(plate_rows, plate_meta=plate_meta, config=cfg)
 
-    # 3. Yesterday (T-1)
     prev_date = (report.get("prev_trading_day")
                  or report.get("prev_date")
                  or _dataset_meta(report, "home.qxlive.top_metrics").get("prev_trading_day"))
     prev_captures = _resolve_prev_trading_day_captures(root, prev_date)
     yesterday = _evaluate_yesterday_signals(prev_captures, config=cfg)
 
-    # 4. Merge candidates from 4 auction sources
     pool = _merge_candidates(report)
 
-    # 5. Score each candidate
     scored: List[Dict[str, Any]] = []
     round_to = int((cfg.get("output") or {}).get("round_scores_to", 2) or 2)
 
@@ -904,13 +887,12 @@ def build_premarket_analysis_v6(report: Mapping[str, Any],
             "pool_size": len(pool),
             "source_coverage": {
                 src: sum(1 for c in pool.values() if src in c.sources)
-                for src in ("vratio", "qiangchou", "net_amount", "fengdan")
+                for src in ("vratio", "qiangchou", "net_amount", "fengdan"):
             },
         }
     return result
 
 
-# Backwards-compatible aliases
 build_premarket_analysis = build_premarket_analysis_v6
 compute_premarket_analysis = build_premarket_analysis_v6
 
@@ -919,7 +901,6 @@ compute_premarket_analysis = build_premarket_analysis_v6
 # CLI / smoke test
 # ---------------------------------------------------------------------------
 def _load_capture_dir_as_report(capture_dir: Path) -> Dict[str, Any]:
-    """Load a flat captures/<date>/<dataset.name>/<HHMMSS>.json tree into a report dict."""
     capture_dir = Path(capture_dir)
     datasets: Dict[str, Dict[str, Any]] = {}
     for sub in sorted(capture_dir.iterdir()):
@@ -937,26 +918,33 @@ def _load_capture_dir_as_report(capture_dir: Path) -> Dict[str, Any]:
 
 
 def _main(argv: Optional[Sequence[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="Duanxianxia premarket v6.1 smoke test")
+    parser = argparse.ArgumentParser(description="Duanxianxia premarket v6.2 smoke test")
     parser.add_argument("capture_dir", help="Path to captures/<date>/ or samples/<date>/")
     parser.add_argument("--config", default=None, help="Path to premarket_scoring.yaml")
     parser.add_argument("--project-root", default=".", help="Project root (for resolving T-1 captures)")
     parser.add_argument("--prev-date", default=None,
-                        help="Override previous trading day (YYYY-MM-DD)")
+                        help="Override previous trading day (YYYY-MM-DD). If omitted, inferred from capture_dir siblings.")
     parser.add_argument("--top", type=int, default=10)
     args = parser.parse_args(argv)
 
     root = Path(args.project_root).resolve()
-    report = _load_capture_dir_as_report(Path(args.capture_dir))
+    capture_path = Path(args.capture_dir)
+    report = _load_capture_dir_as_report(capture_path)
+
     if args.prev_date:
         report["prev_trading_day"] = args.prev_date
+    else:
+        inferred = _infer_prev_trading_day(capture_path)
+        if inferred:
+            report["prev_trading_day"] = inferred
 
     cfg = load_premarket_config(path=args.config, project_root=root)
     result = build_premarket_analysis_v6(report, project_root=root, config=cfg)
 
     print(f"version={result['version']}  regime={result['regime']} (x{result['regime_multiplier']:.2f})")
     print(f"themes={len(result['themes'])}  candidates={result['candidate_total']}")
-    print(f"T-1 hot_themes={len(result['yesterday']['hot_themes'])} "
+    print(f"T-1 prev_date={result['yesterday']['prev_date']}  "
+          f"hot_themes={len(result['yesterday']['hot_themes'])} "
           f"leaders={result['yesterday']['leader_count']} "
           f"ltgd={result['yesterday']['ltgd_count']}")
     print("-" * 80)

@@ -1,0 +1,117 @@
+{
+  "project": "duanxianxia",
+  "timezone": "Asia/Shanghai",
+  "storagePolicy": {
+    "persistEveryFetch": true,
+    "defaultFormat": "json",
+    "allowSummaryOnlyWhenUserRequests": true
+  },
+  "datasets": [
+    {
+      "id": "rank.rocket",
+      "label": "飙升榜",
+      "path": "搜索/榜单",
+      "status": "working"
+    },
+    {
+      "id": "pool.hot",
+      "label": "热门",
+      "path": "股票池/热门",
+      "status": "working"
+    },
+    {
+      "id": "pool.surge",
+      "label": "冲涨",
+      "path": "股票池/冲涨",
+      "status": "working"
+    },
+    {
+      "id": "rank.hot_stock_day",
+      "label": "热度榜（日）",
+      "path": "热度榜/日",
+      "status": "working"
+    },
+    {
+      "id": "review.ltgd.range",
+      "label": "龙头高度区间涨幅",
+      "path": "复盘/龙头高度",
+      "status": "working"
+    },
+    {
+      "id": "review.daily.top_metrics",
+      "label": "每日复盘顶部指标",
+      "path": "复盘/每日复盘",
+      "status": "working"
+    },
+    {
+      "id": "review.daily.top_metrics.core11",
+      "label": "每日复盘顶部指标（11项，不含量能）",
+      "path": "复盘/每日复盘/11项参考",
+      "status": "working"
+    },
+    {
+      "id": "home.qxlive.top_metrics",
+      "label": "主页 qxlive 顶部指标按钮组",
+      "path": "主页/qxlive/顶部指标按钮组",
+      "status": "working"
+    },
+    {
+      "id": "home.ztpool",
+      "label": "主页涨停股票池",
+      "path": "主页/涨停股票池",
+      "status": "working"
+    },
+    {
+      "id": "auction.jjyd.vratio",
+      "label": "竞价异动/竞价爆量",
+      "path": "竞价/竞价异动/竞价爆量",
+      "status": "working"
+    },
+    {
+      "id": "auction.jjyd.qiangchou",
+      "label": "竞价异动/竞价抢筹",
+      "path": "竞价/竞价异动/竞价抢筹",
+      "status": "working"
+    },
+    {
+      "id": "auction.jjyd.net_amount",
+      "label": "竞价异动/竞价净额",
+      "path": "竞价/竞价异动/竞价净额",
+      "status": "working"
+    },
+    {
+      "id": "auction.jjlive.fengdan",
+      "label": "竞价封单/当日封单表",
+      "path": "竞价/竞价封单",
+      "status": "working"
+    },
+    {
+      "id": "cashflow.stock.today",
+      "label": "个股资金流向/今日排行",
+      "path": "资金流向/个股资金流向/今日排行",
+      "status": "working",
+      "default_limit": 100
+    },
+    {
+      "id": "cashflow.stock.3day",
+      "label": "个股资金流向/3日排行",
+      "path": "资金流向/个股资金流向/3日排行",
+      "status": "working",
+      "default_limit": 100
+    },
+    {
+      "id": "cashflow.stock.5day",
+      "label": "个股资金流向/5日排行",
+      "path": "资金流向/个股资金流向/5日排行",
+      "status": "working",
+      "default_limit": 100
+    },
+    {
+      "id": "cashflow.stock.10day",
+      "label": "个股资金流向/10日排行",
+      "path": "资金流向/个股资金流向/10日排行",
+      "status": "working",
+      "default_limit": 100
+    }
+  ]
+}

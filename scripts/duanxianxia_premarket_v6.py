@@ -887,7 +887,7 @@ def build_premarket_analysis_v6(report: Mapping[str, Any],
             "pool_size": len(pool),
             "source_coverage": {
                 src: sum(1 for c in pool.values() if src in c.sources)
-                for src in ("vratio", "qiangchou", "net_amount", "fengdan"):
+                for src in ("vratio", "qiangchou", "net_amount", "fengdan")
             },
         }
     return result

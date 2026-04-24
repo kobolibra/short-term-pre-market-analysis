@@ -1,141 +1,130 @@
-# Premarket scoring config — v6.1
-# Aligned to real capture schema observed in samples/2026-04-23/.
-# See projects/duanxianxia/docs/premarket-v6-field-mapping.md for field-level rationale.
-version: "premarket_5table_v6.1"
+# Premarket scoring config — v6.2
+# Tuned from openclaw's 2026-04-24 mid-day live run. See
+# projects/duanxianxia/docs/premarket-v6-2-tuning.md for per-threshold rationale.
+version: "premarket_5table_v6.2"
 
 # -------------------------------------------------------------------------
-# Rank-based bonuses per auction source (applied once per candidate per source)
+# Rank-based bonuses per auction source — validated in 2026-04-24, unchanged
 # -------------------------------------------------------------------------
 rank_scores:
-  vratio:              # auction.jjyd.vratio — 竞价爆量
+  vratio:
     top_n: 40
     max_score: 12
     decay: linear
-  qiangchou:           # auction.jjyd.qiangchou — 竞价抢筹 (group == "grab")
+  qiangchou:
     top_n: 30
     max_score: 10
     decay: linear
-  net_amount:          # auction.jjyd.net_amount — 主力净流入
+  net_amount:
     top_n: 30
     max_score: 8
     decay: linear
-  fengdan:             # auction.jjlive.fengdan — 竞价封单 (live)
+  fengdan:
     top_n: 30
     max_score: 10
     decay: linear
 
 # -------------------------------------------------------------------------
-# Numeric-signal bonuses (parsed from the capture rows).
-# All thresholds assume units as documented in samples; parsers in code convert strings.
+# Numeric-signal bonuses — validated in 2026-04-24, unchanged
 # -------------------------------------------------------------------------
 numeric_signals:
-  # From vratio rows (volume_ratio_multiple is a string float in captures)
   volume_ratio_multiple:
     weak_min: 50.0
     strong_min: 150.0
     weak_score: 2
     strong_score: 5
-  # From vratio / qiangchou rows (auction_turnover_wan is a string int in captures — 万)
   auction_turnover_wan:
-    weak_min: 5000      # 5 千万
-    strong_min: 20000   # 2 亿
+    weak_min: 5000
+    strong_min: 20000
     weak_score: 2
     strong_score: 4
-  # From qiangchou rows (grab_strength is a string float in captures)
   grab_strength:
     weak_min: 3.0
     strong_min: 6.0
     weak_score: 2
     strong_score: 4
-  # From net_amount rows (main_net_inflow_wan is int — 万)
   main_net_inflow_wan:
-    weak_min: 3000      # 3 千万
-    strong_min: 10000   # 1 亿
+    weak_min: 3000
+    strong_min: 10000
     weak_score: 2
     strong_score: 4
-  # From fengdan rows — amount_925 parsed to 亿 via _parse_chinese_amount_to_yi
   fengdan_925_yi:
-    weak_min: 0.3       # 3 千万
-    strong_min: 1.0     # 1 亿
+    weak_min: 0.3
+    strong_min: 1.0
     weak_score: 3
     strong_score: 6
 
+# -------------------------------------------------------------------------
 # Cross-source confirmation bonus
+# v6.2: two_sources dropped 3 → 2 (was too automatic — 9/10 top-10 got it)
+# -------------------------------------------------------------------------
 source_hit_bonuses:
-  two_sources: 3
+  two_sources: 2
   three_sources: 6
   four_sources: 10
 
-# Direction consistency: auction_change_pct and latest_change_pct both positive
+# -------------------------------------------------------------------------
+# Direction consistency
+# v6.2: added min_pct=2.0 (previously fired for any auction>0 AND latest>0)
+# -------------------------------------------------------------------------
 direction_consistency:
+  min_pct: 2.0
   score: 2
 
 # -------------------------------------------------------------------------
-# Untradable filter
+# Untradable filter — unchanged
 # -------------------------------------------------------------------------
 untradable:
-  # latest_change_pct >= this % = 一字 / 封死 — skip
   upper_limit_pct: 9.7
-  # code prefixes to exclude (科创 / 北交所 / ST) — optional, adjust per user
   exclude_prefixes: []
 
 # -------------------------------------------------------------------------
-# Theme overlay — from home.kaipan.plate.summary
-# Fields: 主标签名称, 主标签代码, 板块强度原值 (string float),
-#         主力流入原值 (string 万), 主力流入真实金额 (float 元),
-#         涨停数量 (string int), 子标签列表 (pipe/、separated string),
-#         子标签数量 (int)
-# Plus meta.top_plates[].subplates[] (array of {子题材名称, 子题材代码, ...})
+# Theme overlay
+# v6.2: widened top_n 15 → 25, lowered strength_floor 1.0 → 0.5,
+# raised match_bonus 4 → 5, subplate_match_bonus 2 → 3
 # -------------------------------------------------------------------------
 theme_overlay:
-  strength_floor: 1.0          # 板块强度原值 低于此值的主题不计入
-  main_inflow_min_wan: 2000    # 主力流入原值 低于 2000 万的主题不计入
-  top_n_themes: 15             # 取前 N 个主题作为概念词库
-  use_subplates: true          # 展开 meta.top_plates[].subplates[]
-  match_bonus: 4               # 候选的 concept 命中主题 → 加分
-  subplate_match_bonus: 2      # 命中子标签 → 额外加分
+  strength_floor: 0.5
+  main_inflow_min_wan: 2000
+  top_n_themes: 25
+  use_subplates: true
+  match_bonus: 5
+  subplate_match_bonus: 3
 
 # -------------------------------------------------------------------------
-# Risk penalty for over-crowded themes
+# Risk penalty — unchanged (fired correctly on 688041 海光信息)
 # -------------------------------------------------------------------------
 risk_penalty:
-  crowded_zt_count: 8          # 某主题涨停数 >= 8 视为拥挤
+  crowded_zt_count: 8
   crowded_penalty: -3
-  # If 主力流入真实金额 (元) is negative and large in abs value, penalty
-  large_outflow_yuan: -500000000   # -5 亿
+  large_outflow_yuan: -500000000
   large_outflow_penalty: -2
 
 # -------------------------------------------------------------------------
-# Market regime — vote across home.qxlive.top_metrics (premarket) or
-# review.daily.top_metrics (postmarket baseline check).
-# Each metric row has metric_key, value (string), raw_chart_tail_value (numeric).
-# Metric keys are UPPERCASE: QX, ZT, DT, KQXY, HSLN, LBGD, SZ, XD, PB,
-#   ZTBX, LBBX, PBBX (+ PBBX_TOP, PBBX_1_2, ..., PBBX_4P).
+# Market regime — unchanged
 # -------------------------------------------------------------------------
 market_regime:
-  QX:                # 情绪指标 0–100
+  QX:
     cold_max: 30
     hot_min: 70
-  HSLN_premarket:    # 量能 — premarket value is a signed 亿 string ("+2.3亿"/"-1.5亿")
+  HSLN_premarket:
     cold_max: -1.5
     hot_min: 2.0
-  KQXY:              # 亏钱效应 % — higher = colder
+  KQXY:
     cold_min: 60
     hot_max: 35
-  ZTBX:              # 昨涨停表现 % — e.g. "1.78" or "2.17%"
+  ZTBX:
     cold_max: 0
     hot_min: 3
-  LBBX:              # 昨连板表现 % — e.g. "8.23" or "7.17%"
+  LBBX:
     cold_max: 0
     hot_min: 5
-  PBBX:              # 连板晋级率 % (postmarket only) — e.g. "50.0%"
+  PBBX:
     cold_max: 30
     hot_min: 60
-  PB:                # 今日封板率 % (postmarket)
+  PB:
     cold_max: 40
     hot_min: 70
-  # Regime decision: majority cold → cold; majority hot → hot; else normal.
-  # When regime == cold, raise untradable threshold & apply score multiplier.
   regime_multipliers:
     cold: 0.8
     normal: 1.0
@@ -143,21 +132,14 @@ market_regime:
 
 # -------------------------------------------------------------------------
 # Yesterday (T-1) postmarket anchoring
-# Sources (all under captures/<prev_date>/, DOT-separated dir names):
-#   review.fupan.plate  — rows with Chinese keys: 题材名称, 代码, 名称, 连板,
-#                         异动原因, 细标签列表, ...
-#   review.ltgd.range   — rows with Chinese keys: 周期, 代码, 名称,
-#                         区间涨幅 (string with %), 概念, 概念键
-#   review.daily.top_metrics — metric_key rows incl. PBBX tiers
-#   home.ztpool         — (optional) yesterday's ZT pool
 # -------------------------------------------------------------------------
 yesterday_postmarket:
-  min_board_count: 2           # 连板 >= 2 视为龙头
-  min_theme_stock_count: 3     # 同题材股票数 >= 3 视为热点主题
-  theme_weight: 3              # 今日候选匹配昨日热点主题 → 加分
-  leader_weight: 5             # 今日候选恰是昨日龙头 → 加分
+  min_board_count: 2
+  min_theme_stock_count: 3
+  theme_weight: 3
+  leader_weight: 5
   ltgd_cycles_to_use: ["5日", "10日"]
-  ltgd_min_range_pct: 20       # 5/10 日区间涨幅 >= 20% 视为长周期强势
+  ltgd_min_range_pct: 20
   ltgd_weight: 2
 
 # -------------------------------------------------------------------------

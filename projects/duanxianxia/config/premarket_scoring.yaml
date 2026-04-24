@@ -1,0 +1,146 @@
+# Premarket scoring config (v6)
+#
+# 所有 v6 打分相关的魔数/阈值都从这里读. 代码里读不到这个文件时会
+# fallback 到 scripts/duanxianxia_premarket_v6.py 里的 _DEFAULT_CONFIG.
+# 升级结构时请同步更新 schema_version 并在 CHANGELOG 写迁移说明.
+
+version: premarket_5table_v6
+schema_version: 1
+scoring_updated_at: "2026-04-24"
+
+# ---------------------------------------------------------------------------
+# 1) 表内 rank 线性分 (v5 legacy, 保留但降权为辅助项)
+# ---------------------------------------------------------------------------
+rank_scores:
+  vratio:             { weight: 0.6, max_score: 18 }  # 竞价爆量
+  qiangchou_grab:     { weight: 0.6, max_score: 22 }  # 末秒抢筹
+  qiangchou_interval: { weight: 0.6, max_score: 16 }  # 区间抢筹
+  net_amount:         { weight: 0.6, max_score: 20 }  # 竞价净额
+  fengdan_live:       { weight: 0.6, max_score: 16 }  # 竞价封单
+
+# ---------------------------------------------------------------------------
+# 2) 数值分 (v6 新增, 主项)
+#    对每一只候选股, 在当日候选池内做 percentile 归一, 再乘 weight.
+#    min_value / min_multiplier 作为进入打分的下限 (低于即 0 分).
+# ---------------------------------------------------------------------------
+numeric_signals:
+  volume_ratio_multiple: { weight: 4.0, min_value: 1.2 }       # 竞价量比
+  auction_turnover_ratio: { weight: 4.5, min_multiplier: 2.0 } # 今竞额/昨竞额
+  turnover_rate_pct:      { weight: 2.0, min_value: 0.5 }      # 竞价换手 %
+  main_net_inflow_wan:    { weight: 5.0, min_value: 200 }      # 主力净买 万
+  grab_strength:          { weight: 4.0, min_value: 0.3 }      # 抢筹幅度 %
+  seal_amount_925:        { weight: 3.0, min_value: 500 }      # 9:25 封单 万
+  seal_amount_growth:     { weight: 2.0 }                      # 915->925 递增
+  market_cap_yi:                                               # 流通值 亿, 偏好小票
+    weight: 2.0
+    sweet_spot_min: 20
+    sweet_spot_max: 150
+    over_cap_threshold: 500
+    over_cap_penalty: 1.0
+
+# ---------------------------------------------------------------------------
+# 3) 多表共振 bonus (替换 v5 的 10/6/2/0)
+# ---------------------------------------------------------------------------
+source_hit_bonuses:
+  "1": 0
+  "2": 4
+  "3": 10
+  "4": 18
+  "5": 25   # 4 竞价表 + fengdan live 全中
+
+# ---------------------------------------------------------------------------
+# 4) 方向一致性校验 (v6 新增)
+#    4 竞价表里至少 N 个方向为正 (量比>阈值 / 主力净买>0 / 抢筹>0 / 封单>0)
+#    才给完整数值分, 否则乘 penalty_if_below.
+# ---------------------------------------------------------------------------
+direction_consistency:
+  min_positive_signals: 2
+  penalty_if_below: 0.3
+
+# ---------------------------------------------------------------------------
+# 5) untradable 过滤 (v6 重写, 替换 v5 的 "离涨停 0.2%" 单一规则)
+# ---------------------------------------------------------------------------
+untradable:
+  hard_pct_gap: 0.2                 # 竞涨 >= 涨停阈值 - 0.2% 初筛
+  # 满足任一则不视为 untradable (放行回候选池):
+  keep_if_seal_thick_wan: 3000      # 9:25 封单 >= 3000 万
+  keep_if_seal_growth: true         # 9:15 -> 9:25 递增
+  keep_if_main_net_positive_wan: 5000  # 主力净买 >= 5000 万
+  keep_if_small_cap_yi: 80          # 流通值 <= 80 亿的小盘不一刀切
+
+# ---------------------------------------------------------------------------
+# 6) 主题叠加
+# ---------------------------------------------------------------------------
+theme_overlay:
+  max_matches: 2
+  top_match_weight: 1.0
+  second_match_weight: 0.5
+  cap: 12
+  graylist: [数字经济, 大科技, 新质生产力, 国企改革, 专精特新, 新能源, 大消费]
+  gray_penalty_multiplier: 0.5
+  # 子标签内该股票的位次 (v6 新增)
+  sub_leader_bonus:
+    rank_1: 2.5
+    rank_2_3: 1.5
+    rank_4_5: 0.8
+  theme_rank_bonus: { top3: 3.0, top5: 2.0, top10: 1.0 }
+  theme_rank_penalty:
+    over_120: -8.0
+    over_80:  -5.0
+    over_50:  -3.0
+    over_20:  -1.0
+
+# ---------------------------------------------------------------------------
+# 7) 风险惩罚 (累乘, 作用于最终 ranking_score)
+# ---------------------------------------------------------------------------
+risk_penalty:
+  inflow_lt_minus_80000_wan: 0.15   # 主题主力流入 < -8 亿
+  inflow_lt_minus_30000_wan: 0.10   # 主题主力流入 < -3 亿
+  inflow_lt_0_wan:           0.05   # 主题主力流入 < 0
+  no_positive_direction_penalty: 0.10  # 方向不一致
+  market_regime_cold_penalty:    0.15  # 情绪冰点
+
+# ---------------------------------------------------------------------------
+# 8) 大盘情绪 gate (v6 新增, 读 home.qxlive.top_metrics)
+#    阈值单位: 百分比字段直接比,HSLN 单位为亿 (口径 2026-04-16 之后).
+# ---------------------------------------------------------------------------
+market_regime:
+  cold_thresholds:
+    ZTBX_max: 15      # 涨停晋级率 < 15% = 冰点
+    LBBX_max: 15      # 连板晋级率 < 15%
+    HSLN_min_yi: 10000 # 沪深量能 < 1 万亿
+  hot_thresholds:
+    ZTBX_min: 40
+    LBGD_min: 6       # 连板高度 >= 6 板
+  cold_score_multiplier: 0.65
+  hot_score_multiplier:  1.15
+  cold_max_candidates: 5
+  hot_max_candidates:  10
+  normal_max_candidates: 10
+
+# ---------------------------------------------------------------------------
+# 9) 昨日盘后 4 表 (v6 新增)
+#    读 captures/YYYY-MM-DD 下:
+#    - review.daily.top_metrics
+#    - review.ltgd.range
+#    - review.fupan.plate
+#    - home.ztpool
+# ---------------------------------------------------------------------------
+yesterday_postmarket:
+  enabled: true
+  lookback_calendar_days: 5           # 最多往回找 5 个自然日
+  prev_day_broken_board_bonus: 4.0    # 昨日断板今日有回封迹象
+  prev_day_continuation_bonus: 3.0    # 昨日一字/连板延续
+  in_ltgd_range_bonus: 3.0            # 进入昨日龙头高度区间
+  theme_continuation_bonus: 2.0       # 昨日复盘主题今日仍强
+  prev_theme_leader_bonus: 2.5        # 昨日题材龙头 (题材内序号 1-2)
+  prev_day_loser_penalty: -2.0        # 昨日烂板 / 加速板顶断
+
+# ---------------------------------------------------------------------------
+# 10) 输出
+# ---------------------------------------------------------------------------
+output:
+  default_top_n: 10
+  tiebreaker: market_cap_yi_asc   # 相同分先取流通值小的
+  include_breakdown: true         # 输出每股每项子分, 便于复盘
+  include_regime: true            # 输出 regime 元数据

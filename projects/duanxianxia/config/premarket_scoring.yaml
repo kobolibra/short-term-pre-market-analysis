@@ -1,8 +1,9 @@
-# Premarket scoring config — v6.3
+# Premarket scoring config — v6.3 (+ v6.3.1 dictionary extension)
 # v6.3 adds theme-name canonicalization to close the naming gap between
 # kaipan 主标签名称 (today) and fupan 题材名称 (T-1), which openclaw's
 # 2026-04-24 run surfaced as the root cause of yesterday bonus not firing.
-# See projects/duanxianxia/docs/premarket-v6-3-theme-aliases.md.
+# v6.3.1 extends theme_aliases only (no code change). See
+# projects/duanxianxia/docs/premarket-v6-3-theme-aliases.md.
 version: "premarket_5table_v6.3"
 
 # -------------------------------------------------------------------------
@@ -85,6 +86,10 @@ untradable:
 #     Applied in both (a) candidate concept ↔ kaipan plate matching and
 #     (b) today's matched_themes ↔ fupan hot_themes matching.
 #   - fuzzy_substring (opt-in): bidirectional substring match fallback.
+# v6.3.1 extensions (dictionary-only, no code change):
+#   - 半导体产业链 group: +芯片封测 / 封测 / 先进封装 / CPU  (covers 000066, 002156)
+#   - 算力 group: +数据中心 / AI智能体                     (covers 300444, 688787)
+#   - new 大消费 group: 零售 / 服装家纺 / 猪肉 / 农业 / 食品饮料 (covers 301116, 600694, 603363)
 # -------------------------------------------------------------------------
 theme_overlay:
   strength_floor: 0.5
@@ -98,10 +103,11 @@ theme_overlay:
   # groups here; no code change required. Leave empty to disable aliases.
   theme_aliases:
     - ["业绩增长", "一季报增长", "年报增长", "业绩预增", "预增", "半年报增长"]
-    - ["半导体产业链", "芯片", "集成电路", "元器件"]
+    - ["半导体产业链", "芯片", "集成电路", "元器件", "芯片封测", "封测", "先进封装", "CPU"]
     - ["光通信", "通信", "光模块", "CPO"]
     - ["华为", "华为海思", "华为产业链", "鸿蒙"]
-    - ["算力", "算力概念", "AI算力", "AI服务器", "IDC"]
+    - ["算力", "算力概念", "AI算力", "AI服务器", "IDC", "数据中心", "AI智能体"]
+    - ["大消费", "零售", "服装家纺", "猪肉", "农业", "食品饮料"]
   # Opt-in: when true, two theme names match if one contains the other and
   # the shorter has >= fuzzy_substring_min_len characters. Default off since
   # it can over-trigger on short names.

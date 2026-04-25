@@ -31,3 +31,14 @@ esac
 
 cd /home/investmentofficehku/.openclaw/workspace
 python3 scripts/duanxianxia_batch.py "$GROUP"
+
+# v7 intraday validator: after intraday_cashflow capture, validate premarket
+# anchors against fresh intraday data and emit reports/<date>/intraday_validation.json.
+# Failure of validator MUST NOT mask success of the capture (capture is the
+# critical part of the cron). Use `|| true` so cron exit stays 0 if validator
+# bails out (e.g. before premarket anchors exist on a non-trading day).
+if [[ "$GROUP" == "intraday_cashflow" ]]; then
+  python3 scripts/duanxianxia_intraday_validator.py \
+    --project-root /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia \
+    --quiet || echo "[duanxianxia] v7 intraday validator returned non-zero (non-fatal)" >&2
+fi

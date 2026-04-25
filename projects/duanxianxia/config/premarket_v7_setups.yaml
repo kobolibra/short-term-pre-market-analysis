@@ -1,0 +1,134 @@
+# Premarket v7 setup classifier config
+# Used by scripts/duanxianxia_premarket_v7.py and duanxianxia_intraday_validator.py.
+# Thresholds here override defaults baked into the v7 module.
+version: "premarket_5table_v7.0"
+
+# -------------------------------------------------------------------------
+# Layer 1/2 label thresholds
+# -------------------------------------------------------------------------
+stock_t1_label:
+  # cashflow.stock.today rank breakpoints. PR #9 expands today/3d/5d/10d to 150.
+  hit_top_max_rank: 50
+  hit_mid_max_rank: 150
+
+cashflow_continuity:
+  # multi-period rank trajectory (10day -> 5day -> 3day -> today)
+  # if all <= accumulating_rank_max OR final < first AND final <= accumulating_rank_max -> accumulating
+  accumulating_rank_max: 75
+  # if final > first AND final >= distributing_rank_min -> distributing
+  distributing_rank_min: 105
+
+longtou_status:
+  # 题材内序号 == 1 AND 连板 >= longtou_min_board -> confirmed_longtou
+  longtou_min_board: 2
+  # 题材内序号 in [1, mid_position_max_seq] -> mid_position
+  mid_position_max_seq: 3
+
+industry_t1_label:
+  # T-1 fupan 题材出现 stock count
+  fade_min_count: 5      # 拥挤判定（hit_weak:fade）
+  acceleration_min_count: 2  # hit_strong:acceleration 下界
+
+zt_quality:
+  dirty_min_open_count: 2  # 开板>=2 -> dirty
+
+# -------------------------------------------------------------------------
+# Setup mutex classifier rules
+# Order matters: E > B > A > C > D > none. First match wins.
+# Each rule lists conditions; ALL must hold for that setup to fire.
+# -------------------------------------------------------------------------
+setups:
+  E:
+    name: "一字板埋伏"
+    target_winrate: 0.80
+    target_payoff: 0.5
+    conditions:
+      zt_pattern_in: ["一字"]
+  B:
+    name: "主升期龙头接力"
+    target_winrate: 0.55
+    target_payoff: 1.5
+    conditions:
+      regime_not_in: ["cold"]
+      industry_t1_label_in: ["hit_strong:acceleration", "hit_strong:absorb_dip"]
+      zt_pattern_in: ["二板", "三板+"]
+      longtou_status_in: ["confirmed_longtou"]
+      cashflow_continuity_in: ["accumulating"]
+  A:
+    name: "冰点反弹首日龙头"
+    target_winrate: 0.65
+    target_payoff: 3.0
+    conditions:
+      regime_in: ["cold"]
+      industry_t1_label_in: ["miss:new_entry", "hit_strong:absorb_dip"]
+      zt_pattern_in: ["首板", "二板", "无"]
+      longtou_status_in: ["confirmed_longtou", "mid_position"]
+      source_hit_count_min: 2
+  C:
+    name: "题材首板突破"
+    target_winrate: 0.50
+    target_payoff: 2.0
+    conditions:
+      regime_not_in: ["cold"]
+      industry_t1_label_in: ["hit_strong:acceleration", "hit_strong:absorb_dip"]
+      zt_pattern_in: ["无", "首板"]
+      stock_t1_label_in: ["hit_top", "hit_mid"]
+      longtou_status_in: ["follower", "none"]
+      source_hit_count_min: 3
+  D:
+    name: "退潮反包"
+    target_winrate: 0.40
+    target_payoff: 3.0
+    conditions:
+      industry_t1_label_in: ["hit_weak:fade"]
+      zt_pattern_in: ["反包板", "首板"]
+      longtou_status_in: ["follower"]
+      cashflow_continuity_in: ["distributing", "neutral"]
+
+setup_priority:
+  E: 5
+  B: 4
+  A: 3
+  C: 2
+  D: 1
+  none: 0
+
+# -------------------------------------------------------------------------
+# Intraday anchor specs per setup. Read by validator.
+# -------------------------------------------------------------------------
+anchors:
+  A:
+    check_at: "10:00"
+    conditions:
+      - {type: price_above_auction, tolerance_pct: -1.0}
+      - {type: amount_min_yi, by_time: "10:00", min_yi: 5.0}
+      - {type: industry_rank_top, max_rank: 5}
+  B:
+    check_at: "09:35"
+    conditions:
+      - {type: price_above_auction, tolerance_pct: -0.5}
+      - {type: industry_rank_top, max_rank: 3}
+  C:
+    check_at: "09:50"
+    conditions:
+      - {type: intraday_uptrend}
+      - {type: fengdan_min_wan, min_wan: 3000}
+  D:
+    check_at: "10:00"
+    conditions:
+      - {type: fanbao_complete}
+      - {type: price_above_auction, tolerance_pct: -0.5}
+  E:
+    check_at: "09:30"
+    conditions:
+      - {type: miaoban}
+      - {type: fengdan_min_yi, min_yi: 1.0}
+
+# -------------------------------------------------------------------------
+# Output shaping
+# -------------------------------------------------------------------------
+output:
+  max_candidates: 50
+  emit_setup_none: false  # 是否在 top_candidates 中保留未分类的 setup=none
+  intraday_anchors_dirname: "reports"  # <project_root>/<dirname>/<date>/intraday_anchors.json
+  validation_filename: "intraday_validation.json"

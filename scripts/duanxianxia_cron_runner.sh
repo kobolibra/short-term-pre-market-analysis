@@ -30,7 +30,16 @@ case "$GROUP" in
 esac
 
 cd /home/investmentofficehku/.openclaw/workspace
-python3 scripts/duanxianxia_batch.py "$GROUP"
+
+if [[ "$GROUP" == "premarket" ]]; then
+  # v7: run setup-classifier instead of v5 inline analysis. The runner imports
+  # duanxianxia_batch as a module, monkey-patches build_premarket_analysis to
+  # v7, then dispatches main() with the same argv. No double-run — v5 path is
+  # entirely bypassed for premarket.
+  python3 scripts/duanxianxia_premarket_v7_runner.py "$GROUP"
+else
+  python3 scripts/duanxianxia_batch.py "$GROUP"
+fi
 
 # v7 intraday validator: after intraday_cashflow capture, validate premarket
 # anchors against fresh intraday data and emit reports/<date>/intraday_validation.json.

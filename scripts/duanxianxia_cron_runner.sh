@@ -30,4 +30,24 @@ case "$GROUP" in
 esac
 
 cd /home/investmentofficehku/.openclaw/workspace
-python3 scripts/duanxianxia_batch.py "$GROUP"
+
+if [[ "$GROUP" == "premarket" ]]; then
+  # v7: run setup-classifier instead of v5 inline analysis. The runner imports
+  # duanxianxia_batch as a module, monkey-patches build_premarket_analysis to
+  # v7, then dispatches main() with the same argv. No double-run — v5 path is
+  # entirely bypassed for premarket.
+  python3 scripts/duanxianxia_premarket_v7_runner.py "$GROUP"
+else
+  python3 scripts/duanxianxia_batch.py "$GROUP"
+fi
+
+# v7 intraday validator: after intraday_cashflow capture, validate premarket
+# anchors against fresh intraday data and emit reports/<date>/intraday_validation.json.
+# Failure of validator MUST NOT mask success of the capture (capture is the
+# critical part of the cron). Use `|| true` so cron exit stays 0 if validator
+# bails out (e.g. before premarket anchors exist on a non-trading day).
+if [[ "$GROUP" == "intraday_cashflow" ]]; then
+  python3 scripts/duanxianxia_intraday_validator.py \
+    --project-root /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia \
+    --quiet || echo "[duanxianxia] v7 intraday validator returned non-zero (non-fatal)" >&2
+fi

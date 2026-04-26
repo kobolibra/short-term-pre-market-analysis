@@ -91,7 +91,9 @@ _DEFAULT_LABEL_THRESHOLDS: Dict[str, Any] = {
 }
 
 _DEFAULT_SETUP_RULES: Dict[str, Dict[str, Any]] = {
-    "E": {"conditions": {"zt_pattern_in": ["一字"]}},
+    # Setup E "一字板埋伏": 要求 source_hit_count >= 2（fengdan + vratio/qiangchou/net_amount 任一）
+    # 过滤"昨天一字今天没人抢"的反指票。基于 04-24 复算实证添加 (2026-04-26)。
+    "E": {"conditions": {"zt_pattern_in": ["一字"], "source_hit_count_min": 2}},
     "B": {"conditions": {
         "regime_not_in": ["cold"],
         "industry_t1_label_in": ["hit_strong:acceleration", "hit_strong:absorb_dip"],

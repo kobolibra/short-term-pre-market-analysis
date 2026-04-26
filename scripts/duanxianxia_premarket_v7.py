@@ -479,6 +479,55 @@ def _instantiate_anchors(setup: str, cand_facts: Mapping[str, Any],
 # ---------------------------------------------------------------------------
 # Helpers: locate capture dir + load extended T-1 captures
 # ---------------------------------------------------------------------------
+def _ensure_datasets_loaded(report: Mapping[str, Any]) -> Mapping[str, Any]:
+    """Bridge v5-shaped report (items only) -> v7 expected shape (datasets populated).
+
+    batch.py builds report = {"items": [{"dataset_id": "...", "capture_path": "..."}, ...]}
+    with no "datasets" field. v6's _dataset_rows / _merge_candidates (which v7
+    imports) only read report["datasets"][key] or report[key]; they do NOT
+    load capture files from disk. v5's inline analysis used to load via
+    load_capture_rows(items_by_id[...]["capture_path"]). When the v7 runner
+    monkey-patches v5 -> v7 the report shape stays v5, so v7 reads zero rows
+    for auction.* / home.kaipan.plate.summary / home.qxlive.top_metrics and
+    emits top_candidates=[].
+
+    This helper lazy-loads each items[].capture_path JSON into
+    report["datasets"][dataset_id] before the first _dataset_rows call.
+
+    Idempotent: returns report unchanged when "datasets" is already populated
+    (preserves the 110615_with_datasets.json reanalysis path). Per-file
+    try/except so a single missing/malformed capture does not abort the run.
+
+    T-1 fupan / cashflow path is unchanged (still loads from disk via
+    _resolve_prev_trading_day_captures + _load_prev_cashflow_into).
+    """
+    existing = report.get("datasets")
+    if isinstance(existing, Mapping) and existing:
+        return report
+    items = report.get("items") or []
+    if not items:
+        return report
+    datasets: Dict[str, Any] = {}
+    for it in items:
+        if not isinstance(it, Mapping):
+            continue
+        ds_id = str(it.get("dataset_id") or "").strip()
+        cp = it.get("capture_path")
+        if not ds_id or not cp:
+            continue
+        try:
+            payload = json.loads(Path(str(cp)).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if isinstance(payload, Mapping):
+            datasets[ds_id] = payload
+    if not datasets:
+        return report
+    merged = dict(report)
+    merged["datasets"] = datasets
+    return merged
+
+
 def _resolve_capture_dir(report: Mapping[str, Any]) -> Optional[Path]:
     for key in ("captures_dir", "capture_dir", "base_dir"):
         val = report.get(key)
@@ -533,6 +582,12 @@ def build_premarket_analysis_v7(report: Mapping[str, Any],
             v7_config = load_v7_config(project_root=project_root)
         except Exception:
             v7_config = {}
+
+    # Bridge v5-shaped report (items only) -> v7 expected shape (datasets populated).
+    # Without this, _merge_candidates / _dataset_rows return empty for auction.* /
+    # home.kaipan.plate.summary / home.qxlive.top_metrics, and top_candidates is [].
+    # Idempotent: skipped when datasets already populated.
+    report = _ensure_datasets_loaded(report)
 
     canon_map = _build_theme_canon_map(config)
     label_th = {**_DEFAULT_LABEL_THRESHOLDS}

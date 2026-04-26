@@ -44,6 +44,11 @@ setups:
     target_payoff: 0.5
     conditions:
       zt_pattern_in: ["一字"]
+      # 至少 2 个 auction 表命中（封单 + vratio/qiangchou/net_amount 任一）。
+      # 过滤"昨天一字今天没人抢"的低质反指票。基于 04-24 复算实证添加 (2026-04-26)：
+      # 04-24 该规则下命中的 2 只票 (300067/603315) 均为 source_hit_count=1，
+      # latest_change_pct 分别 -2.2%/-7.89%，是典型反指。
+      source_hit_count_min: 2
   B:
     name: "主升期龙头接力"
     target_winrate: 0.55

@@ -26,7 +26,9 @@
 
 ## 2. 当前纳入范围（15 张固定表 + 2 张补充/研究表）
 
-### 盘前（4 张固定表 + 2 张独立补充表）
+### 盘前（6 张固定表 + 2 张独立补充表）
+1. `rank.rocket`｜飙升榜
+4. `rank.hot_stock_day`｜热度榜（日）
 1. `auction.jjyd.vratio`｜竞价爆量
 2. `auction.jjyd.qiangchou`｜竞价抢筹
 3. `auction.jjyd.net_amount`｜竞价净额
@@ -69,7 +71,7 @@
 - 时区：`Asia/Shanghai`
 - 随机延迟：**5–15 秒**
 - runner：`premarket`
-- 抓取内容：盘前 4 张固定表 + qxlive 全主标签汇总表 + 主页 qxlive 顶部指标按钮组
+- 抓取内容：盘前 6 张固定表 + qxlive 全主标签汇总表 + 主页 qxlive 顶部指标按钮组
 
 ## 3.2 10:01 自动抓取
 - 任务名：`duanxianxia_1001盘中+资金净流入自动抓取`
@@ -115,7 +117,7 @@
 `duanxianxia_batch.py` 当前支持这些关键 group：
 
 - `premarket`
-  - 盘前 4 张固定表 + qxlive 全主标签汇总表 + 主页 qxlive 顶部指标按钮组
+  - 盘前 6 张固定表 + qxlive 全主标签汇总表 + 主页 qxlive 顶部指标按钮组
 - `intraday`
   - 盘中 4 张 + 主页 qxlive 顶部指标按钮组
 - `postmarket`

@@ -85,6 +85,8 @@ GROUPS: Dict[str, Dict[str, Any]] = {
     "premarket": {
         "label": "盘前",
         "datasets": [
+            "rocket",
+            "hotlist_day",
             "auction_vratio",
             "auction_qiangchou",
             "auction_net_amount",

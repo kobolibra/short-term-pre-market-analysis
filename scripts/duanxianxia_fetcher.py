@@ -1885,3 +1885,487 @@ class DuanxianxiaFetcher:
                             {
                                 "page": page_no,
                                 "row_count": len(page_data["rows"]),
+                            }
+                        )
+                        if len(rows) >= CASHFLOW_DEFAULT_LIMIT:
+                            break
+
+                rows = rows[:CASHFLOW_DEFAULT_LIMIT]
+            finally:
+                browser.close()
+
+        kind_map = {
+            "today": "cashflow_today",
+            "3d": "cashflow_3d",
+            "5d": "cashflow_5d",
+            "10d": "cashflow_10d",
+        }
+        return FetchResult(
+            kind=kind_map[period],
+            rows=rows,
+            meta={
+                "source": page_url,
+                "field": "table rows",
+                "count": len(rows),
+                "period": period,
+                "period_label": label,
+                "total_pages": total_pages,
+                "page_counts": page_counts,
+                "default_limit": CASHFLOW_DEFAULT_LIMIT,
+                "complete": True,
+            },
+        )
+
+    def _extract_cashflow_rows_from_page(self, page) -> Dict[str, Any]:
+        payload = page.evaluate(
+            """() => {
+              const rows = [...document.querySelectorAll('table tbody tr')].map(tr => {
+                const tds = [...tr.querySelectorAll('td')].map(td => (td.innerText || '').trim());
+                return {
+                  rank: tds[0] || '',
+                  name: tds[1] || '',
+                  code: tds[2] || '',
+                  stock_circle: tds[3] || '',
+                  latest_price: tds[4] || '',
+                  change_pct: tds[5] || '',
+                  main_net_inflow: tds[6] || '',
+                  super_net_inflow: tds[7] || '',
+                  large_net_inflow: tds[8] || '',
+                  medium_net_inflow: tds[9] || '',
+                  little_net_inflow: tds[10] || ''
+                };
+              }).filter(row => row.code);
+              const pages = [...document.querySelectorAll('[name="whj_page"]')]
+                .map(el => Number(el.getAttribute('data-page') || '0'))
+                .filter(Boolean);
+              return {
+                rows,
+                totalPages: pages.length ? Math.max(...pages) : 1
+              };
+            }"""
+        )
+        normalized_rows = []
+        for row in payload.get("rows", []):
+            normalized_rows.append(
+                {
+                    "排名": int(row["rank"]) if str(row.get("rank", "")).isdigit() else row.get("rank", ""),
+                    "名称": row.get("name", ""),
+                    "代码": row.get("code", ""),
+                    "股圈": row.get("stock_circle", ""),
+                    "最新价": row.get("latest_price", ""),
+                    "涨跌幅": row.get("change_pct", ""),
+                    "主力净流入": row.get("main_net_inflow", ""),
+                    "特大单净流入": row.get("super_net_inflow", ""),
+                    "大单净流入": row.get("large_net_inflow", ""),
+                    "中单净流入": row.get("medium_net_inflow", ""),
+                    "小单净流入": row.get("little_net_inflow", ""),
+                }
+            )
+        return {
+            "rows": normalized_rows,
+            "total_pages": int(payload.get("totalPages") or 1),
+        }
+
+    @staticmethod
+    def _decode_padded_base64(value: str) -> bytes:
+        value = value.rstrip("=")
+        while len(value) % 4:
+            value += "="
+        return base64.b64decode(value)
+
+    def _decrypt_jjlive_payload(self, encrypted_text: str) -> str:
+        encrypted_bytes = base64.b64decode(encrypted_text)
+        cipher = AES.new(JJLIVE_AES_KEY, AES.MODE_CBC, JJLIVE_AES_IV)
+        decrypted = unpad(cipher.decrypt(encrypted_bytes), AES.block_size)
+        return decrypted.decode("utf-8")
+
+    @staticmethod
+    def _parse_fengdan_head(head_html: str) -> Dict[str, Any]:
+        text = BeautifulSoup(head_html, "lxml").get_text("\n", strip=True)
+        text = text.replace("\xa0", " ")
+        date_match = re.search(r"(\d{4}-\d{2}-\d{2})", text)
+        yizi_match = re.search(r"一字\s*:?\s*(\d+)个", text)
+        seal_match = re.search(r"封单\s*:?\s*([^\n|]+)", text)
+        return {
+            "date": date_match.group(1) if date_match else "",
+            "yizi_count": int(yizi_match.group(1)) if yizi_match else None,
+            "seal_total": seal_match.group(1).strip() if seal_match else "",
+            "has_change_pct": "涨幅" in text,
+            "header_text": text,
+        }
+
+    @staticmethod
+    def _parse_fengdan_table(table_html: str, summary: Dict[str, Any]) -> List[Dict[str, Any]]:
+        def is_board_label(text: str) -> bool:
+            text = text.strip()
+            if not text:
+                return False
+            return bool(re.fullmatch(r"(?:昨)?(?:首板|\d+板|\d+天\d+板)", text))
+
+        soup = BeautifulSoup(table_html, "lxml")
+        rows: List[Dict[str, Any]] = []
+        for idx, td in enumerate(soup.select("td.fd"), start=1):
+            code = td.get("code", "")
+            name = ""
+            b = td.find("b")
+            if b and b.contents:
+                first_text = b.find(string=True, recursive=False)
+                name = first_text.strip() if first_text else b.get_text(" ", strip=True)
+
+            direct_ps = [p.get_text(" ", strip=True) for p in td.find_all("p", recursive=False) if p.get_text(" ", strip=True)]
+            board_label = ""
+            concept_tags = direct_ps
+            if direct_ps and is_board_label(direct_ps[-1]):
+                board_label = direct_ps[-1]
+                concept_tags = direct_ps[:-1]
+
+            direct_spans = td.select(":scope > span")
+            span_texts = [s.get_text(" ", strip=True) for s in direct_spans]
+            amount_915 = span_texts[0] if len(span_texts) > 0 else ""
+            amount_920 = span_texts[1] if len(span_texts) > 1 else ""
+            amount_925 = span_texts[2] if len(span_texts) > 2 else ""
+            latest_change_pct = span_texts[3] if len(span_texts) > 3 else ""
+
+            rows.append(
+                {
+                    "section_date": summary.get("date", ""),
+                    "section_kind": summary.get("section_kind", ""),
+                    "section_yizi_count": summary.get("yizi_count"),
+                    "section_seal_total": summary.get("seal_total", ""),
+                    "section_t15_total": summary.get("t15", ""),
+                    "section_t20_total": summary.get("t20", ""),
+                    "section_t25_total": summary.get("t25", ""),
+                    "section_has_change_pct": summary.get("has_change_pct", False),
+                    "rank": idx,
+                    "code": code,
+                    "name": name,
+                    "tag_1": concept_tags[0] if len(concept_tags) > 0 else "",
+                    "tag_2": concept_tags[1] if len(concept_tags) > 1 else "",
+                    "tag_3": concept_tags[2] if len(concept_tags) > 2 else "",
+                    "board_label": board_label,
+                    "amount_915": amount_915,
+                    "amount_920": amount_920,
+                    "amount_925": amount_925,
+                    "latest_change_pct": latest_change_pct,
+                    "latest_change_pct_source": "jjlive.json",
+                    "tags": direct_ps,
+                }
+            )
+        return rows
+
+    def _fetch_realtime_quotes(self, codes: List[str]) -> Dict[str, Dict[str, str]]:
+        unique_codes: List[str] = []
+        seen = set()
+        for code in codes:
+            code = str(code).strip()
+            if not code or code in seen:
+                continue
+            seen.add(code)
+            unique_codes.append(code)
+
+        result: Dict[str, Dict[str, str]] = {}
+        if not unique_codes:
+            return result
+
+        def market_prefix(code: str) -> str:
+            if code.startswith(("60", "68")):
+                return "sh"
+            return "sz"
+
+        for i in range(0, len(unique_codes), 60):
+            batch = unique_codes[i : i + 60]
+            symbols = ",".join(f"{market_prefix(code)}{code}" for code in batch)
+            url = f"https://qt.gtimg.cn/q={symbols}"
+            resp = self.session.get(
+                url,
+                timeout=TIMEOUT,
+                headers={
+                    "User-Agent": UA,
+                    "Referer": f"{BASE}/web/jjlive",
+                },
+            )
+            resp.raise_for_status()
+            for line in resp.text.splitlines():
+                line = line.strip().rstrip(";")
+                if not line or "=\"" not in line:
+                    continue
+                _, payload = line.split('="', 1)
+                payload = payload.rstrip('"')
+                parts = payload.split("~")
+                if len(parts) < 33:
+                    continue
+                code = parts[2].strip()
+                latest_change_pct = parts[32].strip()
+                if code:
+                    result[code] = {
+                        "latest_change_pct": f"{latest_change_pct}%" if latest_change_pct else ""
+                    }
+        return result
+
+    @staticmethod
+    def _format_hot_rate(value: Any) -> str:
+        try:
+            n = float(value)
+        except Exception:
+            return str(value) if value is not None else ""
+        if abs(n) >= 10000:
+            return f"{n / 10000:.0f}w"
+        if n.is_integer():
+            return str(int(n))
+        return str(n)
+
+    @staticmethod
+    def _format_amount(value: Any, digits: int = 1) -> str:
+        try:
+            n = float(value)
+        except Exception:
+            return ""
+        if abs(n) >= 100000000:
+            return f"{n / 100000000:.{digits}f}亿"
+        return f"{round(n / 10000)}万"
+
+    @staticmethod
+    def _split_concepts(value: Any) -> tuple[str, str]:
+        if value is None:
+            return "", ""
+        text = str(value)
+        parts = [p.strip() for p in text.split("+") if p.strip()]
+        if not parts:
+            return "", ""
+        if len(parts) == 1:
+            return parts[0], ""
+        return parts[0], parts[1]
+
+    @staticmethod
+    def _split_pipe_concepts(value: Any) -> tuple[str, str]:
+        if value is None:
+            return "", ""
+        text = str(value)
+        parts = [p.strip() for p in text.split("|") if p.strip()]
+        if not parts:
+            return "", ""
+        if len(parts) == 1:
+            return parts[0], ""
+        return parts[0], parts[1]
+
+    @staticmethod
+    def _review_jinji_bucket(bucket: Any, fallback_rate: Any = None) -> Dict[str, Any]:
+        if not isinstance(bucket, dict):
+            bucket = {}
+        all_count = DuanxianxiaFetcher._to_int_or_none(bucket.get("all"))
+        jinji_count = DuanxianxiaFetcher._to_int_or_none(bucket.get("jinji"))
+        rate = bucket.get("jinjilv")
+        if rate in (None, ""):
+            rate = fallback_rate
+        return {
+            "all": all_count,
+            "jinji": 0 if all_count is not None and jinji_count is None else jinji_count,
+            "rate": rate,
+        }
+
+    @staticmethod
+    def _to_int_or_none(value: Any) -> int | None:
+        try:
+            if value in (None, ""):
+                return None
+            return int(float(value))
+        except Exception:
+            return None
+
+    @staticmethod
+    def _format_review_percent(value: Any) -> str:
+        try:
+            if value in (None, ""):
+                return ""
+            return f"{float(value):.1f}%"
+        except Exception:
+            text = str(value) if value is not None else ""
+            return text if not text or text.endswith("%") else text + "%"
+
+    @staticmethod
+    def _format_review_ratio(jinji_count: Any, sample_count: Any) -> str:
+        if jinji_count is None or sample_count is None:
+            return ""
+        return f"{jinji_count}/{sample_count}"
+
+
+def build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Fetch reusable duanxianxia rank data")
+    parser.add_argument(
+        "dataset",
+        choices=[
+            "rocket",
+            "hot",
+            "surge",
+            "hotlist_day",
+            "review_daily",
+            "review_daily_core11",
+            "review_ltgd_range",
+            "review_plate",
+            "home_qxlive_plate_summary",
+            "home_qxlive_top_metrics",
+            "home_ztpool",
+            "auction_vratio",
+            "auction_qiangchou",
+            "auction_net_amount",
+            "auction_fengdan",
+            "cashflow_today",
+            "cashflow_3d",
+            "cashflow_5d",
+            "cashflow_10d",
+        ],
+        help="rocket=飙升榜, hot=热门, surge=冲涨, hotlist_day=热度榜（日）, review_daily=复盘/每日复盘顶部指标, review_daily_core11=每日复盘顶部指标（11项，不含量能）, review_ltgd_range=龙头高度区间涨幅, review_plate=涨停复盘（按概念/题材标签）, home_qxlive_plate_summary=主页板块强度全主标签汇总表, home_qxlive_top_metrics=主页qxlive顶部指标按钮组, home_ztpool=主页涨停股票池, auction_vratio=竞价爆量, auction_qiangchou=竞价抢筹, auction_net_amount=竞价净额, auction_fengdan=竞价封单, cashflow_today/3d/5d/10d=个股资金流向排行（默认前100名）",
+    )
+    parser.add_argument("--format", choices=["json", "jsonl"], default="json")
+    parser.add_argument("--limit", type=int, default=0, help="Only output first N rows (0 = all)")
+    parser.add_argument("--sort", default="", help="Optional server-side sort suffix for pool endpoints")
+    parser.add_argument("--date", default="", help="Optional trade date for review_daily, e.g. 2026-04-09")
+    parser.add_argument(
+        "--range",
+        default="",
+        help="Optional date range for review_ltgd_range, e.g. '2026-03-11 - 2026-04-09'",
+    )
+    parser.add_argument(
+        "--stdout-only",
+        action="store_true",
+        help="Do not persist capture to disk (debug only; default behavior persists every fetch)",
+    )
+    return parser
+
+
+def dataset_meta(kind: str) -> Dict[str, str]:
+    try:
+        return DATASET_REGISTRY[kind]
+    except KeyError as exc:
+        raise ValueError(f"Unknown dataset kind: {kind}") from exc
+
+
+def infer_headers(rows: List[Dict[str, Any]]) -> List[str]:
+    headers: List[str] = []
+    seen = set()
+    for row in rows:
+        for key in row.keys():
+            if key not in seen:
+                headers.append(key)
+                seen.add(key)
+    return headers
+
+
+def build_capture_payload(result: FetchResult) -> Dict[str, Any]:
+    ds = dataset_meta(result.kind)
+    now_utc = datetime.now(timezone.utc)
+    now_cn = now_utc.astimezone(TZ_SHANGHAI)
+    rows = result.rows
+    return {
+        "project": "duanxianxia",
+        "dataset_kind": result.kind,
+        "dataset_id": ds["id"],
+        "dataset_label": ds["label"],
+        "source_path": ds["path"],
+        "source_url": result.meta.get("source", ""),
+        "fetched_at": now_cn.isoformat(timespec="seconds"),
+        "fetched_at_utc": now_utc.isoformat(timespec="seconds").replace("+00:00", "Z"),
+        "timezone": "Asia/Shanghai",
+        "row_count": len(rows),
+        "headers": infer_headers(rows),
+        "rows": rows,
+        "meta": result.meta,
+    }
+
+
+def persist_capture(payload: Dict[str, Any]) -> Path:
+    fetched_at = datetime.fromisoformat(payload["fetched_at"])
+    date_part = fetched_at.strftime("%Y-%m-%d")
+    time_part = fetched_at.strftime("%H%M%S")
+    dataset_id = payload["dataset_id"]
+    out_dir = CAPTURE_ROOT / date_part / dataset_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{time_part}.json"
+    out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return out_path
+
+
+def main() -> int:
+    parser = build_arg_parser()
+    args = parser.parse_args()
+    fetcher = DuanxianxiaFetcher()
+
+    if args.dataset == "rocket":
+        result = fetcher.fetch_rocket()
+    elif args.dataset == "hot":
+        result = fetcher.fetch_hot(sort=args.sort)
+    elif args.dataset == "surge":
+        result = fetcher.fetch_surge(sort=args.sort)
+    elif args.dataset == "hotlist_day":
+        result = fetcher.fetch_hotlist_day()
+    elif args.dataset == "review_daily":
+        result = fetcher.fetch_review_daily(date=args.date)
+    elif args.dataset == "review_daily_core11":
+        result = fetcher.fetch_review_daily_core11(date=args.date)
+    elif args.dataset == "review_ltgd_range":
+        result = fetcher.fetch_review_ltgd_range(range_expr=args.range)
+    elif args.dataset == "review_plate":
+        result = fetcher.fetch_review_plate(date=args.date)
+    elif args.dataset == "home_qxlive_plate_summary":
+        result = fetcher.fetch_home_qxlive_plate_summary()
+    elif args.dataset == "home_qxlive_top_metrics":
+        result = fetcher.fetch_home_qxlive_top_metrics()
+    elif args.dataset == "home_ztpool":
+        result = fetcher.fetch_home_ztpool()
+    elif args.dataset == "auction_vratio":
+        result = fetcher.fetch_auction_vratio()
+    elif args.dataset == "auction_qiangchou":
+        result = fetcher.fetch_auction_qiangchou()
+    elif args.dataset == "auction_net_amount":
+        result = fetcher.fetch_auction_net_amount()
+    elif args.dataset == "auction_fengdan":
+        result = fetcher.fetch_auction_fengdan()
+    elif args.dataset == "cashflow_today":
+        result = fetcher.fetch_cashflow_today()
+    elif args.dataset == "cashflow_3d":
+        result = fetcher.fetch_cashflow_3d()
+    elif args.dataset == "cashflow_5d":
+        result = fetcher.fetch_cashflow_5d()
+    elif args.dataset == "cashflow_10d":
+        result = fetcher.fetch_cashflow_10d()
+    else:
+        parser.error(f"Unsupported dataset: {args.dataset}")
+        return 2
+
+    capture_payload = build_capture_payload(result)
+    capture_path = None
+    if not args.stdout_only:
+        capture_path = persist_capture(capture_payload)
+
+    rows = result.rows[: args.limit] if args.limit and args.limit > 0 else result.rows
+    output_meta = dict(capture_payload["meta"])
+    output_meta.update(
+        {
+            "dataset_id": capture_payload["dataset_id"],
+            "dataset_label": capture_payload["dataset_label"],
+            "source_path": capture_payload["source_path"],
+            "fetched_at": capture_payload["fetched_at"],
+            "timezone": capture_payload["timezone"],
+            "saved": not args.stdout_only,
+            "capture_path": str(capture_path) if capture_path else "",
+            "stored_row_count": capture_payload["row_count"],
+            "returned_row_count": len(rows),
+        }
+    )
+    payload = {
+        "dataset": result.kind,
+        "dataset_id": capture_payload["dataset_id"],
+        "meta": output_meta,
+        "rows": rows,
+    }
+
+    if args.format == "jsonl":
+        for row in rows:
+            print(json.dumps(row, ensure_ascii=False))
+    else:
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

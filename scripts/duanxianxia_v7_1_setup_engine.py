@@ -1,12 +1,11 @@
 """
 duanxianxia_v7_1_setup_engine.py — v7.1 setup 汇总引擎
 
-Hardening points:
+Hardening after live rerun:
 - regime gates per setup
-- churn_high_volume blocks all non-D setups
-- E rejects exploded seal status
-- setup_fit_score used for secondary ranking
-- blocked_reasons include setup/rule/value detail
+- common non-D/E risk filters
+- setup_fit_score secondary ranking
+- detailed blocked reasons
 """
 
 from __future__ import annotations
@@ -95,9 +94,8 @@ def _auction_pct(candidate: Dict[str, Any]) -> Optional[float]:
     return None
 
 
-def _best_theme(themes: List[str], industry_labels: Dict[str, Any], theme_history: Dict[str, Any]) -> Tuple[str, str, str, Dict[str, Any], Dict[str, Any]]:
-    """多板块匹配时取 pct_strength 最高者；这是当前资金最认可方向。"""
-    best = ("none", "none", "", {}, {})
+def _best_theme(themes: List[str], industry_labels: Dict[str, Any], theme_history: Dict[str, Any]) -> Tuple[str, str, str, Dict[str, Any]]:
+    best = ("none", "none", "", {})
     best_score = -1.0
     hist_rank = {"fresh": 5, "day1_fermenting": 4, "day2_main": 3, "day3_high": 2, "fading": 1, "none": 0}
     for t in themes:
@@ -105,12 +103,11 @@ def _best_theme(themes: List[str], industry_labels: Dict[str, Any], theme_histor
         h_obj = _get_obj(theme_history, t)
         i = str(i_obj.get("label", "none") or "none")
         h = str(h_obj.get("label", "none") or "none")
-        s = _to_float(i_obj.get("pct_strength"), 0.0)
-        tie = hist_rank.get(h, 0) / 100.0
-        score = s + tie
+        # 多板块命中时取 strength_pct 最高的题材；同分用历史阶段轻微 tie-break。
+        score = _to_float(i_obj.get("pct_strength"), 0.0) + hist_rank.get(h, 0) / 100.0
         if score > best_score:
             best_score = score
-            best = (i, h, t, i_obj, h_obj)
+            best = (i, h, t, i_obj)
     return best
 
 
@@ -145,81 +142,121 @@ def _block(setup_id: str, rule: str, actual: Any, expected: Any) -> str:
     return f"{setup_id} blocked: {rule}={actual} (need {expected})"
 
 
-def _common_gate(setup_id: str, s: Dict[str, Any]) -> Tuple[bool, List[str]]:
+def _auction_ok(s: Dict[str, Any], floor: float) -> bool:
+    pct = s.get("auction_change_pct")
+    return pct is not None and pct >= floor
+
+
+def _tech_clean(s: Dict[str, Any]) -> bool:
+    tech = str(s.get("tech_profile") or "")
+    return tech in {"breakout", "healthy", "cooling"}
+
+
+def _has_stock_or_flow(s: Dict[str, Any]) -> bool:
+    return s.get("stock_t1_label") != "miss" or s.get("cashflow_continuity") in {"accumulating", "accumulating_strong"}
+
+
+def _bad_board(s: Dict[str, Any]) -> bool:
+    return s.get("zt_pattern") == "烂板" and s.get("zt_quality") == "dirty"
+
+
+def _common_gate(setup_id: str, s: Dict[str, Any]) -> List[str]:
     b: List[str] = []
     regime = s.get("market_regime", "normal")
     if regime not in SETUP_META[setup_id]["allowed_regimes"]:
         b.append(_block(setup_id, "market_regime", regime, sorted(SETUP_META[setup_id]["allowed_regimes"])))
     if setup_id != "D" and s.get("tech_profile") == "churn_high_volume":
         b.append(_block(setup_id, "tech_profile", "churn_high_volume", "not churn_high_volume"))
-    return len(b) == 0, b
+    if setup_id not in {"D"} and _bad_board(s):
+        b.append(_block(setup_id, "zt_pattern/quality", "烂板/dirty", "not broken dirty board"))
+    return b
+
+
+def _pass_A_ice(s: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
+    r, b = [], _common_gate("A_ice", s)
+    if s["longtou_status"] == "confirmed_longtou": r.append("confirmed longtou")
+    else: b.append(_block("A_ice", "longtou_status", s["longtou_status"], "confirmed_longtou"))
+    if s["industry_t1_label"] in {"hit_strong:rising", "hit_strong:absorb_dip", "hit_weak:fade"}: r.append("cooled/rising leader state")
+    else: b.append(_block("A_ice", "industry_t1_label", s["industry_t1_label"], "rising/absorb_dip/fade"))
+    if _tech_clean(s): r.append("tech acceptable")
+    else: b.append(_block("A_ice", "tech_profile", s["tech_profile"], "breakout/healthy/cooling"))
+    if s["zt_quality"] != "dirty": r.append("zt not dirty")
+    else: b.append(_block("A_ice", "zt_quality", "dirty", "clean/average"))
+    if s["source_hit_count"] >= 2: r.append("source >=2")
+    else: b.append(_block("A_ice", "source_hit_count", s["source_hit_count"], ">=2"))
+    if _auction_ok(s, 0.0): r.append("auction nonnegative")
+    else: b.append(_block("A_ice", "auction_change_pct", s.get("auction_change_pct"), ">=0"))
+    return len(b) == 0, r, b
 
 
 def _pass_A(s: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
-    r, b = [], []
-    ok, cb = _common_gate("A", s); b.extend(cb)
+    r, b = [], _common_gate("A", s)
     if s["industry_t1_label"] == "hit_strong:leader": r.append("industry leader")
     else: b.append(_block("A", "industry_t1_label", s["industry_t1_label"], "hit_strong:leader"))
     if s["zt_quality"] == "clean": r.append("zt clean")
     else: b.append(_block("A", "zt_quality", s["zt_quality"], "clean"))
-    if s["zt_seal_verified"] in ("sealed", "none"): r.append("not exploded")
+    if s["zt_seal_verified"] in {"sealed", "none"}: r.append("not exploded")
     else: b.append(_block("A", "zt_seal_verified", s["zt_seal_verified"], "sealed/none"))
-    if s["longtou_status"] in ("confirmed_longtou", "mid_position"): r.append("position ok")
-    else: b.append(_block("A", "longtou_status", s["longtou_status"], "confirmed_longtou/mid_position"))
-    return len(b) == 0, r, b
-
-
-def _pass_A_ice(s: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
-    r, b = [], []
-    ok, cb = _common_gate("A_ice", s); b.extend(cb)
-    if s["longtou_status"] == "confirmed_longtou": r.append("confirmed longtou")
-    else: b.append(_block("A_ice", "longtou_status", s["longtou_status"], "confirmed_longtou"))
-    if s["industry_t1_label"] in ("hit_strong:rising", "hit_strong:absorb_dip", "hit_weak:fade"): r.append("cooled leader state")
-    else: b.append(_block("A_ice", "industry_t1_label", s["industry_t1_label"], "rising/absorb_dip/fade"))
-    if s["tech_profile"] in ("cooling", "healthy", "breakout"): r.append("tech not broken")
-    else: b.append(_block("A_ice", "tech_profile", s["tech_profile"], "cooling/healthy/breakout"))
+    if s["longtou_status"] in {"confirmed_longtou", "mid_position"}: r.append("position ok")
+    else: b.append(_block("A", "longtou_status", s["longtou_status"], "confirmed/mid"))
+    if s["source_hit_count"] >= 2: r.append("source >=2")
+    else: b.append(_block("A", "source_hit_count", s["source_hit_count"], ">=2"))
+    if _tech_clean(s): r.append("tech acceptable")
+    else: b.append(_block("A", "tech_profile", s["tech_profile"], "breakout/healthy/cooling"))
+    if _has_stock_or_flow(s): r.append("stock/flow confirmation")
+    else: b.append(_block("A", "stock/flow", f"{s['stock_t1_label']}/{s['cashflow_continuity']}", "stock_t1!=miss or flow accumulating"))
     return len(b) == 0, r, b
 
 
 def _pass_B(s: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
-    r, b = [], []
-    ok, cb = _common_gate("B", s); b.extend(cb)
-    if s["industry_t1_label"] in ("hit_strong:leader", "hit_strong:rising"): r.append("industry strong")
+    r, b = [], _common_gate("B", s)
+    if s["industry_t1_label"] in {"hit_strong:leader", "hit_strong:rising"}: r.append("industry strong")
     else: b.append(_block("B", "industry_t1_label", s["industry_t1_label"], "leader/rising"))
-    if s["theme_history"] in ("day3_high", "fading"): r.append("theme high/fading")
+    if s["theme_history"] in {"day3_high", "fading"}: r.append("theme high/fading")
     else: b.append(_block("B", "theme_history", s["theme_history"], "day3_high/fading"))
-    if s["stock_t1_label"] in ("hit_top_strong", "hit_top_retail", "hit_mid_strong"): r.append("stock cashflow hit")
+    if s["stock_t1_label"] in {"hit_top_strong", "hit_top_retail", "hit_mid_strong"}: r.append("stock cashflow hit")
     else: b.append(_block("B", "stock_t1_label", s["stock_t1_label"], "top/mid strong"))
+    if s["source_hit_count"] >= 2: r.append("source >=2")
+    else: b.append(_block("B", "source_hit_count", s["source_hit_count"], ">=2"))
+    if _auction_ok(s, 0.0): r.append("auction nonnegative")
+    else: b.append(_block("B", "auction_change_pct", s.get("auction_change_pct"), ">=0"))
+    if _tech_clean(s): r.append("tech acceptable")
+    else: b.append(_block("B", "tech_profile", s["tech_profile"], "breakout/healthy/cooling"))
     return len(b) == 0, r, b
 
 
 def _pass_C1(s: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
-    r, b = [], []
-    ok, cb = _common_gate("C1", s); b.extend(cb)
-    if s["industry_t1_label"] in ("miss:new_entry", "hit_strong:rising"): r.append("new/rising theme")
+    r, b = [], _common_gate("C1", s)
+    if s["industry_t1_label"] in {"miss:new_entry", "hit_strong:rising"}: r.append("new/rising theme")
     else: b.append(_block("C1", "industry_t1_label", s["industry_t1_label"], "new_entry/rising"))
-    if s["theme_history"] in ("fresh", "day1_fermenting"): r.append("fresh/day1")
+    if s["theme_history"] in {"fresh", "day1_fermenting"}: r.append("fresh/day1")
     else: b.append(_block("C1", "theme_history", s["theme_history"], "fresh/day1"))
     if s["stock_t1_label"].startswith("hit_top") or s["cashflow_continuity"] == "accumulating_strong": r.append("strong stock cashflow")
     else: b.append(_block("C1", "cashflow", f"{s['stock_t1_label']}/{s['cashflow_continuity']}", "hit_top or accumulating_strong"))
+    if _tech_clean(s): r.append("tech acceptable")
+    else: b.append(_block("C1", "tech_profile", s["tech_profile"], "breakout/healthy/cooling"))
+    if _auction_ok(s, -1.0): r.append("auction not weak")
+    else: b.append(_block("C1", "auction_change_pct", s.get("auction_change_pct"), ">=-1"))
     return len(b) == 0, r, b
 
 
 def _pass_C2(s: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
-    r, b = [], []
-    ok, cb = _common_gate("C2", s); b.extend(cb)
-    if s["industry_t1_label"] in ("hit_strong:rising", "hit_strong:absorb_dip"): r.append("rotation industry hit")
+    r, b = [], _common_gate("C2", s)
+    if s["industry_t1_label"] in {"hit_strong:rising", "hit_strong:absorb_dip"}: r.append("rotation industry hit")
     else: b.append(_block("C2", "industry_t1_label", s["industry_t1_label"], "rising/absorb_dip"))
-    if s["theme_history"] in ("fresh", "day1_fermenting", "day2_main"): r.append("not overheated")
+    if s["theme_history"] in {"fresh", "day1_fermenting", "day2_main"}: r.append("not overheated")
     else: b.append(_block("C2", "theme_history", s["theme_history"], "fresh/day1/day2"))
-    if s["tech_profile"] in ("healthy", "breakout", "cooling"): r.append("tech acceptable")
-    else: b.append(_block("C2", "tech_profile", s["tech_profile"], "healthy/breakout/cooling"))
+    if _tech_clean(s): r.append("tech acceptable")
+    else: b.append(_block("C2", "tech_profile", s["tech_profile"], "breakout/healthy/cooling"))
+    if _auction_ok(s, 0.0): r.append("auction nonnegative")
+    else: b.append(_block("C2", "auction_change_pct", s.get("auction_change_pct"), ">=0"))
+    if s["source_hit_count"] >= 2 or _has_stock_or_flow(s): r.append("source or flow confirmation")
+    else: b.append(_block("C2", "source/flow", f"source={s['source_hit_count']}, {s['stock_t1_label']}/{s['cashflow_continuity']}", "source>=2 or stock/flow confirmation"))
     return len(b) == 0, r, b
 
 
 def _pass_D(s: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
-    r, b = [], []
-    ok, cb = _common_gate("D", s); b.extend(cb)
+    r, b = [], _common_gate("D", s)
     if s["source_hit_count"] >= 3: r.append("auction >=3 sources")
     else: b.append(_block("D", "source_hit_count", s["source_hit_count"], ">=3"))
     pct = s.get("auction_change_pct")
@@ -231,9 +268,8 @@ def _pass_D(s: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
 
 
 def _pass_E(s: Dict[str, Any]) -> Tuple[bool, List[str], List[str]]:
-    r, b = [], []
-    ok, cb = _common_gate("E", s); b.extend(cb)
-    if s["zt_pattern"] in ("一字", "首板", "二板", "三板加"): r.append("zt pool candidate")
+    r, b = [], _common_gate("E", s)
+    if s["zt_pattern"] in {"一字", "首板", "二板", "三板加"}: r.append("zt pool candidate")
     else: b.append(_block("E", "zt_pattern", s["zt_pattern"], "一字/首板/二板/三板加"))
     if s["source_hit_count"] >= 2: r.append("source_hit_count >=2")
     else: b.append(_block("E", "source_hit_count", s["source_hit_count"], ">=2"))
@@ -247,9 +283,7 @@ PASSERS = {"A_ice": _pass_A_ice, "A": _pass_A, "B": _pass_B, "C1": _pass_C1, "C2
 
 
 def _norm01(v: float, lo: float, hi: float) -> float:
-    if hi <= lo:
-        return 0.0
-    return max(0.0, min((v - lo) / (hi - lo), 1.0))
+    return max(0.0, min((v - lo) / (hi - lo), 1.0)) if hi > lo else 0.0
 
 
 def _fit_score(setup_id: str, s: Dict[str, Any]) -> float:
@@ -261,9 +295,9 @@ def _fit_score(setup_id: str, s: Dict[str, Any]) -> float:
     cashflow = 0.5 * money + 0.5 * super_ratio
     ztq = _to_float(s.get("zt_quality_score"), 0.0)
     theme = 0.7 * _to_float(s.get("industry_pct_strength"), 0.0) + 0.3 * _to_float(s.get("industry_pct_inflow"), 0.0)
-    if setup_id in ("A", "A_ice"):
+    if setup_id in {"A", "A_ice"}:
         score = 0.3 * ztq + 0.3 * cashflow + 0.2 * auction_strength + 0.2 * theme
-    elif setup_id in ("B", "C1", "C2"):
+    elif setup_id in {"B", "C1", "C2"}:
         score = 0.4 * cashflow + 0.3 * theme + 0.3 * auction_strength
     else:
         score = 0.5 * auction_strength + 0.2 * cashflow + 0.2 * theme + 0.1 * source
@@ -275,23 +309,19 @@ def _fit_score(setup_id: str, s: Dict[str, Any]) -> float:
 def classify_candidate(candidate: Dict[str, Any], labels: Dict[str, Any]) -> SetupDecision:
     code = _norm_code(candidate.get("code") or candidate.get("代码"))
     name = str(candidate.get("name") or candidate.get("名称") or "")
-    themes = _themes(candidate)
-    best_ind, best_hist, best_theme, industry_obj, _hist_obj = _best_theme(themes, labels.get("industry_t1", {}), labels.get("theme_history", {}))
+    best_ind, best_hist, best_theme, industry_obj = _best_theme(_themes(candidate), labels.get("industry_t1", {}), labels.get("theme_history", {}))
     snap = _snapshot(code, candidate, labels, best_ind, best_hist, best_theme, industry_obj)
-
     all_results = []
     for setup_id, fn in PASSERS.items():
         passed, reasons, blocked = fn(snap)
         meta = SETUP_META[setup_id]
         fit = _fit_score(setup_id, snap) if passed else 0.0
         all_results.append((passed, meta["priority"], fit, setup_id, reasons, blocked))
-
     passed_results = [x for x in all_results if x[0]]
     if passed_results:
         _p, priority, fit, setup_id, reasons, blocked = sorted(passed_results, key=lambda x: (-x[1], -x[2], x[3]))[0]
         meta = SETUP_META[setup_id]
         return SetupDecision(code, name, setup_id, meta["name"], priority, fit, True, reasons, blocked, snap, candidate)
-
     _p, _priority, _fit, setup_id, _reasons, blocked = sorted(all_results, key=lambda x: (-x[1], x[3]))[0]
     return SetupDecision(code, name, "none", "未入选", 0.0, 0.0, False, [], blocked, snap, candidate)
 
@@ -308,7 +338,6 @@ def setup_stats(decisions: List[Dict[str, Any]]) -> Dict[str, int]:
         sid = d.get("setup_id") or "none"
         stats[sid] = stats.get(sid, 0) + 1
     return stats
-
 
 if __name__ == "__main__":
     print("setup_engine loaded")

@@ -90,28 +90,28 @@
       "label": "个股资金流向/今日排行",
       "path": "资金流向/个股资金流向/今日排行",
       "status": "working",
-      "default_limit": 100
+      "default_limit": 150
     },
     {
       "id": "cashflow.stock.3day",
       "label": "个股资金流向/3日排行",
       "path": "资金流向/个股资金流向/3日排行",
       "status": "working",
-      "default_limit": 100
+      "default_limit": 150
     },
     {
       "id": "cashflow.stock.5day",
       "label": "个股资金流向/5日排行",
       "path": "资金流向/个股资金流向/5日排行",
       "status": "working",
-      "default_limit": 100
+      "default_limit": 150
     },
     {
       "id": "cashflow.stock.10day",
       "label": "个股资金流向/10日排行",
       "path": "资金流向/个股资金流向/10日排行",
       "status": "working",
-      "default_limit": 100
+      "default_limit": 150
     }
   ]
 }

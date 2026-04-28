@@ -21,6 +21,8 @@
 
 ## 关键业务口径（请勿改）
 - 盘前时段：
+  - `rocket`
+  - `hotlist_day`
   - `auction_vratio`
   - `auction_qiangchou`
   - `auction_net_amount`

@@ -1,0 +1,125 @@
+# Premarket v7.1 setup engine config
+# 与 v7.0 (premarket_v7_setups.yaml) 并存,不覆盖。D7 上线后才切换。
+version: "premarket_v7_1"
+
+# =========================================================================
+# v7.1 核心参数(spec §7 完整迁移)
+# =========================================================================
+params:
+  # ---- industry_t1_label 百分位阈值 ----
+  industry_pct_strength_leader: 0.75
+  industry_pct_inflow_leader: 0.70
+  industry_pct_strength_rising: 0.50
+  industry_pct_strength_absorb_dip: 0.25
+  # subplate fallback 降档重价(父 top 标签是 leader,该股只中子标签 → 降为 rising)
+  industry_subplate_downgrade_steps: 1
+
+  # ---- stock_t1_label super-ratio 阈值 ----
+  super_ratio_top: 0.4
+  super_ratio_mid: 0.3
+  super_ratio_main_inflow_floor_wan: 1000
+  super_strong_consecutive_days: 2
+
+  # ---- zt_quality 评分 ----
+  zt_quality_clean_min: 0.7
+  zt_quality_average_min: 0.4
+  zt_quality_open_punish_max_count: 3
+  zt_quality_seal_target_ratio: 0.3       # 封单/成交 目标比
+  zt_quality_time_decay_minutes: 240      # 4h 线性衰减
+
+  # ---- theme_history streak ----
+  theme_history_day1_min: 1
+  theme_history_day2_min: 3
+  theme_history_day3_min: 4
+  theme_history_fading_min: 5
+  theme_history_top_n: 20                 # 只看 T-N 天 top 20 主标签
+
+  # ---- tech_profile ----
+  tech_profile_lookback_volume_days: 20
+  tech_profile_volume_ratio_min: 0.5
+
+  # ---- market_regime ----
+  regime_warming_qx_today_min: 35
+  regime_warming_qx_yesterday_max: 30
+  regime_warming_lbbx_today_min: 2
+  regime_warming_lbbx_yesterday_max: 0
+  regime_downgrade_promo_rate_max: 0.20   # 首板晋级率 ≤ 20% → 降级类似冷
+
+  # ---- longtou_status ----
+  ltgd_window_days: 5                     # v7.1 锁定 5 日单一窗口
+  ltgd_top_n_for_longtou: 5               # 区间涨幅前 5 才算 confirmed_longtou
+
+  # ---- fengdan(925/920) 阈值 ----
+  fengdan_reduction_floor: -0.3           # 925 相比 920 减仓 > 30% → 警告
+  fengdan_amount_920_floor_wan: 1000      # 920 封单 ≥ 1000 万 才纳入考虑;为 None 默认通过
+
+# =========================================================================
+# theme_aliases — 从 v7.0 premarket_scoring.yaml v6.3.1 字典完整迁移
+# 每组首个为 canonical 名。本表同时供 industry_t1_label 与 theme_history 使用。
+# =========================================================================
+theme_aliases:
+  - ["业绩增长", "一季报增长", "年报增长", "业绩预增", "预增", "半年报增长"]
+  - ["半导体产业链", "芯片", "集成电路", "元器件", "芯片封测", "封测", "先进封装", "CPU"]
+  - ["光通信", "通信", "光模块", "CPO"]
+  - ["华为", "华为海思", "华为产业链", "鸿蒙"]
+  - ["算力", "算力概念", "AI算力", "AI服务器", "IDC", "数据中心", "AI智能体"]
+  - ["大消费", "零售", "服装家纺", "猪肉", "农业", "食品饮料"]
+
+# =========================================================================
+# Setup 纲要(D5 填充具体准入逻辑)
+# =========================================================================
+setups:
+  # 主龙跳 — 赢面接力,industry hit_strong:leader + zt_quality clean + zt_seal sealed
+  - id: "A"
+    name: "主龙跳"
+    priority: 3.0
+    enabled: true
+    notes: "D5 fill detail"
+
+  # 主龙跳(冰龙) — 锁仓后冷却期,领跌后首次重新启动;优先级高于 A
+  - id: "A_ice"
+    name: "主龙跳(冰龙)"
+    priority: 3.5
+    enabled: true
+    notes: "D5 fill detail"
+
+  # 同步补涨 — industry hit_strong + theme_history fading,帮击武者加速补涨
+  - id: "B"
+    name: "同步补涨"
+    priority: 2.5
+    enabled: true
+    notes: "D5 fill detail"
+
+  # 新龙 C1 + 轮动 C2 — v7.1 拆分 v7.0 Setup C
+  - id: "C1"
+    name: "新龙首次"
+    priority: 2.0
+    enabled: true
+    notes: "D5 fill detail"
+  - id: "C2"
+    name: "轮动接力"
+    priority: 1.8
+    enabled: true
+    notes: "D5 fill detail"
+
+  # 竞价资金微警 — D 面后接力,4 表中三表达标
+  - id: "D"
+    name: "竞价微警"
+    priority: 1.5
+    enabled: true
+    notes: "D5 fill detail"
+
+  # 朋友圈套利 — 4 表颃子不中 但同圈子出现周边股
+  - id: "E"
+    name: "颃子身位"
+    priority: 1.0
+    enabled: true
+    notes: "D5 fill detail (source_hit_count_min)"
+
+# =========================================================================
+# 输出参数
+# =========================================================================
+output:
+  max_candidates: 30
+  per_setup_max: 5
+  include_debug_labels: true

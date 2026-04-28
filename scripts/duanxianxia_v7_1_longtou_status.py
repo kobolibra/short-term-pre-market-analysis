@@ -5,13 +5,13 @@ duanxianxia_v7_1_longtou_status.py — v7.1 龙头状态标签
 labels:
   - confirmed_longtou: ltgd 5日 排名 ≤ ltgd_top_n_for_longtou (5) 且 fupan 板数 ≥ 3
   - mid_position: fupan 板数 == 2 或 (ltgd 排名 6..15 且 板数 ≥ 1)
-  - follower: fupan 板数 == 1 且 不在 ltgd 前 15
+  - follower: fupan 有板数但不满足 confirmed/mid
   - none: 默认
 """
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from duanxianxia_v7_parsing import parse_int_safely
 from duanxianxia_v7_1_stock_t1_label import _index_by_code
@@ -68,7 +68,7 @@ def compute_longtou_status(
             label = "mid_position"
         elif ltgd_rank is not None and ltgd_rank <= mid_max_rank and (boards or 0) >= 1:
             label = "mid_position"
-        elif (boards or 0) == 1:
+        elif (boards or 0) >= 1:
             label = "follower"
         else:
             label = "none"
@@ -98,9 +98,9 @@ def _self_test() -> None:
     out = compute_longtou_status(["000001", "000002", "000003", "000004", "000005", "999999"], fupan, ltgd, params)
     assert out["000001"]["label"] == "confirmed_longtou", out["000001"]
     assert out["000002"]["label"] == "mid_position", out["000002"]
-    assert out["000003"]["label"] == "mid_position", out["000003"]  # ltgd 前15 + 板数≥1
-    assert out["000004"]["label"] == "follower", out["000004"]      # 板数=1 不在 ltgd
-    assert out["000005"]["label"] == "follower", out["000005"]      # 板数=3 但 ltgd 排名 30 > 15 且 < 5 → 后面逻辑 板数>=3但没 confirmed → 接 follower
+    assert out["000003"]["label"] == "mid_position", out["000003"]
+    assert out["000004"]["label"] == "follower", out["000004"]
+    assert out["000005"]["label"] == "follower", out["000005"]
     assert out["999999"]["label"] == "none"
     print("longtou_status _self_test passed")
 

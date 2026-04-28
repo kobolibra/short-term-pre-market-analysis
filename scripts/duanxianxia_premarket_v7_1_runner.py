@@ -13,7 +13,6 @@ import csv
 import json
 import re
 import sys
-from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -29,7 +28,7 @@ except Exception:  # noqa: BLE001
     yaml = None
 
 from duanxianxia_v7_1_data_loader import load_premarket_bundle
-from duanxianxia_v7_1_industry_t1_label import compute_industry_t1_labels
+from duanxianxia_v7_1_industry_t1_label import compute_industry_t1_labels, build_canon_map, canonicalize
 from duanxianxia_v7_1_theme_history import compute_theme_history_batch
 from duanxianxia_v7_1_stock_t1_label import compute_stock_t1_labels
 from duanxianxia_v7_1_cashflow_continuity import compute_cashflow_continuity
@@ -136,8 +135,9 @@ def load_v7_1_config(project_root: Path) -> Dict[str, Any]:
     return {"version": "premarket_v7_1", "params": dict(DEFAULT_PARAMS), "theme_aliases": DEFAULT_ALIASES, "output": {"max_candidates": 30}}
 
 
-def build_candidates_from_auction(bundle: Any) -> List[Dict[str, Any]]:
+def build_candidates_from_auction(bundle: Any, theme_aliases: Optional[List[List[str]]] = None) -> List[Dict[str, Any]]:
     candidates: Dict[str, Dict[str, Any]] = {}
+    canon_map = build_canon_map(theme_aliases or [])
 
     def ensure(row: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         code = _norm_code(row.get("code") or row.get("代码"))
@@ -159,7 +159,6 @@ def build_candidates_from_auction(bundle: Any) -> List[Dict[str, Any]]:
 
     def add_source(rows: List[Dict[str, Any]], source: str) -> None:
         for row in rows or []:
-            # fengdan 只用 live 区段;其他表无 section_kind
             if source == "fengdan" and str(row.get("section_kind") or "").strip() not in {"", "live"}:
                 continue
             item = ensure(row)
@@ -176,8 +175,11 @@ def build_candidates_from_auction(bundle: Any) -> List[Dict[str, Any]]:
                 item["latest_change_pct"] = latest
             themes = _split_themes(row.get("concept"), row.get("concept_1"), row.get("concept_2"), row.get("tag_1"), row.get("tag_2"), row.get("题材1"), row.get("题材2"), row.get("概念"))
             for t in themes:
-                if t not in item["matched_themes"]:
-                    item["matched_themes"].append(t)
+                canon_t = canonicalize(t, canon_map)
+                # setup_engine 查 label map,而 label map 用 canonical key;候选里同时保留 canonical 与 raw 避免漏配
+                for candidate_theme in [canon_t, t]:
+                    if candidate_theme and candidate_theme not in item["matched_themes"]:
+                        item["matched_themes"].append(candidate_theme)
             item["raw_rows"][source] = row
 
     add_source(bundle.auction_vratio, "vratio")
@@ -202,6 +204,17 @@ def load_dailyline_dict(project_root: Path, codes: List[str]) -> Dict[str, List[
     return out
 
 
+def _alias_label_maps(raw_themes: List[str], label_map: Dict[str, Any], theme_aliases: List[List[str]]) -> Dict[str, Any]:
+    """把 canonical label 映射回 raw theme,避免 setup_engine 用 raw theme 查不到。"""
+    canon_map = build_canon_map(theme_aliases)
+    out = dict(label_map or {})
+    for t in raw_themes:
+        canon = canonicalize(t, canon_map)
+        if canon in out and t not in out:
+            out[t] = out[canon]
+    return out
+
+
 def compute_all_labels(bundle: Any, candidates: List[Dict[str, Any]], config: Dict[str, Any], project_root: Path) -> Dict[str, Any]:
     params = config["params"]
     aliases = config["theme_aliases"]
@@ -216,9 +229,12 @@ def compute_all_labels(bundle: Any, candidates: List[Dict[str, Any]], config: Di
     qx_t1 = {"rows": bundle.qxlive_top_t1_rows, "meta": bundle.qxlive_top_t1_meta}
     qx_t2 = {"rows": bundle.qxlive_top_t2_rows, "meta": bundle.qxlive_top_t2_meta}
 
+    industry = compute_industry_t1_labels(themes, bundle.kaipan_t1_rows, bundle.kaipan_t1_meta, params, aliases)
+    history = compute_theme_history_batch(themes, bundle.kaipan_history, params, aliases)
+
     return {
-        "industry_t1": compute_industry_t1_labels(themes, bundle.kaipan_t1_rows, bundle.kaipan_t1_meta, params, aliases),
-        "theme_history": compute_theme_history_batch(themes, bundle.kaipan_history, params, aliases),
+        "industry_t1": _alias_label_maps(themes, industry, aliases),
+        "theme_history": _alias_label_maps(themes, history, aliases),
         "stock_t1": compute_stock_t1_labels(codes, bundle.cashflow_today_t1, bundle.cashflow_3day_t1, params),
         "cashflow_continuity": compute_cashflow_continuity(codes, bundle.cashflow_today_t1, bundle.cashflow_3day_t1, bundle.cashflow_5day_t1, bundle.cashflow_10day_t1, params),
         "zt": compute_zt_labels(codes, bundle.fupan_t1, bundle.ztpool_t1, params),
@@ -231,7 +247,7 @@ def compute_all_labels(bundle: Any, candidates: List[Dict[str, Any]], config: Di
 def run_v7_1(date_str: str, project_root: Path, output_dir: Optional[Path] = None, no_write: bool = False) -> Dict[str, Any]:
     config = load_v7_1_config(project_root)
     bundle = load_premarket_bundle(date_str, project_root)
-    candidates = build_candidates_from_auction(bundle)
+    candidates = build_candidates_from_auction(bundle, config.get("theme_aliases") or [])
     labels = compute_all_labels(bundle, candidates, config, project_root)
     max_candidates = int((config.get("output") or {}).get("max_candidates", 30))
     decisions = classify_candidates(candidates, labels, max_candidates=None)

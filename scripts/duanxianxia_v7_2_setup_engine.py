@@ -5,7 +5,12 @@ Design:
     t1_multiplier    = clamp(1 + T-1 soft adjustments, 0.75, 1.35)
     final_score      = today_signal_raw * t1_multiplier * regime_multiplier * risk_penalty
 
-Only ST / delisting is a hard kill.  Historical signals only amplify or degrade.
+Only ST / delisting is a hard kill. Historical signals only amplify or degrade.
+
+Hardening:
+  - iceberg and confirmed_longtou are asserted mutually exclusive in T1 adjustments
+  - heavy_outflow prefers 主力净流出 / 流通市值 ratio when float market cap exists
+  - dailyline unknown never triggers churn penalty by default
 """
 from __future__ import annotations
 
@@ -22,7 +27,7 @@ def _f(v: Any, default: float = 0.0) -> float:
     try:
         if v in (None, "", "-"):
             return default
-        return float(str(v).replace("%", "").strip())
+        return float(str(v).replace("%", "").replace(",", "").strip())
     except Exception:
         return default
 
@@ -68,11 +73,6 @@ def _is_exploded(zt: Dict[str, Any]) -> bool:
 
 
 def _main_flow_wan(stock_t1: Dict[str, Any], cash: Dict[str, Any]) -> float:
-    """Return today's main flow in 万.
-
-    v7.1 stock_t1 exposes `main_inflow_wan`; cashflow_continuity exposes
-    `today_wan`.  Also support future/Chinese aliases.
-    """
     for obj in (stock_t1, cash):
         for key in (
             "main_inflow_wan", "today_wan", "main_net_inflow_wan", "main_net_wan",
@@ -83,11 +83,47 @@ def _main_flow_wan(stock_t1: Dict[str, Any], cash: Dict[str, Any]) -> float:
     return 0.0
 
 
+def _float_market_value_wan(stock_t1: Dict[str, Any], cash: Dict[str, Any]) -> Optional[float]:
+    for obj in (stock_t1, cash):
+        for key in ("float_market_value_wan", "流通市值万", "流通值万"):
+            if key in obj:
+                v = _f(obj.get(key), 0.0)
+                return v if v > 0 else None
+        for key in ("float_market_value_yi", "流通值", "流通市值", "流通市值(亿)"):
+            if key in obj:
+                raw = obj.get(key)
+                s = str(raw or "").replace(",", "").strip()
+                if not s or s == "-":
+                    continue
+                try:
+                    if "亿" in s:
+                        return float(s.replace("亿", "")) * 10000.0
+                    if "万" in s:
+                        return float(s.replace("万", ""))
+                    # These keys are market-cap-like; plain numeric is treated as 亿
+                    return float(s) * 10000.0
+                except Exception:
+                    continue
+    return None
+
+
+def _heavy_outflow(main_flow_wan: float, stock_t1: Dict[str, Any], cash: Dict[str, Any], params: Dict[str, Any]) -> Tuple[bool, Optional[float], Optional[float], str]:
+    float_mv_wan = _float_market_value_wan(stock_t1, cash)
+    if float_mv_wan and float_mv_wan > 0:
+        outflow_ratio = main_flow_wan / float_mv_wan
+        threshold = float(params.get("risk_outflow_float_mv_ratio", -0.005))
+        return outflow_ratio <= threshold, outflow_ratio, float_mv_wan / 10000.0, "float_mv_ratio"
+    abs_threshold = float(params.get("risk_main_outflow_heavy_wan", -20000))
+    return main_flow_wan < abs_threshold, None, None, "absolute_fallback"
+
+
 def _churn_type(tech: Dict[str, Any], params: Dict[str, Any]) -> str:
     existing = str(tech.get("churn_type") or "").strip()
     if existing in {"panic_churn", "dull_churn", "none"}:
         return existing
     profile = str(tech.get("tech_profile") or tech.get("label") or "")
+    if profile in {"unknown", ""}:
+        return "none"
     if profile != "churn_high_volume":
         return "none"
     pct = _f(tech.get("pct_chg") or tech.get("pct_chg_t1") or tech.get("change_pct") or tech.get("latest_pct"), 0.0)
@@ -127,9 +163,11 @@ def compute_t1_multiplier(snapshot: Dict[str, Any], auction_strength: float, par
     main_flow = _main_flow_wan(stock_t1 if isinstance(stock_t1, dict) else {}, cash_obj if isinstance(cash_obj, dict) else {})
 
     iceberg = auction_strength >= float(params.get("iceberg_auction_threshold", 80)) and longtou == "none"
+    assert not (iceberg and longtou == "confirmed_longtou"), "iceberg must be mutually exclusive with confirmed_longtou"
+
     if iceberg:
         adj.append({"key": "iceberg", "value": float(params.get("iceberg_bonus", 0.10))})
-    if longtou == "confirmed_longtou":
+    elif longtou == "confirmed_longtou":
         adj.append({"key": "longtou_confirmed", "value": float(params.get("longtou_confirmed_bonus", 0.10))})
     elif longtou == "board_leader":
         adj.append({"key": "longtou_board_leader", "value": float(params.get("longtou_board_leader_bonus", 0.05))})
@@ -166,7 +204,12 @@ def compute_risk_penalty(candidate: Dict[str, Any], snapshot: Dict[str, Any], pa
     board = _board_count(zt if isinstance(zt, dict) else {})
     exploded = _is_exploded(zt if isinstance(zt, dict) else {})
     main_flow = _main_flow_wan(stock_t1 if isinstance(stock_t1, dict) else {}, cash_obj if isinstance(cash_obj, dict) else {})
-    heavy_outflow = main_flow < float(params.get("risk_main_outflow_heavy_wan", -20000))
+    heavy_outflow, outflow_ratio, float_mv_yi, outflow_method = _heavy_outflow(
+        main_flow,
+        stock_t1 if isinstance(stock_t1, dict) else {},
+        cash_obj if isinstance(cash_obj, dict) else {},
+        params,
+    )
 
     if exploded and board >= int(params.get("risk_high_board_threshold", 6)):
         p = float(params.get("risk_high_board_penalty", 0.75))
@@ -178,7 +221,15 @@ def compute_risk_penalty(candidate: Dict[str, Any], snapshot: Dict[str, Any], pa
         p = float(params.get("risk_only_one_factor_penalty", 0.95))
     else:
         p = 1.0
-    return round(p, 4), {"board_count": board, "exploded": exploded, "main_flow_wan": main_flow, "heavy_outflow": heavy_outflow}
+    return round(p, 4), {
+        "board_count": board,
+        "exploded": exploded,
+        "main_flow_wan": main_flow,
+        "heavy_outflow": heavy_outflow,
+        "outflow_ratio": outflow_ratio,
+        "float_market_value_yi": float_mv_yi,
+        "outflow_method": outflow_method,
+    }
 
 
 def classify_setup(longtou: str, auction: float, theme: float, hotness: Optional[float], params: Dict[str, Any], risk_penalty: float) -> Tuple[str, str]:

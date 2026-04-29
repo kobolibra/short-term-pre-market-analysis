@@ -80,13 +80,7 @@ def _index_by_code_min_rank(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, A
 
 
 def _fengdan_stable(fengdan_row: Optional[Dict[str, Any]], shrink_threshold: float) -> bool:
-    """True iff fengdan capture indicates a stable seal queue.
-
-    Returns False if no closing fengdan (a925<=0).  Returns True for
-    'late entry' rows (a920 missing/0 but a925>0; momentum is genuine).
-    Otherwise, requires (a925-a920)/a920 > shrink_threshold (i.e. shrunk
-    no more than `shrink_threshold` percent).
-    """
+    """True iff fengdan capture indicates a stable seal queue."""
     if fengdan_row is None:
         return False
     a920 = _parse_yi(fengdan_row.get("amount_920"))
@@ -94,7 +88,7 @@ def _fengdan_stable(fengdan_row: Optional[Dict[str, Any]], shrink_threshold: flo
     if a925 is None or a925 <= 0:
         return False
     if a920 is None or a920 <= 0:
-        return True  # late entry — strong momentum
+        return True
     shrink = (a925 - a920) / a920
     return shrink > shrink_threshold
 
@@ -150,7 +144,6 @@ def compute_auction_strengths(
         base_table = max(scores, key=lambda k: scores[k])
         base = scores[base_table]
 
-        # If base is fengdan but fengdan unstable, halve the base score.
         f_stable = _fengdan_stable(f_row, shrink_threshold)
         if base_table == "fengdan" and base > 0 and not f_stable:
             base *= 0.5
@@ -200,5 +193,11 @@ def _self_test() -> None:
         {"rank": 2, "code": "000001", "amount_920": "10亿", "amount_925": "3亿", "section_kind": "live"},
     ]
     out = compute_auction_strengths(["603629", "000001"], vratio, qiangchou, netamount, fengdan, {})
-    # 603629: base=100 (vratio), +5 qiangchou +5 net_amount +3 fengdan (stable +60%) +5 grab = 118 → clip 100
-    assert out["603629"]["auction_strength"] >= 95, out["603
+    assert out["603629"]["auction_strength"] >= 95, out["603629"]
+    assert out["603629"]["base_table"] == "vratio", out["603629"]
+    assert out["000001"]["auction_strength"] < 50, out["000001"]
+    print("auction_strength _self_test passed", out)
+
+
+if __name__ == "__main__":
+    _self_test()

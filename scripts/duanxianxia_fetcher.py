@@ -24,7 +24,7 @@ BASE = "https://duanxianxia.com"
 X_BASE = "https://x.duanxianxia.cn"
 TIMEOUT = 20
 CASHFLOW_BASE = "https://stock.9fzt.com"
-CASHFLOW_DEFAULT_LIMIT = 100
+CASHFLOW_DEFAULT_LIMIT = 150
 UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"

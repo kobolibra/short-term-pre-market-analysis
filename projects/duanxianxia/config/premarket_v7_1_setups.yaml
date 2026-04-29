@@ -1,0 +1,98 @@
+# Premarket v7.1 setup engine config
+version: "premarket_v7_1"
+
+params:
+  premarket_auction_cutoff: "092900"
+
+  industry_pct_strength_leader: 0.75
+  industry_pct_inflow_leader: 0.70
+  industry_pct_strength_rising: 0.50
+  industry_pct_strength_absorb_dip: 0.25
+  industry_subplate_downgrade_steps: 1
+
+  super_ratio_top: 0.4
+  super_ratio_mid: 0.3
+  super_ratio_main_inflow_floor_wan: 1000
+  super_strong_consecutive_days: 2
+  cashflow_effective_min_wan: 300
+
+  zt_quality_clean_min: 0.7
+  zt_quality_average_min: 0.4
+  zt_quality_open_punish_max_count: 3
+  zt_quality_seal_target_ratio: 0.3
+  zt_quality_time_decay_minutes: 240
+
+  theme_history_day1_min: 1
+  theme_history_day2_min: 3
+  theme_history_day3_min: 4
+  theme_history_fading_min: 5
+  theme_history_top_n: 20
+
+  tech_profile_lookback_volume_days: 20
+  tech_profile_volume_ratio_min: 0.5
+  tech_profile_churn_volume_ratio_min: 2.0
+  tech_profile_churn_pct_chg_max: 2.0
+
+  regime_warming_qx_today_min: 35
+  regime_warming_qx_yesterday_max: 30
+  regime_warming_lbbx_today_min: 2
+  regime_warming_lbbx_yesterday_max: 0
+  regime_downgrade_promo_rate_max: 0.20
+
+  ltgd_window_days: 5
+  ltgd_top_n_for_longtou: 5
+  ltgd_confirmed_board_min: 4
+  ltgd_confirmed_board3_rank_max: 3
+
+  fengdan_reduction_floor: -0.3
+  fengdan_amount_920_floor_wan: 1000
+
+theme_aliases:
+  - ["业绩增长", "一季报增长", "年报增长", "业绩预增", "预增", "半年报增长"]
+  - ["半导体产业链", "芯片", "集成电路", "元器件", "芯片封测", "封测", "先进封装", "CPU"]
+  - ["光通信", "通信", "光模块", "CPO"]
+  - ["华为", "华为海思", "华为产业链", "鸿蒙"]
+  - ["算力", "算力概念", "AI算力", "AI服务器", "IDC", "数据中心", "AI智能体"]
+  - ["大消费", "零售", "服装家纺", "猪肉", "农业", "食品饮料"]
+
+setups:
+  - id: "A"
+    name: "主龙跳"
+    priority: 3.0
+    enabled: true
+    allowed_regimes: ["normal", "hot"]
+  - id: "A_ice"
+    name: "主龙跳(冰龙)"
+    priority: 3.5
+    enabled: true
+    allowed_regimes: ["cold_to_warming", "normal", "hot"]
+  - id: "B"
+    name: "同步补涨"
+    priority: 2.5
+    enabled: true
+    allowed_regimes: ["normal", "hot"]
+  - id: "C1"
+    name: "新龙首次"
+    priority: 2.0
+    enabled: true
+    allowed_regimes: ["cold", "cold_to_warming", "normal", "hot", "hot_to_downgrading"]
+  - id: "C2"
+    name: "轮动接力"
+    priority: 1.8
+    enabled: true
+    allowed_regimes: ["cold", "cold_to_warming", "normal", "hot", "hot_to_downgrading"]
+  - id: "D"
+    name: "竞价微警"
+    priority: 1.5
+    enabled: true
+    allowed_regimes: ["cold_to_warming", "normal", "hot"]
+  - id: "E"
+    name: "颃子身位"
+    priority: 1.0
+    enabled: true
+    allowed_regimes: ["normal", "hot"]
+
+output:
+  max_candidates: 30
+  per_setup_max: 5
+  include_debug_labels: true

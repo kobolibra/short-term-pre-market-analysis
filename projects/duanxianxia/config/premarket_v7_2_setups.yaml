@@ -1,0 +1,164 @@
+# Premarket v7.2 setup engine config — T0-driven redesign
+# Architecture summary:
+#   today_signal_raw = w_a*auction_strength + w_t*theme_strength_t0 + w_h*hotness_score
+#   (hotness missing → weights re-normalized to auction+theme only)
+#   t1_multiplier  = clamp(1.0 + sum(adjustments), 0.75, 1.35)
+#   final_score    = today_signal_raw * t1_multiplier * regime_multiplier * risk_penalty
+#
+# Setup labels are discrete-value classifiers (longtou+auction+theme+hotness),
+# not hard exclusion gates. Only ST/退市 hard-kills.
+version: "premarket_v7_2"
+
+params:
+  # === Inherited from v7.1 (used by reused label modules) ===
+  premarket_auction_cutoff: "092900"
+  industry_pct_strength_leader: 0.75
+  industry_pct_inflow_leader: 0.70
+  industry_pct_strength_rising: 0.50
+  industry_pct_strength_absorb_dip: 0.25
+  industry_subplate_downgrade_steps: 1
+  super_ratio_top: 0.4
+  super_ratio_mid: 0.3
+  super_ratio_main_inflow_floor_wan: 1000
+  cashflow_effective_min_wan: 300
+  zt_quality_clean_min: 0.7
+  zt_quality_average_min: 0.4
+  zt_quality_open_punish_max_count: 3
+  zt_quality_seal_target_ratio: 0.3
+  zt_quality_time_decay_minutes: 240
+  theme_history_top_n: 20
+  tech_profile_lookback_volume_days: 20
+  tech_profile_volume_ratio_min: 0.5
+  tech_profile_churn_volume_ratio_min: 2.0
+  tech_profile_churn_pct_chg_max: 2.0
+  regime_warming_qx_today_min: 35
+  regime_warming_qx_yesterday_max: 30
+  regime_warming_lbbx_today_min: 2
+  regime_warming_lbbx_yesterday_max: 0
+  regime_downgrade_promo_rate_max: 0.20
+  ltgd_top_n_for_longtou: 5
+  ltgd_confirmed_board_min: 4
+  ltgd_confirmed_board3_rank_max: 3
+
+  # === v7.2 today_signal weights ===
+  weight_auction: 0.60
+  weight_theme: 0.20
+  weight_hotness: 0.20
+
+  # === v7.2 auction_strength ===
+  auction_top_rank_n: 30
+  auction_bonus_strong: 5
+  auction_bonus_fengdan: 3
+  auction_bonus_grab: 5
+  fengdan_shrink_threshold: -0.20  # if (a925-a920)/a920 < -0.20 → fengdan invalid
+
+  # === v7.2 hotness_score ===
+  hotness_rocket_top_n: 50
+  hotness_hotday_top_n: 100
+  hotness_rocket_weight: 0.6
+  hotness_hotday_weight: 0.4
+
+  # === v7.2 theme_strength_t0 ===
+  # theme_strength_t0 = 0.70*T0 plate strength percentile + 0.30*T-1 plate strength percentile
+  theme_t0_weight: 0.70
+  theme_yesterday_weight: 0.30
+  theme_inertia_full_streak: 3
+
+  # === v7.2 t1_multiplier ===
+  t1_multiplier_min: 0.75
+  t1_multiplier_max: 1.35
+  iceberg_auction_threshold: 80
+  iceberg_bonus: 0.10
+  longtou_confirmed_bonus: 0.10
+  longtou_board_leader_bonus: 0.05
+  cashflow_strong_bonus: 0.08
+  cashflow_distributing_penalty: -0.10
+  cashflow_distributing_outflow_threshold_wan: -300
+  zt_clean_bonus: 0.05
+  zt_dirty_penalty: -0.08
+  tech_breakdown_penalty: -0.08
+  churn_dull_penalty: -0.15
+  churn_dull_iceberg_penalty: -0.07
+  churn_panic_penalty: -0.05
+  churn_panic_pct_chg_max: -3.0
+  churn_panic_vol_ratio_min: 3.0
+
+  # === v7.2 setup classification ===
+  setup_lead_auction_min: 70
+  setup_new_auction_min: 70
+  setup_new_high_confidence_auction: 85
+  setup_new_high_confidence_hotness: 50
+  setup_rotate_theme_min: 65
+  setup_rotate_auction_min: 50
+
+  # === v7.2 risk_penalty (board-layered) ===
+  risk_st_kill: true
+  risk_high_board_threshold: 6
+  risk_mid_board_min: 4
+  risk_mid_board_max: 5
+  risk_main_outflow_heavy_wan: -20000   # 2亿 in 万
+  risk_high_board_penalty: 0.75
+  risk_mid_board_penalty: 0.85
+  risk_low_board_penalty: 0.92
+  risk_only_one_factor_penalty: 0.95
+
+regime_multiplier:
+  cold:
+    T0-LEAD: 0.95
+    T0-NEW: 0.85
+    T0-ROTATE: 0.80
+    T0-GENERAL: 0.85
+  cold_to_warming:
+    T0-LEAD: 1.05
+    T0-NEW: 1.05
+    T0-ROTATE: 1.00
+    T0-GENERAL: 0.95
+  normal:
+    T0-LEAD: 1.00
+    T0-NEW: 1.00
+    T0-ROTATE: 1.00
+    T0-GENERAL: 1.00
+  hot:
+    T0-LEAD: 1.05
+    T0-NEW: 1.00
+    T0-ROTATE: 1.05
+    T0-GENERAL: 0.95
+  hot_to_downgrading:
+    T0-LEAD: 1.00
+    T0-NEW: 0.85
+    T0-ROTATE: 0.90
+    T0-GENERAL: 0.85
+
+intraday_anchors:
+  T0-LEAD:
+    - "开盘 1 分钟内是否打板"
+    - "封单是否 ≥ 1 亿"
+    - "10:00 前不破开盘 -1.0%"
+  T0-NEW-high:
+    - "9:35 前涨幅 ≥ 2%"
+    - "9:30-9:35 分时不破开盘价"
+    - "10:00 前成交额 ≥ 3 亿"
+  T0-NEW-low:
+    - "9:35 前涨幅 ≥ 1.5%"
+    - "9:30-9:35 不破开盘 -0.5%"
+    - "10:00 前成交额 ≥ 2 亿"
+  T0-ROTATE:
+    - "10:00 前成交额 ≥ 5 亿"
+    - "10:00 不破开盘 -1.0%"
+    - "板块龙头/龙二是否同步红盘"
+  T0-GENERAL:
+    - "不破开盘 -2%"
+    - "9:45 前不放巨量阴线"
+    - "盘中观察,不作为主候选"
+
+theme_aliases:
+  - ["业绩增长", "一季报增长", "年报增长", "业绩预增", "预增", "半年报增长"]
+  - ["半导体产业链", "芯片", "集成电路", "元器件", "芯片封测", "封测", "先进封装", "CPU"]
+  - ["光通信", "通信", "光模块", "CPO"]
+  - ["华为", "华为海思", "华为产业链", "鸿蒙"]
+  - ["算力", "算力概念", "AI算力", "AI服务器", "IDC", "数据中心", "AI智能体"]
+  - ["大消费", "零售", "服装家纺", "猪肉", "农业", "食品饮料"]
+
+output:
+  max_candidates: 30
+  watch_tier_max: 50

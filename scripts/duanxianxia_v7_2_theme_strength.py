@@ -3,19 +3,17 @@ duanxianxia_v7_2_theme_strength.py — v7.2 theme_strength_t0 (0-100).
 
 Final hardened formula:
 
-  if no matched theme:
-      theme_strength_t0 = no_theme_base  # default 20
+  if no matched theme OR all matched themes scored 0 (no T0 plate strength and
+     no T-1 plate strength): theme_strength_t0 = no_theme_base  # default 20
   else:
       theme_strength_t0 = 0.70 * t0_plate_strength_pct + 0.30 * yesterday_plate_rank
 
-where:
-  - t0_plate_strength_pct: candidate's strongest matched plate's percentile
-    among today's home.kaipan.plate.summary plates (0-100)
-  - yesterday_plate_rank: T-1 plate strength percentile from the v7.1
-    industry_t1 label module (`pct_strength * 100`). Missing -> 0.
-
-The no-theme base respects independent / iceberg movers without letting them
-outrank genuine plate-resonance candidates by theme alone.
+  After scoring, broad themes (一季报增长 / 业绩增长 / 预增 ...) are capped:
+      - default cap: broad_theme_cap (60)
+      - if theme is fading or streak_days >= broad_theme_fading_streak (5):
+        cap drops to broad_theme_fading_cap (55)
+  This prevents broad earnings/financial reporting plates from dominating top
+  ranks once they have already been running for a long time.
 """
 
 from __future__ import annotations
@@ -76,6 +74,10 @@ def compute_theme_strength_t0(
     w_t0 = float(p.get("theme_t0_weight", 0.70))
     w_yday = float(p.get("theme_yesterday_weight", p.get("theme_inertia_weight", 0.30)))
     no_theme_base = float(p.get("no_theme_base", 20))
+    broad_theme_names = set(p.get("broad_theme_names") or [])
+    broad_theme_cap = float(p.get("broad_theme_cap", 60))
+    broad_theme_fading_cap = float(p.get("broad_theme_fading_cap", 55))
+    broad_theme_fading_streak = int(p.get("broad_theme_fading_streak", 5))
 
     if not matched_themes:
         return {
@@ -86,6 +88,7 @@ def compute_theme_strength_t0(
             "theme_history_label": "none",
             "streak_days": 0,
             "no_theme_base_applied": True,
+            "broad_theme_cap_applied": None,
         }
 
     best_theme: Optional[str] = None
@@ -118,8 +121,25 @@ def compute_theme_strength_t0(
             best_label = history_label
             best_streak = streak
 
-    if best_theme is None:
+    matched_but_zero = False
+    if best_theme is None or best_score <= 0 or (best_t0_pct == 0.0 and best_yday == 0.0):
+        # Matched themes existed but none had T0 plate strength or T-1 inertia.
+        # Fall back to no_theme_base so we do not reward stale tags with 0.
         best_score = no_theme_base
+        matched_but_zero = True
+
+    broad_cap_applied: Optional[str] = None
+    if best_theme and best_theme in broad_theme_names and not matched_but_zero:
+        is_fading = (
+            best_label == "fading"
+            or best_streak >= broad_theme_fading_streak
+        )
+        if is_fading and best_score > broad_theme_fading_cap:
+            best_score = broad_theme_fading_cap
+            broad_cap_applied = "fading"
+        elif not is_fading and best_score > broad_theme_cap:
+            best_score = broad_theme_cap
+            broad_cap_applied = "broad"
 
     return {
         "best_theme": best_theme,
@@ -128,7 +148,8 @@ def compute_theme_strength_t0(
         "yesterday_plate_rank": round(best_yday, 2),
         "theme_history_label": best_label,
         "streak_days": best_streak,
-        "no_theme_base_applied": False,
+        "no_theme_base_applied": matched_but_zero,
+        "broad_theme_cap_applied": broad_cap_applied,
     }
 
 
@@ -157,23 +178,42 @@ def _self_test() -> None:
         {"code": "000001", "matched_themes": ["算力", "AI算力"]},
         {"code": "000002", "matched_themes": ["猪肉"]},
         {"code": "000003", "matched_themes": []},
+        {"code": "000004", "matched_themes": ["一季报增长"]},  # broad, fading streak
+        {"code": "000005", "matched_themes": ["某个陈旧主题"]},  # matched but no plate
     ]
     kaipan = [
         {"主标签名称": "算力", "板块强度原值": "85"},
         {"主标签名称": "半导体", "板块强度原值": "70"},
         {"主标签名称": "猪肉", "板块强度原值": "20"},
+        {"主标签名称": "一季报增长", "板块强度原值": "3360"},
     ]
     theme_history = {
         "算力": {"streak_days": 2, "label": "day2_main", "theme_canonical": "算力"},
         "AI算力": {"streak_days": 2, "label": "day2_main", "theme_canonical": "算力"},
         "猪肉": {"streak_days": 0, "label": "fresh", "theme_canonical": "猪肉"},
+        "一季报增长": {"streak_days": 10, "label": "fading", "theme_canonical": "一季报增长"},
     }
     industry = {"算力": {"pct_strength": 0.80}, "猪肉": {"pct_strength": 0.10}}
-    out = compute_theme_strengths(candidates, kaipan, theme_history, industry, {"theme_t0_weight": 0.70, "theme_yesterday_weight": 0.30, "no_theme_base": 20})
+    params = {
+        "theme_t0_weight": 0.70,
+        "theme_yesterday_weight": 0.30,
+        "no_theme_base": 20,
+        "broad_theme_names": ["一季报增长", "业绩增长", "预增"],
+        "broad_theme_cap": 60,
+        "broad_theme_fading_cap": 55,
+        "broad_theme_fading_streak": 5,
+    }
+    out = compute_theme_strengths(candidates, kaipan, theme_history, industry, params)
     assert out["000001"]["theme_strength_t0"] > out["000002"]["theme_strength_t0"], out
     assert out["000001"]["yesterday_plate_rank"] == 80.0, out
     assert out["000003"]["theme_strength_t0"] == 20.0
     assert out["000003"]["no_theme_base_applied"] is True
+    # 一季报增长: t0=100*0.70 = 70 → capped to fading 55
+    assert out["000004"]["theme_strength_t0"] == 55.0, out["000004"]
+    assert out["000004"]["broad_theme_cap_applied"] == "fading", out["000004"]
+    # matched-but-zero → no_theme_base
+    assert out["000005"]["theme_strength_t0"] == 20.0, out["000005"]
+    assert out["000005"]["no_theme_base_applied"] is True, out["000005"]
     print("theme_strength _self_test passed", out)
 
 

@@ -6,7 +6,7 @@
 #   final_score    = today_signal_raw * t1_multiplier * regime_multiplier * risk_penalty
 #
 # Setup labels are discrete-value classifiers (longtou+auction+theme+hotness),
-# not hard exclusion gates.  Only ST/退市 hard-kills.
+# not hard exclusion gates. Only ST/退市 hard-kills.
 version: "premarket_v7_2"
 
 params:
@@ -50,7 +50,7 @@ params:
   auction_bonus_strong: 5
   auction_bonus_fengdan: 3
   auction_bonus_grab: 5
-  fengdan_shrink_threshold: -0.20  # if (a925-a920)/a920 < -0.20 → kill fengdan bonus
+  fengdan_shrink_threshold: -0.20  # if (a925-a920)/a920 < -0.20 → fengdan invalid
 
   # === v7.2 hotness_score ===
   hotness_rocket_top_n: 50
@@ -59,8 +59,9 @@ params:
   hotness_hotday_weight: 0.4
 
   # === v7.2 theme_strength_t0 ===
+  # theme_strength_t0 = 0.70*T0 plate strength percentile + 0.30*T-1 plate strength percentile
   theme_t0_weight: 0.70
-  theme_inertia_weight: 0.30
+  theme_yesterday_weight: 0.30
   theme_inertia_full_streak: 3
 
   # === v7.2 t1_multiplier ===

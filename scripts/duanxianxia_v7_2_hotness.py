@@ -11,9 +11,10 @@ If both captures are empty for the code, returns None — callers should
 re-distribute hotness weight to auction/theme rather than treating None as zero.
 
 Hardening:
-  - If latest_change_pct >= 9.7, hotness is capped at 20. These names are hot,
-    but often already unavailable at 9:25; do not let them occupy top slots
-    purely because of heat.
+  - latest_change_pct ≥ hotness_limitup_cap_pct → score capped at
+    hotness_limitup_cap_score. Caller can pass candidate_latest_pct so that
+    candidates already at or near limit-up are capped even if rocket/hotday
+    rows do not carry the latest pct.
 """
 
 from __future__ import annotations
@@ -85,8 +86,14 @@ def compute_hotness_scores(
     hotstock_day_rows: Optional[List[Dict[str, Any]]],
     candidate_codes: List[str],
     params: Optional[Dict[str, Any]] = None,
+    candidate_latest_pct: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Optional[float]]:
-    """Returns {code: hotness_score | None}."""
+    """Returns {code: hotness_score | None}.
+
+    candidate_latest_pct: optional {code: latest_change_pct} from auction
+        candidates so that limit-up cap is enforced even when the candidate is
+        absent from rocket/hotday rows or those rows lack latest pct.
+    """
     p = params or {}
     rocket_top_n = int(p.get("hotness_rocket_top_n", 50))
     hotday_top_n = int(p.get("hotness_hotday_top_n", 100))
@@ -97,6 +104,13 @@ def compute_hotness_scores(
 
     rocket_idx = _index_by_code(rocket_rows or [])
     hotday_idx = _index_by_code(hotstock_day_rows or [])
+    cand_pct_idx: Dict[str, float] = {}
+    if candidate_latest_pct:
+        for k, v in candidate_latest_pct.items():
+            f = _to_float(v)
+            if f is None:
+                continue
+            cand_pct_idx[_norm_code(k)] = f
 
     out: Dict[str, Optional[float]] = {}
     for raw in candidate_codes or []:
@@ -120,6 +134,9 @@ def compute_hotness_scores(
             score = w_rocket * rocket_score + w_hotday * hotday_score
 
         pct = _latest_change_pct(rocket_row, hotday_row)
+        cand_pct = cand_pct_idx.get(code)
+        if cand_pct is not None:
+            pct = cand_pct if pct is None else max(pct, cand_pct)
         if pct is not None and pct >= cap_pct:
             score = min(score, cap_score)
         out[code] = round(score, 2)
@@ -138,15 +155,20 @@ def _self_test() -> None:
     rocket = [
         {"rank": 1, "code": "603629", "name": "利通电子", "latest_change_pct": "9.8%"},
         {"rank": 5, "code": "000001", "name": "平安银行", "latest_change_pct": "3.0%"},
+        {"rank": 8, "code": "688531", "name": "日联科技"},
     ]
     hotday = [
         {"排名": 1, "代码": "603629", "名称": "利通电子", "涨幅": "9.9%"},
         {"排名": 50, "代码": "000002", "名称": "万科A"},
     ]
-    out = compute_hotness_scores(rocket, hotday, ["603629", "000001", "000002", "999999"], {})
+    out = compute_hotness_scores(
+        rocket, hotday, ["603629", "000001", "000002", "688531", "999999"], {},
+        candidate_latest_pct={"688531": 20.0, "000001": 3.0},
+    )
     assert out["603629"] == 20, out
     assert out["000001"] is not None and 70 < out["000001"] < 100, out
     assert out["000002"] is not None, out
+    assert out["688531"] == 20, out  # candidate_latest_pct triggers cap
     assert out["999999"] is None, out
     print("hotness _self_test passed", out)
 

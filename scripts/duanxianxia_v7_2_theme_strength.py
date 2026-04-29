@@ -29,7 +29,6 @@ def _to_float(v: Any) -> Optional[float]:
 
 
 def _plate_strength_index(kaipan_t0_rows: List[Dict[str, Any]]) -> Dict[str, float]:
-    """Build {plate_name: percentile_0_100} from T0 kaipan summary."""
     rows = kaipan_t0_rows or []
     parsed: List[Dict[str, Any]] = []
     for r in rows:
@@ -55,7 +54,6 @@ def _plate_strength_index(kaipan_t0_rows: List[Dict[str, Any]]) -> Dict[str, flo
 
 
 def _industry_pct_strength_0_100(obj: Dict[str, Any]) -> float:
-    """v7.1 industry_t1 uses pct_strength in 0-1. Some future callers may pass 0-100."""
     v = _to_float((obj or {}).get("pct_strength"))
     if v is None:
         v = _to_float((obj or {}).get("yesterday_plate_rank"))
@@ -71,10 +69,9 @@ def compute_theme_strength_t0(
     plate_pct_index: Dict[str, float],
     params: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """For a candidate's matched themes, return the strongest theme with formula breakdown."""
     p = params or {}
     w_t0 = float(p.get("theme_t0_weight", 0.70))
-    w_yday = float(p.get("theme_inertia_weight", 0.30))
+    w_yday = float(p.get("theme_yesterday_weight", p.get("theme_inertia_weight", 0.30)))
 
     best_theme: Optional[str] = None
     best_t0_pct = 0.0
@@ -155,11 +152,8 @@ def _self_test() -> None:
         "AI算力": {"streak_days": 2, "label": "day2_main", "theme_canonical": "算力"},
         "猪肉": {"streak_days": 0, "label": "fresh", "theme_canonical": "猪肉"},
     }
-    industry = {
-        "算力": {"pct_strength": 0.80},
-        "猪肉": {"pct_strength": 0.10},
-    }
-    out = compute_theme_strengths(candidates, kaipan, theme_history, industry, {})
+    industry = {"算力": {"pct_strength": 0.80}, "猪肉": {"pct_strength": 0.10}}
+    out = compute_theme_strengths(candidates, kaipan, theme_history, industry, {"theme_t0_weight": 0.70, "theme_yesterday_weight": 0.30})
     assert out["000001"]["theme_strength_t0"] > out["000002"]["theme_strength_t0"], out
     assert out["000001"]["yesterday_plate_rank"] == 80.0, out
     assert out["000003"]["theme_strength_t0"] == 0.0

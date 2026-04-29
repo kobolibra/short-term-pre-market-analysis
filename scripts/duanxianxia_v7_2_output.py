@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional
 
 DEFAULT_V72_ANCHORS = {
     "T0-LEAD": [
-        "开盘 1 分钟内是否打板",
+        "9:31 前是否出现瞬时封板/回封动作",
         "封单是否 ≥ 1 亿",
         "10:00 前不破开盘 -1.0%",
     ],
@@ -129,12 +129,14 @@ def write_v7_2_outputs(
 def _self_test() -> None:
     decisions = [
         {"code": "000001", "name": "A", "setup_v72": "T0-NEW", "setup_v71_compat": "D", "confidence": "high", "final_score": 88},
-        {"code": "000002", "name": "B", "setup_v72": "none", "setup_v71_compat": "none", "confidence": "none", "final_score": 0},
+        {"code": "000002", "name": "B", "setup_v72": "T0-LEAD", "setup_v71_compat": "A", "confidence": "high", "final_score": 80},
+        {"code": "000003", "name": "C", "setup_v72": "none", "setup_v71_compat": "none", "confidence": "none", "final_score": 0},
     ]
     out = shape_v7_2_output(decisions)
     assert out["version"] == "premarket_v7_2"
     assert out["setup_stats"]["T0-NEW"] == 1
     assert out["intraday_anchors"][0]["setup_v72"] == "T0-NEW"
+    assert "9:31" in out["intraday_anchors"][1]["anchors"][0]
     print("output v7.2 _self_test passed")
 
 

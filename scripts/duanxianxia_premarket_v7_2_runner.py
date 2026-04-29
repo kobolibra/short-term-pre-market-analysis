@@ -55,6 +55,32 @@ def load_v7_2_config(project_root: Path) -> Dict[str, Any]:
     return data
 
 
+def _to_float(v: Any) -> Optional[float]:
+    try:
+        if v in (None, "", "-"):
+            return None
+        return float(str(v).replace("%", "").replace(",", "").strip())
+    except Exception:
+        return None
+
+
+def _build_candidate_latest_pct(candidates: list) -> Dict[str, float]:
+    """Best-effort latest 9:25 change pct per candidate, used for hotness cap."""
+    out: Dict[str, float] = {}
+    for c in candidates or []:
+        code = str(c.get("code") or "").strip()
+        if not code:
+            continue
+        pct = (
+            _to_float(c.get("latest_change_pct"))
+            or _to_float(c.get("auction_change_pct"))
+            or _to_float(c.get("change_pct"))
+        )
+        if pct is not None:
+            out[code] = pct
+    return out
+
+
 def run_v7_2(
     date_str: str,
     project_root: Path,
@@ -71,6 +97,7 @@ def run_v7_2(
     candidates = build_candidates_from_auction(v71, config.get("theme_aliases") or [])
     labels = compute_all_labels(v71, candidates, config, project_root)
     codes = [c["code"] for c in candidates if c.get("code")]
+    candidate_latest_pct = _build_candidate_latest_pct(candidates)
 
     auction_strengths = compute_auction_strengths(
         codes,
@@ -85,6 +112,7 @@ def run_v7_2(
         bundle.hot_stock_day_rows,
         codes,
         params,
+        candidate_latest_pct=candidate_latest_pct,
     )
     theme_strengths = compute_theme_strengths(
         candidates,

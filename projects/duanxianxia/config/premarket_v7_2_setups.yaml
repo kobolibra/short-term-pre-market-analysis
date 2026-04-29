@@ -51,17 +51,28 @@ params:
   auction_bonus_fengdan: 3
   auction_bonus_grab: 5
   fengdan_shrink_threshold: -0.20  # if (a925-a920)/a920 < -0.20 → fengdan invalid
+  min_auction_amount_wan: 500
+  full_auction_amount_wan: 1000
+  auction_amount_low_multiplier: 0.5
+  auction_amount_mid_multiplier: 0.8
+  auction_turnover_bonus_high_pct: 1.0
+  auction_turnover_bonus_high: 5
+  auction_turnover_bonus_mid_pct: 0.5
+  auction_turnover_bonus_mid: 3
 
   # === v7.2 hotness_score ===
   hotness_rocket_top_n: 50
   hotness_hotday_top_n: 100
   hotness_rocket_weight: 0.6
   hotness_hotday_weight: 0.4
+  hotness_limitup_cap_pct: 9.7
+  hotness_limitup_cap_score: 20
 
   # === v7.2 theme_strength_t0 ===
   # theme_strength_t0 = 0.70*T0 plate strength percentile + 0.30*T-1 plate strength percentile
   theme_t0_weight: 0.70
   theme_yesterday_weight: 0.30
+  no_theme_base: 20
   theme_inertia_full_streak: 3
 
   # === v7.2 t1_multiplier ===
@@ -96,7 +107,8 @@ params:
   risk_high_board_threshold: 6
   risk_mid_board_min: 4
   risk_mid_board_max: 5
-  risk_main_outflow_heavy_wan: -20000   # 2亿 in 万
+  risk_main_outflow_heavy_wan: -20000   # fallback absolute threshold: 2亿 in 万
+  risk_outflow_float_mv_ratio: -0.005   # preferred if 流通值 is available: -0.5% of float market cap
   risk_high_board_penalty: 0.75
   risk_mid_board_penalty: 0.85
   risk_low_board_penalty: 0.92
@@ -131,7 +143,7 @@ regime_multiplier:
 
 intraday_anchors:
   T0-LEAD:
-    - "开盘 1 分钟内是否打板"
+    - "9:31 前是否出现瞬时封板/回封动作"
     - "封单是否 ≥ 1 亿"
     - "10:00 前不破开盘 -1.0%"
   T0-NEW-high:

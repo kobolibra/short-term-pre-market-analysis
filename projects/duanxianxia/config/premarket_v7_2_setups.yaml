@@ -59,6 +59,16 @@ params:
   auction_turnover_bonus_high: 5
   auction_turnover_bonus_mid_pct: 0.5
   auction_turnover_bonus_mid: 3
+  # Fengdan ranked but not amount-verified (e.g. amount_925="-" while amount_920 large)
+  # Score factor relative to inv_rank score (1.0 = full credit, 0 = drop).
+  fengdan_unverified_multiplier: 0.6
+  # Negative-auction cap: stocks with negative latest_change_pct have their
+  # auction_strength clamped before any bonuses, regardless of net inflow rank.
+  negative_auction_deep_pct: -6.0
+  negative_auction_deep_cap: 20
+  negative_auction_mid_pct: -3.0
+  negative_auction_mid_cap: 35
+  negative_auction_soft_cap: 50
 
   # === v7.2 hotness_score ===
   hotness_rocket_top_n: 50
@@ -74,6 +84,18 @@ params:
   theme_yesterday_weight: 0.30
   no_theme_base: 20
   theme_inertia_full_streak: 3
+  # Broad earnings/financial-reporting plates that should not dominate top ranks.
+  broad_theme_cap: 60
+  broad_theme_fading_cap: 55
+  broad_theme_fading_streak: 5
+  broad_theme_names:
+    - "一季报增长"
+    - "业绩增长"
+    - "年报增长"
+    - "半年报增长"
+    - "业绩预增"
+    - "预增"
+    - "三季报增长"
 
   # === v7.2 t1_multiplier ===
   t1_multiplier_min: 0.75

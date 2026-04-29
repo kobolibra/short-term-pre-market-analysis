@@ -1,8 +1,10 @@
 """
 duanxianxia_v7_1_tech_profile.py — v7.1 技术形态标签
 
-新增 churn_high_volume: 放量滞涨,即 vol_ratio > 2 且 pctChg < 2%。
-这种票除纯竞价异动 D 外应被 setup_engine 降级/过滤。
+v7.2 compatibility:
+  - keep existing label values
+  - expose churn_type: panic_churn / dull_churn / none
+  - expose normalized keys: pct_chg / volume_ratio / tech_profile
 """
 
 from __future__ import annotations
@@ -27,6 +29,33 @@ def _normalize_code(s: str) -> str:
     return s
 
 
+def _unknown(reason: str, n: int = 0) -> Dict[str, Any]:
+    return {
+        "label": "unknown",
+        "tech_profile": "unknown",
+        "reason": reason if n == 0 else f"{reason} ({n})",
+        "ma20": None,
+        "vol_ma20": None,
+        "vol_ratio_t1": None,
+        "volume_ratio": None,
+        "distance_to_ma20": None,
+        "pct_to_recent_high": None,
+        "pct_chg_t1": None,
+        "pct_chg": None,
+        "churn_type": "none",
+    }
+
+
+def _classify_churn_type(label: str, pct_chg: Optional[float], vol_ratio: Optional[float], params: Dict[str, Any]) -> str:
+    if label != "churn_high_volume":
+        return "none"
+    panic_pct_max = float(params.get("churn_panic_pct_chg_max", -3.0))
+    panic_vol_min = float(params.get("churn_panic_vol_ratio_min", 3.0))
+    if pct_chg is not None and vol_ratio is not None and pct_chg <= panic_pct_max and vol_ratio >= panic_vol_min:
+        return "panic_churn"
+    return "dull_churn"
+
+
 def compute_tech_profile(candidate_codes: List[str], dailyline_dict: Dict[str, List[Dict[str, Any]]], params: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
     lookback = int(params.get("tech_profile_lookback_volume_days", 20))
     vol_min = float(params.get("tech_profile_volume_ratio_min", 0.5))
@@ -41,15 +70,17 @@ def compute_tech_profile(candidate_codes: List[str], dailyline_dict: Dict[str, L
             continue
         rows = norm_dict.get(code, [])
         if len(rows) < lookback:
-            out[code] = {"label": "unknown", "reason": f"insufficient_dailyline ({len(rows)} < {lookback})", "ma20": None, "vol_ma20": None, "vol_ratio_t1": None, "distance_to_ma20": None, "pct_to_recent_high": None, "pct_chg_t1": None}
+            out[code] = _unknown("insufficient_dailyline", len(rows))
             continue
+
         window = rows[-lookback:]
         closes = [_to_float(r.get("close")) for r in window]
         highs = [_to_float(r.get("high")) for r in window]
         vols = [_to_float(r.get("volume")) for r in window]
         if any(x is None for x in closes) or any(x is None for x in vols):
-            out[code] = {"label": "unknown", "reason": "unparseable_dailyline", "ma20": None, "vol_ma20": None, "vol_ratio_t1": None, "distance_to_ma20": None, "pct_to_recent_high": None, "pct_chg_t1": None}
+            out[code] = _unknown("unparseable_dailyline")
             continue
+
         close_vals = [float(x) for x in closes if x is not None]
         high_vals = [float(x) for x in highs if x is not None]
         vol_vals = [float(x) for x in vols if x is not None]
@@ -75,7 +106,21 @@ def compute_tech_profile(candidate_codes: List[str], dailyline_dict: Dict[str, L
             label = "weak"
         if label != "churn_high_volume" and vol_ratio is not None and vol_ratio < vol_min:
             label += ":low_vol"
-        out[code] = {"label": label, "ma20": ma20, "vol_ma20": vol_ma20, "vol_ratio_t1": vol_ratio, "distance_to_ma20": dist, "pct_to_recent_high": pct_to_high, "pct_chg_t1": pct_chg}
+
+        churn_type = _classify_churn_type(label, pct_chg, vol_ratio, params)
+        out[code] = {
+            "label": label,
+            "tech_profile": label,
+            "ma20": ma20,
+            "vol_ma20": vol_ma20,
+            "vol_ratio_t1": vol_ratio,
+            "volume_ratio": vol_ratio,
+            "distance_to_ma20": dist,
+            "pct_to_recent_high": pct_to_high,
+            "pct_chg_t1": pct_chg,
+            "pct_chg": pct_chg,
+            "churn_type": churn_type,
+        }
     return out
 
 
@@ -83,4 +128,8 @@ if __name__ == "__main__":
     rows = [{"close": 10, "high": 10.2, "volume": 100, "pctChg": 1.0} for _ in range(19)] + [{"close": 10.1, "high": 10.3, "volume": 300, "pctChg": 1.5}]
     out = compute_tech_profile(["000001"], {"000001": rows}, {"tech_profile_lookback_volume_days": 20})
     assert out["000001"]["label"] == "churn_high_volume", out
+    assert out["000001"]["churn_type"] == "dull_churn", out
+    panic_rows = [{"close": 10, "high": 10.2, "volume": 100, "pctChg": 1.0} for _ in range(19)] + [{"close": 9.5, "high": 10.3, "volume": 500, "pctChg": -4.0}]
+    out2 = compute_tech_profile(["000002"], {"000002": panic_rows}, {"tech_profile_lookback_volume_days": 20})
+    assert out2["000002"]["churn_type"] == "panic_churn", out2
     print("tech_profile _self_test passed")

@@ -1,9 +1,12 @@
 """
 duanxianxia_v7_2_theme_strength.py — v7.2 theme_strength_t0 (0-100).
 
-Final frozen formula:
+Final hardened formula:
 
-  theme_strength_t0 = 0.70 * t0_plate_strength_pct + 0.30 * yesterday_plate_rank
+  if no matched theme:
+      theme_strength_t0 = no_theme_base  # default 20
+  else:
+      theme_strength_t0 = 0.70 * t0_plate_strength_pct + 0.30 * yesterday_plate_rank
 
 where:
   - t0_plate_strength_pct: candidate's strongest matched plate's percentile
@@ -11,8 +14,8 @@ where:
   - yesterday_plate_rank: T-1 plate strength percentile from the v7.1
     industry_t1 label module (`pct_strength * 100`). Missing -> 0.
 
-Important: do NOT invent a non-existent "T0 net inflow intent" field, and do
-not substitute theme streak for yesterday_plate_rank in the final v7.2 formula.
+The no-theme base respects independent / iceberg movers without letting them
+outrank genuine plate-resonance candidates by theme alone.
 """
 
 from __future__ import annotations
@@ -72,6 +75,18 @@ def compute_theme_strength_t0(
     p = params or {}
     w_t0 = float(p.get("theme_t0_weight", 0.70))
     w_yday = float(p.get("theme_yesterday_weight", p.get("theme_inertia_weight", 0.30)))
+    no_theme_base = float(p.get("no_theme_base", 20))
+
+    if not matched_themes:
+        return {
+            "best_theme": None,
+            "theme_strength_t0": round(no_theme_base, 2),
+            "t0_plate_pct": 0.0,
+            "yesterday_plate_rank": 0.0,
+            "theme_history_label": "none",
+            "streak_days": 0,
+            "no_theme_base_applied": True,
+        }
 
     best_theme: Optional[str] = None
     best_t0_pct = 0.0
@@ -104,7 +119,7 @@ def compute_theme_strength_t0(
             best_streak = streak
 
     if best_theme is None:
-        best_score = 0.0
+        best_score = no_theme_base
 
     return {
         "best_theme": best_theme,
@@ -113,6 +128,7 @@ def compute_theme_strength_t0(
         "yesterday_plate_rank": round(best_yday, 2),
         "theme_history_label": best_label,
         "streak_days": best_streak,
+        "no_theme_base_applied": False,
     }
 
 
@@ -153,10 +169,11 @@ def _self_test() -> None:
         "猪肉": {"streak_days": 0, "label": "fresh", "theme_canonical": "猪肉"},
     }
     industry = {"算力": {"pct_strength": 0.80}, "猪肉": {"pct_strength": 0.10}}
-    out = compute_theme_strengths(candidates, kaipan, theme_history, industry, {"theme_t0_weight": 0.70, "theme_yesterday_weight": 0.30})
+    out = compute_theme_strengths(candidates, kaipan, theme_history, industry, {"theme_t0_weight": 0.70, "theme_yesterday_weight": 0.30, "no_theme_base": 20})
     assert out["000001"]["theme_strength_t0"] > out["000002"]["theme_strength_t0"], out
     assert out["000001"]["yesterday_plate_rank"] == 80.0, out
-    assert out["000003"]["theme_strength_t0"] == 0.0
+    assert out["000003"]["theme_strength_t0"] == 20.0
+    assert out["000003"]["no_theme_base_applied"] is True
     print("theme_strength _self_test passed", out)
 
 

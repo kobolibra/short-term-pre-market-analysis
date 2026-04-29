@@ -44,7 +44,7 @@ def _is_st_or_delist(candidate: Dict[str, Any], daily_rows: Optional[List[Dict[s
 
 
 def _board_count(zt: Dict[str, Any]) -> int:
-    for key in ("board_count", "连板数", "板数"):
+    for key in ("board_count", "连板数", "板数", "boards"):
         if key in zt:
             try:
                 return int(float(str(zt.get(key)).strip()))
@@ -61,13 +61,23 @@ def _board_count(zt: Dict[str, Any]) -> int:
 
 
 def _is_exploded(zt: Dict[str, Any]) -> bool:
-    text = " ".join(str(zt.get(k) or "") for k in ("zt_seal_verified", "status", "状态", "状态样式", "zt_quality"))
-    return "exploded" in text.lower() or "炸" in text or "烂板" in text
+    text = " ".join(str(zt.get(k) or "") for k in (
+        "zt_seal_verified", "seal_verified", "status", "状态", "状态样式", "ztpool_status", "ztpool_status_class", "zt_quality", "quality_label"
+    ))
+    return "exploded" in text.lower() or "zha" in text.lower() or "炸" in text or "烂板" in text
 
 
 def _main_flow_wan(stock_t1: Dict[str, Any], cash: Dict[str, Any]) -> float:
+    """Return today's main flow in 万.
+
+    v7.1 stock_t1 exposes `main_inflow_wan`; cashflow_continuity exposes
+    `today_wan`.  Also support future/Chinese aliases.
+    """
     for obj in (stock_t1, cash):
-        for key in ("main_net_inflow_wan", "main_net_wan", "主力净流入万", "today_main_net_wan", "net_main_wan"):
+        for key in (
+            "main_inflow_wan", "today_wan", "main_net_inflow_wan", "main_net_wan",
+            "主力净流入万", "today_main_net_wan", "net_main_wan",
+        ):
             if key in obj:
                 return _f(obj.get(key), 0.0)
     return 0.0
@@ -80,11 +90,16 @@ def _churn_type(tech: Dict[str, Any], params: Dict[str, Any]) -> str:
     profile = str(tech.get("tech_profile") or tech.get("label") or "")
     if profile != "churn_high_volume":
         return "none"
-    pct = _f(tech.get("pct_chg") or tech.get("change_pct") or tech.get("latest_pct"), 0.0)
-    vol_ratio = _f(tech.get("volume_ratio") or tech.get("vol_ratio"), 0.0)
+    pct = _f(tech.get("pct_chg") or tech.get("pct_chg_t1") or tech.get("change_pct") or tech.get("latest_pct"), 0.0)
+    vol_ratio = _f(tech.get("volume_ratio") or tech.get("vol_ratio") or tech.get("vol_ratio_t1"), 0.0)
     if pct <= float(params.get("churn_panic_pct_chg_max", -3.0)) and vol_ratio >= float(params.get("churn_panic_vol_ratio_min", 3.0)):
         return "panic_churn"
     return "dull_churn"
+
+
+def _is_breakdown_profile(profile: str) -> bool:
+    p = str(profile or "")
+    return p == "breakdown" or p == "weak" or p.startswith("weak:")
 
 
 def compute_today_signal_raw(auction: float, theme: float, hotness: Optional[float], params: Dict[str, Any]) -> Tuple[float, Dict[str, float]]:
@@ -126,7 +141,7 @@ def compute_t1_multiplier(snapshot: Dict[str, Any], auction_strength: float, par
         adj.append({"key": "zt_clean", "value": float(params.get("zt_clean_bonus", 0.05))})
     elif zt_quality == "dirty":
         adj.append({"key": "zt_dirty", "value": float(params.get("zt_dirty_penalty", -0.08))})
-    if tech_profile == "breakdown" and not iceberg:
+    if _is_breakdown_profile(tech_profile) and not iceberg:
         adj.append({"key": "tech_breakdown", "value": float(params.get("tech_breakdown_penalty", -0.08))})
 
     churn = _churn_type(snapshot.get("tech_raw") or {}, params)
@@ -228,7 +243,7 @@ def classify_candidates_v72(
         snapshot = {
             "longtou_status": str(longtou_raw.get("longtou_status") or longtou_raw.get("label") or "none"),
             "cashflow_continuity": str(cash_raw.get("cashflow_continuity") or cash_raw.get("label") or "none"),
-            "zt_quality": str(zt_raw.get("zt_quality") or zt_raw.get("quality") or "average"),
+            "zt_quality": str(zt_raw.get("zt_quality") or zt_raw.get("quality_label") or zt_raw.get("quality") or "average"),
             "tech_profile": str(tech_raw.get("tech_profile") or tech_raw.get("label") or "unknown"),
             "zt_raw": zt_raw,
             "stock_t1": stock_t1,

@@ -7,9 +7,13 @@ Reads premarket capture of:
 
 For each candidate code, returns hotness_score in [0, 100].
 
-If both captures are empty for the code (or both datasets missing entirely),
-returns None — callers should re-distribute hotness weight to auction/theme
-rather than treating None as zero.
+If both captures are empty for the code, returns None — callers should
+re-distribute hotness weight to auction/theme rather than treating None as zero.
+
+Hardening:
+  - If latest_change_pct >= 9.7, hotness is capped at 20. These names are hot,
+    but often already unavailable at 9:25; do not let them occupy top slots
+    purely because of heat.
 """
 
 from __future__ import annotations
@@ -32,13 +36,21 @@ def _to_int(v: Any) -> Optional[int]:
     try:
         if v in (None, "", "-"):
             return None
-        return int(float(str(v).strip()))
+        return int(float(str(v).replace(",", "").strip()))
+    except Exception:
+        return None
+
+
+def _to_float(v: Any) -> Optional[float]:
+    try:
+        if v in (None, "", "-"):
+            return None
+        return float(str(v).replace("%", "").replace(",", "").strip())
     except Exception:
         return None
 
 
 def _inv_rank_score(rank: Optional[int], top_n: int) -> float:
-    """rank=1 -> 100; rank=top_n -> ~1/top_n*100; rank>top_n -> 0."""
     if rank is None or rank <= 0 or rank > top_n:
         return 0.0
     return max(0.0, (top_n - rank + 1) / top_n * 100.0)
@@ -54,6 +66,20 @@ def _index_by_code(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     return out
 
 
+def _latest_change_pct(*rows: Optional[Dict[str, Any]]) -> Optional[float]:
+    keys = ["latest_change_pct", "最新涨幅", "涨幅", "change_pct", "竞价涨幅", "auction_change_pct"]
+    best: Optional[float] = None
+    for row in rows:
+        if not row:
+            continue
+        for k in keys:
+            if k in row:
+                v = _to_float(row.get(k))
+                if v is not None:
+                    best = v if best is None else max(best, v)
+    return best
+
+
 def compute_hotness_scores(
     rocket_rows: Optional[List[Dict[str, Any]]],
     hotstock_day_rows: Optional[List[Dict[str, Any]]],
@@ -66,6 +92,8 @@ def compute_hotness_scores(
     hotday_top_n = int(p.get("hotness_hotday_top_n", 100))
     w_rocket = float(p.get("hotness_rocket_weight", 0.6))
     w_hotday = float(p.get("hotness_hotday_weight", 0.4))
+    cap_pct = float(p.get("hotness_limitup_cap_pct", 9.7))
+    cap_score = float(p.get("hotness_limitup_cap_score", 20))
 
     rocket_idx = _index_by_code(rocket_rows or [])
     hotday_idx = _index_by_code(hotstock_day_rows or [])
@@ -85,11 +113,16 @@ def compute_hotness_scores(
         rocket_score = _inv_rank_score(rocket_rank, rocket_top_n)
         hotday_score = _inv_rank_score(hotday_rank, hotday_top_n)
         if rocket_row is None:
-            out[code] = round(hotday_score, 2)
+            score = hotday_score
         elif hotday_row is None:
-            out[code] = round(rocket_score, 2)
+            score = rocket_score
         else:
-            out[code] = round(w_rocket * rocket_score + w_hotday * hotday_score, 2)
+            score = w_rocket * rocket_score + w_hotday * hotday_score
+
+        pct = _latest_change_pct(rocket_row, hotday_row)
+        if pct is not None and pct >= cap_pct:
+            score = min(score, cap_score)
+        out[code] = round(score, 2)
     return out
 
 
@@ -98,21 +131,20 @@ def hotness_data_available(
     hotstock_day_rows: Optional[List[Dict[str, Any]]],
     min_rows: int = 5,
 ) -> bool:
-    """True if at least one source has enough rows to be meaningful."""
     return (len(rocket_rows or []) + len(hotstock_day_rows or [])) >= min_rows
 
 
 def _self_test() -> None:
     rocket = [
-        {"rank": 1, "code": "603629", "name": "利通电子"},
-        {"rank": 5, "code": "000001", "name": "平安银行"},
+        {"rank": 1, "code": "603629", "name": "利通电子", "latest_change_pct": "9.8%"},
+        {"rank": 5, "code": "000001", "name": "平安银行", "latest_change_pct": "3.0%"},
     ]
     hotday = [
-        {"排名": 1, "代码": "603629", "名称": "利通电子"},
+        {"排名": 1, "代码": "603629", "名称": "利通电子", "涨幅": "9.9%"},
         {"排名": 50, "代码": "000002", "名称": "万科A"},
     ]
     out = compute_hotness_scores(rocket, hotday, ["603629", "000001", "000002", "999999"], {})
-    assert out["603629"] is not None and out["603629"] > 90, out
+    assert out["603629"] == 20, out
     assert out["000001"] is not None and 70 < out["000001"] < 100, out
     assert out["000002"] is not None, out
     assert out["999999"] is None, out

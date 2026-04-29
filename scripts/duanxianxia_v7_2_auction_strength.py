@@ -1,21 +1,12 @@
 """
 duanxianxia_v7_2_auction_strength.py — v7.2 auction_strength scoring (0-100).
 
-For each candidate, compute auction_strength based on its rank in 4 tables:
-  - auction.jjyd.vratio       (real volume ratio, +5 bonus)
-  - auction.jjyd.qiangchou    (subgroup grab = 末秒抢筹 +5 bonus)
-  - auction.jjyd.net_amount   (real main inflow, +5 bonus)
-  - auction.jjlive.fengdan    (queued seal amount, +3 bonus, validated)
+Final frozen logic:
+  base  = max(inv_rank(vratio), inv_rank(qiangchou), inv_rank(net_amount), inv_rank(fengdan_validated))
+  bonus = 5 * (non-fengdan hit count - 1) + 3 * (fengdan hit and validated) + 5 * (qiangchou.group == 'grab')
 
-Algorithm:
-  base   = max inv_rank across the 4 tables (top-30, rank=1 → ~100)
-  bonus  = +5 per additional non-base table hit (vratio/qiangchou/net_amount)
-  bonus += +3 per additional fengdan hit, but only if amount_925 has not
-          shrunk by more than `fengdan_shrink_threshold` vs amount_920
-  bonus += +5 if qiangchou row's group == 'grab' (末秒抢筹)
-  total  = clip(base + bonus, 0, 100)
-
-fengdan section_kind filter: only rows with section_kind in {'', 'live'} are used.
+fengdan must pass amount_920 -> amount_925 shrinkage validation before it can
+count as a hit. Invalid fengdan is not a half-score; it is excluded.
 """
 
 from __future__ import annotations
@@ -41,7 +32,6 @@ def _to_int(v: Any) -> Optional[int]:
 
 
 def _parse_yi(v: Any) -> Optional[float]:
-    """Parse '3.4亿' / '5000万' / plain number → 亿 (float)."""
     if v in (None, "", "-"):
         return None
     s = str(v).strip()
@@ -62,7 +52,6 @@ def _inv_rank(rank: Optional[int], top_n: int) -> float:
 
 
 def _index_by_code_min_rank(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
-    """Index by code; on duplicate, keep the row with the smallest rank."""
     out: Dict[str, Dict[str, Any]] = {}
     for row in rows or []:
         code = _norm_code(row.get("code") or row.get("代码"))
@@ -72,15 +61,13 @@ def _index_by_code_min_rank(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, A
         if code not in out:
             out[code] = row
             continue
-        existing = out[code]
-        existing_rank = _to_int(existing.get("rank") or existing.get("排名"))
-        if rank is not None and (existing_rank is None or rank < existing_rank):
+        old_rank = _to_int(out[code].get("rank") or out[code].get("排名"))
+        if rank is not None and (old_rank is None or rank < old_rank):
             out[code] = row
     return out
 
 
 def _fengdan_stable(fengdan_row: Optional[Dict[str, Any]], shrink_threshold: float) -> bool:
-    """True iff fengdan capture indicates a stable seal queue."""
     if fengdan_row is None:
         return False
     a920 = _parse_yi(fengdan_row.get("amount_920"))
@@ -88,9 +75,8 @@ def _fengdan_stable(fengdan_row: Optional[Dict[str, Any]], shrink_threshold: flo
     if a925 is None or a925 <= 0:
         return False
     if a920 is None or a920 <= 0:
-        return True
-    shrink = (a925 - a920) / a920
-    return shrink > shrink_threshold
+        return True  # 末段才进榜 = 强 momentum
+    return (a925 - a920) / a920 > shrink_threshold
 
 
 def compute_auction_strengths(
@@ -111,17 +97,17 @@ def compute_auction_strengths(
     vratio_idx = _index_by_code_min_rank(vratio_rows)
     qiangchou_idx = _index_by_code_min_rank(qiangchou_rows)
     netamount_idx = _index_by_code_min_rank(netamount_rows)
-    fengdan_filtered = [
+    fengdan_idx = _index_by_code_min_rank([
         r for r in (fengdan_rows or [])
         if str(r.get("section_kind") or "").strip() in {"", "live"}
-    ]
-    fengdan_idx = _index_by_code_min_rank(fengdan_filtered)
+    ])
 
     out: Dict[str, Dict[str, Any]] = {}
     for raw in candidate_codes or []:
         code = _norm_code(raw)
         if not code or code in out:
             continue
+
         v_row = vratio_idx.get(code)
         q_row = qiangchou_idx.get(code)
         n_row = netamount_idx.get(code)
@@ -132,31 +118,20 @@ def compute_auction_strengths(
         n_rank = _to_int((n_row or {}).get("rank") or (n_row or {}).get("排名"))
         f_rank = _to_int((f_row or {}).get("rank") or (f_row or {}).get("排名"))
 
-        v_score = _inv_rank(v_rank, top_n)
-        q_score = _inv_rank(q_rank, top_n)
-        n_score = _inv_rank(n_rank, top_n)
-        f_score = _inv_rank(f_rank, top_n)
-
+        f_stable = _fengdan_stable(f_row, shrink_threshold)
         scores = {
-            "vratio": v_score, "qiangchou": q_score,
-            "net_amount": n_score, "fengdan": f_score,
+            "vratio": _inv_rank(v_rank, top_n),
+            "qiangchou": _inv_rank(q_rank, top_n),
+            "net_amount": _inv_rank(n_rank, top_n),
+            "fengdan": _inv_rank(f_rank, top_n) if f_stable else 0.0,
         }
         base_table = max(scores, key=lambda k: scores[k])
         base = scores[base_table]
 
-        f_stable = _fengdan_stable(f_row, shrink_threshold)
-        if base_table == "fengdan" and base > 0 and not f_stable:
-            base *= 0.5
-
-        bonus = 0.0
-        for table, score in scores.items():
-            if table == base_table or score <= 0:
-                continue
-            if table == "fengdan":
-                if f_stable:
-                    bonus += bonus_fengdan
-            else:
-                bonus += bonus_strong
+        non_fengdan_hits = sum(1 for k in ("vratio", "qiangchou", "net_amount") if scores[k] > 0)
+        bonus = max(0, non_fengdan_hits - 1) * bonus_strong
+        if scores["fengdan"] > 0:
+            bonus += bonus_fengdan
 
         q_group = str((q_row or {}).get("group") or (q_row or {}).get("分组") or "").strip().lower()
         if q_group == "grab":
@@ -176,17 +151,14 @@ def compute_auction_strengths(
             "fengdan_stable": f_stable,
             "fengdan_amount_920_yi": _parse_yi((f_row or {}).get("amount_920")),
             "fengdan_amount_925_yi": _parse_yi((f_row or {}).get("amount_925")),
-            "hits_count": sum(1 for s in scores.values() if s > 0),
+            "hits_count": non_fengdan_hits + (1 if scores["fengdan"] > 0 else 0),
         }
     return out
 
 
 def _self_test() -> None:
     vratio = [{"rank": 1, "code": "603629"}]
-    qiangchou = [
-        {"rank": 2, "code": "603629", "group": "grab"},
-        {"rank": 5, "code": "000001"},
-    ]
+    qiangchou = [{"rank": 2, "code": "603629", "group": "grab"}, {"rank": 5, "code": "000001"}]
     netamount = [{"rank": 3, "code": "603629"}]
     fengdan = [
         {"rank": 1, "code": "603629", "amount_920": "5亿", "amount_925": "8亿", "section_kind": "live"},
@@ -194,8 +166,9 @@ def _self_test() -> None:
     ]
     out = compute_auction_strengths(["603629", "000001"], vratio, qiangchou, netamount, fengdan, {})
     assert out["603629"]["auction_strength"] >= 95, out["603629"]
-    assert out["603629"]["base_table"] == "vratio", out["603629"]
-    assert out["000001"]["auction_strength"] < 50, out["000001"]
+    assert out["603629"]["fengdan_stable"] is True
+    assert out["000001"]["fengdan_stable"] is False
+    assert out["000001"]["hits_count"] == 1, out["000001"]
     print("auction_strength _self_test passed", out)
 
 

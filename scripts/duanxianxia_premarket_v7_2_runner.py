@@ -6,7 +6,7 @@ Pipeline:
   -> v7.2 setup engine -> v7.2 output.
 
 OpenClaw dependency:
-  Add rank.rocket and rank.hot_stock_day to premarket captures.  If absent,
+  Add rank.rocket and rank.hot_stock_day to premarket captures. If absent,
   v7.2 still runs and reweights today_signal_raw to auction+theme.
 """
 from __future__ import annotations
@@ -29,6 +29,7 @@ except Exception:
     yaml = None
 
 from duanxianxia_premarket_v7_1_runner import build_candidates_from_auction, compute_all_labels
+from duanxianxia_v7_1_regime import compute_regime
 from duanxianxia_v7_2_auction_strength import compute_auction_strengths
 from duanxianxia_v7_2_data_loader import load_premarket_v72_bundle
 from duanxianxia_v7_2_hotness import compute_hotness_scores
@@ -39,6 +40,13 @@ from duanxianxia_v7_2_theme_strength import compute_theme_strengths
 TZ_SHANGHAI = ZoneInfo("Asia/Shanghai")
 DEFAULT_PROJECT_ROOT = Path("/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia")
 CONFIG_REL = Path("config/premarket_v7_2_setups.yaml")
+
+
+QXLIVE_METRIC_ALIASES = {
+    "情绪": {"QX", "情绪", "情绪指标"},
+    "连板宽度": {"LBBX", "连板宽度", "昨连板表现"},
+    "晋升率": {"PB", "晋升率", "今日封板率"},
+}
 
 
 def load_v7_2_config(project_root: Path) -> Dict[str, Any]:
@@ -81,6 +89,39 @@ def _build_candidate_latest_pct(candidates: list) -> Dict[str, float]:
     return out
 
 
+def _normalize_qxlive_top_rows(rows: Any) -> list[dict[str, Any]]:
+    """Adapt real home.qxlive.top_metrics rows to v7.1 regime input schema.
+
+    v7.1 compute_regime expects rows carrying names like “情绪/连板宽度/晋升率”
+    under 指标名称/指标值. Real captures currently use metric_key / metric_label /
+    value. To avoid touching an extra file, normalize here and reuse v7.1 logic.
+    """
+    out: list[dict[str, Any]] = []
+    for row in rows or []:
+        if not isinstance(row, dict):
+            continue
+        metric_key = str(row.get("metric_key") or "").strip()
+        metric_label = str(row.get("metric_label") or "").strip()
+        mapped_name = None
+        for canonical, aliases in QXLIVE_METRIC_ALIASES.items():
+            if metric_key in aliases or metric_label in aliases:
+                mapped_name = canonical
+                break
+        if not mapped_name:
+            # keep original names too; maybe upstream schema already matches v7.1
+            mapped_name = str(row.get("指标名称") or row.get("name") or row.get("名称") or metric_label or metric_key).strip()
+        value = row.get("value")
+        if value in (None, ""):
+            value = row.get("指标值")
+        out.append({
+            **row,
+            "指标名称": mapped_name,
+            "指标值": value,
+            "name": mapped_name,
+        })
+    return out
+
+
 def run_v7_2(
     date_str: str,
     project_root: Path,
@@ -97,6 +138,22 @@ def run_v7_2(
     candidates = build_candidates_from_auction(v71, config.get("theme_aliases") or [])
     labels = compute_all_labels(v71, candidates, config, project_root)
     codes = [c["code"] for c in candidates if c.get("code")]
+
+    # v7.2: regime should use T0 premarket qxlive + T-1 qxlive, not v7.1's T-1/T-2.
+    # Also normalize real capture schema (metric_key/metric_label/value) into the
+    # legacy compute_regime input shape so the logic actually works on live data.
+    if getattr(bundle, "qxlive_top_t0_rows", None):
+        labels["regime"] = compute_regime(
+            {"rows": _normalize_qxlive_top_rows(bundle.qxlive_top_t0_rows), "meta": {}},
+            {
+                "rows": _normalize_qxlive_top_rows(getattr(v71, "qxlive_top_t1_rows", [])),
+                "meta": getattr(v71, "qxlive_top_t1_meta", {}),
+            },
+            params,
+        )
+    else:
+        bundle.warnings.append("v7.2 regime fallback: missing T0 home.qxlive.top_metrics, using v7.1 T-1/T-2 regime")
+
     candidate_latest_pct = _build_candidate_latest_pct(candidates)
 
     auction_strengths = compute_auction_strengths(
@@ -147,6 +204,7 @@ def run_v7_2(
         "notes": [
             "v7.2 is additive; v7.1 files are preserved.",
             "If rank.rocket / rank.hot_stock_day are missing, hotness_score is None and weights are reallocated.",
+            "If T0 home.qxlive.top_metrics is present, regime uses T0/T-1 instead of v7.1 T-1/T-2.",
         ],
     }
 

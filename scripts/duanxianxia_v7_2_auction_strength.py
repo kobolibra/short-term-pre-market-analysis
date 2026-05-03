@@ -1,21 +1,22 @@
 """
 duanxianxia_v7_2_auction_strength.py — v7.2 auction_strength scoring (0-100).
 
-Final hardened logic:
+Updated logic:
   base  = max(inv_rank(vratio), inv_rank(qiangchou), inv_rank(net_amount), fengdan_score)
-  bonus = 5 * (non-fengdan hit count - 1) + 3 * (fengdan hit and counted)
+  bonus = rank-quality synergy bonus + 3 * (fengdan hit and counted)
         + 5 * (qiangchou.group == 'grab') + turnover bonus
   raw   = clip(base + bonus, 0, 100)
   raw   = apply negative_auction_cap based on latest_change_pct
   total = clip(raw * auction_amount_multiplier, 0, 100)
 
+Fengdan behavior uses 9:15 / 9:20 / 9:25 when available:
+  fake / consume / lock / stable / unverified / none.
+
 Hardening (post real-data review):
   - real auction turnover field is `auction_turnover_wan` (not `竞额`)
   - missing amount must NOT punish the stock; it just flips a debug flag
-  - fengdan with rank + amount_920 but amount_925 missing/'-' is an
-    "unverified" near-limit pattern; give discounted credit, not zero
-  - clearly weak / negative auction change caps raw strength so net-amount
-    low-open names cannot dominate the T0 strong pool
+  - negative auction names are capped before amount multiplier
+  - multi-table resonance is based on rank quality, not just hit count
 """
 
 from __future__ import annotations
@@ -120,34 +121,129 @@ def _index_by_code_min_rank(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, A
     return out
 
 
+def _money_yi_from_keys(row: Optional[Dict[str, Any]], keys: List[str]) -> Optional[float]:
+    if not row:
+        return None
+    for k in keys:
+        if k in row:
+            v = _parse_yi(row.get(k))
+            if v is not None:
+                return v
+    return None
+
+
 def _classify_fengdan(
     fengdan_row: Optional[Dict[str, Any]],
     shrink_threshold: float,
-) -> Tuple[str, Optional[float], Optional[float]]:
-    """Classify fengdan as stable / unverified / withdrawn / none.
+    latest_pct: Optional[float],
+    params: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Classify fengdan using 9:15/9:20/9:25 behavior.
 
-    Returns (status, amount_920_yi, amount_925_yi).
+    Returned dict keys:
+      status, amount_915_yi, amount_920_yi, amount_925_yi,
+      ratio_920_915, ratio_925_920, behavior_bonus, penalty_multiplier, reason.
 
-    - stable:     amount_925 valid, not heavily shrunk vs amount_920
-    - unverified: rank present, amount_920 valid, amount_925 missing/'-'
-                  (typical for near-limit names that have not produced a clean
-                   9:25 seal-amount field yet)
-    - withdrawn:  amount_925 valid but heavily shrunk vs amount_920
-    - none:       no fengdan signal at all
+    Basic behavior labels:
+    - fake:       9:15 showed meaningful seal, 9:20 collapsed before no-cancel stage
+    - consume:    9:20→9:25 seal was materially consumed by sell pressure
+    - lock:       9:20→9:25 remained stable and latest pct is near limit-up
+    - stable:     9:25 valid but not lock
+    - unverified: 9:20 valid but 9:25 missing/'-'
+    - none:       no usable fengdan signal
     """
+    p = params or {}
     if fengdan_row is None:
-        return "none", None, None
-    a920 = _parse_yi(fengdan_row.get("amount_920"))
-    a925 = _parse_yi(fengdan_row.get("amount_925"))
+        return {
+            "status": "none",
+            "amount_915_yi": None,
+            "amount_920_yi": None,
+            "amount_925_yi": None,
+            "ratio_920_915": None,
+            "ratio_925_920": None,
+            "ratio_920_vs_915": None,
+            "ratio_925_vs_920": None,
+            "behavior_bonus": 0.0,
+            "penalty_multiplier": 1.0,
+            "reason": "missing_row",
+        }
+
+    a915 = _money_yi_from_keys(fengdan_row, ["amount_915", "9:15", "915", "f15", "seal_915", "t15_amount"])
+    a920 = _money_yi_from_keys(fengdan_row, ["amount_920", "9:20", "920", "f20", "seal_920", "t20_amount"])
+    a925 = _money_yi_from_keys(fengdan_row, ["amount_925", "9:25", "925", "f25", "seal_925", "t25_amount"])
+
+    fake_drop_ratio = float(p.get("fengdan_fake_drop_ratio", 0.30))
+    fake_f15_min_wan = float(p.get("fengdan_fake_f15_min_wan", 1000))
+    consume_ratio = float(p.get("fengdan_consume_ratio", 0.80))
+    lock_ratio = float(p.get("fengdan_lock_ratio", 0.90))
+    lock_latest_min_pct = float(p.get("fengdan_lock_latest_min_pct", 9.5))
+    consume_limitup_pct = float(p.get("fengdan_consume_limitup_pct", 9.9))
+    fake_penalty = float(p.get("fengdan_fake_penalty_multiplier", 0.70))
+
+    ratio_920_915 = (a920 / a915) if (a915 is not None and a915 > 0 and a920 is not None) else None
+    ratio_925_920 = (a925 / a920) if (a920 is not None and a920 > 0 and a925 is not None) else None
+
+    def _resp(status: str, *, reason: str, behavior_bonus: float = 0.0, penalty_multiplier: float = 1.0) -> Dict[str, Any]:
+        return {
+            "status": status,
+            "amount_915_yi": a915,
+            "amount_920_yi": a920,
+            "amount_925_yi": a925,
+            "ratio_920_915": ratio_920_915,
+            "ratio_925_920": ratio_925_920,
+            "ratio_920_vs_915": ratio_920_915,
+            "ratio_925_vs_920": ratio_925_920,
+            "behavior_bonus": behavior_bonus,
+            "penalty_multiplier": penalty_multiplier,
+            "reason": reason,
+        }
+
+    # 9:15 有有效大封单，但 9:20 前大幅消失，属于可撤单阶段的诱多嫌疑。
+    if a915 is not None and a915 * 10000.0 >= fake_f15_min_wan:
+        if a920 is None or a920 <= 0 or (ratio_920_915 is not None and ratio_920_915 < fake_drop_ratio):
+            return _resp(
+                "fake",
+                reason=(f"915->920 collapse ratio={round(ratio_920_915, 4)}" if ratio_920_915 is not None else "915_large_but_920_missing"),
+                behavior_bonus=0.0,
+                penalty_multiplier=fake_penalty,
+            )
+
     if a925 is None or a925 <= 0:
         if a920 is not None and a920 > 0:
-            return "unverified", a920, None
-        return "none", a920, None
+            return _resp("unverified", reason="missing_925")
+        return _resp("none", reason="no_positive_amount")
+
     if a920 is None or a920 <= 0:
-        return "stable", a920, a925
-    if (a925 - a920) / a920 > shrink_threshold:
-        return "stable", a920, a925
-    return "withdrawn", a920, a925
+        return _resp("stable", reason="missing_920_but_925_valid")
+
+    if ratio_925_920 is not None and ratio_925_920 < consume_ratio:
+        bonus = (
+            float(p.get("fengdan_consume_limitup_bonus", 6))
+            if (latest_pct is not None and latest_pct >= consume_limitup_pct)
+            else float(p.get("fengdan_consume_weak_bonus", 2))
+        )
+        return _resp(
+            "consume",
+            reason=f"920->925 consume ratio={round(ratio_925_920, 4)}",
+            behavior_bonus=bonus,
+        )
+
+    if ratio_925_920 is not None and ratio_925_920 >= lock_ratio and latest_pct is not None and latest_pct >= lock_latest_min_pct:
+        return _resp(
+            "lock",
+            reason=f"920->925 locked ratio={round(ratio_925_920, 4)}, latest_pct={latest_pct}",
+            behavior_bonus=float(p.get("fengdan_lock_bonus", 15)),
+        )
+
+    # 兼容旧 shrink_threshold：如果 9:25 相比 9:20 明显缩小但未触发 consume_ratio，也视为 consume-like。
+    if (a925 - a920) / a920 <= shrink_threshold:
+        return _resp(
+            "consume",
+            reason=f"920->925 shrink={round((a925 - a920) / a920, 4)}",
+            behavior_bonus=float(p.get("fengdan_consume_weak_bonus", 2)),
+        )
+
+    return _resp("stable", reason=(f"920->925 stable ratio={round(ratio_925_920, 4)}" if ratio_925_920 is not None else "stable"))
 
 
 def _auction_amount_multiplier(
@@ -186,9 +282,8 @@ def _negative_auction_cap(
     """Cap raw_total when premarket auction change is clearly weak.
 
     Premarket selection is for high-conviction strong-open setups. Low-open
-    names that rank by net inflow alone (e.g. 601778 -7.72%, 002176 -5.88%,
-    600410 -6.75%) belong to a separate intraday rebound model, not to T0
-    premarket main pool.
+    names that rank by net inflow alone belong to a separate intraday rebound
+    model, not to the T0 premarket main pool.
     """
     if latest_pct is None:
         return raw_total, None
@@ -206,6 +301,29 @@ def _negative_auction_cap(
     return raw_total, None
 
 
+def _rank_quality_synergy_bonus(ranks: List[Optional[int]], top_n: int, params: Dict[str, Any]) -> float:
+    """Reward resonance by extra rank quality, not just hit count.
+
+    The best table already contributes to base. Here we only score the extra
+    valid ranks from the remaining tables.
+    """
+    hits = sorted([r for r in ranks if r is not None and 0 < r <= top_n])
+    if len(hits) <= 1:
+        return 0.0
+    b10 = float(params.get("auction_synergy_rank10_bonus", 5))
+    b20 = float(params.get("auction_synergy_rank20_bonus", 2))
+    b30 = float(params.get("auction_synergy_rank30_bonus", 1))
+    bonus = 0.0
+    for r in hits[1:]:
+        if r <= 10:
+            bonus += b10
+        elif r <= 20:
+            bonus += b20
+        else:
+            bonus += b30
+    return bonus
+
+
 def compute_auction_strengths(
     candidate_codes: List[str],
     vratio_rows: List[Dict[str, Any]],
@@ -216,7 +334,6 @@ def compute_auction_strengths(
 ) -> Dict[str, Dict[str, Any]]:
     p = params or {}
     top_n = int(p.get("auction_top_rank_n", 30))
-    bonus_strong = float(p.get("auction_bonus_strong", 5))
     bonus_fengdan = float(p.get("auction_bonus_fengdan", 3))
     bonus_grab = float(p.get("auction_bonus_grab", 5))
     shrink_threshold = float(p.get("fengdan_shrink_threshold", -0.20))
@@ -230,8 +347,6 @@ def compute_auction_strengths(
         if str(r.get("section_kind") or "").strip() in {"", "live"}
     ])
 
-    # Real capture fields (verified from auction.jjyd.* data):
-    #   auction_turnover_wan / auction_turnover_wan_text are the actual amounts.
     amount_keys = [
         "auction_turnover_wan",
         "auction_turnover_wan_text",
@@ -274,13 +389,30 @@ def compute_auction_strengths(
         n_rank = _to_int((n_row or {}).get("rank") or (n_row or {}).get("排名"))
         f_rank = _to_int((f_row or {}).get("rank") or (f_row or {}).get("排名"))
 
-        f_status, f_a920, f_a925 = _classify_fengdan(f_row, shrink_threshold)
+        latest_pct = (
+            _first_pct(n_row, latest_pct_keys)
+            or _first_pct(v_row, latest_pct_keys)
+            or _first_pct(q_row, latest_pct_keys)
+            or _first_pct(f_row, latest_pct_keys)
+        )
+
+        f_behavior = _classify_fengdan(f_row, shrink_threshold, latest_pct, p)
+        f_status = str(f_behavior.get("status") or "none")
+
+        f_base_rank_score = _inv_rank(f_rank, top_n)
         if f_status == "stable":
-            f_score = _inv_rank(f_rank, top_n)
+            f_score = f_base_rank_score
+        elif f_status == "lock":
+            f_score = f_base_rank_score + float(f_behavior.get("behavior_bonus") or 0.0)
+            if f_rank is not None and f_rank <= 5:
+                f_score += float(p.get("fengdan_lock_top5_bonus", 5))
+        elif f_status == "consume":
+            f_score = f_base_rank_score + float(f_behavior.get("behavior_bonus") or 0.0)
         elif f_status == "unverified":
-            f_score = _inv_rank(f_rank, top_n) * fengdan_unverified_mult
+            f_score = f_base_rank_score * fengdan_unverified_mult
         else:
             f_score = 0.0
+        f_score = max(0.0, min(100.0, f_score))
 
         scores = {
             "vratio": _inv_rank(v_rank, top_n),
@@ -292,7 +424,8 @@ def compute_auction_strengths(
         base = scores[base_table]
 
         non_fengdan_hits = sum(1 for k in ("vratio", "qiangchou", "net_amount") if scores[k] > 0)
-        bonus = max(0, non_fengdan_hits - 1) * bonus_strong
+        synergy_bonus = _rank_quality_synergy_bonus([v_rank, q_rank, n_rank], top_n, p)
+        bonus = synergy_bonus
         if scores["fengdan"] > 0:
             bonus += bonus_fengdan
 
@@ -300,13 +433,11 @@ def compute_auction_strengths(
         if q_group == "grab":
             bonus += bonus_grab
 
-        # Amount: prefer vratio, then qiangchou, then net_amount, then fengdan seal_total.
         auction_amount_wan = (
             _first_money_wan(v_row, amount_keys)
             or _first_money_wan(q_row, amount_keys)
             or _first_money_wan(n_row, amount_keys)
         )
-        # Turnover %: prefer the table that gave us the base.
         turnover_pct = (
             _first_pct(v_row, turnover_keys)
             or _first_pct(q_row, turnover_keys)
@@ -315,20 +446,11 @@ def compute_auction_strengths(
         turnover_bonus = _turnover_bonus(turnover_pct, p)
         bonus += turnover_bonus
 
-        # Latest %: used for negative-auction cap.
-        latest_pct = (
-            _first_pct(n_row, latest_pct_keys)
-            or _first_pct(v_row, latest_pct_keys)
-            or _first_pct(q_row, latest_pct_keys)
-            or _first_pct(f_row, latest_pct_keys)
-        )
-
         raw_total = max(0.0, min(100.0, base + bonus))
         capped_total, neg_cap_reason = _negative_auction_cap(raw_total, latest_pct, p)
-        amount_multiplier, amount_missing = _auction_amount_multiplier(
-            auction_amount_wan, p
-        )
+        amount_multiplier, amount_missing = _auction_amount_multiplier(auction_amount_wan, p)
         total = max(0.0, min(100.0, capped_total * amount_multiplier))
+        total = max(0.0, min(100.0, total * float(f_behavior.get("penalty_multiplier") or 1.0)))
 
         out[code] = {
             "auction_strength": round(total, 2),
@@ -341,6 +463,8 @@ def compute_auction_strengths(
             "latest_change_pct": latest_pct,
             "negative_auction_cap_reason": neg_cap_reason,
             "turnover_bonus": round(turnover_bonus, 2),
+            "synergy_bonus": round(synergy_bonus, 2),
+            "rank_synergy_bonus": round(synergy_bonus, 2),
             "base": round(base, 2),
             "base_table": base_table,
             "bonus": round(bonus, 2),
@@ -350,49 +474,59 @@ def compute_auction_strengths(
             "net_amount_rank": n_rank,
             "fengdan_rank": f_rank,
             "fengdan_status": f_status,
-            "fengdan_amount_920_yi": f_a920,
-            "fengdan_amount_925_yi": f_a925,
+            "fengdan_behavior_reason": f_behavior.get("reason"),
+            "fengdan_amount_915_yi": f_behavior.get("amount_915_yi"),
+            "fengdan_amount_920_yi": f_behavior.get("amount_920_yi"),
+            "fengdan_amount_925_yi": f_behavior.get("amount_925_yi"),
+            "fengdan_ratio_920_915": f_behavior.get("ratio_920_915"),
+            "fengdan_ratio_925_920": f_behavior.get("ratio_925_920"),
+            "fengdan_ratio_920_vs_915": f_behavior.get("ratio_920_vs_915"),
+            "fengdan_ratio_925_vs_920": f_behavior.get("ratio_925_vs_920"),
+            "fengdan_behavior_bonus": round(float(f_behavior.get("behavior_bonus") or 0.0), 2),
+            "fengdan_penalty_multiplier": round(float(f_behavior.get("penalty_multiplier") or 1.0), 4),
             "hits_count": non_fengdan_hits + (1 if scores["fengdan"] > 0 else 0),
         }
     return out
 
 
 def _self_test() -> None:
-    # 1) strong with real auction_turnover_wan field
     vratio = [
-        {"rank": 1, "code": "603629", "auction_turnover_wan": "1200", "turnover_rate_pct": 1.2, "latest_change_pct": "5.0"},
+        {"rank": 1, "code": "603629", "auction_turnover_wan": "1200", "turnover_rate_pct": 1.2, "latest_change_pct": "9.8"},
         {"rank": 1, "code": "000001", "auction_turnover_wan": "200", "turnover_rate_pct": 0.1, "latest_change_pct": "3.0"},
         {"rank": 5, "code": "000709", "auction_turnover_wan": "5694", "turnover_rate_pct": 0.66, "latest_change_pct": "5.75"},
     ]
     qiangchou = [{"rank": 2, "code": "603629", "group": "grab"}, {"rank": 5, "code": "000001"}]
     netamount = [
-        {"rank": 3, "code": "603629", "latest_change_pct": 5.0},
+        {"rank": 3, "code": "603629", "latest_change_pct": 9.8},
         {"rank": 1, "code": "601778", "auction_turnover_wan": 22598, "latest_change_pct": -7.72},
     ]
     fengdan = [
-        {"rank": 1, "code": "603629", "amount_920": "5亿", "amount_925": "8亿", "section_kind": "live"},
+        {"rank": 1, "code": "603629", "amount_915": "5亿", "amount_920": "6亿", "amount_925": "8亿", "latest_change_pct": "9.8%", "section_kind": "live"},
         {"rank": 2, "code": "000001", "amount_920": "10亿", "amount_925": "3亿", "section_kind": "live"},
         {"rank": 5, "code": "603630", "amount_920": "1.6亿", "amount_925": "-", "latest_change_pct": "9.75%", "section_kind": "live"},
     ]
     out = compute_auction_strengths(
-        ["603629", "000001", "000709", "601778", "603630"],
+        ["603629", "000001", "000709", "601778", "603630", "603631"],
         vratio, qiangchou, netamount, fengdan, {},
     )
-    # 603629: real amount 1200万 -> mid multiplier 0.8
-    assert out["603629"]["auction_amount_multiplier"] == 0.8, out["603629"]
+    # 603629: real amount 1200万 >= 1000 -> full multiplier 1.0; lock because 8/5 >= 1.2
+    assert out["603629"]["auction_amount_multiplier"] == 1.0, out["603629"]
     assert out["603629"]["auction_amount_missing"] is False
-    # 000001: amount 200万 < 500 -> 0.5; fengdan withdrawn -> not counted
+    assert out["603629"]["fengdan_status"] == "lock", out["603629"]
+    # 000001: amount 200万 < 500 -> 0.5; fengdan consume
     assert out["000001"]["auction_amount_multiplier"] == 0.5
-    assert out["000001"]["fengdan_status"] == "withdrawn"
-    # 000709: amount 5694万 >= 1000 -> 1.0 multiplier; auction_strength should be ~100
+    assert out["000001"]["fengdan_status"] == "consume", out["000001"]
+    # 000709: amount 5694万 >= 1000 -> 1.0 multiplier; score should stay high
     assert out["000709"]["auction_amount_multiplier"] == 1.0, out["000709"]
     assert out["000709"]["auction_strength"] >= 80, out["000709"]
     # 601778: -7.72% deep negative -> cap 20
     assert out["601778"]["negative_auction_cap_reason"] == "deep_negative"
     assert out["601778"]["auction_strength"] <= 20, out["601778"]
-    # 603630: fengdan unverified -> not zero, partial credit
+    # 603630: missing 9:25 => unverified, not zero
     assert out["603630"]["fengdan_status"] == "unverified", out["603630"]
     assert out["603630"]["auction_strength"] > 0, out["603630"]
+    assert out["603629"]["fengdan_status"] == "lock", out["603629"]
+    assert out["603629"]["synergy_bonus"] >= 2, out["603629"]
     print("auction_strength _self_test passed")
 
 

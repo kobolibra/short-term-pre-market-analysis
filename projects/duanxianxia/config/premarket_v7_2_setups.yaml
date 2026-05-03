@@ -12,6 +12,7 @@ version: "premarket_v7_2"
 params:
   # === Inherited from v7.1 (used by reused label modules) ===
   premarket_auction_cutoff: "092900"
+  qxlive_premarket_boundary: "093000"
   industry_pct_strength_leader: 0.75
   industry_pct_inflow_leader: 0.70
   industry_pct_strength_rising: 0.50
@@ -79,9 +80,13 @@ params:
   hotness_limitup_cap_score: 20
 
   # === v7.2 theme_strength_t0 ===
-  # theme_strength_t0 = 0.70*T0 plate strength percentile + 0.30*T-1 plate strength percentile
+  # Enriched theme scoring uses T0 strength / inflow / limit-up count plus T-1 inertia.
   theme_t0_weight: 0.70
-  theme_yesterday_weight: 0.30
+  theme_t0_strength_weight: 0.50
+  theme_t0_inflow_weight: 0.25
+  theme_t0_limitup_weight: 0.15
+  theme_yesterday_weight: 0.10
+  theme_subplate_multiplier: 0.85
   no_theme_base: 20
   theme_inertia_full_streak: 3
   # Broad earnings/financial-reporting plates that should not dominate top ranks.

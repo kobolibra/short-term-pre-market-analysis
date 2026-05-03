@@ -131,8 +131,14 @@ def run_v7_2(
     config = load_v7_2_config(project_root)
     params = config.get("params") or {}
     cutoff = str(params.get("premarket_auction_cutoff", "092900"))
+    qxlive_cutoff = str(params.get("qxlive_premarket_boundary", "093000"))
 
-    bundle = load_premarket_v72_bundle(date_str, project_root, premarket_auction_cutoff=cutoff)
+    bundle = load_premarket_v72_bundle(
+        date_str,
+        project_root,
+        premarket_auction_cutoff=cutoff,
+        qxlive_t0_cutoff=qxlive_cutoff,
+    )
     v71 = bundle.v71
 
     candidates = build_candidates_from_auction(v71, config.get("theme_aliases") or [])

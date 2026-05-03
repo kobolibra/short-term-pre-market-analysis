@@ -96,6 +96,7 @@ def load_premarket_v72_bundle(
     date_str: str,
     project_root: Path,
     premarket_auction_cutoff: str = "092900",
+    qxlive_t0_cutoff: str = "093000",
 ) -> PremarketV72Bundle:
     v71 = load_premarket_bundle(
         date_str,
@@ -107,7 +108,7 @@ def load_premarket_v72_bundle(
     rocket, _rocket_path = _latest_capture(project_root, date_str, DS_RANK_ROCKET, premarket_auction_cutoff)
     hotday, _hotday_path = _latest_capture(project_root, date_str, DS_RANK_HOT_STOCK_DAY, premarket_auction_cutoff)
     kaipan_t0, _kaipan_path = _latest_capture(project_root, date_str, DS_KAIPAN_PLATE_SUMMARY, premarket_auction_cutoff)
-    qxlive_t0, _qxlive_path = _latest_capture(project_root, date_str, DS_HOME_QXLIVE_TOP, premarket_auction_cutoff)
+    qxlive_t0, _qxlive_path = _latest_capture(project_root, date_str, DS_HOME_QXLIVE_TOP, qxlive_t0_cutoff)
 
     if not rocket:
         warnings.append(f"missing_or_empty:{DS_RANK_ROCKET}")

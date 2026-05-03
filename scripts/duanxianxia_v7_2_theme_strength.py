@@ -52,8 +52,15 @@ def _parse_money_to_wan(v: Any) -> Optional[float]:
 def _split_subplates(v: Any) -> List[str]:
     if v in (None, "", "-"):
         return []
+    raw_parts: List[Any]
     if isinstance(v, list):
-        raw_parts = v
+        raw_parts = []
+        for item in v:
+            if isinstance(item, dict):
+                name = item.get("子题材名称") or item.get("子标签名称") or item.get("name") or item.get("名称")
+                raw_parts.append(name)
+            else:
+                raw_parts.append(item)
     else:
         text = str(v)
         for sep in ("|", "、", "/", "，", ",", ";", "；", "\n"):
@@ -106,11 +113,12 @@ def _plate_metrics_index(kaipan_t0_rows: List[Dict[str, Any]]) -> Dict[str, Dict
             or r.get("strength_value")
             or r.get("强度")
         )
-        inflow = (
-            _parse_money_to_wan(r.get("主力流入原值"))
-            if r.get("主力流入原值") is not None
-            else _parse_money_to_wan(r.get("主力流入真实金额"))
-        )
+        inflow = None
+        if r.get("主力流入原值") is not None:
+            inflow = _parse_money_to_wan(r.get("主力流入原值"))
+        elif r.get("主力流入真实金额") is not None:
+            raw_yuan = _to_float(r.get("主力流入真实金额"))
+            inflow = (raw_yuan / 10000.0) if raw_yuan is not None else None
         if inflow is None:
             inflow = _parse_money_to_wan(r.get("主力流入"))
         limitup_count = _to_float(r.get("涨停数量") or r.get("limitup_count") or r.get("涨停数"))
@@ -168,21 +176,13 @@ def compute_theme_strength_t0(
     params: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     p = params or {}
-    # Keep old weights as fallback, but prefer the new split weights.
-    w_t0 = float(p.get("theme_t0_weight", 0.70))
-    w_yday = float(p.get("theme_yesterday_weight", p.get("theme_inertia_weight", 0.30)))
+    # Prefer enriched v7.2 weights when present. If they are absent, use the
+    # documented enriched defaults directly instead of silently falling back to
+    # the old v7.1-style 0.70/0.30 formula.
+    w_yday = float(p.get("theme_yesterday_weight", p.get("theme_inertia_weight", 0.10)))
     w_strength = float(p.get("theme_t0_strength_weight", 0.50))
     w_inflow = float(p.get("theme_t0_inflow_weight", 0.25))
     w_limitup = float(p.get("theme_t0_limitup_weight", 0.15))
-    inferred_yday = max(0.0, 1.0 - w_strength - w_inflow - w_limitup)
-    if "theme_t0_strength_weight" not in p and "theme_t0_inflow_weight" not in p and "theme_t0_limitup_weight" not in p:
-        # Legacy config fallback: preserve old total T0/T-1 split when new params are absent.
-        w_strength = w_t0
-        w_inflow = 0.0
-        w_limitup = 0.0
-        inferred_yday = w_yday
-    else:
-        w_yday = float(p.get("theme_yesterday_weight", inferred_yday))
 
     no_theme_base = float(p.get("no_theme_base", 20))
     broad_theme_names = set(p.get("broad_theme_names") or [])

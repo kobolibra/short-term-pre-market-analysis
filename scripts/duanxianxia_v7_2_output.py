@@ -68,6 +68,8 @@ def build_intraday_anchors_v72(top_candidates: List[Dict[str, Any]]) -> List[Dic
             "theme_strength_t0": d.get("theme_strength_t0"),
             "hotness_score": d.get("hotness_score"),
             "risk_flag": d.get("risk_flag"),
+            "entry_tag": d.get("entry_tag") or "normal",
+            "entry_reason": d.get("entry_reason") or "normal",
             "anchors": DEFAULT_V72_ANCHORS.get(key, DEFAULT_V72_ANCHORS["none"]),
             "risk_detail": d.get("risk_detail") or {},
         })

@@ -10,13 +10,12 @@ Updated logic:
   total = clip(raw * auction_amount_multiplier, 0, 100)
 
 Fengdan behavior uses 9:15 / 9:20 / 9:25 when available:
-  fake / consume / lock / stable / unverified / none.
+  fake / consume / lock / stable / none.
 
-Hardening (post real-data review):
-  - real auction turnover field is `auction_turnover_wan` (not `竞额`)
-  - missing amount must NOT punish the stock; it just flips a debug flag
-  - negative auction names are capped before amount multiplier
-  - multi-table resonance is based on rank quality, not just hit count
+Important trading semantics:
+  - Missing/blank amount_925 is treated as 0 in this table.
+  - F20 > 0 and F25 missing/0 means the 9:20 seal was fully consumed,
+    i.e. consume with consume_type="zero", not unverified.
 """
 
 from __future__ import annotations
@@ -141,21 +140,29 @@ def _classify_fengdan(
     """Classify fengdan using 9:15/9:20/9:25 behavior.
 
     Returned dict keys:
-      status, amount_915_yi, amount_920_yi, amount_925_yi,
+      status, consume_type, amount_915_yi, amount_920_yi, amount_925_yi,
       ratio_920_915, ratio_925_920, behavior_bonus, penalty_multiplier, reason.
 
-    Basic behavior labels:
-    - fake:       9:15 showed meaningful seal, 9:20 collapsed before no-cancel stage
-    - consume:    9:20→9:25 seal was materially consumed by sell pressure
-    - lock:       9:20→9:25 remained stable and latest pct is near limit-up
-    - stable:     9:25 valid but not lock
-    - unverified: 9:20 valid but 9:25 missing/'-'
-    - none:       no usable fengdan signal
+    Trading behavior labels:
+    - fake:
+      9:15 showed meaningful seal, but 9:20 collapsed before no-cancel stage.
+      This is withdrawable-stage fake/inducement risk.
+    - consume:
+      9:20 had valid seal, but 9:25 was materially lower.
+      Missing/blank 9:25 is treated as 0, so F20>0 and F25="-" is consume_zero.
+    - lock:
+      9:20→9:25 remained stable and latest pct is near limit-up.
+      Strong, but may be hard to buy.
+    - stable:
+      9:25 valid, but not lock/consume/fake.
+    - none:
+      No usable fengdan signal.
     """
     p = params or {}
     if fengdan_row is None:
         return {
             "status": "none",
+            "consume_type": None,
             "amount_915_yi": None,
             "amount_920_yi": None,
             "amount_925_yi": None,
@@ -168,9 +175,25 @@ def _classify_fengdan(
             "reason": "missing_row",
         }
 
-    a915 = _money_yi_from_keys(fengdan_row, ["amount_915", "9:15", "915", "f15", "seal_915", "t15_amount"])
-    a920 = _money_yi_from_keys(fengdan_row, ["amount_920", "9:20", "920", "f20", "seal_920", "t20_amount"])
-    a925 = _money_yi_from_keys(fengdan_row, ["amount_925", "9:25", "925", "f25", "seal_925", "t25_amount"])
+    raw_915 = _money_yi_from_keys(
+        fengdan_row,
+        ["amount_915", "9:15", "915", "f15", "seal_915", "t15_amount"],
+    )
+    raw_920 = _money_yi_from_keys(
+        fengdan_row,
+        ["amount_920", "9:20", "920", "f20", "seal_920", "t20_amount"],
+    )
+    raw_925 = _money_yi_from_keys(
+        fengdan_row,
+        ["amount_925", "9:25", "925", "f25", "seal_925", "t25_amount"],
+    )
+
+    # Trading semantics for this table:
+    # amount_925 missing / "-" / blank means final 9:25 seal is effectively 0.
+    # This is NOT "unverified"; if F20 > 0, it is consume_zero.
+    a915 = raw_915 if raw_915 is not None else 0.0
+    a920 = raw_920 if raw_920 is not None else 0.0
+    a925 = raw_925 if raw_925 is not None else 0.0
 
     fake_drop_ratio = float(p.get("fengdan_fake_drop_ratio", 0.30))
     fake_f15_min_wan = float(p.get("fengdan_fake_f15_min_wan", 1000))
@@ -180,15 +203,23 @@ def _classify_fengdan(
     consume_limitup_pct = float(p.get("fengdan_consume_limitup_pct", 9.9))
     fake_penalty = float(p.get("fengdan_fake_penalty_multiplier", 0.70))
 
-    ratio_920_915 = (a920 / a915) if (a915 is not None and a915 > 0 and a920 is not None) else None
-    ratio_925_920 = (a925 / a920) if (a920 is not None and a920 > 0 and a925 is not None) else None
+    ratio_920_915 = (a920 / a915) if a915 > 0 else None
+    ratio_925_920 = (a925 / a920) if a920 > 0 else None
 
-    def _resp(status: str, *, reason: str, behavior_bonus: float = 0.0, penalty_multiplier: float = 1.0) -> Dict[str, Any]:
+    def _resp(
+        status: str,
+        *,
+        reason: str,
+        consume_type: Optional[str] = None,
+        behavior_bonus: float = 0.0,
+        penalty_multiplier: float = 1.0,
+    ) -> Dict[str, Any]:
         return {
             "status": status,
-            "amount_915_yi": a915,
-            "amount_920_yi": a920,
-            "amount_925_yi": a925,
+            "consume_type": consume_type,
+            "amount_915_yi": a915 if a915 > 0 else None,
+            "amount_920_yi": a920 if a920 > 0 else None,
+            "amount_925_yi": a925 if a925 > 0 else 0.0,
             "ratio_920_915": ratio_920_915,
             "ratio_925_920": ratio_925_920,
             "ratio_920_vs_915": ratio_920_915,
@@ -198,52 +229,79 @@ def _classify_fengdan(
             "reason": reason,
         }
 
-    # 9:15 有有效大封单，但 9:20 前大幅消失，属于可撤单阶段的诱多嫌疑。
-    if a915 is not None and a915 * 10000.0 >= fake_f15_min_wan:
-        if a920 is None or a920 <= 0 or (ratio_920_915 is not None and ratio_920_915 < fake_drop_ratio):
+    # 1) fake: 9:15 可撤单阶段有大封单，9:20 不可撤单前大幅消失。
+    if a915 * 10000.0 >= fake_f15_min_wan:
+        if a920 <= 0 or (ratio_920_915 is not None and ratio_920_915 < fake_drop_ratio):
             return _resp(
                 "fake",
-                reason=(f"915->920 collapse ratio={round(ratio_920_915, 4)}" if ratio_920_915 is not None else "915_large_but_920_missing"),
+                reason=(
+                    f"915->920 collapse ratio={round(ratio_920_915, 4)}"
+                    if ratio_920_915 is not None
+                    else "915_large_but_920_zero"
+                ),
                 behavior_bonus=0.0,
                 penalty_multiplier=fake_penalty,
             )
 
-    if a925 is None or a925 <= 0:
-        if a920 is not None and a920 > 0:
-            return _resp("unverified", reason="missing_925")
-        return _resp("none", reason="no_positive_amount")
+    # 2) consume: 9:20 后不能撤单，F20 -> F25 的下降视为被卖盘消耗。
+    # F25 missing/blank has already been converted to 0.0 above.
+    if a920 > 0 and ratio_925_920 is not None and ratio_925_920 < consume_ratio:
+        consume_type = "zero" if a925 <= 0 else "partial"
+        if consume_type == "zero":
+            bonus = 0.0
+            reason = "920->925 fully consumed ratio=0.0"
+        else:
+            bonus = (
+                float(p.get("fengdan_consume_limitup_bonus", 6))
+                if (latest_pct is not None and latest_pct >= consume_limitup_pct)
+                else float(p.get("fengdan_consume_weak_bonus", 2))
+            )
+            reason = f"920->925 consume ratio={round(ratio_925_920, 4)}"
 
-    if a920 is None or a920 <= 0:
-        return _resp("stable", reason="missing_920_but_925_valid")
-
-    if ratio_925_920 is not None and ratio_925_920 < consume_ratio:
-        bonus = (
-            float(p.get("fengdan_consume_limitup_bonus", 6))
-            if (latest_pct is not None and latest_pct >= consume_limitup_pct)
-            else float(p.get("fengdan_consume_weak_bonus", 2))
-        )
         return _resp(
             "consume",
-            reason=f"920->925 consume ratio={round(ratio_925_920, 4)}",
+            consume_type=consume_type,
+            reason=reason,
             behavior_bonus=bonus,
         )
 
-    if ratio_925_920 is not None and ratio_925_920 >= lock_ratio and latest_pct is not None and latest_pct >= lock_latest_min_pct:
+    # 3) lock: 9:20 到 9:25 基本锁住，且价格接近涨停。
+    if (
+        a920 > 0
+        and a925 > 0
+        and ratio_925_920 is not None
+        and ratio_925_920 >= lock_ratio
+        and latest_pct is not None
+        and latest_pct >= lock_latest_min_pct
+    ):
         return _resp(
             "lock",
             reason=f"920->925 locked ratio={round(ratio_925_920, 4)}, latest_pct={latest_pct}",
             behavior_bonus=float(p.get("fengdan_lock_bonus", 15)),
         )
 
-    # 兼容旧 shrink_threshold：如果 9:25 相比 9:20 明显缩小但未触发 consume_ratio，也视为 consume-like。
-    if (a925 - a920) / a920 <= shrink_threshold:
+    # 4) 兼容旧 shrink_threshold：只在 F20/F25 都有效时保留。
+    if a920 > 0 and a925 > 0 and (a925 - a920) / a920 <= shrink_threshold:
         return _resp(
             "consume",
+            consume_type="partial",
             reason=f"920->925 shrink={round((a925 - a920) / a920, 4)}",
             behavior_bonus=float(p.get("fengdan_consume_weak_bonus", 2)),
         )
 
-    return _resp("stable", reason=(f"920->925 stable ratio={round(ratio_925_920, 4)}" if ratio_925_920 is not None else "stable"))
+    # 5) stable: 最终 9:25 有封单，但不属于 lock/consume/fake。
+    if a925 > 0:
+        return _resp(
+            "stable",
+            reason=(
+                f"920->925 stable ratio={round(ratio_925_920, 4)}"
+                if ratio_925_920 is not None
+                else "925_valid"
+            ),
+        )
+
+    # 6) none: 全程没有有效封单。
+    return _resp("none", reason="no_positive_amount")
 
 
 def _auction_amount_multiplier(
@@ -301,6 +359,43 @@ def _negative_auction_cap(
     return raw_total, None
 
 
+def _entry_tag(
+    *,
+    fengdan_status: str,
+    fengdan_amount_925_yi: Optional[float],
+    latest_pct: Optional[float],
+    auction_amount_wan: Optional[float],
+    params: Dict[str, Any],
+) -> Tuple[str, str]:
+    """Simple tradability tag.
+
+    This is not a new scoring factor. It only explains whether a strong signal
+    is practically tradable.
+    """
+    if fengdan_status == "fake":
+        return "avoid", "fake_fengdan"
+
+    board_watch_pct = float(params.get("entry_board_watch_pct", 9.5))
+    lock_large_f25_yi = float(params.get("entry_lock_large_f25_yi", 1.0))
+    if (
+        fengdan_status == "lock"
+        and latest_pct is not None
+        and latest_pct >= board_watch_pct
+        and fengdan_amount_925_yi is not None
+        and fengdan_amount_925_yi >= lock_large_f25_yi
+    ):
+        return "board_watch", "lock_near_limit_large_f25"
+
+    high_open_pct = float(params.get("entry_high_open_pct", 8.5))
+    if latest_pct is not None and latest_pct >= high_open_pct:
+        return "high_open_confirm", "near_limit_high_open"
+
+    min_amount = float(params.get("min_auction_amount_wan", 500))
+    if auction_amount_wan is not None and auction_amount_wan < min_amount:
+        return "low_liquidity_confirm", "auction_amount_below_min"
+
+    return "normal", "normal"
+
 def _rank_quality_synergy_bonus(ranks: List[Optional[int]], top_n: int, params: Dict[str, Any]) -> float:
     """Reward resonance by extra rank quality, not just hit count.
 
@@ -337,7 +432,6 @@ def compute_auction_strengths(
     bonus_fengdan = float(p.get("auction_bonus_fengdan", 3))
     bonus_grab = float(p.get("auction_bonus_grab", 5))
     shrink_threshold = float(p.get("fengdan_shrink_threshold", -0.20))
-    fengdan_unverified_mult = float(p.get("fengdan_unverified_multiplier", 0.6))
 
     vratio_idx = _index_by_code_min_rank(vratio_rows)
     qiangchou_idx = _index_by_code_min_rank(qiangchou_rows)
@@ -407,9 +501,12 @@ def compute_auction_strengths(
             if f_rank is not None and f_rank <= 5:
                 f_score += float(p.get("fengdan_lock_top5_bonus", 5))
         elif f_status == "consume":
-            f_score = f_base_rank_score + float(f_behavior.get("behavior_bonus") or 0.0)
-        elif f_status == "unverified":
-            f_score = f_base_rank_score * fengdan_unverified_mult
+            # consume_partial: 被消耗但最终仍有封单，可以保留少量分歧承接加分。
+            # consume_zero: F25 缺失/为0，说明最终封单归零，不给封单正分。
+            if str(f_behavior.get("consume_type") or "") == "zero":
+                f_score = 0.0
+            else:
+                f_score = f_base_rank_score + float(f_behavior.get("behavior_bonus") or 0.0)
         else:
             f_score = 0.0
         f_score = max(0.0, min(100.0, f_score))
@@ -452,6 +549,14 @@ def compute_auction_strengths(
         total = max(0.0, min(100.0, capped_total * amount_multiplier))
         total = max(0.0, min(100.0, total * float(f_behavior.get("penalty_multiplier") or 1.0)))
 
+        entry_tag, entry_reason = _entry_tag(
+            fengdan_status=f_status,
+            fengdan_amount_925_yi=f_behavior.get("amount_925_yi"),
+            latest_pct=latest_pct,
+            auction_amount_wan=auction_amount_wan,
+            params=p,
+        )
+
         out[code] = {
             "auction_strength": round(total, 2),
             "raw_auction_strength": round(raw_total, 2),
@@ -474,7 +579,10 @@ def compute_auction_strengths(
             "net_amount_rank": n_rank,
             "fengdan_rank": f_rank,
             "fengdan_status": f_status,
+            "fengdan_consume_type": f_behavior.get("consume_type"),
             "fengdan_behavior_reason": f_behavior.get("reason"),
+            "entry_tag": entry_tag,
+            "entry_reason": entry_reason,
             "fengdan_amount_915_yi": f_behavior.get("amount_915_yi"),
             "fengdan_amount_920_yi": f_behavior.get("amount_920_yi"),
             "fengdan_amount_925_yi": f_behavior.get("amount_925_yi"),
@@ -522,9 +630,10 @@ def _self_test() -> None:
     # 601778: -7.72% deep negative -> cap 20
     assert out["601778"]["negative_auction_cap_reason"] == "deep_negative"
     assert out["601778"]["auction_strength"] <= 20, out["601778"]
-    # 603630: missing 9:25 => unverified, not zero
-    assert out["603630"]["fengdan_status"] == "unverified", out["603630"]
-    assert out["603630"]["auction_strength"] > 0, out["603630"]
+    # 603630: missing 9:25 is treated as 0; F20>0 and F25=0 => consume_zero.
+    assert out["603630"]["fengdan_status"] == "consume", out["603630"]
+    assert out["603630"]["fengdan_consume_type"] == "zero", out["603630"]
+    assert out["603630"]["fengdan_behavior_bonus"] == 0.0, out["603630"]
     assert out["603629"]["fengdan_status"] == "lock", out["603629"]
     assert out["603629"]["synergy_bonus"] >= 2, out["603629"]
     print("auction_strength _self_test passed")

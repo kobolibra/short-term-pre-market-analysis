@@ -2,7 +2,7 @@
 
 Design:
     today_signal_raw = auction/theme/hotness weighted score
-    t1_multiplier    = clamp(1 + T-1 soft adjustments, 0.75, 1.35)
+    t1_multiplier    = clamp(1 + T-1 soft adjustments, 0.85, 1.15 by default)
     final_score      = today_signal_raw * t1_multiplier * regime_multiplier * risk_penalty
 
 Only ST / delisting is a hard kill. Historical signals only amplify or degrade.
@@ -286,7 +286,8 @@ def classify_candidates_v72(
         stock_t1 = (labels.get("stock_t1") or {}).get(code) or {}
         tech_raw = (labels.get("tech_profile") or {}).get(code) or {}
 
-        auction = float((auction_strengths.get(code) or {}).get("auction_strength") or 0.0)
+        auction_detail = auction_strengths.get(code) or {}
+        auction = float(auction_detail.get("auction_strength") or 0.0)
         theme_info = theme_strengths.get(code) or {}
         theme = float(theme_info.get("theme_strength_t0") or 0.0)
         hot = hotness_scores.get(code)
@@ -325,12 +326,14 @@ def classify_candidates_v72(
             "theme_strength_t0": theme,
             "hotness_score": hot,
             "risk_flag": risk < 1.0,
+            "entry_tag": auction_detail.get("entry_tag") or "normal",
+            "entry_reason": auction_detail.get("entry_reason") or "normal",
             "score_weights": weights,
             "t1_adjustments": adjustments,
             "risk_detail": risk_detail,
             "regime": regime,
             "theme_detail": theme_info,
-            "auction_detail": auction_strengths.get(code) or {},
+            "auction_detail": auction_detail,
             "label_snapshot": snapshot,
         })
 

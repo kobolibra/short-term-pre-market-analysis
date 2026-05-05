@@ -2,7 +2,7 @@
 # Architecture summary:
 #   today_signal_raw = w_a*auction_strength + w_t*theme_strength_t0 + w_h*hotness_score
 #   (hotness missing → weights re-normalized to auction+theme only)
-#   t1_multiplier  = clamp(1.0 + sum(adjustments), 0.75, 1.35)
+#   t1_multiplier  = clamp(1.0 + sum(adjustments), 0.85, 1.15)
 #   final_score    = today_signal_raw * t1_multiplier * regime_multiplier * risk_penalty
 #
 # Setup labels are discrete-value classifiers (longtou+auction+theme+hotness),
@@ -60,9 +60,6 @@ params:
   auction_turnover_bonus_high: 5
   auction_turnover_bonus_mid_pct: 0.5
   auction_turnover_bonus_mid: 3
-  # Fengdan ranked but not amount-verified (e.g. amount_925="-" while amount_920 large)
-  # Score factor relative to inv_rank score (1.0 = full credit, 0 = drop).
-  fengdan_unverified_multiplier: 0.6
   # Negative-auction cap: stocks with negative latest_change_pct have their
   # auction_strength clamped before any bonuses, regardless of net inflow rank.
   negative_auction_deep_pct: -6.0
@@ -70,6 +67,13 @@ params:
   negative_auction_mid_pct: -3.0
   negative_auction_mid_cap: 35
   negative_auction_soft_cap: 50
+
+  # === v7.2 entry/tradability tags ===
+  # These tags do not create a new score factor. They explain whether a strong
+  # signal is practically tradable.
+  entry_board_watch_pct: 9.5
+  entry_lock_large_f25_yi: 1.0
+  entry_high_open_pct: 8.5
 
   # === v7.2 hotness_score ===
   hotness_rocket_top_n: 50
@@ -102,21 +106,23 @@ params:
     - "预增"
     - "三季报增长"
 
-  # === v7.2 t1_multiplier ===
-  t1_multiplier_min: 0.75
-  t1_multiplier_max: 1.35
+  # === v7.2 t1_multiplier refined ===
+  # T0 auction/theme/hotness already dominate today_signal_raw.
+  # T-1 labels should only be a small quality modifier, not a second model.
+  t1_multiplier_min: 0.85
+  t1_multiplier_max: 1.15
   iceberg_auction_threshold: 80
-  iceberg_bonus: 0.10
-  longtou_confirmed_bonus: 0.10
-  longtou_board_leader_bonus: 0.05
-  cashflow_strong_bonus: 0.08
-  cashflow_distributing_penalty: -0.10
+  iceberg_bonus: 0.00
+  longtou_confirmed_bonus: 0.06
+  longtou_board_leader_bonus: 0.03
+  cashflow_strong_bonus: 0.04
+  cashflow_distributing_penalty: -0.06
   cashflow_distributing_outflow_threshold_wan: -300
-  zt_clean_bonus: 0.05
-  zt_dirty_penalty: -0.08
-  tech_breakdown_penalty: -0.08
-  churn_dull_penalty: -0.15
-  churn_dull_iceberg_penalty: -0.07
+  zt_clean_bonus: 0.03
+  zt_dirty_penalty: -0.05
+  tech_breakdown_penalty: -0.05
+  churn_dull_penalty: -0.08
+  churn_dull_iceberg_penalty: -0.04
   churn_panic_penalty: -0.05
   churn_panic_pct_chg_max: -3.0
   churn_panic_vol_ratio_min: 3.0

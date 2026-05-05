@@ -51,7 +51,7 @@ params:
   auction_bonus_strong: 5
   auction_bonus_fengdan: 3
   auction_bonus_grab: 5
-  fengdan_shrink_threshold: -0.20  # if (a925-a920)/a920 < -0.20 → fengdan invalid
+  fengdan_shrink_threshold: -0.20  # legacy fallback: if valid F20/F25 shrink <= -20% → consume_partial
   min_auction_amount_wan: 500
   full_auction_amount_wan: 1000
   auction_amount_low_multiplier: 0.5

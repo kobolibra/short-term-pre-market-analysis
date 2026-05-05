@@ -634,6 +634,7 @@ def _self_test() -> None:
     assert out["603630"]["fengdan_status"] == "consume", out["603630"]
     assert out["603630"]["fengdan_consume_type"] == "zero", out["603630"]
     assert out["603630"]["fengdan_behavior_bonus"] == 0.0, out["603630"]
+    assert out["603630"]["auction_strength"] == 0.0, out["603630"]
     assert out["603629"]["fengdan_status"] == "lock", out["603629"]
     assert out["603629"]["synergy_bonus"] >= 2, out["603629"]
     print("auction_strength _self_test passed")

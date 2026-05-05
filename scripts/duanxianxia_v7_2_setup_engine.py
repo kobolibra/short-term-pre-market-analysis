@@ -166,32 +166,32 @@ def compute_t1_multiplier(snapshot: Dict[str, Any], auction_strength: float, par
     assert not (iceberg and longtou == "confirmed_longtou"), "iceberg must be mutually exclusive with confirmed_longtou"
 
     if iceberg:
-        adj.append({"key": "iceberg", "value": float(params.get("iceberg_bonus", 0.10))})
+        adj.append({"key": "iceberg", "value": float(params.get("iceberg_bonus", 0.00))})
     elif longtou == "confirmed_longtou":
-        adj.append({"key": "longtou_confirmed", "value": float(params.get("longtou_confirmed_bonus", 0.10))})
+        adj.append({"key": "longtou_confirmed", "value": float(params.get("longtou_confirmed_bonus", 0.06))})
     elif longtou == "board_leader":
-        adj.append({"key": "longtou_board_leader", "value": float(params.get("longtou_board_leader_bonus", 0.05))})
+        adj.append({"key": "longtou_board_leader", "value": float(params.get("longtou_board_leader_bonus", 0.03))})
     if cash_label == "accumulating_strong":
-        adj.append({"key": "cashflow_strong", "value": float(params.get("cashflow_strong_bonus", 0.08))})
+        adj.append({"key": "cashflow_strong", "value": float(params.get("cashflow_strong_bonus", 0.04))})
     if cash_label == "distributing" and main_flow < float(params.get("cashflow_distributing_outflow_threshold_wan", -300)):
-        adj.append({"key": "cashflow_distributing", "value": float(params.get("cashflow_distributing_penalty", -0.10))})
+        adj.append({"key": "cashflow_distributing", "value": float(params.get("cashflow_distributing_penalty", -0.06))})
     if zt_quality == "clean":
-        adj.append({"key": "zt_clean", "value": float(params.get("zt_clean_bonus", 0.05))})
+        adj.append({"key": "zt_clean", "value": float(params.get("zt_clean_bonus", 0.03))})
     elif zt_quality == "dirty":
-        adj.append({"key": "zt_dirty", "value": float(params.get("zt_dirty_penalty", -0.08))})
+        adj.append({"key": "zt_dirty", "value": float(params.get("zt_dirty_penalty", -0.05))})
     if _is_breakdown_profile(tech_profile) and not iceberg:
-        adj.append({"key": "tech_breakdown", "value": float(params.get("tech_breakdown_penalty", -0.08))})
+        adj.append({"key": "tech_breakdown", "value": float(params.get("tech_breakdown_penalty", -0.05))})
 
     churn = _churn_type(snapshot.get("tech_raw") or {}, params)
     if churn == "dull_churn":
-        value = float(params.get("churn_dull_iceberg_penalty", -0.07)) if iceberg else float(params.get("churn_dull_penalty", -0.15))
+        value = float(params.get("churn_dull_iceberg_penalty", -0.04)) if iceberg else float(params.get("churn_dull_penalty", -0.08))
         adj.append({"key": "dull_churn", "value": value})
     elif churn == "panic_churn":
         adj.append({"key": "panic_churn", "value": float(params.get("churn_panic_penalty", -0.05))})
 
     raw = 1.0 + sum(float(x["value"]) for x in adj)
-    lo = float(params.get("t1_multiplier_min", 0.75))
-    hi = float(params.get("t1_multiplier_max", 1.35))
+    lo = float(params.get("t1_multiplier_min", 0.85))
+    hi = float(params.get("t1_multiplier_max", 1.15))
     return round(_clip(raw, lo, hi), 4), adj
 
 

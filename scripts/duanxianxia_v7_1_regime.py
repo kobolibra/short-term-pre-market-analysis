@@ -1,19 +1,23 @@
 """
-duanxianxia_v7_1_regime.py — v7.1 市场 regime 判定
+duanxianxia_v7_1_regime.py — market regime classifier.
 
-输入:
-  - qxlive_t0_top: 今日 09:30 前 top_metrics(rows + meta)
-  - qxlive_t1_top: T-1 末场 top_metrics
-  - params
-从 rows 中提取 “指标名称” 在 情绪/连板宽度/涨停宽度/平宽/连跌宽度/跌停宽度/晋升率/破板率 中的赋值。
+For v7.2 premarket use, this module deliberately uses only stable, available
+T0 qxlive signals:
+- QX / 情绪指标
+- DT / 跌停家数
+- KQXY / 亏钱效应
+- SZ + XD / 涨跌家数 breadth
+- LBBX / 昨连板表现
+- ZTBX / 昨涨停表现
 
-labels:
-  - cold_to_warming: 昨QX ≤ 30 且 今 QX ≥ 35 且 昨 LBBX ≤ 0 且 今 LBBX ≥ 2  (冷转暑)
-  - hot:         今 QX ≥ 70 或 今 LBBX ≥ 5
-  - hot_to_downgrading: 今晋升率 ≤ 0.20 且 昨 QX ≥ 60         (热后转凉)
-  - cold:        今 QX ≤ 30
-  - normal:      其他
-依据:premarket_scoring.yaml v6.3 market_regime + v7.1 spec params
+It explicitly does NOT use:
+- HSLN / 主力流入: premarket value is often 0/unstable and user confirmed it
+  should not be used.
+- PB / 今日封板率: early-session value often has no stable meaning.
+- PBBX: in home.qxlive.top_metrics this is 沪深5分钟量能, not 晋级率.
+
+The function still accepts legacy rows with 指标名称/指标值 for backward
+compatibility, but metric_key/metric_label/value is the preferred real schema.
 """
 
 from __future__ import annotations
@@ -21,36 +25,42 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 
-METRIC_NAME_KEYS = ("指标名称", "name", "名称")
-METRIC_VALUE_KEYS = ("指标值", "value", "值")
+_IGNORE_KEYS = {"HSLN", "PB", "PBBX"}
 
 
-def _extract_metric(rows: List[Dict[str, Any]], target_name: str) -> Optional[float]:
-    """从 top_metrics rows 中按名称匹配提取指标值(float 转换失败返回 None)。"""
+def _to_float(v: Any) -> Optional[float]:
+    try:
+        if v in (None, "", "-"):
+            return None
+        return float(str(v).replace("%", "").replace("亿", "").replace(",", "").strip())
+    except Exception:
+        return None
+
+
+def _extract_by_key_or_label(rows: List[Dict[str, Any]], metric_key: str, labels: set[str]) -> Optional[float]:
     if not rows:
         return None
     for row in rows:
-        name = ""
-        for k in METRIC_NAME_KEYS:
-            v = row.get(k)
-            if v not in (None, ""):
-                name = str(v).strip()
-                break
-        if name != target_name:
+        key = str(row.get("metric_key") or "").strip()
+        label = str(row.get("metric_label") or row.get("指标名称") or row.get("name") or row.get("名称") or "").strip()
+        if key in _IGNORE_KEYS:
             continue
-        for k in METRIC_VALUE_KEYS:
-            v = row.get(k)
-            if v in (None, ""):
-                continue
-            try:
-                # 可能带 “%” 后缀
-                s = str(v).strip()
-                if s.endswith("%"):
-                    return float(s[:-1]) / 100.0
-                return float(s)
-            except Exception:
-                return None
+        if key == metric_key or label in labels:
+            for value_key in ("raw_chart_tail_value", "raw_value", "value", "指标值", "值"):
+                if value_key in row:
+                    val = _to_float(row.get(value_key))
+                    if val is not None:
+                        return val
     return None
+
+
+def _breadth_ratio(sz: Optional[float], xd: Optional[float]) -> Optional[float]:
+    if sz is None or xd is None:
+        return None
+    total = sz + xd
+    if total <= 0:
+        return None
+    return sz / total
 
 
 def compute_regime(
@@ -58,57 +68,65 @@ def compute_regime(
     qxlive_t1_top: Dict[str, Any],
     params: Dict[str, Any],
 ) -> Dict[str, Any]:
-    """返回 regime 字典。qxlive_*_top 为 {rows: [...], meta: {...}} 格式。"""
+    """Return regime dict using stable qxlive metrics only."""
     t0_rows = (qxlive_t0_top or {}).get("rows") or []
     t1_rows = (qxlive_t1_top or {}).get("rows") or []
 
-    qx_t0 = _extract_metric(t0_rows, "情绪")
-    qx_t1 = _extract_metric(t1_rows, "情绪")
-    lbbx_t0 = _extract_metric(t0_rows, "连板宽度")
-    lbbx_t1 = _extract_metric(t1_rows, "连板宽度")
-    promo_t0 = _extract_metric(t0_rows, "晋升率")
+    qx_t0 = _extract_by_key_or_label(t0_rows, "QX", {"情绪", "情绪指标"})
+    qx_t1 = _extract_by_key_or_label(t1_rows, "QX", {"情绪", "情绪指标"})
+    dt_t0 = _extract_by_key_or_label(t0_rows, "DT", {"跌停家数"})
+    kqxy_t0 = _extract_by_key_or_label(t0_rows, "KQXY", {"亏钱效应"})
+    sz_t0 = _extract_by_key_or_label(t0_rows, "SZ", {"上涨家数"})
+    xd_t0 = _extract_by_key_or_label(t0_rows, "XD", {"下跌家数"})
+    lbbx_t0 = _extract_by_key_or_label(t0_rows, "LBBX", {"昨连板表现", "连板表现"})
+    ztbx_t0 = _extract_by_key_or_label(t0_rows, "ZTBX", {"昨涨停表现", "涨停表现"})
+    lbbx_t1 = _extract_by_key_or_label(t1_rows, "LBBX", {"昨连板表现", "连板表现"})
+    breadth_t0 = _breadth_ratio(sz_t0, xd_t0)
 
+    qx_hot = float(params.get("regime_hot_qx_min", 65))
+    lbbx_hot = float(params.get("regime_hot_lbbx_min", 5))
+    qx_cold = float(params.get("regime_cold_qx_max", 30))
+    dt_cold = float(params.get("regime_cold_dt_min", 20))
+    kqxy_cold = float(params.get("regime_cold_kqxy_min", 10))
+    breadth_cold = float(params.get("regime_cold_breadth_max", 0.28))
     qx_warm_today = float(params.get("regime_warming_qx_today_min", 35))
     qx_warm_yest = float(params.get("regime_warming_qx_yesterday_max", 30))
-    lbbx_warm_today = float(params.get("regime_warming_lbbx_today_min", 2))
-    lbbx_warm_yest = float(params.get("regime_warming_lbbx_yesterday_max", 0))
-    promo_max = float(params.get("regime_downgrade_promo_rate_max", 0.20))
 
     label = "normal"
     reason = ""
 
-    # cold_to_warming 连路(昨 cold, 今 明显 暑)
-    if (
-        qx_t1 is not None and qx_t1 <= qx_warm_yest
-        and qx_t0 is not None and qx_t0 >= qx_warm_today
-        and lbbx_t1 is not None and lbbx_t1 <= lbbx_warm_yest
-        and lbbx_t0 is not None and lbbx_t0 >= lbbx_warm_today
-    ):
+    if qx_t1 is not None and qx_t1 <= qx_warm_yest and qx_t0 is not None and qx_t0 >= qx_warm_today:
         label = "cold_to_warming"
-        reason = f"qx {qx_t1}→{qx_t0}, lbbx {lbbx_t1}→{lbbx_t0}"
-    elif qx_t0 is not None and (qx_t0 >= 70 or (lbbx_t0 is not None and lbbx_t0 >= 5)):
+        reason = f"qx {qx_t1}→{qx_t0}"
+    elif qx_t0 is not None and (qx_t0 >= qx_hot or (lbbx_t0 is not None and lbbx_t0 >= lbbx_hot)):
         label = "hot"
         reason = f"qx={qx_t0}, lbbx={lbbx_t0}"
     elif (
-        promo_t0 is not None and promo_t0 <= promo_max
-        and qx_t1 is not None and qx_t1 >= 60
+        (qx_t0 is not None and qx_t0 <= qx_cold)
+        or (dt_t0 is not None and dt_t0 >= dt_cold)
+        or (kqxy_t0 is not None and kqxy_t0 >= kqxy_cold)
+        or (breadth_t0 is not None and breadth_t0 <= breadth_cold)
     ):
-        label = "hot_to_downgrading"
-        reason = f"promo {promo_t0}, qx_t1 {qx_t1}"
-    elif qx_t0 is not None and qx_t0 <= 30:
         label = "cold"
-        reason = f"qx={qx_t0}"
+        reason = f"qx={qx_t0}, dt={dt_t0}, kqxy={kqxy_t0}, breadth={breadth_t0}"
     else:
-        reason = f"qx={qx_t0}, lbbx={lbbx_t0}, promo={promo_t0}"
+        reason = f"qx={qx_t0}, lbbx={lbbx_t0}, ztbx={ztbx_t0}, breadth={breadth_t0}"
 
     return {
         "label": label,
         "reason": reason,
         "qx_t0": qx_t0,
         "qx_t1": qx_t1,
+        "dt_t0": dt_t0,
+        "kqxy_t0": kqxy_t0,
+        "sz_t0": sz_t0,
+        "xd_t0": xd_t0,
+        "breadth_t0": breadth_t0,
         "lbbx_t0": lbbx_t0,
         "lbbx_t1": lbbx_t1,
-        "promo_t0": promo_t0,
+        "ztbx_t0": ztbx_t0,
+        "promo_t0": None,
+        "ignored_metrics": sorted(_IGNORE_KEYS),
     }
 
 
@@ -116,42 +134,22 @@ def _self_test() -> None:
     params = {
         "regime_warming_qx_today_min": 35,
         "regime_warming_qx_yesterday_max": 30,
-        "regime_warming_lbbx_today_min": 2,
-        "regime_warming_lbbx_yesterday_max": 0,
-        "regime_downgrade_promo_rate_max": 0.20,
+        "regime_hot_qx_min": 65,
+        "regime_hot_lbbx_min": 5,
+        "regime_cold_qx_max": 30,
+        "regime_cold_breadth_max": 0.28,
     }
-    # cold_to_warming
-    t0 = {"rows": [{"指标名称": "情绪", "指标值": "40"}, {"指标名称": "连板宽度", "指标值": "3"}]}
-    t1 = {"rows": [{"指标名称": "情绪", "指标值": "25"}, {"指标名称": "连板宽度", "指标值": "0"}]}
-    r = compute_regime(t0, t1, params)
-    assert r["label"] == "cold_to_warming", r
+    t0 = {"rows": [{"metric_key": "QX", "value": "40"}, {"metric_key": "HSLN", "value": "0"}]}
+    t1 = {"rows": [{"metric_key": "QX", "value": "25"}]}
+    assert compute_regime(t0, t1, params)["label"] == "cold_to_warming"
 
-    # hot
-    t0 = {"rows": [{"指标名称": "情绪", "指标值": "75"}]}
-    t1 = {"rows": [{"指标名称": "情绪", "指标值": "60"}]}
-    r = compute_regime(t0, t1, params)
-    assert r["label"] == "hot", r
+    t0 = {"rows": [{"metric_key": "QX", "value": "70"}, {"metric_key": "PB", "value": "100%"}]}
+    assert compute_regime(t0, {"rows": []}, params)["label"] == "hot"
 
-    # cold
-    t0 = {"rows": [{"指标名称": "情绪", "指标值": "20"}]}
-    t1 = {"rows": [{"指标名称": "情绪", "指标值": "40"}]}
-    r = compute_regime(t0, t1, params)
-    assert r["label"] == "cold", r
+    t0 = {"rows": [{"metric_key": "QX", "value": "40"}, {"metric_key": "SZ", "value": "1000"}, {"metric_key": "XD", "value": "5000"}]}
+    assert compute_regime(t0, {"rows": []}, params)["label"] == "cold"
 
-    # hot_to_downgrading: 昨 热 (qx_t1 ≥ 60), 今晋升率 ≤ 0.20
-    t0 = {"rows": [{"指标名称": "情绪", "指标值": "45"}, {"指标名称": "晋升率", "指标值": "15%"}]}
-    t1 = {"rows": [{"指标名称": "情绪", "指标值": "68"}]}
-    r = compute_regime(t0, t1, params)
-    assert r["label"] == "hot_to_downgrading", r
-    assert abs(r["promo_t0"] - 0.15) < 1e-9
-
-    # normal
-    t0 = {"rows": [{"指标名称": "情绪", "指标值": "50"}]}
-    t1 = {"rows": [{"指标名称": "情绪", "指标值": "50"}]}
-    r = compute_regime(t0, t1, params)
-    assert r["label"] == "normal", r
-
-    print("regime _self_test passed")
+    print("regime conservative _self_test passed")
 
 
 if __name__ == "__main__":

@@ -9,6 +9,11 @@ Main rule after 2026-05 review:
 `use_t1_review_context=false` disables review-derived zt/longtou bonuses and
 penalties, while keeping strictly useful non-review risk signals such as ST,
 cashflow continuity and tech profile.
+
+This file also implements the earlier repo-review recommendation that v7.2
+should not only return one sorted list. It now exposes enough decision metadata
+for downstream output pools: main attack, theme rotation, board watch,
+confirmation watch, and avoid/risk.
 """
 from __future__ import annotations
 
@@ -211,19 +216,59 @@ def compute_risk_penalty(candidate: Dict[str, Any], snapshot: Dict[str, Any], pa
     return round(p, 4), {"board_count": board, "exploded": exploded, "main_flow_wan": main_flow, "heavy_outflow": heavy_outflow, "outflow_ratio": outflow_ratio, "float_market_value_yi": float_mv_yi, "outflow_method": outflow_method, "t1_review_context_used": use_review}
 
 
-def classify_setup(longtou: str, auction: float, theme: float, hotness: Optional[float], params: Dict[str, Any], risk_penalty: float) -> Tuple[str, str]:
+def _hot_ge(hotness: Optional[float], threshold: float) -> bool:
+    return hotness is not None and hotness >= threshold
+
+
+def classify_setup(
+    longtou: str,
+    auction: float,
+    theme: float,
+    hotness: Optional[float],
+    params: Dict[str, Any],
+    risk_penalty: float,
+    entry_tag: str = "normal",
+) -> Tuple[str, str, str]:
+    """Classify T0 setup from T0 signals.
+
+    Important: when `use_t1_review_context=false`, T0-LEAD must still be
+    reachable. Earlier code accidentally made T0-LEAD depend on longtou labels;
+    that contradicted the v7.2 redesign. Now LEAD means a high-conviction T0
+    attack candidate, not necessarily yesterday's confirmed leader.
+    """
     if risk_penalty <= 0:
-        return "none", "none"
+        return "none", "none", "hard_risk_kill"
+    if entry_tag == "avoid":
+        return "none", "none", "entry_avoid"
+
     use_review = bool(params.get("use_t1_review_context", False))
     effective_longtou = longtou if use_review else "none"
-    if effective_longtou in {"confirmed_longtou", "board_leader", "confirmed"} and auction >= float(params.get("setup_lead_auction_min", 70)):
-        return "T0-LEAD", "high"
-    if effective_longtou == "none" and auction >= float(params.get("setup_new_auction_min", 70)):
-        high = (hotness is not None and hotness >= float(params.get("setup_new_high_confidence_hotness", 50))) or auction >= float(params.get("setup_new_high_confidence_auction", 85))
-        return "T0-NEW", "high" if high else "low"
-    if effective_longtou != "confirmed_longtou" and theme >= float(params.get("setup_rotate_theme_min", 65)) and auction >= float(params.get("setup_rotate_auction_min", 50)):
-        return "T0-ROTATE", "high" if theme >= 80 else "low"
-    return "T0-GENERAL", "low"
+    lead_entry_tags = set(params.get("setup_lead_entry_tags") or ["board_watch", "high_open_confirm"])
+    lead_auction = float(params.get("setup_lead_auction_min", 80))
+    lead_theme = float(params.get("setup_lead_theme_min", 65))
+    lead_hotness = float(params.get("setup_lead_hotness_min", 55))
+
+    if effective_longtou in {"confirmed_longtou", "board_leader", "confirmed"} and auction >= float(params.get("setup_legacy_lead_auction_min", 70)):
+        return "T0-LEAD", "high", "review_leader_plus_t0_auction"
+
+    if auction >= lead_auction and (entry_tag in lead_entry_tags or theme >= lead_theme or _hot_ge(hotness, lead_hotness)):
+        return "T0-LEAD", "high", "t0_attack_resonance"
+
+    if theme >= float(params.get("setup_rotate_theme_min", 65)) and auction >= float(params.get("setup_rotate_auction_min", 50)):
+        conf = "high" if (theme >= float(params.get("setup_rotate_high_theme_min", 80)) and auction >= float(params.get("setup_rotate_high_auction_min", 60))) else "low"
+        return "T0-ROTATE", conf, "theme_strength_plus_auction_confirm"
+
+    if auction >= float(params.get("setup_new_auction_min", 70)):
+        high = (
+            _hot_ge(hotness, float(params.get("setup_new_high_confidence_hotness", 50)))
+            or auction >= float(params.get("setup_new_high_confidence_auction", 85))
+            or entry_tag in lead_entry_tags
+        )
+        return "T0-NEW", "high" if high else "low", "new_t0_auction_candidate"
+
+    if auction >= float(params.get("setup_general_auction_min", 45)) or theme >= float(params.get("setup_general_theme_min", 55)):
+        return "T0-GENERAL", "low", "weak_or_single_factor_watch"
+    return "none", "none", "below_t0_thresholds"
 
 
 def regime_multiplier(regime: str, setup: str, config: Dict[str, Any]) -> float:
@@ -240,6 +285,24 @@ def compat_setup_v71(setup: str, auction: float, confidence: str) -> str:
     if setup == "T0-GENERAL":
         return "C2"
     return "none"
+
+
+def _decision_signal_summary(auction_detail: Dict[str, Any], theme_info: Dict[str, Any], hot: Optional[float], setup_reason: str) -> Dict[str, Any]:
+    return {
+        "setup_reason": setup_reason,
+        "qiangchou_primary_signal": auction_detail.get("qiangchou_primary_signal"),
+        "qiangchou_920_925_rank": auction_detail.get("qiangchou_920_925_rank"),
+        "qiangchou_last_second_rank": auction_detail.get("qiangchou_last_second_rank"),
+        "auction_amount_wan": auction_detail.get("auction_amount_wan"),
+        "amount_quality_bonus": auction_detail.get("amount_quality_bonus"),
+        "net_pressure": auction_detail.get("net_pressure"),
+        "net_pressure_bonus": auction_detail.get("net_pressure_bonus"),
+        "fengdan_status": auction_detail.get("fengdan_status"),
+        "matched_tags": theme_info.get("matched_tags") or [],
+        "matched_plate": theme_info.get("matched_plate"),
+        "t0_plate_strength_raw": theme_info.get("t0_plate_strength_raw"),
+        "hotness_score": hot,
+    }
 
 
 def classify_candidates_v72(candidates: List[Dict[str, Any]], labels: Dict[str, Any], auction_strengths: Dict[str, Dict[str, Any]], theme_strengths: Dict[str, Dict[str, Any]], hotness_scores: Dict[str, Optional[float]], config: Dict[str, Any], max_candidates: Optional[int] = None) -> List[Dict[str, Any]]:
@@ -263,15 +326,33 @@ def classify_candidates_v72(candidates: List[Dict[str, Any]], labels: Dict[str, 
         theme_info = theme_strengths.get(code) or {}
         theme = float(theme_info.get("theme_strength_t0") or 0.0)
         hot = hotness_scores.get(code)
+        entry_tag = auction_detail.get("entry_tag") or "normal"
+        entry_reason = auction_detail.get("entry_reason") or "normal"
 
         snapshot = {"longtou_status": str(longtou_raw.get("longtou_status") or longtou_raw.get("label") or "none") if use_review else "none", "cashflow_continuity": str(cash_raw.get("cashflow_continuity") or cash_raw.get("label") or "none"), "zt_quality": str(zt_raw.get("zt_quality") or zt_raw.get("quality_label") or zt_raw.get("quality") or "average") if use_review else "average", "tech_profile": str(tech_raw.get("tech_profile") or tech_raw.get("label") or "unknown"), "zt_raw": zt_raw if use_review else {}, "stock_t1": stock_t1, "cashflow_raw": cash_raw, "tech_raw": tech_raw, "daily_rows": labels.get("dailyline", {}).get(code) if isinstance(labels.get("dailyline"), dict) else None}
         risk, risk_detail = compute_risk_penalty(c, snapshot, params)
         today_signal, weights = compute_today_signal_raw(auction, theme, hot, params)
         t1_mult, adjustments = compute_t1_multiplier(snapshot, auction, params)
-        setup, confidence = classify_setup(snapshot["longtou_status"], auction, theme, hot, params, risk)
+        setup, confidence, setup_reason = classify_setup(snapshot["longtou_status"], auction, theme, hot, params, risk, entry_tag=entry_tag)
         reg_mult = regime_multiplier(regime, setup, config) if setup != "none" else 0.0
         final = round(today_signal * t1_mult * reg_mult * risk, 2)
-        decisions.append({"code": code, "name": c.get("name"), "setup_v72": setup, "setup_v71_compat": compat_setup_v71(setup, auction, confidence), "confidence": confidence, "final_score": final, "today_signal_raw": today_signal, "t1_multiplier": t1_mult, "regime_multiplier": reg_mult, "risk_penalty": risk, "auction_strength": auction, "theme_strength_t0": theme, "hotness_score": hot, "risk_flag": risk < 1.0, "entry_tag": auction_detail.get("entry_tag") or "normal", "entry_reason": auction_detail.get("entry_reason") or "normal", "score_weights": weights, "t1_adjustments": adjustments, "risk_detail": risk_detail, "regime": regime, "theme_detail": theme_info, "auction_detail": auction_detail, "label_snapshot": snapshot, "t1_review_context_used": use_review})
+        signal_summary = _decision_signal_summary(auction_detail, theme_info, hot, setup_reason)
+        decisions.append({"code": code, "name": c.get("name"), "setup_v72": setup, "setup_v71_compat": compat_setup_v71(setup, auction, confidence), "confidence": confidence, "setup_reason": setup_reason, "final_score": final, "today_signal_raw": today_signal, "t1_multiplier": t1_mult, "regime_multiplier": reg_mult, "risk_penalty": risk, "auction_strength": auction, "theme_strength_t0": theme, "hotness_score": hot, "risk_flag": risk < 1.0, "entry_tag": entry_tag, "entry_reason": entry_reason, "score_weights": weights, "t1_adjustments": adjustments, "risk_detail": risk_detail, "regime": regime, "theme_detail": theme_info, "auction_detail": auction_detail, "signal_summary": signal_summary, "label_snapshot": snapshot, "t1_review_context_used": use_review})
 
     decisions.sort(key=lambda x: x.get("final_score") or 0, reverse=True)
     return decisions[:max_candidates] if max_candidates is not None else decisions
+
+
+def _self_test() -> None:
+    params = {"use_t1_review_context": False, "setup_lead_auction_min": 80, "setup_lead_theme_min": 65}
+    setup, conf, reason = classify_setup("none", 88, 70, None, params, 1.0, entry_tag="normal")
+    assert setup == "T0-LEAD" and conf == "high", (setup, conf, reason)
+    setup, conf, reason = classify_setup("confirmed_longtou", 88, 20, None, params, 1.0, entry_tag="normal")
+    assert setup == "T0-NEW", (setup, conf, reason)
+    setup, conf, reason = classify_setup("none", 55, 85, None, params, 1.0, entry_tag="normal")
+    assert setup == "T0-ROTATE", (setup, conf, reason)
+    print("setup_engine conservative _self_test passed")
+
+
+if __name__ == "__main__":
+    _self_test()

@@ -3,9 +3,16 @@
 Formalizes the action-pool report so the trading view is no longer one mixed
 Top30.  Production classification still uses only premarket-visible fields; any
 close_pct/excess_return fields are used only for review diagnostics.
+
+Important review-mode rule:
+- The premarket runner cannot know close_pct/excess_return at 09:25.
+- A later review bundle may backfill those fields into flat CSV/JSONL.
+- When that happens, v7.3 source JSON must be recomputed so pool_performance and
+  review_diagnostics are not left empty.
 """
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 from statistics import median
@@ -25,6 +32,7 @@ ACTION_PRIORITY = {
     "DEBUG_ONLY": 999,
 }
 ACTIONABLE = {"AUCTION_FOLLOW", "MOMENTUM_CATCHUP", "THEME_CATCHUP", "LOW_OPEN_REVERSAL", "BOARD_WATCH"}
+PERFORMANCE_KEYS = ("auction_pct", "open_pct", "close_pct", "excess_return", "dailyline_found", "prev_close", "day_open", "day_high", "day_low", "day_close")
 
 
 def _f(v: Any, default: Optional[float] = 0.0) -> Optional[float]:
@@ -50,6 +58,9 @@ def _metric(d: Dict[str, Any], key: str, default: Optional[float] = 0.0) -> Opti
 def _auction_pct(d: Dict[str, Any]) -> Optional[float]:
     if d.get("auction_pct") is not None:
         return _f(d.get("auction_pct"), None)
+    perf = d.get("derived_performance") or d.get("performance") or {}
+    if isinstance(perf, dict) and perf.get("auction_pct") is not None:
+        return _f(perf.get("auction_pct"), None)
     return _metric(d, "latest_change_pct", None)
 
 
@@ -90,9 +101,10 @@ def _theme_quality(aux: float, cfg: Dict[str, Any]) -> str:
 def _perf(d: Dict[str, Any]) -> Dict[str, Any]:
     src = d.get("derived_performance") or d.get("performance") or d
     out: Dict[str, Any] = {}
-    for k in ("auction_pct", "open_pct", "close_pct", "excess_return", "dailyline_found"):
-        if src.get(k) is not None:
-            out[k] = src.get(k)
+    if isinstance(src, dict):
+        for k in PERFORMANCE_KEYS:
+            if src.get(k) is not None:
+                out[k] = src.get(k)
     if "auction_pct" not in out:
         pct = _auction_pct(d)
         if pct is not None:
@@ -131,7 +143,7 @@ def _upgrade_row(d: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
         min_auc = float(cfg.get("momentum_min_auction_strength", 50)); min_liq = float(cfg.get("momentum_min_liquidity_score", 55)); min_amt = float(cfg.get("momentum_min_amount_wan", 1000))
         if pct is not None and lo <= pct <= hi and auction >= min_auc and liq >= min_liq and amt >= min_amt:
             score = _clamp(0.46 * auction + 0.18 * liq + 0.14 * min(100, amt / 5000 * 100) + 0.10 * max(src, theme * 0.25))
-            if src < float(cfg.get("follow_min_source_evidence", 18)):
+            if src < float(cfg.get("follow_min_source_evidence", 18)) and "incomplete_source_evidence" not in tags:
                 tags.append("incomplete_source_evidence")
             out.update(action_type="MOMENTUM_CATCHUP", action_confidence=_confidence(score, 58, 42), action_score=round(score, 2), action_reason="strong_auction_momentum_incomplete_theme_or_source", action_quality="momentum", action_tags=tags)
         else:
@@ -139,9 +151,9 @@ def _upgrade_row(d: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
     elif action == "THEME_CATCHUP":
         aux = _theme_aux_score(out, cfg)
         quality = _theme_quality(aux, cfg)
-        if quality == "strong":
+        if quality == "strong" and "theme_aux_strong" not in tags:
             tags.append("theme_aux_strong")
-        elif quality == "weak":
+        elif quality == "weak" and "theme_aux_weak" not in tags:
             tags.append("theme_aux_weak")
             out["action_score"] = round(_clamp(float(out.get("action_score") or 0) - 12), 2)
         out.update(action_quality=quality, action_tags=tags)
@@ -153,6 +165,8 @@ def _upgrade_row(d: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
         out.setdefault("action_quality", "main_attack")
     elif action == "AVOID":
         out.setdefault("action_quality", "avoid")
+    elif action == "DEBUG_ONLY":
+        out.setdefault("action_quality", "debug")
 
     out["action_priority"] = ACTION_PRIORITY.get(str(out.get("action_type")), 999)
     return out
@@ -238,18 +252,120 @@ def _pools(rows: List[Dict[str, Any]], pool_max: int) -> Dict[str, List[Dict[str
     return out
 
 
-def upgrade_shaped_v72_to_v73(shaped: Dict[str, Any], action_config: Optional[Dict[str, Any]] = None, max_candidates: int = 30, watch_tier_max: int = 60, pool_max: int = 15) -> Dict[str, Any]:
-    cfg = action_config or {}
-    source = shaped.get("all_candidates_action_ranked") or shaped.get("all_candidates_debug") or []
-    rows = [_upgrade_row(r, cfg) for r in source]
+def _rebuild_v73(shaped: Dict[str, Any], rows: List[Dict[str, Any]], max_candidates: int, watch_tier_max: int, pool_max: int) -> Dict[str, Any]:
     ranked = _sort_action(rows)
     legacy = _sort_score(rows)
     actionable = [r for r in ranked if r.get("action_type") in ACTIONABLE]
     meta = dict(shaped.get("meta") or {})
     notes = list(meta.get("interpretation_notes") or [])
-    notes += ["v7.3 is action-pool first: use candidate_pools/actionable_candidates as the trading view, not the legacy mixed rank.", "DEBUG_ONLY rows are retained only for debug/review and are excluded from trading pools.", "MOMENTUM_CATCHUP is separated from AUCTION_FOLLOW because it has price momentum but incomplete theme/source evidence."]
+    required_notes = [
+        "v7.3 is action-pool first: use candidate_pools/actionable_candidates as the trading view, not the legacy mixed rank.",
+        "DEBUG_ONLY rows are retained only for debug/review and are excluded from trading pools.",
+        "MOMENTUM_CATCHUP is separated from AUCTION_FOLLOW because it has price momentum but incomplete theme/source evidence.",
+    ]
+    for note in required_notes:
+        if note not in notes:
+            notes.append(note)
     meta["interpretation_notes"] = notes
     return {"version": VERSION, "meta": meta, "setup_stats": shaped.get("setup_stats") or v72.setup_stats_v72(rows), "action_stats": _stats(rows), "action_quality_stats": _quality_stats(rows), "pool_performance": _performance_stats(rows), "review_diagnostics": _diagnostics(rows), "candidate_pools": _pools(rows, pool_max), "top_candidates": actionable[:max_candidates], "actionable_candidates": actionable[:max_candidates], "legacy_top_candidates": [r for r in legacy if r.get("setup_v72") != "none"][:max_candidates], "watch_tier": ranked[:watch_tier_max], "all_candidates_action_ranked": ranked, "all_candidates_debug": legacy, "intraday_anchors": v72.build_intraday_anchors_v72(actionable[:20])}
+
+
+def upgrade_shaped_v72_to_v73(shaped: Dict[str, Any], action_config: Optional[Dict[str, Any]] = None, max_candidates: int = 30, watch_tier_max: int = 60, pool_max: int = 15) -> Dict[str, Any]:
+    cfg = action_config or {}
+    source = shaped.get("all_candidates_action_ranked") or shaped.get("all_candidates_debug") or []
+    rows = [_upgrade_row(r, cfg) for r in source]
+    return _rebuild_v73(shaped, rows, max_candidates=max_candidates, watch_tier_max=watch_tier_max, pool_max=pool_max)
+
+
+def _code_key(value: Any) -> str:
+    text = str(value or "").strip()
+    if text.endswith(".0"):
+        text = text[:-2]
+    digits = "".join(ch for ch in text if ch.isdigit())
+    return digits.zfill(6) if digits else text
+
+
+def _coerce_perf_value(key: str, value: Any) -> Any:
+    if value in (None, "", "None", "null", "NULL"):
+        return None
+    if key == "dailyline_found":
+        if isinstance(value, bool):
+            return value
+        return str(value).strip().lower() in {"1", "true", "yes", "y"}
+    parsed = _f(value, None)
+    return parsed if parsed is not None else value
+
+
+def load_performance_map_from_flat(path: str | Path) -> Dict[str, Dict[str, Any]]:
+    """Load code -> performance fields from a flat CSV or JSONL review export."""
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"missing performance flat file: {p}")
+    rows: List[Dict[str, Any]] = []
+    if p.suffix.lower() == ".jsonl":
+        for line in p.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                item = json.loads(line)
+                if isinstance(item, dict):
+                    rows.append(item)
+    else:
+        with p.open("r", encoding="utf-8", newline="") as fp:
+            rows = list(csv.DictReader(fp))
+    out: Dict[str, Dict[str, Any]] = {}
+    for row in rows:
+        code = _code_key(row.get("code") or row.get("股票代码") or row.get("代码"))
+        if not code:
+            continue
+        perf: Dict[str, Any] = {}
+        for key in PERFORMANCE_KEYS:
+            if key in row:
+                val = _coerce_perf_value(key, row.get(key))
+                if val is not None:
+                    perf[key] = val
+        if perf:
+            out[code] = perf
+    return out
+
+
+def attach_performance_to_rows(rows: List[Dict[str, Any]], performance_by_code: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Return rows with derived_performance injected by stock code.
+
+    Existing premarket classification fields are preserved.  This function only
+    adds realized review fields, then downstream stats/diagnostics are rebuilt.
+    """
+    out: List[Dict[str, Any]] = []
+    for row in rows or []:
+        copied = dict(row)
+        code = _code_key(copied.get("code") or copied.get("股票代码") or copied.get("代码"))
+        perf = dict(copied.get("derived_performance") or copied.get("performance") or {})
+        if code in performance_by_code:
+            perf.update(performance_by_code[code])
+        if perf:
+            copied["derived_performance"] = perf
+            # Also expose these at row top-level for flat-export compatibility.
+            for key in PERFORMANCE_KEYS:
+                if perf.get(key) is not None:
+                    copied[key] = perf.get(key)
+        out.append(copied)
+    return out
+
+
+def recompute_v73_review_metrics(shaped: Dict[str, Any], performance_by_code: Optional[Dict[str, Dict[str, Any]]] = None, action_config: Optional[Dict[str, Any]] = None, max_candidates: int = 30, watch_tier_max: int = 60, pool_max: int = 15) -> Dict[str, Any]:
+    """Recompute v7.3 pool_performance/review_diagnostics after review backfill.
+
+    Use this after close_pct/excess_return are available.  It fixes the previous
+    failure mode where markdown/flat files had realized returns, but the source
+    analysis JSON still showed with_performance=0.
+    """
+    cfg = action_config or {}
+    source = shaped.get("all_candidates_action_ranked") or shaped.get("all_candidates_debug") or []
+    rows = attach_performance_to_rows(source, performance_by_code or {})
+    rows = [_upgrade_row(r, cfg) for r in rows]
+    rebuilt = _rebuild_v73(shaped, rows, max_candidates=max_candidates, watch_tier_max=watch_tier_max, pool_max=pool_max)
+    rebuilt.setdefault("meta", {})
+    rebuilt["meta"]["review_metrics_recomputed"] = True
+    rebuilt["meta"]["review_performance_source"] = "flat_backfill" if performance_by_code else "embedded_rows"
+    return rebuilt
 
 
 def shape_v7_3_output(decisions: List[Dict[str, Any]], meta: Optional[Dict[str, Any]] = None, max_candidates: int = 30, watch_tier_max: int = 60, action_config: Optional[Dict[str, Any]] = None, pool_max: int = 15) -> Dict[str, Any]:
@@ -268,15 +384,19 @@ def write_v7_3_outputs(output_dir: str, decisions: List[Dict[str, Any]], meta: O
 
 def _self_test() -> None:
     rows = [
-        {"code":"A","name":"follow","setup_v72":"T0-ROTATE","confidence":"high","final_score":60,"auction_strength":76,"theme_strength_t0":95,"auction_detail":{"latest_change_pct":5,"source_evidence_score":30,"source_family_count":3,"auction_amount_wan":5000,"liquidity_score":90}},
-        {"code":"B","name":"momentum","setup_v72":"T0-GENERAL","confidence":"low","final_score":40,"auction_strength":55,"theme_strength_t0":20,"auction_detail":{"latest_change_pct":3,"source_evidence_score":0,"auction_amount_wan":3000,"liquidity_score":80}},
-        {"code":"C","name":"debug","setup_v72":"none","confidence":"none","final_score":0,"auction_strength":0,"theme_strength_t0":0},
+        {"code":"000001","name":"follow","setup_v72":"T0-ROTATE","confidence":"high","final_score":60,"auction_strength":76,"theme_strength_t0":95,"auction_detail":{"latest_change_pct":5,"source_evidence_score":30,"source_family_count":3,"auction_amount_wan":5000,"liquidity_score":90}},
+        {"code":"000002","name":"momentum","setup_v72":"T0-GENERAL","confidence":"low","final_score":40,"auction_strength":55,"theme_strength_t0":20,"auction_detail":{"latest_change_pct":3,"source_evidence_score":0,"auction_amount_wan":3000,"liquidity_score":80}},
+        {"code":"000003","name":"debug","setup_v72":"none","confidence":"none","final_score":0,"auction_strength":0,"theme_strength_t0":0},
     ]
     out = shape_v7_3_output(rows, action_config={"momentum_min_amount_wan":1000})
     assert out["version"] == VERSION
     assert out["action_stats"].get("MOMENTUM_CATCHUP") == 1, out["action_stats"]
     assert out["action_stats"].get("DEBUG_ONLY") == 1, out["action_stats"]
     assert "momentum_catchup_pool" in out["candidate_pools"]
+    perf = {"000001": {"close_pct": 10, "auction_pct": 5, "excess_return": 5}, "000002": {"close_pct": 20, "auction_pct": 3, "excess_return": 17}}
+    recomputed = recompute_v73_review_metrics(out, perf, action_config={"momentum_min_amount_wan":1000})
+    assert recomputed["pool_performance"]["AUCTION_FOLLOW"]["with_performance"] == 1, recomputed["pool_performance"]
+    assert recomputed["pool_performance"]["MOMENTUM_CATCHUP"]["with_performance"] == 1, recomputed["pool_performance"]
     print("output v7.3 _self_test passed")
 
 

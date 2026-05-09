@@ -47,6 +47,7 @@ def load_v7_2_config(project_root: Path) -> Dict[str, Any]:
     data.setdefault("params", {})
     data.setdefault("theme_aliases", [])
     data.setdefault("output", {"max_candidates": 30, "watch_tier_max": 50})
+    data.setdefault("action_pools", {})
     return data
 
 
@@ -87,6 +88,7 @@ def _normalize_qxlive_top_rows(rows: Any) -> list[dict[str, Any]]:
 def run_v7_2(date_str: str, project_root: Path, output_dir: Optional[Path] = None, no_write: bool = False) -> Dict[str, Any]:
     config = load_v7_2_config(project_root)
     params = config.get("params") or {}
+    action_config = config.get("action_pools") or {}
     cutoff = str(params.get("premarket_auction_cutoff", "092900"))
     qxlive_cutoff = str(params.get("qxlive_premarket_boundary", "093000"))
 
@@ -111,8 +113,30 @@ def run_v7_2(date_str: str, project_root: Path, output_dir: Optional[Path] = Non
     out_cfg = config.get("output") or {}
     max_candidates = int(out_cfg.get("max_candidates", 30))
     watch_tier_max = int(out_cfg.get("watch_tier_max", 50))
-    meta = {"date_t0": bundle.date_t0, "date_t1": bundle.date_t1, "date_t2": bundle.date_t2, "generated_at": datetime.now(TZ_SHANGHAI).isoformat(timespec="seconds"), "candidate_count": len(candidates), "bundle_summary": bundle.to_summary_dict(), "regime": labels.get("regime"), "warnings": bundle.warnings, "notes": ["v7.2 conservative mode: T0 auction + exact plate-tag strength + hotness dominate.", "T0 qxlive HSLN/PB/PBBX are ignored for premarket regime.", "T0 plate 主力流入 and 涨停数量 are ignored; only 板块强度 is used.", "T-1 review tables are not used as premarket scoring factors when use_t1_review_context=false."]}
-    shaped = shape_v7_2_output(decisions, meta=meta, max_candidates=max_candidates, watch_tier_max=watch_tier_max)
+    meta = {
+        "date_t0": bundle.date_t0,
+        "date_t1": bundle.date_t1,
+        "date_t2": bundle.date_t2,
+        "generated_at": datetime.now(TZ_SHANGHAI).isoformat(timespec="seconds"),
+        "candidate_count": len(candidates),
+        "bundle_summary": bundle.to_summary_dict(),
+        "regime": labels.get("regime"),
+        "warnings": bundle.warnings,
+        "notes": [
+            "v7.2 conservative mode: T0 auction + exact plate-tag strength + hotness dominate.",
+            "T0 qxlive HSLN/PB/PBBX are ignored for premarket regime.",
+            "T0 plate 主力流入 and 涨停数量 are ignored; only 板块强度 is used.",
+            "T-1 review tables are not used as premarket scoring factors when use_t1_review_context=false.",
+            "Action-pool output separates auction follow, theme catch-up, low-open reversal, board watch, confirmation, and avoid; do not read top_candidates as one homogeneous flat rank.",
+        ],
+    }
+    shaped = shape_v7_2_output(
+        decisions,
+        meta=meta,
+        max_candidates=max_candidates,
+        watch_tier_max=watch_tier_max,
+        action_config=action_config,
+    )
 
     if not no_write:
         if output_dir is None:
@@ -120,7 +144,16 @@ def run_v7_2(date_str: str, project_root: Path, output_dir: Optional[Path] = Non
             analysis_name = f"{datetime.now(TZ_SHANGHAI).strftime('%H%M%S')}_analysis_v7_2.json"
         else:
             analysis_name = "analysis_v7_2.json"
-        shaped["paths"] = write_v7_2_outputs(str(output_dir), decisions, meta=meta, max_candidates=max_candidates, watch_tier_max=watch_tier_max, analysis_filename=analysis_name, anchors_filename="intraday_anchors.json")
+        shaped["paths"] = write_v7_2_outputs(
+            str(output_dir),
+            decisions,
+            meta=meta,
+            max_candidates=max_candidates,
+            watch_tier_max=watch_tier_max,
+            analysis_filename=analysis_name,
+            anchors_filename="intraday_anchors.json",
+            action_config=action_config,
+        )
     return shaped
 
 
@@ -136,7 +169,7 @@ def main() -> int:
     if a.json:
         print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
     else:
-        print(f"v7.2 done date={a.date} candidates={result['meta']['candidate_count']} setup_stats={result['setup_stats']}")
+        print(f"v7.2 done date={a.date} candidates={result['meta']['candidate_count']} setup_stats={result['setup_stats']} action_stats={result.get('action_stats')}")
     return 0
 
 

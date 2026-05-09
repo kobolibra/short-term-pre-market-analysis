@@ -16,6 +16,14 @@
 - `version`: str
 - `watch_tier`: list[50]
 
+## 绩效补充口径
+
+- `auction_pct`: 采用 `auction_detail.latest_change_pct` 作为竞价涨幅口径
+- `open_pct`: `(open - prev_close) / prev_close * 100`
+- `close_pct`: `(close - prev_close) / prev_close * 100`
+- `excess_return`: 对齐 `scripts/duanxianxia_review_backfill.py` 的盘前口径，按 `close_pct - auction_pct` 计算
+- 若缺失当日 dailyline 行或缺失竞价涨幅，则对应绩效字段为 `null`
+
 ## all_candidates_debug 主要字段说明
 
 - `code`: 股票代码
@@ -37,6 +45,10 @@
 - `regime_multiplier`: 环境乘数
 - `risk_penalty`: 风险惩罚乘数
 - `risk_flag`: 是否打风险标
+- `trade_date`: 绩效对应交易日
+- `dailyline_found`: 是否找到当日日线行
+- `prev_close/day_open/day_high/day_low/day_close`: 日线原始价格
+- `auction_pct/open_pct/close_pct/excess_return`: 绩效补充列
 - `score_weight_*`: 总分里各模块权重
 - `theme_*`: 题材匹配细节：匹配题材、标签、板块强度、忽略字段等
 - `auction_*`: 竞价细节：量比/抢筹/净额/封单/流动性/风险/命中族数等
@@ -134,7 +146,6 @@
 ```
 
 ## candidate_pools 尺寸
-
 - `main_attack_pool`: 0
 - `theme_rotation_pool`: 1
 - `board_watch_pool`: 1

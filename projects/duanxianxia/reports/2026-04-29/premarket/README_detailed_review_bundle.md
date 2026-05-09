@@ -71,3 +71,10 @@
 ## 备注
 
 本目录中的文件是为了复盘与模型改进导出的“详细结果包”，并不是生产链路正式输入。后续如果继续做切片分析，建议基于 `201743_all_candidates_flat.csv` 继续扩展对照列，例如补入当日收盘涨跌幅、开盘涨跌幅、分组统计等。
+
+## 新增绩效补充列
+
+- `auction_pct`: 竞价涨幅（采用 `auction_detail.latest_change_pct`）
+- `open_pct`: 当日开盘相对昨收涨幅
+- `close_pct`: 当日收盘相对昨收涨幅
+- `excess_return`: 对齐项目 review backfill 口径，按 `close_pct - auction_pct` 计算的超额收益

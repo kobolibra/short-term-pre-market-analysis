@@ -39,24 +39,26 @@ action_pools:
   theme_catchup_pct_max: 3.5
   theme_catchup_strong_min_aux_score: 35
   theme_catchup_weak_max_aux_score: 12
-  # Review showed weak signal_quality can still produce strong realized returns,
-  # so weak quality should be interpreted as low evidence, not an automatic kill.
+  # weak is low evidence, not an automatic kill.
   theme_weak_score_penalty: 6
 
   reversal_min_auction_strength: 25
   net_pressure_full_ratio: 0.002
 
-  # High-cost confirmation rows such as last-second/sustained strength without
-  # enough source evidence are not automatically avoid, but they should be
-  # tagged separately because review showed high cost can erase excess return.
+  # High auction cost is a risk by itself.  v7.3.1 always tags confirmation rows
+  # above this cost as high_cost_watch, even if some source evidence exists.
   confirmation_high_cost_pct: 7.0
-  confirmation_high_cost_min_source_evidence: 18
-  confirmation_high_cost_score_penalty: 10
+  confirmation_high_cost_score_penalty: 12
 
-  # FAKE_STRENGTH is no longer one hard bucket.  Production still excludes it
-  # from actionable pools, but low/normal cost fake-strength rows with acceptable
-  # liquidity are separated into FAKE_STRENGTH_WATCH for intraday repair checks.
+  # FAKE_STRENGTH split:
+  # - FAKE_STRENGTH_WATCH: not actionable premarket, but suitable for intraday repair checks.
+  # - SOFT_AVOID_REPAIR_CANDIDATE: still non-actionable; captures avoid rows that are not hard avoid.
   fake_watch_pct_min: -5.0
-  fake_watch_pct_max: 5.5
+  fake_watch_pct_max: 5.8
   fake_watch_min_liquidity_score: 45
   fake_watch_min_amount_wan: 800
+
+  soft_avoid_pct_min: -3.5
+  soft_avoid_pct_max: 4.0
+  soft_avoid_min_liquidity_score: 40
+  soft_avoid_min_amount_wan: 500

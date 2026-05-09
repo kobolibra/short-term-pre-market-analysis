@@ -21,20 +21,42 @@ action_pools:
     - "股权转让"
   high_cost_pct: 8.5
   board_watch_pct: 9.5
+
   follow_pct_min: 2.0
   follow_pct_max: 7.5
   follow_min_auction_strength: 50
   follow_min_source_evidence: 18
   follow_min_source_family_count: 2
+
   momentum_pct_min: 2.0
   momentum_pct_max: 5.8
   momentum_min_auction_strength: 50
   momentum_min_liquidity_score: 55
   momentum_min_amount_wan: 1000
+
   theme_catchup_min_theme: 80
   theme_catchup_pct_min: -1.5
   theme_catchup_pct_max: 3.5
   theme_catchup_strong_min_aux_score: 35
   theme_catchup_weak_max_aux_score: 12
+  # Review showed weak signal_quality can still produce strong realized returns,
+  # so weak quality should be interpreted as low evidence, not an automatic kill.
+  theme_weak_score_penalty: 6
+
   reversal_min_auction_strength: 25
   net_pressure_full_ratio: 0.002
+
+  # High-cost confirmation rows such as last-second/sustained strength without
+  # enough source evidence are not automatically avoid, but they should be
+  # tagged separately because review showed high cost can erase excess return.
+  confirmation_high_cost_pct: 7.0
+  confirmation_high_cost_min_source_evidence: 18
+  confirmation_high_cost_score_penalty: 10
+
+  # FAKE_STRENGTH is no longer one hard bucket.  Production still excludes it
+  # from actionable pools, but low/normal cost fake-strength rows with acceptable
+  # liquidity are separated into FAKE_STRENGTH_WATCH for intraday repair checks.
+  fake_watch_pct_min: -5.0
+  fake_watch_pct_max: 5.5
+  fake_watch_min_liquidity_score: 45
+  fake_watch_min_amount_wan: 800

@@ -4,11 +4,16 @@ Formalizes the action-pool report so the trading view is no longer one mixed
 Top30.  Production classification still uses only premarket-visible fields; any
 close_pct/excess_return fields are used only for review diagnostics.
 
-Important review-mode rule:
-- The premarket runner cannot know close_pct/excess_return at 09:25.
-- A later review bundle may backfill those fields into flat CSV/JSONL.
-- When that happens, v7.3 source JSON must be recomputed so pool_performance and
-  review_diagnostics are not left empty.
+Review lessons reflected here without one-day overfitting:
+- LOW_OPEN_REVERSAL and MOMENTUM_CATCHUP remain separate actionable pools.
+- THEME_CATCHUP weak quality means weak premarket evidence, not an automatic
+  realized-return failure.
+- High-cost confirmation rows are tagged because review showed high auction cost
+  can erase excess return even when last-second/sustained strength exists.
+- FAKE_STRENGTH is split into hard AVOID vs FAKE_STRENGTH_WATCH so repair cases
+  can be monitored without making them actionable at 09:25.
+- Review backfill can recompute pool_performance/review_diagnostics after
+  close_pct/excess_return are available.
 """
 from __future__ import annotations
 
@@ -28,10 +33,12 @@ ACTION_PRIORITY = {
     "LOW_OPEN_REVERSAL": 30,
     "BOARD_WATCH": 40,
     "CONFIRMATION_WATCH": 80,
+    "FAKE_STRENGTH_WATCH": 90,
     "AVOID": 99,
     "DEBUG_ONLY": 999,
 }
 ACTIONABLE = {"AUCTION_FOLLOW", "MOMENTUM_CATCHUP", "THEME_CATCHUP", "LOW_OPEN_REVERSAL", "BOARD_WATCH"}
+NON_ACTIONABLE_WATCH = {"CONFIRMATION_WATCH", "FAKE_STRENGTH_WATCH"}
 PERFORMANCE_KEYS = ("auction_pct", "open_pct", "close_pct", "excess_return", "dailyline_found", "prev_close", "day_open", "day_high", "day_low", "day_close")
 
 
@@ -114,12 +121,30 @@ def _perf(d: Dict[str, Any]) -> Dict[str, Any]:
 
 def _compact(d: Dict[str, Any]) -> Dict[str, Any]:
     out = v72._compact_decision(d)
-    out["action_quality"] = d.get("action_quality")
+    quality = d.get("action_quality")
+    out["action_quality"] = quality
+    out["signal_quality"] = d.get("signal_quality") or quality
     out["action_priority"] = d.get("action_priority")
     p = _perf(d)
     if p:
         out["performance"] = p
     return out
+
+
+def _base_tags(d: Dict[str, Any]) -> List[str]:
+    return list(dict.fromkeys(d.get("action_tags") or []))
+
+
+def _fake_strength_watchable(out: Dict[str, Any], cfg: Dict[str, Any], pct: Optional[float], liq: float, amt: float) -> bool:
+    if out.get("risk_penalty") == 0:
+        return False
+    if pct is None:
+        return False
+    return (
+        float(cfg.get("fake_watch_pct_min", -5.0)) <= pct <= float(cfg.get("fake_watch_pct_max", 5.5))
+        and liq >= float(cfg.get("fake_watch_min_liquidity_score", 45))
+        and amt >= float(cfg.get("fake_watch_min_amount_wan", 800))
+    )
 
 
 def _upgrade_row(d: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
@@ -128,16 +153,33 @@ def _upgrade_row(d: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
     reason = str(out.get("action_reason") or "")
     setup = str(out.get("setup_v72") or "none")
     conf = str(out.get("confidence") or "none")
+    auction_type = str(out.get("auction_setup_type") or _detail(out).get("auction_setup_type") or "")
+    entry_tag = str(out.get("entry_tag") or _detail(out).get("entry_tag") or "normal")
     pct = _auction_pct(out)
     auction = float(_metric(out, "auction_strength", 0.0) or 0.0)
     liq = float(_metric(out, "liquidity_score", 50.0) or 50.0)
     amt = float(_metric(out, "auction_amount_wan", 0.0) or 0.0)
     src = float(_metric(out, "source_evidence_score", 0.0) or 0.0)
     theme = float(_metric(out, "theme_strength_t0", 0.0) or 0.0)
-    tags = list(out.get("action_tags") or [])
+    tags = _base_tags(out)
 
-    if action == "CONFIRMATION_WATCH" and setup == "none" and conf == "none" and (out.get("final_score") or 0) == 0 and "not_selected" in reason:
-        out.update(action_type="DEBUG_ONLY", action_confidence="none", action_score=0.0, action_reason="not_selected_debug_universe_only", action_quality="debug")
+    # v7.2 hard-coded fake strength into AVOID.  v7.3 keeps hard avoid for bad
+    # cases, but separates repair-watch cases so they can be reviewed intraday.
+    if action == "AVOID" and (auction_type == "FAKE_STRENGTH" or entry_tag == "avoid" or "fake_strength" in reason):
+        if _fake_strength_watchable(out, cfg, pct, liq, amt):
+            if "fake_strength" not in tags:
+                tags.append("fake_strength")
+            if "needs_intraday_repair" not in tags:
+                tags.append("needs_intraday_repair")
+            score = _clamp(0.30 * auction + 0.25 * liq + 0.20 * min(100, amt / 5000 * 100) + 0.15 * max(0.0, 6.0 - abs(float(pct or 0))) * 10 + 0.10 * max(src, theme * 0.2))
+            out.update(action_type="FAKE_STRENGTH_WATCH", action_confidence=_confidence(score, 58, 38), action_score=round(score, 2), action_reason="fake_strength_needs_intraday_repair_confirmation", action_quality="repair_watch", signal_quality="repair_watch", action_tags=tags)
+        else:
+            out.setdefault("action_quality", "avoid")
+            out.setdefault("signal_quality", "avoid")
+
+    elif action == "CONFIRMATION_WATCH" and setup == "none" and conf == "none" and (out.get("final_score") or 0) == 0 and "not_selected" in reason:
+        out.update(action_type="DEBUG_ONLY", action_confidence="none", action_score=0.0, action_reason="not_selected_debug_universe_only", action_quality="debug", signal_quality="debug")
+
     elif action == "CONFIRMATION_WATCH":
         lo = float(cfg.get("momentum_pct_min", 2.0)); hi = float(cfg.get("momentum_pct_max", 5.8))
         min_auc = float(cfg.get("momentum_min_auction_strength", 50)); min_liq = float(cfg.get("momentum_min_liquidity_score", 55)); min_amt = float(cfg.get("momentum_min_amount_wan", 1000))
@@ -145,9 +187,19 @@ def _upgrade_row(d: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
             score = _clamp(0.46 * auction + 0.18 * liq + 0.14 * min(100, amt / 5000 * 100) + 0.10 * max(src, theme * 0.25))
             if src < float(cfg.get("follow_min_source_evidence", 18)) and "incomplete_source_evidence" not in tags:
                 tags.append("incomplete_source_evidence")
-            out.update(action_type="MOMENTUM_CATCHUP", action_confidence=_confidence(score, 58, 42), action_score=round(score, 2), action_reason="strong_auction_momentum_incomplete_theme_or_source", action_quality="momentum", action_tags=tags)
+            out.update(action_type="MOMENTUM_CATCHUP", action_confidence=_confidence(score, 58, 42), action_score=round(score, 2), action_reason="strong_auction_momentum_incomplete_theme_or_source", action_quality="momentum", signal_quality="momentum", action_tags=tags)
         else:
-            out.setdefault("action_quality", "watch")
+            quality = "watch"
+            score = float(out.get("action_score") or 0)
+            if pct is not None and pct >= float(cfg.get("confirmation_high_cost_pct", 7.0)) and src < float(cfg.get("confirmation_high_cost_min_source_evidence", 18)):
+                quality = "high_cost_watch"
+                if "high_cost_confirmation" not in tags:
+                    tags.append("high_cost_confirmation")
+                if "needs_stronger_intraday_hold" not in tags:
+                    tags.append("needs_stronger_intraday_hold")
+                score = _clamp(score - float(cfg.get("confirmation_high_cost_score_penalty", 10)))
+            out.update(action_quality=quality, signal_quality=quality, action_score=round(score, 2), action_tags=tags)
+
     elif action == "THEME_CATCHUP":
         aux = _theme_aux_score(out, cfg)
         quality = _theme_quality(aux, cfg)
@@ -155,18 +207,23 @@ def _upgrade_row(d: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
             tags.append("theme_aux_strong")
         elif quality == "weak" and "theme_aux_weak" not in tags:
             tags.append("theme_aux_weak")
-            out["action_score"] = round(_clamp(float(out.get("action_score") or 0) - 12), 2)
-        out.update(action_quality=quality, action_tags=tags)
+            # Review showed weak signal_quality can still win; keep a mild
+            # confidence penalty, not a hard demotion.
+            out["action_score"] = round(_clamp(float(out.get("action_score") or 0) - float(cfg.get("theme_weak_score_penalty", 6))), 2)
+        out.update(action_quality=quality, signal_quality=quality, action_tags=tags)
+
     elif action == "BOARD_WATCH":
-        out.setdefault("action_quality", "watch_only")
+        out.setdefault("action_quality", "watch_only"); out.setdefault("signal_quality", "watch_only")
     elif action == "LOW_OPEN_REVERSAL":
-        out.setdefault("action_quality", "repair")
+        out.setdefault("action_quality", "repair"); out.setdefault("signal_quality", "repair")
     elif action == "AUCTION_FOLLOW":
-        out.setdefault("action_quality", "main_attack")
-    elif action == "AVOID":
-        out.setdefault("action_quality", "avoid")
+        out.setdefault("action_quality", "main_attack"); out.setdefault("signal_quality", "main_attack")
+    elif action == "MOMENTUM_CATCHUP":
+        out.setdefault("action_quality", "momentum"); out.setdefault("signal_quality", "momentum")
     elif action == "DEBUG_ONLY":
-        out.setdefault("action_quality", "debug")
+        out.setdefault("action_quality", "debug"); out.setdefault("signal_quality", "debug")
+    elif action == "AVOID":
+        out.setdefault("action_quality", "avoid"); out.setdefault("signal_quality", "avoid")
 
     out["action_priority"] = ACTION_PRIORITY.get(str(out.get("action_type")), 999)
     return out
@@ -191,7 +248,7 @@ def _stats(rows: List[Dict[str, Any]]) -> Dict[str, int]:
 def _quality_stats(rows: List[Dict[str, Any]]) -> Dict[str, int]:
     out: Dict[str, int] = {}
     for r in rows:
-        k = f"{r.get('action_type') or 'DEBUG_ONLY'}:{r.get('action_quality') or 'standard'}"
+        k = f"{r.get('action_type') or 'DEBUG_ONLY'}:{r.get('signal_quality') or r.get('action_quality') or 'standard'}"
         out[k] = out.get(k, 0) + 1
     return out
 
@@ -217,19 +274,31 @@ def _performance_stats(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
 
 
 def _diagnostics(rows: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-    missed, false_pos = [], []
+    missed, debug_missed, avoid_missed, fake_watch_winners, false_pos = [], [], [], [], []
     for r in rows:
         ex = _f(_perf(r).get("excess_return"), None)
         if ex is None:
             continue
         c = _compact(r)
-        if r.get("action_type") in {"CONFIRMATION_WATCH", "DEBUG_ONLY"} and ex >= 8:
-            c["diagnostic"] = "missed_winner_candidate"; missed.append(c)
-        if r.get("action_type") in ACTIONABLE and ex <= -3:
+        action = r.get("action_type")
+        if action in {"CONFIRMATION_WATCH", "DEBUG_ONLY", "AVOID", "FAKE_STRENGTH_WATCH"} and ex >= 8:
+            c["diagnostic"] = "missed_or_non_actionable_winner"
+            missed.append(c)
+            if action == "DEBUG_ONLY":
+                debug_missed.append(c)
+            elif action == "AVOID":
+                avoid_missed.append(c)
+            elif action == "FAKE_STRENGTH_WATCH":
+                fake_watch_winners.append(c)
+        if action in ACTIONABLE and ex <= -3:
             c["diagnostic"] = "actionable_false_positive"; false_pos.append(c)
-    missed.sort(key=lambda x: float((x.get("performance") or {}).get("excess_return") or 0), reverse=True)
-    false_pos.sort(key=lambda x: float((x.get("performance") or {}).get("excess_return") or 0))
-    return {"missed_winners": missed[:30], "false_positives": false_pos[:30]}
+    key = lambda x: float((x.get("performance") or {}).get("excess_return") or 0)
+    missed.sort(key=key, reverse=True)
+    debug_missed.sort(key=key, reverse=True)
+    avoid_missed.sort(key=key, reverse=True)
+    fake_watch_winners.sort(key=key, reverse=True)
+    false_pos.sort(key=key)
+    return {"missed_winners": missed[:30], "debug_missed_winners": debug_missed[:30], "avoid_missed_winners": avoid_missed[:30], "fake_strength_watch_winners": fake_watch_winners[:30], "false_positives": false_pos[:30]}
 
 
 def _pools(rows: List[Dict[str, Any]], pool_max: int) -> Dict[str, List[Dict[str, Any]]]:
@@ -242,6 +311,7 @@ def _pools(rows: List[Dict[str, Any]], pool_max: int) -> Dict[str, List[Dict[str
         "low_open_reversal_pool": lambda r: r.get("action_type") == "LOW_OPEN_REVERSAL",
         "board_watch_pool": lambda r: r.get("action_type") == "BOARD_WATCH",
         "confirmation_watch_pool": lambda r: r.get("action_type") == "CONFIRMATION_WATCH",
+        "fake_strength_watch_pool": lambda r: r.get("action_type") == "FAKE_STRENGTH_WATCH",
         "avoid_or_risk_pool": lambda r: r.get("action_type") == "AVOID",
         "debug_only_pool": lambda r: r.get("action_type") == "DEBUG_ONLY",
     }
@@ -262,6 +332,8 @@ def _rebuild_v73(shaped: Dict[str, Any], rows: List[Dict[str, Any]], max_candida
         "v7.3 is action-pool first: use candidate_pools/actionable_candidates as the trading view, not the legacy mixed rank.",
         "DEBUG_ONLY rows are retained only for debug/review and are excluded from trading pools.",
         "MOMENTUM_CATCHUP is separated from AUCTION_FOLLOW because it has price momentum but incomplete theme/source evidence.",
+        "action_quality/signal_quality describe premarket evidence quality, not realized return quality.",
+        "FAKE_STRENGTH_WATCH is not actionable at premarket; it requires intraday repair confirmation before any consideration.",
     ]
     for note in required_notes:
         if note not in notes:
@@ -328,11 +400,7 @@ def load_performance_map_from_flat(path: str | Path) -> Dict[str, Dict[str, Any]
 
 
 def attach_performance_to_rows(rows: List[Dict[str, Any]], performance_by_code: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Return rows with derived_performance injected by stock code.
-
-    Existing premarket classification fields are preserved.  This function only
-    adds realized review fields, then downstream stats/diagnostics are rebuilt.
-    """
+    """Return rows with derived_performance injected by stock code."""
     out: List[Dict[str, Any]] = []
     for row in rows or []:
         copied = dict(row)
@@ -342,7 +410,6 @@ def attach_performance_to_rows(rows: List[Dict[str, Any]], performance_by_code: 
             perf.update(performance_by_code[code])
         if perf:
             copied["derived_performance"] = perf
-            # Also expose these at row top-level for flat-export compatibility.
             for key in PERFORMANCE_KEYS:
                 if perf.get(key) is not None:
                     copied[key] = perf.get(key)
@@ -351,12 +418,7 @@ def attach_performance_to_rows(rows: List[Dict[str, Any]], performance_by_code: 
 
 
 def recompute_v73_review_metrics(shaped: Dict[str, Any], performance_by_code: Optional[Dict[str, Dict[str, Any]]] = None, action_config: Optional[Dict[str, Any]] = None, max_candidates: int = 30, watch_tier_max: int = 60, pool_max: int = 15) -> Dict[str, Any]:
-    """Recompute v7.3 pool_performance/review_diagnostics after review backfill.
-
-    Use this after close_pct/excess_return are available.  It fixes the previous
-    failure mode where markdown/flat files had realized returns, but the source
-    analysis JSON still showed with_performance=0.
-    """
+    """Recompute v7.3 pool_performance/review_diagnostics after review backfill."""
     cfg = action_config or {}
     source = shaped.get("all_candidates_action_ranked") or shaped.get("all_candidates_debug") or []
     rows = attach_performance_to_rows(source, performance_by_code or {})
@@ -387,16 +449,18 @@ def _self_test() -> None:
         {"code":"000001","name":"follow","setup_v72":"T0-ROTATE","confidence":"high","final_score":60,"auction_strength":76,"theme_strength_t0":95,"auction_detail":{"latest_change_pct":5,"source_evidence_score":30,"source_family_count":3,"auction_amount_wan":5000,"liquidity_score":90}},
         {"code":"000002","name":"momentum","setup_v72":"T0-GENERAL","confidence":"low","final_score":40,"auction_strength":55,"theme_strength_t0":20,"auction_detail":{"latest_change_pct":3,"source_evidence_score":0,"auction_amount_wan":3000,"liquidity_score":80}},
         {"code":"000003","name":"debug","setup_v72":"none","confidence":"none","final_score":0,"auction_strength":0,"theme_strength_t0":0},
+        {"code":"000004","name":"fake_watch","setup_v72":"none","confidence":"none","final_score":0,"entry_tag":"avoid","auction_setup_type":"FAKE_STRENGTH","auction_strength":20,"auction_detail":{"latest_change_pct":1.0,"auction_amount_wan":2000,"liquidity_score":70}},
     ]
     out = shape_v7_3_output(rows, action_config={"momentum_min_amount_wan":1000})
     assert out["version"] == VERSION
     assert out["action_stats"].get("MOMENTUM_CATCHUP") == 1, out["action_stats"]
     assert out["action_stats"].get("DEBUG_ONLY") == 1, out["action_stats"]
     assert "momentum_catchup_pool" in out["candidate_pools"]
-    perf = {"000001": {"close_pct": 10, "auction_pct": 5, "excess_return": 5}, "000002": {"close_pct": 20, "auction_pct": 3, "excess_return": 17}}
+    perf = {"000001": {"close_pct": 10, "auction_pct": 5, "excess_return": 5}, "000002": {"close_pct": 20, "auction_pct": 3, "excess_return": 17}, "000004": {"close_pct": 10, "auction_pct": 1, "excess_return": 9}}
     recomputed = recompute_v73_review_metrics(out, perf, action_config={"momentum_min_amount_wan":1000})
     assert recomputed["pool_performance"]["AUCTION_FOLLOW"]["with_performance"] == 1, recomputed["pool_performance"]
     assert recomputed["pool_performance"]["MOMENTUM_CATCHUP"]["with_performance"] == 1, recomputed["pool_performance"]
+    assert "fake_strength_watch_winners" in recomputed["review_diagnostics"], recomputed["review_diagnostics"]
     print("output v7.3 _self_test passed")
 
 

@@ -309,7 +309,7 @@ def load_performance_map_from_flat(path: str | Path) -> Dict[str, Dict[str, Any]
                 if isinstance(item, dict):
                     rows.append(item)
     else:
-        with p.open("r", encoding="utf-8", newline="") as fp:
+        with p.open("r", encoding="utf-8-sig", newline="") as fp:
             rows = list(csv.DictReader(fp))
     out: Dict[str, Dict[str, Any]] = {}
     for row in rows:

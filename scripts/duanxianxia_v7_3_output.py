@@ -384,16 +384,16 @@ def write_v7_3_outputs(output_dir: str, decisions: List[Dict[str, Any]], meta: O
 
 def _self_test() -> None:
     rows = [
-        {"code":"A","name":"follow","setup_v72":"T0-ROTATE","confidence":"high","final_score":60,"auction_strength":76,"theme_strength_t0":95,"auction_detail":{"latest_change_pct":5,"source_evidence_score":30,"source_family_count":3,"auction_amount_wan":5000,"liquidity_score":90}},
-        {"code":"B","name":"momentum","setup_v72":"T0-GENERAL","confidence":"low","final_score":40,"auction_strength":55,"theme_strength_t0":20,"auction_detail":{"latest_change_pct":3,"source_evidence_score":0,"auction_amount_wan":3000,"liquidity_score":80}},
-        {"code":"C","name":"debug","setup_v72":"none","confidence":"none","final_score":0,"auction_strength":0,"theme_strength_t0":0},
+        {"code":"000001","name":"follow","setup_v72":"T0-ROTATE","confidence":"high","final_score":60,"auction_strength":76,"theme_strength_t0":95,"auction_detail":{"latest_change_pct":5,"source_evidence_score":30,"source_family_count":3,"auction_amount_wan":5000,"liquidity_score":90}},
+        {"code":"000002","name":"momentum","setup_v72":"T0-GENERAL","confidence":"low","final_score":40,"auction_strength":55,"theme_strength_t0":20,"auction_detail":{"latest_change_pct":3,"source_evidence_score":0,"auction_amount_wan":3000,"liquidity_score":80}},
+        {"code":"000003","name":"debug","setup_v72":"none","confidence":"none","final_score":0,"auction_strength":0,"theme_strength_t0":0},
     ]
     out = shape_v7_3_output(rows, action_config={"momentum_min_amount_wan":1000})
     assert out["version"] == VERSION
     assert out["action_stats"].get("MOMENTUM_CATCHUP") == 1, out["action_stats"]
     assert out["action_stats"].get("DEBUG_ONLY") == 1, out["action_stats"]
     assert "momentum_catchup_pool" in out["candidate_pools"]
-    perf = {"00000A": {"close_pct": 10, "auction_pct": 5, "excess_return": 5}, "00000B": {"close_pct": 20, "auction_pct": 3, "excess_return": 17}}
+    perf = {"000001": {"close_pct": 10, "auction_pct": 5, "excess_return": 5}, "000002": {"close_pct": 20, "auction_pct": 3, "excess_return": 17}}
     recomputed = recompute_v73_review_metrics(out, perf, action_config={"momentum_min_amount_wan":1000})
     assert recomputed["pool_performance"]["AUCTION_FOLLOW"]["with_performance"] == 1, recomputed["pool_performance"]
     assert recomputed["pool_performance"]["MOMENTUM_CATCHUP"]["with_performance"] == 1, recomputed["pool_performance"]

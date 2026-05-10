@@ -1,11 +1,12 @@
-"""Next-level v7.3 recall/risk overlay.
+"""Professional next-level v7.3 recall/ranking overlay.
 
-This module monkey-patches duanxianxia_v7_3_output at import time so the
-existing runner/backfill/bundle tools can keep their public API while gaining
-new production rules.
-
-Production rules still use only premarket-visible fields.  Realized
-close/excess returns remain review-only.
+This overlay is intentionally narrow and auditable:
+- production rules use only premarket-visible fields;
+- realized returns stay review-only;
+- BROAD_REPAIR_MOMENTUM is a recall expansion for no-theme/no-source repair;
+- HIGH_COST_REPAIR_WATCH is non-actionable, used to avoid hiding high-cost
+  repair candidates inside hard avoid;
+- expected-return ranking is display-only and now ranks broad repair explicitly.
 """
 from __future__ import annotations
 
@@ -51,9 +52,7 @@ def _is_broad_repair_candidate(row: Dict[str, Any], cfg: Dict[str, Any]) -> bool
         return False
     if str(row.get("action_type")) != "DEBUG_ONLY":
         return False
-    setup = str(row.get("setup_v72") or "none")
-    conf = str(row.get("confidence") or "none")
-    if setup != "none" or conf != "none":
+    if str(row.get("setup_v72") or "none") != "none" or str(row.get("confidence") or "none") != "none":
         return False
     auction_type = str(row.get("auction_setup_type") or (row.get("auction_detail") or {}).get("auction_setup_type") or "")
     if auction_type in {"BOARD_LOCK_WATCH", "FAKE_STRENGTH"}:
@@ -64,11 +63,7 @@ def _is_broad_repair_candidate(row: Dict[str, Any], cfg: Dict[str, Any]) -> bool
     theme = float(v73._metric(row, "theme_strength_t0", 0.0) or 0.0)
     src = float(v73._metric(row, "source_evidence_score", 0.0) or 0.0)
     fam = int(v73._metric(row, "source_family_count", 0) or 0)
-    if theme > float(cfg.get("broad_repair_theme_max", 20)):
-        return False
-    if src > float(cfg.get("broad_repair_source_max", 1.0)):
-        return False
-    if fam > int(cfg.get("broad_repair_family_max", 1)):
+    if theme > float(cfg.get("broad_repair_theme_max", 20)) or src > float(cfg.get("broad_repair_source_max", 1.0)) or fam > int(cfg.get("broad_repair_family_max", 1)):
         return False
     auction = float(v73._metric(row, "auction_strength", 0.0) or 0.0)
     amt = float(v73._metric(row, "auction_amount_wan", 0.0) or 0.0)
@@ -84,8 +79,7 @@ def _is_broad_repair_candidate(row: Dict[str, Any], cfg: Dict[str, Any]) -> bool
     )
     if not (normal or deep):
         return False
-    score = _broad_repair_score(row, cfg, pct, auction, amt, src, theme)
-    return score >= float(cfg.get("broad_repair_score_min", 24))
+    return _broad_repair_score(row, cfg, pct, auction, amt, src, theme) >= float(cfg.get("broad_repair_score_min", 24))
 
 
 def _is_high_cost_repair_watch(row: Dict[str, Any], cfg: Dict[str, Any]) -> bool:
@@ -103,6 +97,56 @@ def _is_high_cost_repair_watch(row: Dict[str, Any], cfg: Dict[str, Any]) -> bool
     )
 
 
+def _expected_score(row: Dict[str, Any], cfg: Dict[str, Any]) -> float:
+    action = str(row.get("action_type"))
+    quality = str(row.get("signal_quality") or row.get("action_quality"))
+    pct = v73._auction_pct(row)
+    auction = float(v73._metric(row, "auction_strength", 0.0) or 0.0)
+    amt = float(v73._metric(row, "auction_amount_wan", 0.0) or 0.0)
+    src = float(v73._metric(row, "source_evidence_score", 0.0) or 0.0)
+    theme = float(v73._metric(row, "theme_strength_t0", 0.0) or 0.0)
+
+    pool_bonus = {
+        "MOMENTUM_CATCHUP": float(cfg.get("expected_bonus_momentum", 30)),
+        "LOW_OPEN_REVERSAL": float(cfg.get("expected_bonus_low_open_reversal", 27)),
+        "BROAD_REPAIR_MOMENTUM": float(cfg.get("expected_bonus_broad_repair", 24)),
+        "THEME_CATCHUP": float(cfg.get("expected_bonus_theme", 16)),
+        "AUCTION_FOLLOW": float(cfg.get("expected_bonus_auction_follow", 13)),
+        "CONFIRMATION_WATCH": 4.0,
+        "FAKE_STRENGTH_WATCH": float(cfg.get("expected_bonus_fake_watch", 4)),
+        "HIGH_COST_REPAIR_WATCH": float(cfg.get("expected_bonus_high_cost_repair_watch", -8)),
+        "SOFT_AVOID_REPAIR_CANDIDATE": -10.0,
+        "BOARD_WATCH": -8.0,
+        "AVOID": -30.0,
+        "DEBUG_ONLY": -70.0,
+    }.get(action, -50.0)
+    quality_bonus = {
+        "momentum": 8.0,
+        "repair": 7.0,
+        "broad_repair": 7.0,
+        "strong": 6.0,
+        "medium": 3.0,
+        "main_attack": 3.0,
+        "weak": -1.0,
+        "high_cost_watch": -10.0,
+        "high_cost_repair_watch": -12.0,
+        "soft_avoid": -12.0,
+        "hard_avoid": -18.0,
+    }.get(quality, 0.0)
+    cost_penalty = max(0.0, float(pct or 0) - 5.5) * 2.0 if pct is not None else 0.0
+    deep_repair_bonus = 4.0 if action == "BROAD_REPAIR_MOMENTUM" and pct is not None and pct < -5 else 0.0
+    return (
+        pool_bonus
+        + quality_bonus
+        + min(18.0, auction * 0.18)
+        + min(14.0, amt / 5000.0 * 14.0)
+        + min(8.0, src * 0.25)
+        + min(5.0, theme * 0.03)
+        + deep_repair_bonus
+        - cost_penalty
+    )
+
+
 def apply() -> None:
     global _APPLIED
     if _APPLIED:
@@ -113,10 +157,7 @@ def apply() -> None:
     base_pools = v73._pools
     base_diagnostics = v73._diagnostics
 
-    v73.ACTION_PRIORITY.update({
-        "BROAD_REPAIR_MOMENTUM": 32,
-        "HIGH_COST_REPAIR_WATCH": 92,
-    })
+    v73.ACTION_PRIORITY.update({"BROAD_REPAIR_MOMENTUM": 32, "HIGH_COST_REPAIR_WATCH": 92})
     v73.ACTIONABLE.add("BROAD_REPAIR_MOMENTUM")
     v73.NON_ACTIONABLE_WATCH.add("HIGH_COST_REPAIR_WATCH")
 
@@ -130,41 +171,25 @@ def apply() -> None:
         tags = _tags(out)
 
         if _is_broad_repair_candidate(out, cfg):
-            if "no_theme_no_source" not in tags:
-                tags.append("no_theme_no_source")
-            if "broad_repair_momentum" not in tags:
-                tags.append("broad_repair_momentum")
+            for t in ["no_theme_no_source", "broad_repair_momentum"]:
+                if t not in tags:
+                    tags.append(t)
             if pct is not None and pct < -5 and "deep_repair" not in tags:
                 tags.append("deep_repair")
             score = _broad_repair_score(out, cfg, pct, auction, amt, src, theme)
-            out.update(
-                action_type="BROAD_REPAIR_MOMENTUM",
-                action_quality="broad_repair",
-                signal_quality="broad_repair",
-                action_reason="no_theme_no_source_broad_repair_momentum",
-                action_score=round(score, 2),
-                action_confidence=v73._confidence(score, 55, 35),
-                action_tags=tags,
-            )
-
+            out.update(action_type="BROAD_REPAIR_MOMENTUM", action_quality="broad_repair", signal_quality="broad_repair", action_reason="no_theme_no_source_broad_repair_momentum", action_score=round(score, 2), action_confidence=v73._confidence(score, 55, 35), action_tags=tags)
         elif _is_high_cost_repair_watch(out, cfg):
-            if "high_cost_fake_strength" not in tags:
-                tags.append("high_cost_fake_strength")
-            if "repair_watch_not_actionable" not in tags:
-                tags.append("repair_watch_not_actionable")
+            for t in ["high_cost_fake_strength", "repair_watch_not_actionable"]:
+                if t not in tags:
+                    tags.append(t)
             score = v73._clamp(0.25 * auction + 0.25 * min(100.0, amt / 5000.0 * 100.0) + 0.15 * theme)
-            out.update(
-                action_type="HIGH_COST_REPAIR_WATCH",
-                action_quality="high_cost_repair_watch",
-                signal_quality="high_cost_repair_watch",
-                action_reason="high_cost_fake_strength_repair_watch_only",
-                action_score=round(score, 2),
-                action_confidence=v73._confidence(score, 60, 40),
-                action_tags=tags,
-            )
-
+            out.update(action_type="HIGH_COST_REPAIR_WATCH", action_quality="high_cost_repair_watch", signal_quality="high_cost_repair_watch", action_reason="high_cost_fake_strength_repair_watch_only", action_score=round(score, 2), action_confidence=v73._confidence(score, 60, 40), action_tags=tags)
+        out["expected_return_score"] = round(_expected_score(out, cfg), 2)
         out["action_priority"] = v73.ACTION_PRIORITY.get(str(out.get("action_type")), 999)
         return out
+
+    def expected_sort_next(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        return sorted(rows, key=lambda r: (float(r.get("expected_return_score") or -999), float(r.get("action_score") or 0), float(r.get("final_score") or 0)), reverse=True)
 
     def pools_next(rows: List[Dict[str, Any]], pool_max: int) -> Dict[str, List[Dict[str, Any]]]:
         out = base_pools(rows, pool_max)
@@ -190,15 +215,14 @@ def apply() -> None:
             if r.get("action_type") == "HIGH_COST_REPAIR_WATCH" and ex >= 8:
                 c["diagnostic"] = "high_cost_repair_watch_winner"; high_cost_watch_winners.append(c)
         key = lambda x: float((x.get("performance") or {}).get("excess_return") or 0)
-        broad_winners.sort(key=key, reverse=True)
-        broad_false.sort(key=key)
-        high_cost_watch_winners.sort(key=key, reverse=True)
+        broad_winners.sort(key=key, reverse=True); broad_false.sort(key=key); high_cost_watch_winners.sort(key=key, reverse=True)
         out["broad_repair_winners"] = broad_winners[:30]
         out["broad_repair_false_positives"] = broad_false[:30]
         out["high_cost_repair_watch_winners"] = high_cost_watch_winners[:30]
         return out
 
     v73._upgrade_row = upgrade_row_next
+    v73._sort_expected_return_proxy = expected_sort_next
     v73._pools = pools_next
     v73._diagnostics = diagnostics_next
 

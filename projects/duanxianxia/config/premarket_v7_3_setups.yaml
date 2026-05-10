@@ -1,8 +1,4 @@
 # Premarket v7.3 action-pool production overlay
-#
-# v7.3 is the formal production entry for the action-pool redesign. It keeps the
-# v7.2 data/scoring foundation, then upgrades the output contract so users read
-# candidates by trading action instead of one mixed final_score rank.
 version: "premarket_v7_3"
 
 output:
@@ -44,23 +40,38 @@ action_pools:
   reversal_min_auction_strength: 25
   net_pressure_full_ratio: 0.002
 
-  # High auction cost is a risk by itself.  v7.3 always tags confirmation rows
-  # above this cost as high_cost_watch, even if some source evidence exists.
   confirmation_high_cost_pct: 7.0
   confirmation_high_cost_score_penalty: 12
 
-  # FAKE_STRENGTH split:
-  # - FAKE_STRENGTH_WATCH: not actionable premarket, but suitable for intraday repair checks.
-  # - SOFT_AVOID_REPAIR_CANDIDATE: still non-actionable; captures avoid rows that are not hard avoid.
   fake_watch_pct_min: -5.0
   fake_watch_pct_max: 5.8
   fake_watch_min_liquidity_score: 45
   fake_watch_min_amount_wan: 800
 
-  # Wider than fake-watch by design: soft avoid is review/intraday-confirmation only,
-  # not an actionable premarket pool.  It prevents moderate-cost avoid rows from
-  # being mislabeled as hard avoid before multi-day evidence is available.
   soft_avoid_pct_min: -3.5
   soft_avoid_pct_max: 4.0
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
+
+  # v7.3 next-level recall pool: captures no-theme/no-source broad repair momentum
+  # exposed by review_profiles. Uses only 09:25-visible fields and remains low-confidence
+  # unless confirmed intraday.
+  broad_repair_enabled: true
+  broad_repair_theme_max: 20
+  broad_repair_source_max: 1.0
+  broad_repair_family_max: 1
+  broad_repair_pct_min: -2.0
+  broad_repair_pct_max: 5.0
+  broad_repair_min_auction_strength: 12
+  broad_repair_min_amount_wan: 800
+  broad_repair_deep_pct_min: -18.0
+  broad_repair_deep_pct_max: -5.0
+  broad_repair_deep_min_auction_strength: 8
+  broad_repair_deep_min_amount_wan: 800
+  broad_repair_score_min: 24
+
+  # High-cost fake strength is not a buy list, but should not be buried in hard avoid.
+  high_cost_repair_watch_pct_min: 7.0
+  high_cost_repair_watch_pct_max: 10.5
+  high_cost_repair_watch_min_amount_wan: 5000
+  high_cost_repair_watch_min_theme: 80

@@ -1,14 +1,5 @@
 #!/usr/bin/env python3
-"""Recompute v7.3 review metrics after close_pct/excess_return backfill.
-
-Usage:
-  python scripts/duanxianxia_v7_3_review_backfill.py \
-    --analysis projects/duanxianxia/reports/2026-04-29/premarket/120615_analysis_v7_3.json \
-    --flat projects/duanxianxia/reports/2026-04-29/premarket/120615_all_candidates_flat.csv
-
-This patches the source v7.3 JSON so pool_performance/review_diagnostics are
-consistent with the already-backfilled flat CSV/JSONL bundle.
-"""
+"""Recompute v7.3 review metrics after close_pct/excess_return backfill."""
 from __future__ import annotations
 
 import argparse
@@ -20,6 +11,7 @@ SCRIPTS_DIR = Path(__file__).parent.resolve()
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
+import duanxianxia_v7_3_next_level_patch  # noqa: F401 - applies v7.3 next-level overlay
 from duanxianxia_v7_3_output import load_performance_map_from_flat, recompute_v73_review_metrics
 
 

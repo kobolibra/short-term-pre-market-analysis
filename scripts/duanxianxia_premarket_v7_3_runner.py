@@ -20,6 +20,7 @@ except Exception:
     yaml = None
 
 from duanxianxia_premarket_v7_2_runner import DEFAULT_PROJECT_ROOT, run_v7_2
+import duanxianxia_v7_3_next_level_patch  # noqa: F401 - applies v7.3 next-level overlay
 from duanxianxia_v7_3_output import upgrade_shaped_v72_to_v73
 
 TZ_SHANGHAI = ZoneInfo("Asia/Shanghai")

@@ -83,86 +83,86 @@
 | 75 | 603629 | 利通电子 | BOARD_WATCH | watch_only | T0-GENERAL | low | 21.34 | 9.75 | 10.0 | 0.25 | board_watch_pool |
 | 76 | 300632 | 光莆股份 | BOARD_WATCH | watch_only | T0-GENERAL | low | 30.37 | 20.01 | 20.01 | 0.0 | board_watch_pool |
 | 77 | 920167 | 同享科技 | BOARD_WATCH | watch_only | none | none | 0.0 | 12.85 |  |  | board_watch_pool |
-| 78 | 301666 | 大普微-UW | AVOID | hard_avoid | none | none | 0.0 | 8.78 | 17.08 | 8.3 | avoid_or_risk_pool |
-| 79 | 920425 | 乐创技术 | BOARD_WATCH | watch_only | none | none | 0.0 | 19.2 |  |  | board_watch_pool |
-| 80 | 603329 | 上海雅仕 | AVOID | hard_avoid | none | none | 0.0 | 6.37 | 6.85 | 0.48 | avoid_or_risk_pool |
-| 81 | 600816 | 建元信托 | AVOID | hard_avoid | none | none | 0.0 | 8.75 | 4.94 | -3.81 | avoid_or_risk_pool |
-| 82 | 300905 | 宝丽迪 | AVOID | hard_avoid | none | none | 0.0 | 4.46 | 1.61 | -2.85 | avoid_or_risk_pool |
-| 83 | 600379 | 宝光股份 | AVOID | hard_avoid | none | none | 0.0 | 5.34 | 10.03 | 4.69 | avoid_or_risk_pool |
-| 84 | 000567 | 海德股份 | AVOID | hard_avoid | none | none | 0.0 | 8.71 | 9.98 | 1.27 | avoid_or_risk_pool |
-| 85 | 002218 | 拓日新能 | AVOID | hard_avoid | none | none | 0.0 | -4.55 | -1.75 | 2.8 | avoid_or_risk_pool |
-| 86 | 002582 | 好想你 | AVOID | hard_avoid | none | none | 0.0 | -4.93 | -1.11 | 3.82 | avoid_or_risk_pool |
-| 87 | 002217 | 合力泰 | DEBUG_ONLY | debug | none | none | 0.0 | -1.34 | 3.02 | 4.36 |  |
-| 88 | 002081 | 金螳螂 | DEBUG_ONLY | debug | none | none | 0.0 | -1.44 | 10.06 | 11.5 |  |
-| 89 | 002361 | 神剑股份 | DEBUG_ONLY | debug | none | none | 0.0 | -0.8 | 0.15 | 0.95 |  |
-| 90 | 301396 | 宏景科技 | DEBUG_ONLY | debug | none | none | 0.0 | -11.9 | -2.54 | 9.36 |  |
-| 91 | 603002 | 宏昌电子 | DEBUG_ONLY | debug | none | none | 0.0 | -5.22 | -2.78 | 2.44 |  |
-| 92 | 301291 | 明阳电气 | DEBUG_ONLY | debug | none | none | 0.0 | -5.11 | 7.11 | 12.22 |  |
-| 93 | 000062 | 深圳华强 | DEBUG_ONLY | debug | none | none | 0.0 | -2.71 | -1.25 | 1.46 |  |
-| 94 | 603318 | 水发燃气 | DEBUG_ONLY | debug | none | none | 0.0 | -1.02 | 5.59 | 6.61 |  |
-| 95 | 301205 | 联特科技 | DEBUG_ONLY | debug | none | none | 0.0 | -17.23 | -5.33 | 11.9 |  |
-| 96 | 000938 | 紫光股份 | DEBUG_ONLY | debug | none | none | 0.0 | 2.91 | 2.66 | -0.25 |  |
-| 97 | 002851 | 麦格米特 | DEBUG_ONLY | debug | none | none | 0.0 | 4.66 | 10.0 | 5.34 |  |
-| 98 | 002225 | 濮耐股份 | DEBUG_ONLY | debug | none | none | 0.0 | -1.61 | 5.99 | 7.6 |  |
-| 99 | 002709 | 天赐材料 | DEBUG_ONLY | debug | none | none | 0.0 | 0.35 | 9.99 | 9.64 |  |
-| 100 | 600330 | 天通股份 | DEBUG_ONLY | debug | none | none | 0.0 | -2.35 | -2.88 | -0.53 |  |
-| 101 | 300750 | 宁德时代 | DEBUG_ONLY | debug | none | none | 0.0 | 1.01 | 4.05 | 3.04 |  |
-| 102 | 002428 | 云南锗业 | DEBUG_ONLY | debug | none | none | 0.0 | -1.54 | -0.66 | 0.88 |  |
-| 103 | 600522 | 中天科技 | DEBUG_ONLY | debug | none | none | 0.0 | -2.29 | -2.06 | 0.23 |  |
-| 104 | 688048 | 长光华芯 | DEBUG_ONLY | debug | none | none | 0.0 | -3.44 | -3.67 | -0.23 |  |
-| 105 | 300308 | 中际旭创 | DEBUG_ONLY | debug | none | none | 0.0 | -1.06 | 2.55 | 3.61 |  |
-| 106 | 002463 | 沪电股份 | DEBUG_ONLY | debug | none | none | 0.0 | -0.86 | 0.1 | 0.96 |  |
-| 107 | 603501 | 豪威集团 | DEBUG_ONLY | debug | none | none | 0.0 | -1.0 | -2.21 | -1.21 |  |
-| 108 | 600028 | 中国石化 | DEBUG_ONLY | debug | none | none | 0.0 | 0.93 | 1.31 | 0.38 |  |
-| 109 | 001267 | 汇绿生态 | DEBUG_ONLY | debug | none | none | 0.0 | -2.47 | 4.11 | 6.58 |  |
-| 110 | 603345 | 安井食品 | DEBUG_ONLY | debug | none | none | 0.0 | 5.77 | 10.0 | 4.23 | debug_only_pool |
-| 111 | 002506 | 协鑫集成 | DEBUG_ONLY | debug | none | none | 0.0 | -6.9 | -1.38 | 5.52 |  |
-| 112 | 002210 | 飞马国际 | AVOID | hard_avoid | none | none | 0.0 | 9.3 | 9.97 | 0.67 | avoid_or_risk_pool |
-| 113 | 300972 | 万辰集团 | DEBUG_ONLY | debug | none | none | 0.0 | 3.01 | 10.2 | 7.19 | debug_only_pool |
-| 114 | 600186 | 莲花控股 | DEBUG_ONLY | debug | none | none | 0.0 | 0.1 | 9.96 | 9.86 |  |
-| 115 | 002655 | 共达电声 | DEBUG_ONLY | debug | none | none | 0.0 | 2.4 | 10.0 | 7.6 |  |
-| 116 | 001266 | 宏英智能 | AVOID | hard_avoid | none | none | 0.0 | 9.99 | 9.99 | 0.0 | avoid_or_risk_pool |
-| 117 | 300323 | 华灿光电 | DEBUG_ONLY | debug | none | none | 0.0 | 4.91 | 6.67 | 1.76 |  |
-| 118 | 600160 | 巨化股份 | DEBUG_ONLY | debug | none | none | 0.0 | 1.66 | 1.66 | 0.0 |  |
-| 119 | 002517 | 恺英网络 | DEBUG_ONLY | debug | none | none | 0.0 | 2.2 | 5.2 | 3.0 |  |
-| 120 | 002457 | 青龙管业 | DEBUG_ONLY | debug | none | none | 0.0 | 3.08 | 3.96 | 0.88 |  |
-| 121 | 603803 | 瑞斯康达 | DEBUG_ONLY | debug | none | none | 0.0 | 5.03 | 9.99 | 4.96 |  |
-| 122 | 003018 | 金富科技 | DEBUG_ONLY | debug | none | none | 0.0 | 1.99 | -0.27 | -2.26 |  |
-| 123 | 002444 | 巨星科技 | DEBUG_ONLY | debug | none | none | 0.0 | 2.39 | 6.19 | 3.8 |  |
-| 124 | 002818 | 富森美 | DEBUG_ONLY | debug | none | none | 0.0 | 5.22 | 9.98 | 4.76 | debug_only_pool |
-| 125 | 002805 | 丰元股份 | DEBUG_ONLY | debug | none | none | 0.0 | 4.87 | 10.01 | 5.14 |  |
-| 126 | 601168 | 西部矿业 | DEBUG_ONLY | debug | none | none | 0.0 | 1.19 | 6.16 | 4.97 |  |
-| 127 | 002290 | 禾盛新材 | DEBUG_ONLY | debug | none | none | 0.0 | 0.81 | -2.91 | -3.72 |  |
-| 128 | 600654 | 中安科 | DEBUG_ONLY | debug | none | none | 0.0 | 3.25 | 10.03 | 6.78 |  |
-| 129 | 300738 | 奥飞数据 | DEBUG_ONLY | debug | none | none | 0.0 | 2.66 | 7.49 | 4.83 |  |
-| 130 | 601991 | 大唐发电 | DEBUG_ONLY | debug | none | none | 0.0 | 1.98 | 6.19 | 4.21 |  |
-| 131 | 000589 | 贵州轮胎 | DEBUG_ONLY | debug | none | none | 0.0 | 5.07 | 7.82 | 2.75 |  |
-| 132 | 688531 | 日联科技 | AVOID | hard_avoid | none | none | 0.0 | 20.0 | 20.0 | 0.0 | avoid_or_risk_pool |
-| 133 | 301638 | 南网数字 | DEBUG_ONLY | debug | none | none | 0.0 | 4.01 | 9.77 | 5.76 |  |
-| 134 | 000980 | 众泰汽车 | DEBUG_ONLY | debug | none | none | 0.0 | 3.85 | 10.1 | 6.25 |  |
-| 135 | 688400 | 凌云光 | DEBUG_ONLY | debug | none | none | 0.0 | 2.26 | 7.55 | 5.29 |  |
-| 136 | 002847 | 盐津铺子 | DEBUG_ONLY | debug | none | none | 0.0 | 4.02 | 10.0 | 5.98 |  |
-| 137 | 300459 | 汤姆猫 | DEBUG_ONLY | debug | none | none | 0.0 | 2.58 | 7.47 | 4.89 |  |
-| 138 | 605099 | 共创草坪 | DEBUG_ONLY | debug | none | none | 0.0 | 3.7 | 10.0 | 6.3 |  |
-| 139 | 601872 | 招商轮船 | DEBUG_ONLY | debug | none | none | 0.0 | 2.08 | 4.82 | 2.74 |  |
-| 140 | 603369 | 今世缘 | DEBUG_ONLY | debug | none | none | 0.0 | 2.08 | 7.01 | 4.93 |  |
-| 141 | 600606 | 绿地控股 | DEBUG_ONLY | debug | none | none | 0.0 | 5.97 | 9.7 | 3.73 |  |
-| 142 | 002948 | 青岛银行 | DEBUG_ONLY | debug | none | none | 0.0 | 6.73 | 7.08 | 0.35 |  |
-| 143 | 600210 | 紫江企业 | DEBUG_ONLY | debug | none | none | 0.0 | 3.94 | 4.08 | 0.14 |  |
-| 144 | 000551 | 创元科技 | DEBUG_ONLY | debug | none | none | 0.0 | 7.82 | 9.98 | 2.16 |  |
-| 145 | 300500 | 启迪设计 | DEBUG_ONLY | debug | none | none | 0.0 | 4.0 | 4.55 | 0.55 |  |
-| 146 | 300919 | 中伟新材 | DEBUG_ONLY | debug | none | none | 0.0 | 1.41 | 7.25 | 5.84 |  |
-| 147 | 002563 | 森马服饰 | DEBUG_ONLY | debug | none | none | 0.0 | 4.02 | 5.94 | 1.92 |  |
-| 148 | 688717 | 艾罗能源 | DEBUG_ONLY | debug | none | none | 0.0 | 4.89 | 14.09 | 9.2 |  |
-| 149 | 002132 | 恒星科技 | DEBUG_ONLY | debug | none | none | 0.0 | 1.51 | 4.75 | 3.24 |  |
-| 150 | 300302 | 同有科技 | DEBUG_ONLY | debug | none | none | 0.0 | 2.04 | 12.24 | 10.2 |  |
-| 151 | 603305 | 旭升集团 | DEBUG_ONLY | debug | none | none | 0.0 | 4.01 | 4.71 | 0.7 |  |
-| 152 | 300436 | 广生堂 | DEBUG_ONLY | debug | none | none | 0.0 | 3.57 | 9.31 | 5.74 |  |
-| 153 | 603508 | 思维列控 | DEBUG_ONLY | debug | none | none | 0.0 | 4.96 | 10.01 | 5.05 |  |
-| 154 | 002807 | 江阴银行 | DEBUG_ONLY | debug | none | none | 0.0 | 1.33 | 2.66 | 1.33 |  |
-| 155 | 301662 | 宏工科技 | DEBUG_ONLY | debug | none | none | 0.0 | 3.9 | 12.66 | 8.76 |  |
-| 156 | 300814 | 中富电路 | DEBUG_ONLY | debug | none | none | 0.0 | 1.75 | 6.06 | 4.31 |  |
-| 157 | 300745 | 欣锐科技 | DEBUG_ONLY | debug | none | none | 0.0 | 2.85 | 14.5 | 11.65 |  |
+| 78 | 002081 | 金螳螂 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | -1.44 | 10.06 | 11.5 | broad_repair_momentum_pool |
+| 79 | 301291 | 明阳电气 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | -5.11 | 7.11 | 12.22 | broad_repair_momentum_pool |
+| 80 | 603318 | 水发燃气 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | -1.02 | 5.59 | 6.61 | broad_repair_momentum_pool |
+| 81 | 301205 | 联特科技 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | -17.23 | -5.33 | 11.9 | broad_repair_momentum_pool |
+| 82 | 000938 | 紫光股份 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.91 | 2.66 | -0.25 | broad_repair_momentum_pool |
+| 83 | 002851 | 麦格米特 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 4.66 | 10.0 | 5.34 | broad_repair_momentum_pool |
+| 84 | 002428 | 云南锗业 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | -1.54 | -0.66 | 0.88 | broad_repair_momentum_pool |
+| 85 | 300308 | 中际旭创 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | -1.06 | 2.55 | 3.61 | broad_repair_momentum_pool |
+| 86 | 002463 | 沪电股份 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | -0.86 | 0.1 | 0.96 | broad_repair_momentum_pool |
+| 87 | 603501 | 豪威集团 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | -1.0 | -2.21 | -1.21 | broad_repair_momentum_pool |
+| 88 | 600028 | 中国石化 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 0.93 | 1.31 | 0.38 | broad_repair_momentum_pool |
+| 89 | 002506 | 协鑫集成 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | -6.9 | -1.38 | 5.52 |  |
+| 90 | 600186 | 莲花控股 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 0.1 | 9.96 | 9.86 | broad_repair_momentum_pool |
+| 91 | 002655 | 共达电声 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.4 | 10.0 | 7.6 | broad_repair_momentum_pool |
+| 92 | 300323 | 华灿光电 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 4.91 | 6.67 | 1.76 | broad_repair_momentum_pool |
+| 93 | 600160 | 巨化股份 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 1.66 | 1.66 | 0.0 | broad_repair_momentum_pool |
+| 94 | 002517 | 恺英网络 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.2 | 5.2 | 3.0 |  |
+| 95 | 301666 | 大普微-UW | HIGH_COST_REPAIR_WATCH | high_cost_repair_watch | none | none | 0.0 | 8.78 | 17.08 | 8.3 | high_cost_repair_watch_pool |
+| 96 | 002457 | 青龙管业 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 3.08 | 3.96 | 0.88 |  |
+| 97 | 920425 | 乐创技术 | BOARD_WATCH | watch_only | none | none | 0.0 | 19.2 |  |  | board_watch_pool |
+| 98 | 002444 | 巨星科技 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.39 | 6.19 | 3.8 |  |
+| 99 | 002805 | 丰元股份 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 4.87 | 10.01 | 5.14 |  |
+| 100 | 601168 | 西部矿业 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 1.19 | 6.16 | 4.97 |  |
+| 101 | 002290 | 禾盛新材 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 0.81 | -2.91 | -3.72 |  |
+| 102 | 600654 | 中安科 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 3.25 | 10.03 | 6.78 |  |
+| 103 | 300738 | 奥飞数据 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.66 | 7.49 | 4.83 |  |
+| 104 | 601991 | 大唐发电 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 1.98 | 6.19 | 4.21 |  |
+| 105 | 301638 | 南网数字 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 4.01 | 9.77 | 5.76 |  |
+| 106 | 000980 | 众泰汽车 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 3.85 | 10.1 | 6.25 |  |
+| 107 | 688400 | 凌云光 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.26 | 7.55 | 5.29 |  |
+| 108 | 002847 | 盐津铺子 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 4.02 | 10.0 | 5.98 |  |
+| 109 | 300459 | 汤姆猫 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.58 | 7.47 | 4.89 |  |
+| 110 | 601872 | 招商轮船 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.08 | 4.82 | 2.74 |  |
+| 111 | 603369 | 今世缘 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.08 | 7.01 | 4.93 |  |
+| 112 | 600210 | 紫江企业 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 3.94 | 4.08 | 0.14 |  |
+| 113 | 300919 | 中伟新材 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 1.41 | 7.25 | 5.84 |  |
+| 114 | 002563 | 森马服饰 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 4.02 | 5.94 | 1.92 |  |
+| 115 | 688717 | 艾罗能源 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 4.89 | 14.09 | 9.2 |  |
+| 116 | 002132 | 恒星科技 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 1.51 | 4.75 | 3.24 |  |
+| 117 | 603305 | 旭升集团 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 4.01 | 4.71 | 0.7 |  |
+| 118 | 300436 | 广生堂 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 3.57 | 9.31 | 5.74 |  |
+| 119 | 603508 | 思维列控 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 4.96 | 10.01 | 5.05 |  |
+| 120 | 301662 | 宏工科技 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 3.9 | 12.66 | 8.76 |  |
+| 121 | 300745 | 欣锐科技 | BROAD_REPAIR_MOMENTUM | broad_repair | none | none | 0.0 | 2.85 | 14.5 | 11.65 |  |
+| 122 | 603329 | 上海雅仕 | AVOID | hard_avoid | none | none | 0.0 | 6.37 | 6.85 | 0.48 | avoid_or_risk_pool |
+| 123 | 600816 | 建元信托 | AVOID | hard_avoid | none | none | 0.0 | 8.75 | 4.94 | -3.81 | avoid_or_risk_pool |
+| 124 | 300905 | 宝丽迪 | AVOID | hard_avoid | none | none | 0.0 | 4.46 | 1.61 | -2.85 | avoid_or_risk_pool |
+| 125 | 600379 | 宝光股份 | AVOID | hard_avoid | none | none | 0.0 | 5.34 | 10.03 | 4.69 | avoid_or_risk_pool |
+| 126 | 000567 | 海德股份 | AVOID | hard_avoid | none | none | 0.0 | 8.71 | 9.98 | 1.27 | avoid_or_risk_pool |
+| 127 | 002218 | 拓日新能 | AVOID | hard_avoid | none | none | 0.0 | -4.55 | -1.75 | 2.8 | avoid_or_risk_pool |
+| 128 | 002582 | 好想你 | AVOID | hard_avoid | none | none | 0.0 | -4.93 | -1.11 | 3.82 | avoid_or_risk_pool |
+| 129 | 002217 | 合力泰 | DEBUG_ONLY | debug | none | none | 0.0 | -1.34 | 3.02 | 4.36 |  |
+| 130 | 002361 | 神剑股份 | DEBUG_ONLY | debug | none | none | 0.0 | -0.8 | 0.15 | 0.95 |  |
+| 131 | 301396 | 宏景科技 | DEBUG_ONLY | debug | none | none | 0.0 | -11.9 | -2.54 | 9.36 |  |
+| 132 | 603002 | 宏昌电子 | DEBUG_ONLY | debug | none | none | 0.0 | -5.22 | -2.78 | 2.44 |  |
+| 133 | 000062 | 深圳华强 | DEBUG_ONLY | debug | none | none | 0.0 | -2.71 | -1.25 | 1.46 |  |
+| 134 | 002225 | 濮耐股份 | DEBUG_ONLY | debug | none | none | 0.0 | -1.61 | 5.99 | 7.6 |  |
+| 135 | 002709 | 天赐材料 | DEBUG_ONLY | debug | none | none | 0.0 | 0.35 | 9.99 | 9.64 |  |
+| 136 | 600330 | 天通股份 | DEBUG_ONLY | debug | none | none | 0.0 | -2.35 | -2.88 | -0.53 |  |
+| 137 | 300750 | 宁德时代 | DEBUG_ONLY | debug | none | none | 0.0 | 1.01 | 4.05 | 3.04 |  |
+| 138 | 600522 | 中天科技 | DEBUG_ONLY | debug | none | none | 0.0 | -2.29 | -2.06 | 0.23 |  |
+| 139 | 688048 | 长光华芯 | DEBUG_ONLY | debug | none | none | 0.0 | -3.44 | -3.67 | -0.23 |  |
+| 140 | 001267 | 汇绿生态 | DEBUG_ONLY | debug | none | none | 0.0 | -2.47 | 4.11 | 6.58 |  |
+| 141 | 603345 | 安井食品 | DEBUG_ONLY | debug | none | none | 0.0 | 5.77 | 10.0 | 4.23 | debug_only_pool |
+| 142 | 002210 | 飞马国际 | AVOID | hard_avoid | none | none | 0.0 | 9.3 | 9.97 | 0.67 | avoid_or_risk_pool |
+| 143 | 300972 | 万辰集团 | DEBUG_ONLY | debug | none | none | 0.0 | 3.01 | 10.2 | 7.19 | debug_only_pool |
+| 144 | 001266 | 宏英智能 | AVOID | hard_avoid | none | none | 0.0 | 9.99 | 9.99 | 0.0 | avoid_or_risk_pool |
+| 145 | 603803 | 瑞斯康达 | DEBUG_ONLY | debug | none | none | 0.0 | 5.03 | 9.99 | 4.96 |  |
+| 146 | 003018 | 金富科技 | DEBUG_ONLY | debug | none | none | 0.0 | 1.99 | -0.27 | -2.26 |  |
+| 147 | 002818 | 富森美 | DEBUG_ONLY | debug | none | none | 0.0 | 5.22 | 9.98 | 4.76 | debug_only_pool |
+| 148 | 000589 | 贵州轮胎 | DEBUG_ONLY | debug | none | none | 0.0 | 5.07 | 7.82 | 2.75 |  |
+| 149 | 688531 | 日联科技 | AVOID | hard_avoid | none | none | 0.0 | 20.0 | 20.0 | 0.0 | avoid_or_risk_pool |
+| 150 | 605099 | 共创草坪 | DEBUG_ONLY | debug | none | none | 0.0 | 3.7 | 10.0 | 6.3 |  |
+| 151 | 600606 | 绿地控股 | DEBUG_ONLY | debug | none | none | 0.0 | 5.97 | 9.7 | 3.73 |  |
+| 152 | 002948 | 青岛银行 | DEBUG_ONLY | debug | none | none | 0.0 | 6.73 | 7.08 | 0.35 |  |
+| 153 | 000551 | 创元科技 | DEBUG_ONLY | debug | none | none | 0.0 | 7.82 | 9.98 | 2.16 |  |
+| 154 | 300500 | 启迪设计 | DEBUG_ONLY | debug | none | none | 0.0 | 4.0 | 4.55 | 0.55 |  |
+| 155 | 300302 | 同有科技 | DEBUG_ONLY | debug | none | none | 0.0 | 2.04 | 12.24 | 10.2 |  |
+| 156 | 002807 | 江阴银行 | DEBUG_ONLY | debug | none | none | 0.0 | 1.33 | 2.66 | 1.33 |  |
+| 157 | 300814 | 中富电路 | DEBUG_ONLY | debug | none | none | 0.0 | 1.75 | 6.06 | 4.31 |  |
 | 158 | 603067 | 振华股份 | DEBUG_ONLY | debug | none | none | 0.0 | 2.08 | -0.08 | -2.16 |  |
 | 159 | 002348 | 高乐股份 | DEBUG_ONLY | debug | none | none | 0.0 | 3.43 | 9.97 | 6.54 |  |
 | 160 | 002067 | 景兴纸业 | DEBUG_ONLY | debug | none | none | 0.0 | 4.33 | 6.28 | 1.95 |  |

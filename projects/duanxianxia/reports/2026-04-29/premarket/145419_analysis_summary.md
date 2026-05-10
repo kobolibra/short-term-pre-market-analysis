@@ -17,9 +17,11 @@
 - `BOARD_WATCH`: `7`
 - `CONFIRMATION_WATCH`: `7`
 - `FAKE_STRENGTH_WATCH`: `6`
-- `AVOID`: `11`
 - `SOFT_AVOID_REPAIR_CANDIDATE`: `27`
-- `DEBUG_ONLY`: `219`
+- `AVOID`: `10`
+- `HIGH_COST_REPAIR_WATCH`: `1`
+- `DEBUG_ONLY`: `177`
+- `BROAD_REPAIR_MOMENTUM`: `42`
 
 ## action_quality_stats
 
@@ -33,9 +35,11 @@
 - `CONFIRMATION_WATCH:watch`: `6`
 - `CONFIRMATION_WATCH:high_cost_watch`: `1`
 - `FAKE_STRENGTH_WATCH:repair_watch`: `6`
-- `AVOID:hard_avoid`: `11`
 - `SOFT_AVOID_REPAIR_CANDIDATE:soft_avoid`: `27`
-- `DEBUG_ONLY:debug`: `219`
+- `AVOID:hard_avoid`: `10`
+- `HIGH_COST_REPAIR_WATCH:high_cost_repair_watch`: `1`
+- `DEBUG_ONLY:debug`: `177`
+- `BROAD_REPAIR_MOMENTUM:broad_repair`: `42`
 
 ## pool_performance
 
@@ -43,66 +47,61 @@
 - `MOMENTUM_CATCHUP`: `{"count": 1, "with_performance": 1, "avg_close_pct": 20.0, "med_close_pct": 20.0, "avg_excess_return": 17.14, "med_excess_return": 17.14, "positive_excess_count": 1, "negative_excess_count": 0}`
 - `THEME_CATCHUP`: `{"count": 20, "with_performance": 20, "avg_close_pct": 4.08, "med_close_pct": 4.47, "avg_excess_return": 3.07, "med_excess_return": 2.48, "positive_excess_count": 15, "negative_excess_count": 5}`
 - `LOW_OPEN_REVERSAL`: `{"count": 9, "with_performance": 9, "avg_close_pct": 2.65, "med_close_pct": 3.86, "avg_excess_return": 5.7, "med_excess_return": 5.47, "positive_excess_count": 8, "negative_excess_count": 1}`
+- `BROAD_REPAIR_MOMENTUM`: `{"count": 42, "with_performance": 42, "avg_close_pct": 6.06, "med_close_pct": 6.43, "avg_excess_return": 4.63, "med_excess_return": 4.95, "positive_excess_count": 38, "negative_excess_count": 3}`
 - `BOARD_WATCH`: `{"count": 7, "with_performance": 5, "avg_close_pct": 11.53, "med_close_pct": 10.0, "avg_excess_return": -0.24, "med_excess_return": 0.0, "positive_excess_count": 2, "negative_excess_count": 1}`
 - `CONFIRMATION_WATCH`: `{"count": 7, "with_performance": 7, "avg_close_pct": 3.74, "med_close_pct": 3.0, "avg_excess_return": 2.44, "med_excess_return": 1.97, "positive_excess_count": 5, "negative_excess_count": 2}`
 - `FAKE_STRENGTH_WATCH`: `{"count": 6, "with_performance": 6, "avg_close_pct": 6.14, "med_close_pct": 7.93, "avg_excess_return": 2.7, "med_excess_return": 2.99, "positive_excess_count": 4, "negative_excess_count": 2}`
+- `HIGH_COST_REPAIR_WATCH`: `{"count": 1, "with_performance": 1, "avg_close_pct": 17.08, "med_close_pct": 17.08, "avg_excess_return": 8.3, "med_excess_return": 8.3, "positive_excess_count": 1, "negative_excess_count": 0}`
 - `SOFT_AVOID_REPAIR_CANDIDATE`: `{"count": 27, "with_performance": 27, "avg_close_pct": 1.27, "med_close_pct": 1.33, "avg_excess_return": 1.17, "med_excess_return": 0.22, "positive_excess_count": 16, "negative_excess_count": 11}`
-- `AVOID`: `{"count": 11, "with_performance": 11, "avg_close_pct": 7.96, "med_close_pct": 9.97, "avg_excess_return": 1.4, "med_excess_return": 0.67, "positive_excess_count": 7, "negative_excess_count": 2}`
-- `DEBUG_ONLY`: `{"count": 219, "with_performance": 212, "avg_close_pct": 4.81, "med_close_pct": 4.95, "avg_excess_return": 2.79, "med_excess_return": 2.5, "positive_excess_count": 178, "negative_excess_count": 33}`
+- `AVOID`: `{"count": 10, "with_performance": 10, "avg_close_pct": 7.05, "med_close_pct": 8.41, "avg_excess_return": 0.71, "med_excess_return": 0.57, "positive_excess_count": 6, "negative_excess_count": 2}`
+- `DEBUG_ONLY`: `{"count": 177, "with_performance": 170, "avg_close_pct": 4.5, "med_close_pct": 4.64, "avg_excess_return": 2.33, "med_excess_return": 2.25, "positive_excess_count": 140, "negative_excess_count": 30}`
 
 ## review_diagnostics
 
-- `missed_winners`: `20`
-- `debug_missed_winners`: `17`
-- `avoid_missed_winners`: `1`
+- `missed_winners`: `12`
+- `debug_missed_winners`: `10`
+- `avoid_missed_winners`: `0`
 - `soft_avoid_missed_winners`: `2`
 - `fake_strength_watch_winners`: `0`
-- `false_positives`: `2`
+- `false_positives`: `3`
 - `high_cost_confirmation_failures`: `1`
+- `broad_repair_winners`: `7`
+- `broad_repair_false_positives`: `1`
+- `high_cost_repair_watch_winners`: `1`
 
 ## review_profiles
 
 ### missed_winners
 
-- `count`: `20`
-- `auction_setup_type_top`: `[["GENERAL_WATCH", 11], ["LOW_OPEN_WEAK", 6], ["FAKE_STRENGTH", 3]]`
-- `action_type_top`: `[["DEBUG_ONLY", 17], ["SOFT_AVOID_REPAIR_CANDIDATE", 2], ["AVOID", 1]]`
-- `action_quality_top`: `[["debug", 17], ["soft_avoid", 2], ["hard_avoid", 1]]`
-- `setup_v72_top`: `[["none", 20]]`
-- `confidence_top`: `[["none", 20]]`
-- `entry_tag_top`: `[["normal", 15], ["avoid", 3], ["low_liquidity_confirm", 2]]`
-- `auction_pct_bucket`: `[["[0,2)", 7], ["[2,5)", 5], ["<-5", 4], ["[-2,0)", 3], ["[7,9)", 1]]`
-- `auction_amount_bucket`: `[["500-1000w", 5], ["missing", 5], ["3000-8000w", 3], [">=8000w", 3], ["1000-3000w", 2], ["<500w", 2]]`
-- `numeric_stats`: `{"auction_pct": {"count": 20, "min": -17.23, "p25": -1.0, "median": 0.89, "p75": 2.85, "max": 8.78, "avg": -0.71}, "auction_strength": {"count": 20, "min": 2.27, "p25": 6.88, "median": 12.92, "p75": 31.71, "max": 41.21, "avg": 17.26}, "auction_amount_wan": {"count": 15, "min": 372.0, "p25": 660.0, "median": 1047.0, "p75": 6875.0, "max": 18538.0, "avg": 5144.6}, "liquidity_score": {"count": 0}, "theme_strength_t0": {"count": 20, "min": 20.0, "p25": 20.0, "median": 20.0, "p75": 20.0, "max": 95.0, "avg": 27.5}, "source_evidence_score": {"count": 20, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.44, "max": 6.67, "avg": 0.66}, "source_family_count": {"count": 20, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 1.0, "max": 1.0, "avg": 0.25}, "final_score": {"count": 20, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}}`
-- `top_names`: `["688059 华锐精密", "301291 明阳电气", "301205 联特科技", "300745 欣锐科技", "002081 金螳螂", "603095 越剑智能", "300302 同有科技", "000973 佛塑科技", "600156 华升股份", "600186 莲花控股", "002709 天赐材料", "301396 宏景科技", "688717 艾罗能源", "688655 迅捷兴", "301662 宏工科技", "002652 扬子新材", "603779 威龙股份", "301666 大普微-UW", "002498 汉缆股份", "000901 航天科技"]`
+- `count`: `12`
+- `auction_setup_type_top`: `[["GENERAL_WATCH", 7], ["LOW_OPEN_WEAK", 3], ["FAKE_STRENGTH", 2]]`
+- `action_type_top`: `[["DEBUG_ONLY", 10], ["SOFT_AVOID_REPAIR_CANDIDATE", 2]]`
+- `action_quality_top`: `[["debug", 10], ["soft_avoid", 2]]`
+- `setup_v72_top`: `[["none", 12]]`
+- `confidence_top`: `[["none", 12]]`
+- `entry_tag_top`: `[["normal", 8], ["avoid", 2], ["low_liquidity_confirm", 2]]`
+- `auction_pct_bucket`: `[["[0,2)", 6], ["[-2,0)", 2], ["[2,5)", 2], ["<-5", 2]]`
+- `auction_amount_bucket`: `[["missing", 5], ["500-1000w", 3], ["<500w", 2], ["3000-8000w", 1], [">=8000w", 1]]`
+- `numeric_stats`: `{"auction_pct": {"count": 12, "min": -11.9, "p25": -0.05, "median": 0.89, "p75": 1.89, "max": 2.85, "avg": -0.92}, "auction_strength": {"count": 12, "min": 2.27, "p25": 3.58, "median": 7.67, "p75": 14.3, "max": 38.78, "avg": 11.65}, "auction_amount_wan": {"count": 7, "min": 372.0, "p25": 387.0, "median": 660.0, "p75": 6875.0, "max": 18538.0, "avg": 4043.71}, "liquidity_score": {"count": 0}, "theme_strength_t0": {"count": 12, "min": 20.0, "p25": 20.0, "median": 20.0, "p75": 20.0, "max": 95.0, "avg": 26.25}, "source_evidence_score": {"count": 12, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 2.39, "max": 6.67, "avg": 0.99}, "source_family_count": {"count": 12, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 1.0, "max": 1.0, "avg": 0.25}, "final_score": {"count": 12, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}}`
+- `top_names`: `["688059 华锐精密", "603095 越剑智能", "300302 同有科技", "000973 佛塑科技", "600156 华升股份", "002709 天赐材料", "301396 宏景科技", "688655 迅捷兴", "002652 扬子新材", "603779 威龙股份", "002498 汉缆股份", "000901 航天科技"]`
 
 ### debug_missed_winners
 
-- `count`: `17`
-- `auction_setup_type_top`: `[["GENERAL_WATCH", 11], ["LOW_OPEN_WEAK", 6]]`
-- `action_type_top`: `[["DEBUG_ONLY", 17]]`
-- `action_quality_top`: `[["debug", 17]]`
-- `setup_v72_top`: `[["none", 17]]`
-- `confidence_top`: `[["none", 17]]`
-- `entry_tag_top`: `[["normal", 15], ["low_liquidity_confirm", 2]]`
-- `auction_pct_bucket`: `[["[0,2)", 6], ["[2,5)", 5], ["<-5", 4], ["[-2,0)", 2]]`
-- `auction_amount_bucket`: `[["500-1000w", 5], ["3000-8000w", 3], ["missing", 3], [">=8000w", 2], ["1000-3000w", 2], ["<500w", 2]]`
-- `numeric_stats`: `{"auction_pct": {"count": 17, "min": -17.23, "p25": -1.44, "median": 1.42, "p75": 2.04, "max": 4.89, "avg": -1.3}, "auction_strength": {"count": 17, "min": 3.54, "p25": 8.46, "median": 13.0, "p75": 31.71, "max": 41.21, "avg": 18.6}, "auction_amount_wan": {"count": 14, "min": 372.0, "p25": 660.0, "median": 1005.5, "p75": 6261.0, "max": 18538.0, "avg": 4602.21}, "liquidity_score": {"count": 0}, "theme_strength_t0": {"count": 17, "min": 20.0, "p25": 20.0, "median": 20.0, "p75": 20.0, "max": 20.0, "avg": 20.0}, "source_evidence_score": {"count": 17, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.44, "max": 6.67, "avg": 0.78}, "source_family_count": {"count": 17, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 1.0, "max": 1.0, "avg": 0.29}, "final_score": {"count": 17, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}}`
-- `top_names`: `["688059 华锐精密", "301291 明阳电气", "301205 联特科技", "300745 欣锐科技", "002081 金螳螂", "300302 同有科技", "000973 佛塑科技", "600186 莲花控股", "002709 天赐材料", "301396 宏景科技", "688717 艾罗能源", "688655 迅捷兴", "301662 宏工科技", "002652 扬子新材", "603779 威龙股份", "002498 汉缆股份", "000901 航天科技"]`
+- `count`: `10`
+- `auction_setup_type_top`: `[["GENERAL_WATCH", 7], ["LOW_OPEN_WEAK", 3]]`
+- `action_type_top`: `[["DEBUG_ONLY", 10]]`
+- `action_quality_top`: `[["debug", 10]]`
+- `setup_v72_top`: `[["none", 10]]`
+- `confidence_top`: `[["none", 10]]`
+- `entry_tag_top`: `[["normal", 8], ["low_liquidity_confirm", 2]]`
+- `auction_pct_bucket`: `[["[0,2)", 5], ["[2,5)", 2], ["<-5", 2], ["[-2,0)", 1]]`
+- `auction_amount_bucket`: `[["500-1000w", 3], ["missing", 3], ["<500w", 2], ["3000-8000w", 1], [">=8000w", 1]]`
+- `numeric_stats`: `{"auction_pct": {"count": 10, "min": -11.9, "p25": -0.05, "median": 1.44, "p75": 1.89, "max": 2.85, "avg": -1.0}, "auction_strength": {"count": 10, "min": 3.54, "p25": 5.38, "median": 8.67, "p75": 14.3, "max": 38.78, "avg": 13.4}, "auction_amount_wan": {"count": 7, "min": 372.0, "p25": 387.0, "median": 660.0, "p75": 6875.0, "max": 18538.0, "avg": 4043.71}, "liquidity_score": {"count": 0}, "theme_strength_t0": {"count": 10, "min": 20.0, "p25": 20.0, "median": 20.0, "p75": 20.0, "max": 20.0, "avg": 20.0}, "source_evidence_score": {"count": 10, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 2.39, "max": 6.67, "avg": 1.19}, "source_family_count": {"count": 10, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 1.0, "max": 1.0, "avg": 0.3}, "final_score": {"count": 10, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}}`
+- `top_names`: `["688059 华锐精密", "300302 同有科技", "000973 佛塑科技", "002709 天赐材料", "301396 宏景科技", "688655 迅捷兴", "002652 扬子新材", "603779 威龙股份", "002498 汉缆股份", "000901 航天科技"]`
 
 ### avoid_missed_winners
 
-- `count`: `1`
-- `auction_setup_type_top`: `[["FAKE_STRENGTH", 1]]`
-- `action_type_top`: `[["AVOID", 1]]`
-- `action_quality_top`: `[["hard_avoid", 1]]`
-- `setup_v72_top`: `[["none", 1]]`
-- `confidence_top`: `[["none", 1]]`
-- `entry_tag_top`: `[["avoid", 1]]`
-- `auction_pct_bucket`: `[["[7,9)", 1]]`
-- `auction_amount_bucket`: `[[">=8000w", 1]]`
-- `numeric_stats`: `{"auction_pct": {"count": 1, "min": 8.78, "p25": 8.78, "median": 8.78, "p75": 8.78, "max": 8.78, "avg": 8.78}, "auction_strength": {"count": 1, "min": 23.25, "p25": 23.25, "median": 23.25, "p75": 23.25, "max": 23.25, "avg": 23.25}, "auction_amount_wan": {"count": 1, "min": 12738.0, "p25": 12738.0, "median": 12738.0, "p75": 12738.0, "max": 12738.0, "avg": 12738.0}, "liquidity_score": {"count": 0}, "theme_strength_t0": {"count": 1, "min": 95.0, "p25": 95.0, "median": 95.0, "p75": 95.0, "max": 95.0, "avg": 95.0}, "source_evidence_score": {"count": 1, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}, "source_family_count": {"count": 1, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}, "final_score": {"count": 1, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}}`
-- `top_names`: `["301666 大普微-UW"]`
+- empty
 
 ### soft_avoid_missed_winners
 
@@ -124,17 +123,17 @@
 
 ### false_positives
 
-- `count`: `2`
-- `auction_setup_type_top`: `[["LOW_OPEN_WEAK", 1], ["GENERAL_WATCH", 1]]`
-- `action_type_top`: `[["THEME_CATCHUP", 2]]`
-- `action_quality_top`: `[["weak", 2]]`
-- `setup_v72_top`: `[["T0-GENERAL", 2]]`
-- `confidence_top`: `[["low", 2]]`
-- `entry_tag_top`: `[["normal", 2]]`
-- `auction_pct_bucket`: `[["[-2,0)", 1], ["[0,2)", 1]]`
-- `auction_amount_bucket`: `[["missing", 2]]`
-- `numeric_stats`: `{"auction_pct": {"count": 2, "min": -0.97, "p25": -0.97, "median": -0.48, "p75": 0.0, "max": 0.0, "avg": -0.48}, "auction_strength": {"count": 2, "min": 6.88, "p25": 6.88, "median": 7.88, "p75": 8.88, "max": 8.88, "avg": 7.88}, "auction_amount_wan": {"count": 0}, "liquidity_score": {"count": 0}, "theme_strength_t0": {"count": 2, "min": 95.0, "p25": 95.0, "median": 95.0, "p75": 95.0, "max": 95.0, "avg": 95.0}, "source_evidence_score": {"count": 2, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}, "source_family_count": {"count": 2, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}, "final_score": {"count": 2, "min": 25.32, "p25": 25.32, "median": 25.91, "p75": 26.49, "max": 26.49, "avg": 25.91}}`
-- `top_names`: `["001358 兴欣新材", "601828 美凯龙"]`
+- `count`: `3`
+- `auction_setup_type_top`: `[["GENERAL_WATCH", 2], ["LOW_OPEN_WEAK", 1]]`
+- `action_type_top`: `[["THEME_CATCHUP", 2], ["BROAD_REPAIR_MOMENTUM", 1]]`
+- `action_quality_top`: `[["weak", 2], ["broad_repair", 1]]`
+- `setup_v72_top`: `[["T0-GENERAL", 2], ["none", 1]]`
+- `confidence_top`: `[["low", 2], ["none", 1]]`
+- `entry_tag_top`: `[["normal", 3]]`
+- `auction_pct_bucket`: `[["[0,2)", 2], ["[-2,0)", 1]]`
+- `auction_amount_bucket`: `[["missing", 2], ["1000-3000w", 1]]`
+- `numeric_stats`: `{"auction_pct": {"count": 3, "min": -0.97, "p25": -0.97, "median": 0.0, "p75": 0.81, "max": 0.81, "avg": -0.05}, "auction_strength": {"count": 3, "min": 6.88, "p25": 6.88, "median": 8.88, "p75": 20.64, "max": 20.64, "avg": 12.13}, "auction_amount_wan": {"count": 1, "min": 1890.0, "p25": 1890.0, "median": 1890.0, "p75": 1890.0, "max": 1890.0, "avg": 1890.0}, "liquidity_score": {"count": 0}, "theme_strength_t0": {"count": 3, "min": 20.0, "p25": 20.0, "median": 95.0, "p75": 95.0, "max": 95.0, "avg": 70.0}, "source_evidence_score": {"count": 3, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}, "source_family_count": {"count": 3, "min": 0.0, "p25": 0.0, "median": 0.0, "p75": 0.0, "max": 0.0, "avg": 0.0}, "final_score": {"count": 3, "min": 0.0, "p25": 0.0, "median": 25.32, "p75": 26.49, "max": 26.49, "avg": 17.27}}`
+- `top_names`: `["001358 兴欣新材", "002290 禾盛新材", "601828 美凯龙"]`
 
 ### high_cost_confirmation_failures
 
@@ -161,7 +160,7 @@
 - `confirmation_watch_pool`: 7
 - `fake_strength_watch_pool`: 6
 - `soft_avoid_repair_pool`: 15
-- `avoid_or_risk_pool`: 11
+- `avoid_or_risk_pool`: 10
 - `debug_only_pool`: 15
 
 ## 绩效补充口径
@@ -214,12 +213,14 @@
 - `MOMENTUM_CATCHUP`: `1`
 - `THEME_CATCHUP`: `20`
 - `LOW_OPEN_REVERSAL`: `9`
+- `BROAD_REPAIR_MOMENTUM`: `42`
 - `BOARD_WATCH`: `7`
 - `CONFIRMATION_WATCH`: `7`
 - `FAKE_STRENGTH_WATCH`: `6`
+- `HIGH_COST_REPAIR_WATCH`: `1`
 - `SOFT_AVOID_REPAIR_CANDIDATE`: `27`
-- `AVOID`: `11`
-- `DEBUG_ONLY`: `219`
+- `AVOID`: `10`
+- `DEBUG_ONLY`: `177`
 
 ## action_quality 分布
 
@@ -229,13 +230,15 @@
 - `strong`: `2`
 - `weak`: `12`
 - `repair`: `9`
+- `broad_repair`: `42`
 - `watch_only`: `7`
 - `watch`: `6`
 - `high_cost_watch`: `1`
 - `repair_watch`: `6`
+- `high_cost_repair_watch`: `1`
 - `soft_avoid`: `27`
-- `hard_avoid`: `11`
-- `debug`: `219`
+- `hard_avoid`: `10`
+- `debug`: `177`
 
 ## confidence 分布
 

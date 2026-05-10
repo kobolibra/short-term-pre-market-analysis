@@ -92,7 +92,7 @@
 14. 600744 华银电力 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=3.69 | close_pct=2.77 | excess_return=-0.92
 15. 603819 神力股份 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=2.34 | close_pct=1.42 | excess_return=-0.92
 
-## avoid_or_risk_pool (11)
+## avoid_or_risk_pool (10)
 
 1. 002218 拓日新能 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-4.55 | close_pct=-1.75 | excess_return=2.8
 2. 603329 上海雅仕 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=6.37 | close_pct=6.85 | excess_return=0.48
@@ -104,7 +104,6 @@
 8. 002210 飞马国际 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=9.3 | close_pct=9.97 | excess_return=0.67
 9. 300905 宝丽迪 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=4.46 | close_pct=1.61 | excess_return=-2.85
 10. 688531 日联科技 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=20.0 | close_pct=20.0 | excess_return=0.0
-11. 301666 大普微-UW | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=8.78 | close_pct=17.08 | excess_return=8.3
 
 ## debug_only_pool (15)
 

@@ -1,4 +1,4 @@
-# 145419 all candidates ranked list
+# 145419 all candidates action ranked list
 
 - source_report: `145419_analysis_v7_3.json`
 - version: `premarket_v7_3`
@@ -57,44 +57,44 @@
 | 49 | 601233 | 桐昆股份 | FAKE_STRENGTH_WATCH | repair_watch | none | none | 0.0 | 3.34 | 10.02 | 6.68 | fake_strength_watch_pool |
 | 50 | 002079 | 苏州固锝 | FAKE_STRENGTH_WATCH | repair_watch | none | none | 0.0 | 5.46 | 9.97 | 4.51 | fake_strength_watch_pool |
 | 51 | 688266 | 泽璟制药-U | FAKE_STRENGTH_WATCH | repair_watch | none | none | 0.0 | 2.6 | 0.99 | -1.61 | fake_strength_watch_pool |
-| 52 | 002218 | 拓日新能 | AVOID | hard_avoid | none | none | 0.0 | -4.55 | -1.75 | 2.8 | avoid_or_risk_pool |
-| 53 | 600152 | 维科技术 | AVOID | hard_avoid | none | none | 0.0 | -3.12 | -7.58 | -4.46 | avoid_or_risk_pool |
-| 54 | 002685 | 华东重机 | AVOID | hard_avoid | none | none | 0.0 | -2.84 | -1.42 | 1.42 | avoid_or_risk_pool |
-| 55 | 600248 | 陕建股份 | AVOID | hard_avoid | none | none | 0.0 | -2.43 | -4.59 | -2.16 | avoid_or_risk_pool |
-| 56 | 603283 | 赛腾股份 | AVOID | hard_avoid | none | none | 0.0 | -2.73 | -1.59 | 1.14 | avoid_or_risk_pool |
-| 57 | 002990 | 盛视科技 | AVOID | hard_avoid | none | none | 0.0 | -0.2 | -0.33 | -0.13 | avoid_or_risk_pool |
-| 58 | 603095 | 越剑智能 | AVOID | hard_avoid | none | none | 0.0 | -1.0 | 10.02 | 11.02 | avoid_or_risk_pool |
-| 59 | 601567 | 三星电气 | AVOID | hard_avoid | none | none | 0.0 | -0.81 | -0.77 | 0.04 | avoid_or_risk_pool |
-| 60 | 000301 | 东方盛虹 | AVOID | hard_avoid | none | none | 0.0 | -2.53 | 1.53 | 4.06 | avoid_or_risk_pool |
-| 61 | 002813 | 路畅科技 | AVOID | hard_avoid | none | none | 0.0 | -2.92 | -3.55 | -0.63 | avoid_or_risk_pool |
-| 62 | 002956 | 西麦食品 | AVOID | hard_avoid | none | none | 0.0 | 3.21 | 10.02 | 6.81 | avoid_or_risk_pool |
-| 63 | 002885 | 京泉华 | AVOID | hard_avoid | none | none | 0.0 | 0.7 | 1.93 | 1.23 | avoid_or_risk_pool |
-| 64 | 300861 | 美畅股份 | AVOID | hard_avoid | none | none | 0.0 | 0.5 | 6.39 | 5.89 | avoid_or_risk_pool |
-| 65 | 003816 | 中国广核 | AVOID | hard_avoid | none | none | 0.0 | 0.0 | -3.61 | -3.61 | avoid_or_risk_pool |
-| 66 | 000799 | 酒鬼酒 | AVOID | hard_avoid | none | none | 0.0 | 1.99 | 3.33 | 1.34 | avoid_or_risk_pool |
-| 67 | 000887 | 中鼎股份 | AVOID | hard_avoid | none | none | 0.0 | 1.22 | 1.63 | 0.41 |  |
-| 68 | 600037 | 歌华有线 | AVOID | hard_avoid | none | none | 0.0 | 3.2 | 5.47 | 2.27 |  |
-| 69 | 001236 | 弘业期货 | AVOID | hard_avoid | none | none | 0.0 | 2.75 | 2.97 | 0.22 |  |
-| 70 | 003026 | 中晶科技 | AVOID | hard_avoid | none | none | 0.0 | 2.16 | 4.73 | 2.57 |  |
-| 71 | 600744 | 华银电力 | AVOID | hard_avoid | none | none | 0.0 | 3.69 | 2.77 | -0.92 |  |
-| 72 | 603819 | 神力股份 | AVOID | hard_avoid | none | none | 0.0 | 2.34 | 1.42 | -0.92 |  |
-| 73 | 603329 | 上海雅仕 | AVOID | hard_avoid | none | none | 0.0 | 6.37 | 6.85 | 0.48 |  |
-| 74 | 600816 | 建元信托 | AVOID | hard_avoid | none | none | 0.0 | 8.75 | 4.94 | -3.81 |  |
-| 75 | 000567 | 海德股份 | AVOID | hard_avoid | none | none | 0.0 | 8.71 | 9.98 | 1.27 |  |
-| 76 | 603616 | 韩建河山 | AVOID | hard_avoid | none | none | 0.0 | 1.16 | 1.33 | 0.17 |  |
-| 77 | 002582 | 好想你 | AVOID | hard_avoid | none | none | 0.0 | -4.93 | -1.11 | 3.82 |  |
-| 78 | 001298 | 好上好 | AVOID | hard_avoid | none | none | 0.0 | -1.67 | -2.06 | -0.39 |  |
-| 79 | 002313 | 日海智能 | AVOID | hard_avoid | none | none | 0.0 | -0.4 | -1.38 | -0.98 |  |
-| 80 | 600379 | 宝光股份 | AVOID | hard_avoid | none | none | 0.0 | 5.34 | 10.03 | 4.69 |  |
-| 81 | 601789 | 宁波建工 | AVOID | hard_avoid | none | none | 0.0 | 0.17 | 0.84 | 0.67 |  |
-| 82 | 002902 | 铭普光磁 | AVOID | hard_avoid | none | none | 0.0 | 0.1 | -1.53 | -1.63 |  |
-| 83 | 600156 | 华升股份 | AVOID | hard_avoid | none | none | 0.0 | 0.0 | 10.05 | 10.05 |  |
-| 84 | 002412 | 汉森制药 | AVOID | hard_avoid | none | none | 0.0 | 0.0 | -1.82 | -1.82 |  |
-| 85 | 001266 | 宏英智能 | AVOID | hard_avoid | none | none | 0.0 | 9.99 | 9.99 | 0.0 |  |
-| 86 | 002210 | 飞马国际 | AVOID | hard_avoid | none | none | 0.0 | 9.3 | 9.97 | 0.67 |  |
-| 87 | 300905 | 宝丽迪 | AVOID | hard_avoid | none | none | 0.0 | 4.46 | 1.61 | -2.85 |  |
-| 88 | 688531 | 日联科技 | AVOID | hard_avoid | none | none | 0.0 | 20.0 | 20.0 | 0.0 |  |
-| 89 | 301666 | 大普微-UW | AVOID | hard_avoid | none | none | 0.0 | 8.78 | 17.08 | 8.3 |  |
+| 52 | 000887 | 中鼎股份 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 1.22 | 1.63 | 0.41 | soft_avoid_repair_pool |
+| 53 | 600037 | 歌华有线 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 3.2 | 5.47 | 2.27 | soft_avoid_repair_pool |
+| 54 | 001236 | 弘业期货 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 2.75 | 2.97 | 0.22 | soft_avoid_repair_pool |
+| 55 | 603616 | 韩建河山 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 1.16 | 1.33 | 0.17 | soft_avoid_repair_pool |
+| 56 | 000799 | 酒鬼酒 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 1.99 | 3.33 | 1.34 | soft_avoid_repair_pool |
+| 57 | 002956 | 西麦食品 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 3.21 | 10.02 | 6.81 | soft_avoid_repair_pool |
+| 58 | 601789 | 宁波建工 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 0.17 | 0.84 | 0.67 | soft_avoid_repair_pool |
+| 59 | 002902 | 铭普光磁 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 0.1 | -1.53 | -1.63 | soft_avoid_repair_pool |
+| 60 | 600156 | 华升股份 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 0.0 | 10.05 | 10.05 | soft_avoid_repair_pool |
+| 61 | 002412 | 汉森制药 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 0.0 | -1.82 | -1.82 | soft_avoid_repair_pool |
+| 62 | 001298 | 好上好 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -1.67 | -2.06 | -0.39 | soft_avoid_repair_pool |
+| 63 | 002313 | 日海智能 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -0.4 | -1.38 | -0.98 | soft_avoid_repair_pool |
+| 64 | 003026 | 中晶科技 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 2.16 | 4.73 | 2.57 | soft_avoid_repair_pool |
+| 65 | 600744 | 华银电力 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 3.69 | 2.77 | -0.92 | soft_avoid_repair_pool |
+| 66 | 603819 | 神力股份 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 2.34 | 1.42 | -0.92 | soft_avoid_repair_pool |
+| 67 | 002885 | 京泉华 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 0.7 | 1.93 | 1.23 |  |
+| 68 | 300861 | 美畅股份 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 0.5 | 6.39 | 5.89 |  |
+| 69 | 003816 | 中国广核 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | 0.0 | -3.61 | -3.61 |  |
+| 70 | 002685 | 华东重机 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -2.84 | -1.42 | 1.42 |  |
+| 71 | 600248 | 陕建股份 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -2.43 | -4.59 | -2.16 |  |
+| 72 | 603283 | 赛腾股份 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -2.73 | -1.59 | 1.14 |  |
+| 73 | 002990 | 盛视科技 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -0.2 | -0.33 | -0.13 |  |
+| 74 | 603095 | 越剑智能 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -1.0 | 10.02 | 11.02 |  |
+| 75 | 601567 | 三星电气 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -0.81 | -0.77 | 0.04 |  |
+| 76 | 000301 | 东方盛虹 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -2.53 | 1.53 | 4.06 |  |
+| 77 | 002813 | 路畅科技 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -2.92 | -3.55 | -0.63 |  |
+| 78 | 600152 | 维科技术 | SOFT_AVOID_REPAIR_CANDIDATE | soft_avoid | none | none | 0.0 | -3.12 | -7.58 | -4.46 |  |
+| 79 | 002218 | 拓日新能 | AVOID | hard_avoid | none | none | 0.0 | -4.55 | -1.75 | 2.8 | avoid_or_risk_pool |
+| 80 | 603329 | 上海雅仕 | AVOID | hard_avoid | none | none | 0.0 | 6.37 | 6.85 | 0.48 | avoid_or_risk_pool |
+| 81 | 600816 | 建元信托 | AVOID | hard_avoid | none | none | 0.0 | 8.75 | 4.94 | -3.81 | avoid_or_risk_pool |
+| 82 | 000567 | 海德股份 | AVOID | hard_avoid | none | none | 0.0 | 8.71 | 9.98 | 1.27 | avoid_or_risk_pool |
+| 83 | 002582 | 好想你 | AVOID | hard_avoid | none | none | 0.0 | -4.93 | -1.11 | 3.82 | avoid_or_risk_pool |
+| 84 | 600379 | 宝光股份 | AVOID | hard_avoid | none | none | 0.0 | 5.34 | 10.03 | 4.69 | avoid_or_risk_pool |
+| 85 | 001266 | 宏英智能 | AVOID | hard_avoid | none | none | 0.0 | 9.99 | 9.99 | 0.0 | avoid_or_risk_pool |
+| 86 | 002210 | 飞马国际 | AVOID | hard_avoid | none | none | 0.0 | 9.3 | 9.97 | 0.67 | avoid_or_risk_pool |
+| 87 | 300905 | 宝丽迪 | AVOID | hard_avoid | none | none | 0.0 | 4.46 | 1.61 | -2.85 | avoid_or_risk_pool |
+| 88 | 688531 | 日联科技 | AVOID | hard_avoid | none | none | 0.0 | 20.0 | 20.0 | 0.0 | avoid_or_risk_pool |
+| 89 | 301666 | 大普微-UW | AVOID | hard_avoid | none | none | 0.0 | 8.78 | 17.08 | 8.3 | avoid_or_risk_pool |
 | 90 | 300307 | 慈星股份 | DEBUG_ONLY | debug | none | none | 0.0 | 5.3 | 7.48 | 2.18 | debug_only_pool |
 | 91 | 300380 | 安硕信息 | DEBUG_ONLY | debug | none | none | 0.0 | 4.98 | 7.75 | 2.77 | debug_only_pool |
 | 92 | 002354 | 天娱数科 | DEBUG_ONLY | debug | none | none | 0.0 | 9.06 | 9.98 | 0.92 | debug_only_pool |

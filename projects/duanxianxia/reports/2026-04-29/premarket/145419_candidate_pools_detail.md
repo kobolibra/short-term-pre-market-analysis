@@ -74,26 +74,37 @@
 5. 002079 苏州固锝 | action_type=FAKE_STRENGTH_WATCH | action_quality=repair_watch | action_reason=fake_strength_needs_intraday_repair_confirmation | final=0.0 | auction_pct=5.46 | close_pct=9.97 | excess_return=4.51
 6. 688266 泽璟制药-U | action_type=FAKE_STRENGTH_WATCH | action_quality=repair_watch | action_reason=fake_strength_needs_intraday_repair_confirmation | final=0.0 | auction_pct=2.6 | close_pct=0.99 | excess_return=-1.61
 
-## soft_avoid_repair_pool (0)
+## soft_avoid_repair_pool (15)
 
+1. 000887 中鼎股份 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=1.22 | close_pct=1.63 | excess_return=0.41
+2. 600037 歌华有线 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=3.2 | close_pct=5.47 | excess_return=2.27
+3. 001236 弘业期货 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=2.75 | close_pct=2.97 | excess_return=0.22
+4. 603616 韩建河山 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=1.16 | close_pct=1.33 | excess_return=0.17
+5. 000799 酒鬼酒 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=1.99 | close_pct=3.33 | excess_return=1.34
+6. 002956 西麦食品 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=3.21 | close_pct=10.02 | excess_return=6.81
+7. 601789 宁波建工 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=0.17 | close_pct=0.84 | excess_return=0.67
+8. 002902 铭普光磁 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=0.1 | close_pct=-1.53 | excess_return=-1.63
+9. 600156 华升股份 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=0.0 | close_pct=10.05 | excess_return=10.05
+10. 002412 汉森制药 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=0.0 | close_pct=-1.82 | excess_return=-1.82
+11. 001298 好上好 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=-1.67 | close_pct=-2.06 | excess_return=-0.39
+12. 002313 日海智能 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=-0.4 | close_pct=-1.38 | excess_return=-0.98
+13. 003026 中晶科技 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=2.16 | close_pct=4.73 | excess_return=2.57
+14. 600744 华银电力 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=3.69 | close_pct=2.77 | excess_return=-0.92
+15. 603819 神力股份 | action_type=SOFT_AVOID_REPAIR_CANDIDATE | action_quality=soft_avoid | action_reason=avoid_but_repair_candidate_review_only | final=0.0 | auction_pct=2.34 | close_pct=1.42 | excess_return=-0.92
 
-## avoid_or_risk_pool (15)
+## avoid_or_risk_pool (11)
 
 1. 002218 拓日新能 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-4.55 | close_pct=-1.75 | excess_return=2.8
-2. 600152 维科技术 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-3.12 | close_pct=-7.58 | excess_return=-4.46
-3. 002685 华东重机 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-2.84 | close_pct=-1.42 | excess_return=1.42
-4. 600248 陕建股份 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-2.43 | close_pct=-4.59 | excess_return=-2.16
-5. 603283 赛腾股份 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-2.73 | close_pct=-1.59 | excess_return=1.14
-6. 002990 盛视科技 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-0.2 | close_pct=-0.33 | excess_return=-0.13
-7. 603095 越剑智能 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-1.0 | close_pct=10.02 | excess_return=11.02
-8. 601567 三星电气 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-0.81 | close_pct=-0.77 | excess_return=0.04
-9. 000301 东方盛虹 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-2.53 | close_pct=1.53 | excess_return=4.06
-10. 002813 路畅科技 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-2.92 | close_pct=-3.55 | excess_return=-0.63
-11. 002956 西麦食品 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=3.21 | close_pct=10.02 | excess_return=6.81
-12. 002885 京泉华 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=0.7 | close_pct=1.93 | excess_return=1.23
-13. 300861 美畅股份 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=0.5 | close_pct=6.39 | excess_return=5.89
-14. 003816 中国广核 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=0.0 | close_pct=-3.61 | excess_return=-3.61
-15. 000799 酒鬼酒 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=1.99 | close_pct=3.33 | excess_return=1.34
+2. 603329 上海雅仕 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=6.37 | close_pct=6.85 | excess_return=0.48
+3. 600816 建元信托 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=8.75 | close_pct=4.94 | excess_return=-3.81
+4. 000567 海德股份 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=8.71 | close_pct=9.98 | excess_return=1.27
+5. 002582 好想你 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=-4.93 | close_pct=-1.11 | excess_return=3.82
+6. 600379 宝光股份 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=5.34 | close_pct=10.03 | excess_return=4.69
+7. 001266 宏英智能 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=9.99 | close_pct=9.99 | excess_return=0.0
+8. 002210 飞马国际 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=9.3 | close_pct=9.97 | excess_return=0.67
+9. 300905 宝丽迪 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=4.46 | close_pct=1.61 | excess_return=-2.85
+10. 688531 日联科技 | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=20.0 | close_pct=20.0 | excess_return=0.0
+11. 301666 大普微-UW | action_type=AVOID | action_quality=hard_avoid | action_reason=fake_strength_or_entry_avoid | final=0.0 | auction_pct=8.78 | close_pct=17.08 | excess_return=8.3
 
 ## debug_only_pool (15)
 

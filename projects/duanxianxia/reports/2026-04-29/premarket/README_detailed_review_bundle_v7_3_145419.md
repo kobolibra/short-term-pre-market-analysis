@@ -6,10 +6,10 @@
 
 - 使用本地已有 `2026-04-29` 盘前 captures 重跑，未重复下载盘前数据。
 - 本次源报告已是 `premarket_v7_3`。
-- 复用了同日已 backfill 的 flat CSV (`144258_all_candidates_flat.csv`) 作为绩效来源，给新 `145419` 报告重算了 `pool_performance` / `review_diagnostics`。
-- 附带补充了当日绩效字段：`auction_pct` / `open_pct` / `close_pct` / `excess_return`。
-- 附带补充了动作分层与质量字段：`action_type` / `action_quality` / `action_reason` / `action_score` / `action_priority` / `action_confidence` / `action_tags`。
-- 单独输出了 `candidate_pools` 分池明细文件。
+- bundle 生成时加载 `projects/duanxianxia/config/premarket_v7_3_setups.yaml`，避免 runner 与 backfill/review 分类逻辑漂移。
+- 复用了同日已 backfill 的 flat CSV (`145419_all_candidates_flat.csv`) 作为绩效来源，给新 `145419` 报告重算了 `pool_performance` / `review_diagnostics`。
+- 报告区分 `Action Order Top30` 与 `Expected Return Proxy Top30`。前者是交易动作顺序，后者是盘前可见字段的收益预期展示。
+- 附带 `review_profiles`，用于快速定位 debug missed winners / avoid missed winners 的共性。
 
 ## v7.3 关键结构
 
@@ -17,18 +17,22 @@
 - `action_quality_stats`
 - `pool_performance`
 - `review_diagnostics`
+- `review_profiles`
+- `expected_return_candidates`
 - `candidate_pools.momentum_catchup_pool`
 - `candidate_pools.debug_only_pool`
 - `candidate_pools.fake_strength_watch_pool`
+- `candidate_pools.soft_avoid_repair_pool`
 
 ## 文件说明
 
 - `145419_analysis_v7_3.json`：原始 v7.3 报告（已重算 review metrics）
 - `145419_all_candidates_flat.csv`：全量扁平化 CSV，已补充绩效字段与动作字段
 - `145419_all_candidates_flat.jsonl`：全量扁平化 JSONL，已补充绩效字段与动作字段
-- `145419_analysis_summary.md`：摘要，包括 action stats、quality stats、pool performance、diagnostics 与 Top30 表
+- `145419_analysis_summary.md`：摘要，包括 action stats、quality stats、pool performance、diagnostics、profiles、Action Top30、Expected Top30
 - `145419_analysis_field_catalog.md`：字段说明
-- `145419_all_candidates_ranked_list.md`：全量排序清单
+- `145419_all_candidates_ranked_list.md`：全量 action-order 排序清单
+- `145419_all_candidates_expected_return_ranked_list.md`：全量 expected-return proxy 排序清单
 - `145419_candidate_pools_detail.md`：分池明细
 
 ## 绩效字段口径

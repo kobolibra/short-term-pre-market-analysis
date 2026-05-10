@@ -39,13 +39,12 @@ action_pools:
   theme_catchup_pct_max: 3.5
   theme_catchup_strong_min_aux_score: 35
   theme_catchup_weak_max_aux_score: 12
-  # weak is low evidence, not an automatic kill.
   theme_weak_score_penalty: 6
 
   reversal_min_auction_strength: 25
   net_pressure_full_ratio: 0.002
 
-  # High auction cost is a risk by itself.  v7.3.1 always tags confirmation rows
+  # High auction cost is a risk by itself.  v7.3 always tags confirmation rows
   # above this cost as high_cost_watch, even if some source evidence exists.
   confirmation_high_cost_pct: 7.0
   confirmation_high_cost_score_penalty: 12
@@ -58,7 +57,10 @@ action_pools:
   fake_watch_min_liquidity_score: 45
   fake_watch_min_amount_wan: 800
 
+  # Wider than fake-watch by design: soft avoid is review/intraday-confirmation only,
+  # not an actionable premarket pool.  It prevents moderate-cost avoid rows from
+  # being mislabeled as hard avoid before multi-day evidence is available.
   soft_avoid_pct_min: -3.5
   soft_avoid_pct_max: 4.0
-  soft_avoid_min_liquidity_score: 40
-  soft_avoid_min_amount_wan: 500
+  soft_avoid_min_liquidity_score: 0
+  soft_avoid_min_amount_wan: 0

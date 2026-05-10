@@ -53,9 +53,6 @@ action_pools:
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
 
-  # v7.3 next-level recall pool: captures no-theme/no-source broad repair momentum
-  # exposed by review_profiles. Uses only 09:25-visible fields and remains low-confidence
-  # unless confirmed intraday.
   broad_repair_enabled: true
   broad_repair_theme_max: 20
   broad_repair_source_max: 1.0
@@ -70,8 +67,17 @@ action_pools:
   broad_repair_deep_min_amount_wan: 800
   broad_repair_score_min: 24
 
-  # High-cost fake strength is not a buy list, but should not be buried in hard avoid.
   high_cost_repair_watch_pct_min: 7.0
   high_cost_repair_watch_pct_max: 10.5
   high_cost_repair_watch_min_amount_wan: 5000
   high_cost_repair_watch_min_theme: 80
+
+  # Professional next-level ranking weights. These affect display/order only;
+  # production classification remains rule-based and premarket-visible.
+  expected_bonus_momentum: 30
+  expected_bonus_low_open_reversal: 27
+  expected_bonus_broad_repair: 24
+  expected_bonus_theme: 16
+  expected_bonus_auction_follow: 13
+  expected_bonus_fake_watch: 4
+  expected_bonus_high_cost_repair_watch: -8

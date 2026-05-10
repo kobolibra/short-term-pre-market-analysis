@@ -46,6 +46,8 @@ POOL_ORDER = [
     "avoid_or_risk_pool",
     "debug_only_pool",
 ]
+PROFILE_KEYS = ["auction_setup_type", "action_type", "action_quality", "setup_v72", "confidence", "entry_tag"]
+NUMERIC_PROFILE_KEYS = ["auction_pct", "auction_strength", "auction_amount_wan", "liquidity_score", "theme_strength_t0", "source_evidence_score", "source_family_count", "final_score"]
 
 
 def load_action_config(project_root: Path, config_path: Optional[Path]) -> Dict[str, Any]:
@@ -80,8 +82,117 @@ def code_key(v: Any) -> str:
     return digits.zfill(6) if digits else s
 
 
+def as_float(v: Any) -> Optional[float]:
+    if v in (None, "", "None", "null", "NULL"):
+        return None
+    try:
+        return float(v)
+    except Exception:
+        return None
+
+
+def nested_metric(row: Dict[str, Any], key: str) -> Any:
+    if key in row:
+        return row.get(key)
+    perf = performance_of(row)
+    if key in perf:
+        return perf.get(key)
+    auction = row.get("auction_detail") or {}
+    signal = row.get("signal_summary") or {}
+    if key == "auction_pct":
+        return perf.get("auction_pct") or row.get("auction_pct") or auction.get("latest_change_pct")
+    if key in auction:
+        return auction.get(key)
+    if key in signal:
+        return signal.get(key)
+    return None
+
+
 def performance_of(row: Dict[str, Any]) -> Dict[str, Any]:
     return dict(row.get("derived_performance") or row.get("performance") or {})
+
+
+def add_review_profiles(shaped: Dict[str, Any]) -> Dict[str, Any]:
+    """Attach compact diagnostic profiles for missed winners / false positives.
+
+    These profiles are review-only and do not affect production classification.
+    They make the next rule iteration faster by showing whether leaked winners
+    share common auction-cost, liquidity, amount, setup, or source-evidence shapes.
+    """
+    diag = shaped.get("review_diagnostics") or {}
+
+    def metric_stats(rows: List[Dict[str, Any]], key: str) -> Dict[str, Any]:
+        vals = [as_float(nested_metric(r, key)) for r in rows]
+        nums = sorted(v for v in vals if v is not None)
+        if not nums:
+            return {"count": 0}
+        return {
+            "count": len(nums),
+            "min": round(nums[0], 2),
+            "p25": round(nums[len(nums) // 4], 2),
+            "median": round(median(nums), 2),
+            "p75": round(nums[(len(nums) * 3) // 4], 2),
+            "max": round(nums[-1], 2),
+            "avg": round(sum(nums) / len(nums), 2),
+        }
+
+    def bucket_auction_pct(v: Any) -> str:
+        x = as_float(v)
+        if x is None:
+            return "missing"
+        if x < -5:
+            return "<-5"
+        if x < -2:
+            return "[-5,-2)"
+        if x < 0:
+            return "[-2,0)"
+        if x < 2:
+            return "[0,2)"
+        if x < 5:
+            return "[2,5)"
+        if x < 7:
+            return "[5,7)"
+        if x < 9:
+            return "[7,9)"
+        return ">=9"
+
+    def bucket_amount(v: Any) -> str:
+        x = as_float(v)
+        if x is None:
+            return "missing"
+        if x < 500:
+            return "<500w"
+        if x < 1000:
+            return "500-1000w"
+        if x < 3000:
+            return "1000-3000w"
+        if x < 8000:
+            return "3000-8000w"
+        return ">=8000w"
+
+    def profile(items: List[Dict[str, Any]]) -> Dict[str, Any]:
+        rows = [dict(x) for x in items or []]
+        if not rows:
+            return {}
+        out: Dict[str, Any] = {"count": len(rows)}
+        for key in PROFILE_KEYS:
+            out[f"{key}_top"] = Counter(str(nested_metric(r, key) or r.get(key) or "missing") for r in rows).most_common(10)
+        out["auction_pct_bucket"] = Counter(bucket_auction_pct(nested_metric(r, "auction_pct")) for r in rows).most_common()
+        out["auction_amount_bucket"] = Counter(bucket_amount(nested_metric(r, "auction_amount_wan")) for r in rows).most_common()
+        out["numeric_stats"] = {key: metric_stats(rows, key) for key in NUMERIC_PROFILE_KEYS}
+        out["top_names"] = [f"{r.get('code')} {r.get('name')}" for r in rows[:20]]
+        return out
+
+    shaped["review_profiles"] = {
+        "missed_winners": profile(diag.get("missed_winners") or []),
+        "debug_missed_winners": profile(diag.get("debug_missed_winners") or []),
+        "avoid_missed_winners": profile(diag.get("avoid_missed_winners") or []),
+        "soft_avoid_missed_winners": profile(diag.get("soft_avoid_missed_winners") or []),
+        "fake_strength_watch_winners": profile(diag.get("fake_strength_watch_winners") or []),
+        "false_positives": profile(diag.get("false_positives") or []),
+        "high_cost_confirmation_failures": profile(diag.get("high_cost_confirmation_failures") or []),
+    }
+    return shaped
 
 
 def resolve_csv_value(row: Dict[str, Any], col: str, trade_date: str) -> Any:
@@ -418,6 +529,7 @@ def main() -> int:
     shaped = json.loads(analysis_path.read_text(encoding="utf-8"))
     perf_map = load_performance_map_from_flat(args.performance_flat)
     shaped = recompute_v73_review_metrics(shaped, perf_map, action_config=action_config)
+    shaped = add_review_profiles(shaped)
     analysis_path.write_text(json.dumps(shaped, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
 
     trade_date = ((shaped.get("meta") or {}).get("date_t0")) or ""

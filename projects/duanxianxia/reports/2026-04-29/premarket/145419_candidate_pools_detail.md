@@ -45,6 +45,24 @@
 8. 300857 协创数据 | action_type=LOW_OPEN_REVERSAL | action_quality=repair | action_reason=low_open_repair_with_premarket_support | final=25.59 | auction_pct=-2.3 | close_pct=4.13 | excess_return=6.43
 9. 300476 胜宏科技 | action_type=LOW_OPEN_REVERSAL | action_quality=repair | action_reason=low_open_repair_with_premarket_support | final=24.3 | auction_pct=-2.26 | close_pct=6.65 | excess_return=8.91
 
+## broad_repair_momentum_pool (15)
+
+1. 002081 金螳螂 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=-1.44 | close_pct=10.06 | excess_return=11.5
+2. 603318 水发燃气 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=-1.02 | close_pct=5.59 | excess_return=6.61
+3. 000938 紫光股份 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=2.91 | close_pct=2.66 | excess_return=-0.25
+4. 002851 麦格米特 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=4.66 | close_pct=10.0 | excess_return=5.34
+5. 301291 明阳电气 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=-5.11 | close_pct=7.11 | excess_return=12.22
+6. 002428 云南锗业 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=-1.54 | close_pct=-0.66 | excess_return=0.88
+7. 300308 中际旭创 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=-1.06 | close_pct=2.55 | excess_return=3.61
+8. 002463 沪电股份 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=-0.86 | close_pct=0.1 | excess_return=0.96
+9. 600028 中国石化 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=0.93 | close_pct=1.31 | excess_return=0.38
+10. 603501 豪威集团 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=-1.0 | close_pct=-2.21 | excess_return=-1.21
+11. 301205 联特科技 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=-17.23 | close_pct=-5.33 | excess_return=11.9
+12. 600186 莲花控股 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=0.1 | close_pct=9.96 | excess_return=9.86
+13. 002655 共达电声 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=2.4 | close_pct=10.0 | excess_return=7.6
+14. 600160 巨化股份 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=1.66 | close_pct=1.66 | excess_return=0.0
+15. 300323 华灿光电 | action_type=BROAD_REPAIR_MOMENTUM | action_quality=broad_repair | action_reason=no_theme_no_source_broad_repair_momentum | final=0.0 | auction_pct=4.91 | close_pct=6.67 | excess_return=1.76
+
 ## board_watch_pool (7)
 
 1. 002867 周大生 | action_type=BOARD_WATCH | action_quality=watch_only | action_reason=near_limit_or_locked_board_watch | final=44.9 | auction_pct=9.62 | close_pct=10.03 | excess_return=0.41
@@ -73,6 +91,10 @@
 4. 601233 桐昆股份 | action_type=FAKE_STRENGTH_WATCH | action_quality=repair_watch | action_reason=fake_strength_needs_intraday_repair_confirmation | final=0.0 | auction_pct=3.34 | close_pct=10.02 | excess_return=6.68
 5. 002079 苏州固锝 | action_type=FAKE_STRENGTH_WATCH | action_quality=repair_watch | action_reason=fake_strength_needs_intraday_repair_confirmation | final=0.0 | auction_pct=5.46 | close_pct=9.97 | excess_return=4.51
 6. 688266 泽璟制药-U | action_type=FAKE_STRENGTH_WATCH | action_quality=repair_watch | action_reason=fake_strength_needs_intraday_repair_confirmation | final=0.0 | auction_pct=2.6 | close_pct=0.99 | excess_return=-1.61
+
+## high_cost_repair_watch_pool (1)
+
+1. 301666 大普微-UW | action_type=HIGH_COST_REPAIR_WATCH | action_quality=high_cost_repair_watch | action_reason=high_cost_fake_strength_repair_watch_only | final=0.0 | auction_pct=8.78 | close_pct=17.08 | excess_return=8.3
 
 ## soft_avoid_repair_pool (15)
 

@@ -1,18 +1,9 @@
 #!/usr/bin/env python3
 """
-v7 cron entry. Replaces `python scripts/duanxianxia_batch.py premarket` so the
-09:25 cron uses v7 setup-classifier instead of v5 inline scoring, WITHOUT
-rewriting the 96KB duanxianxia_batch.py.
-
-Strategy (in order):
-  1. Add scripts/ to sys.path so module imports resolve correctly.
-  2. Import duanxianxia_batch as a regular module — this runs all top-level
-     defs but NOT the `if __name__ == \"__main__\":` block.
-  3. Monkey-patch its `build_premarket_analysis` symbol to v7.
-  4. Invoke main() if available (clean path).
-  5. Fallback: re-exec the source file with `__name__=\"__main__\"` while
-     pre-injecting a late-binding shim that overrides the inline def AFTER
-     it runs but BEFORE main() executes.
+v7.3 cron entry. Preserve the original batch-main production architecture for
+premarket: fetch + analysis + webhook/bitable still happen inside
+`duanxianxia_batch.py`, while we monkey-patch its legacy premarket analyzer to
+v7.3.
 
 Usage (from cron):
     python3 scripts/duanxianxia_premarket_v7_runner.py premarket
@@ -31,11 +22,11 @@ if str(SCRIPTS_DIR) not in sys.path:
 # Stage 1+2: import batch (no main runs because __name__ != '__main__')
 import duanxianxia_batch  # type: ignore  # noqa: E402
 
-# Stage 3: pull v7
-from duanxianxia_premarket_v7 import build_premarket_analysis_v7  # noqa: E402
+# Stage 3: pull v7.3-for-batch adapter
+from duanxianxia_premarket_v7_3_runner import build_premarket_analysis_v7_3  # noqa: E402
 
 # Stage 4: monkey-patch
-duanxianxia_batch.build_premarket_analysis = build_premarket_analysis_v7
+duanxianxia_batch.build_premarket_analysis = build_premarket_analysis_v7_3
 
 
 def _try_clean_main() -> bool:
@@ -52,27 +43,20 @@ def _try_clean_main() -> bool:
 
 
 def _fallback_reexec() -> None:
-    """Re-execute the batch.py source under __name__='__main__' with v7 still wired.
-
-    Heuristic: insert one line right before `if __name__ == \"__main__\":` that
-    rebinds `build_premarket_analysis` to the v7 implementation. Since the
-    `def build_premarket_analysis(...)` earlier in the file would otherwise
-    overwrite our pre-injected globals entry, this late-binding shim ensures
-    v7 wins by the time main() runs.
-    """
+    """Re-execute batch.py under __name__='__main__' with v7.3 still wired."""
     src_path = SCRIPTS_DIR / "duanxianxia_batch.py"
     src = src_path.read_text(encoding="utf-8")
     needle = 'if __name__ == "__main__":'
     shim = (
-        "# v7-runner late-binding shim (inserted by duanxianxia_premarket_v7_runner.py)\n"
-        "build_premarket_analysis = build_premarket_analysis_v7\n"
+        "# v7.3-runner late-binding shim (inserted by duanxianxia_premarket_v7_runner.py)\n"
+        "build_premarket_analysis = build_premarket_analysis_v7_3\n"
     )
     if needle in src:
         src = src.replace(needle, shim + needle, 1)
     ns = {
         "__name__": "__main__",
         "__file__": str(src_path),
-        "build_premarket_analysis_v7": build_premarket_analysis_v7,
+        "build_premarket_analysis_v7_3": build_premarket_analysis_v7_3,
     }
     code = compile(src, str(src_path), "exec")
     exec(code, ns)  # noqa: S102 — trusted local source

@@ -32,10 +32,9 @@ esac
 cd /home/investmentofficehku/.openclaw/workspace
 
 if [[ "$GROUP" == "premarket" ]]; then
-  # v7: run setup-classifier instead of v5 inline analysis. The runner imports
-  # duanxianxia_batch as a module, monkey-patches build_premarket_analysis to
-  # v7, then dispatches main() with the same argv. No double-run — v5 path is
-  # entirely bypassed for premarket.
+  # Preserve the original production architecture for premarket:
+  # run the batch main flow end-to-end (capture + analysis + webhook/bitable),
+  # but monkey-patch the legacy premarket analyzer to the current v7.3 one.
   python3 scripts/duanxianxia_premarket_v7_runner.py "$GROUP"
 else
   python3 scripts/duanxianxia_batch.py "$GROUP"

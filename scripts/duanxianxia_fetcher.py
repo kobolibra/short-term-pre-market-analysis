@@ -114,6 +114,11 @@ DATASET_REGISTRY: Dict[str, Dict[str, str]] = {
         "label": "竞价封单/当日封单表",
         "path": "竞价/竞价封单",
     },
+    "auction_weimai": {
+        "id": "auction.jjyd.weimai",
+        "label": "竞价异动/涨停委买",
+        "path": "竞价/竞价异动/涨停委买",
+    },
     "cashflow_today": {
         "id": "cashflow.stock.today",
         "label": "个股资金流向/今日排行",
@@ -1190,9 +1195,14 @@ class DuanxianxiaFetcher:
             except Exception as direct_exc:
                 # 2) 直连失败 → 浏览器方式，同样校验
                 try:
+                    # Browser fallback must use the same-origin qxlive endpoint.
+                    # The page is loaded from duanxianxia.com/web/qxlive; using the
+                    # cross-origin duanxianxia.cn absolute URL can fail with
+                    # `TypeError: Failed to fetch` even when the same-origin
+                    # `/api/getLiveByStrong` call succeeds inside the page.
                     browser_result = self._post_json_via_browser(
                         page_url,
-                        'https://duanxianxia.cn/api/getLiveByStrong',
+                        '/api/getLiveByStrong',
                         {'platetype': platetype, 'platelist': ''},
                     )
                     plates = browser_result.get('plates', {})
@@ -1264,7 +1274,7 @@ class DuanxianxiaFetcher:
             if str(item.get('code', '') or '').strip()
         }
 
-        # 按板块强度排序，取前20个主标签
+        # 按板块强度排序，取前10个主标签
         def strength_val(item: Dict[str, Any]) -> float:
             try:
                 return float(str(item.get('val', '') or '0').strip())
@@ -1272,7 +1282,7 @@ class DuanxianxiaFetcher:
                 return 0.0
 
         sorted_strong = sorted(strong_values, key=strength_val, reverse=True)
-        TOP_N = 20
+        TOP_N = 10
         ordered_codes: List[str] = []
         for item in sorted_strong:
             code = str(item.get('code', '') or '').strip()
@@ -1280,7 +1290,7 @@ class DuanxianxiaFetcher:
                 ordered_codes.append(code)
             if len(ordered_codes) >= TOP_N:
                 break
-        # 不再合并 money_values 的全量，仅按强度前20抓取
+        # 不再合并 money_values 的全量，仅按强度前10抓取
 
         top_plates = []
         for idx, code in enumerate(ordered_codes, start=1):
@@ -1831,6 +1841,75 @@ class DuanxianxiaFetcher:
             },
         )
 
+    def fetch_auction_weimai(self) -> FetchResult:
+        url = f"{BASE}/vendor/stockdata/daban.json"
+        encrypted = self.session.get(
+            url,
+            timeout=TIMEOUT,
+            headers={
+                "User-Agent": UA,
+                "Referer": f"{BASE}/mob/jjyd",
+            },
+        ).text
+        decrypted = self._decrypt_jjlive_payload(encrypted)
+        data = json.loads(decrypted)
+        items = data.get("list", []) or []
+        rows = []
+        for idx, item in enumerate(items, start=1):
+            concept_raw = item[11] if len(item) > 11 else ""
+            concept_parts = [p.strip() for p in str(concept_raw).replace("|", "、").replace("+", "、").split("、") if p.strip()]
+            concept_1 = concept_parts[0] if len(concept_parts) > 0 else ""
+            concept_2 = concept_parts[1] if len(concept_parts) > 1 else ""
+            latest_change_pct = item[3] if len(item) > 3 else None
+            auction_change_pct = item[5] if len(item) > 5 else None
+            rows.append(
+                {
+                    "rank": idx,
+                    "code": str(item[0]),
+                    "name": item[1],
+                    "price": item[2],
+                    "latest_change_pct": latest_change_pct,
+                    "latest_change_pct_text": f"{latest_change_pct}%" if latest_change_pct not in (None, "") else "",
+                    "auction_turnover": item[4],
+                    "auction_turnover_wan": round(float(item[4]) / 10000, 2) if item[4] not in (None, "") else None,
+                    "auction_turnover_text": self._format_qxlive_amount(item[4], yi_digits=1, wan_digits=0) if item[4] not in (None, "") else "",
+                    "auction_change_pct": auction_change_pct,
+                    "auction_change_pct_text": f"{auction_change_pct}%" if auction_change_pct not in (None, "") else "",
+                    "main_net_inflow": item[6],
+                    "main_net_inflow_wan": round(float(item[6]) / 10000, 2) if item[6] not in (None, "") else None,
+                    "main_net_inflow_text": self._format_qxlive_amount(item[6], yi_digits=1, wan_digits=0) if item[6] not in (None, "") else "",
+                    "turnover_rate_pct": item[7],
+                    "turnover_rate_pct_text": f"{item[7]}%" if len(item) > 7 and item[7] not in (None, "") else "",
+                    "seal_volume": item[8],
+                    "auction_amount": item[9],
+                    "auction_amount_wan": round(float(item[9]) / 10000, 2) if item[9] not in (None, "") else None,
+                    "seal_volume_again": item[10],
+                    "concept": concept_raw,
+                    "concept_1": concept_1,
+                    "concept_2": concept_2,
+                    "market_cap": item[12],
+                    "market_cap_yi": round(float(item[12]) / 100000000, 2) if item[12] not in (None, "") else None,
+                    "market_cap_text": self._format_qxlive_amount(item[12], yi_digits=0, wan_digits=0) if item[12] not in (None, "") else "",
+                    "main_net_inflow_full": item[13],
+                    "super_large_net_inflow": item[14],
+                    "large_order_net_inflow": item[15],
+                    "board_label": item[16],
+                    "seal_amount_wan": item[17],
+                    "seal_amount_text": self._format_qxlive_seal_amount(item[17]) if item[17] not in (None, "") else "",
+                    "raw": item,
+                }
+            )
+        return FetchResult(
+            kind="auction_weimai",
+            rows=rows,
+            meta={
+                "source": url,
+                "field": "list",
+                "count": len(rows),
+                "source_tab": "mob/jjyd -> weimai",
+            },
+        )
+
     def fetch_cashflow_today(self) -> FetchResult:
         return self._fetch_cashflow_rank("today", "今日排行")
 
@@ -2209,12 +2288,13 @@ def build_arg_parser() -> argparse.ArgumentParser:
             "auction_qiangchou",
             "auction_net_amount",
             "auction_fengdan",
+            "auction_weimai",
             "cashflow_today",
             "cashflow_3d",
             "cashflow_5d",
             "cashflow_10d",
         ],
-        help="rocket=飙升榜, hot=热门, surge=冲涨, hotlist_day=热度榜（日）, review_daily=复盘/每日复盘顶部指标, review_daily_core11=每日复盘顶部指标（11项，不含量能）, review_ltgd_range=龙头高度区间涨幅, review_plate=涨停复盘（按概念/题材标签）, home_qxlive_plate_summary=主页板块强度全主标签汇总表, home_qxlive_top_metrics=主页qxlive顶部指标按钮组, home_ztpool=主页涨停股票池, auction_vratio=竞价爆量, auction_qiangchou=竞价抢筹, auction_net_amount=竞价净额, auction_fengdan=竞价封单, cashflow_today/3d/5d/10d=个股资金流向排行（默认前100名）",
+        help="rocket=飙升榜, hot=热门, surge=冲涨, hotlist_day=热度榜（日）, review_daily=复盘/每日复盘顶部指标, review_daily_core11=每日复盘顶部指标（11项，不含量能）, review_ltgd_range=龙头高度区间涨幅, review_plate=涨停复盘（按概念/题材标签）, home_qxlive_plate_summary=主页板块强度全主标签汇总表, home_qxlive_top_metrics=主页qxlive顶部指标按钮组, home_ztpool=主页涨停股票池, auction_vratio=竞价爆量, auction_qiangchou=竞价抢筹, auction_net_amount=竞价净额, auction_fengdan=竞价封单, auction_weimai=涨停委买, cashflow_today/3d/5d/10d=个股资金流向排行（默认前100名）",
     )
     parser.add_argument("--format", choices=["json", "jsonl"], default="json")
     parser.add_argument("--limit", type=int, default=0, help="Only output first N rows (0 = all)")
@@ -2320,6 +2400,8 @@ def main() -> int:
         result = fetcher.fetch_auction_net_amount()
     elif args.dataset == "auction_fengdan":
         result = fetcher.fetch_auction_fengdan()
+    elif args.dataset == "auction_weimai":
+        result = fetcher.fetch_auction_weimai()
     elif args.dataset == "cashflow_today":
         result = fetcher.fetch_cashflow_today()
     elif args.dataset == "cashflow_3d":

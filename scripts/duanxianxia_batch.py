@@ -91,6 +91,7 @@ GROUPS: Dict[str, Dict[str, Any]] = {
             "auction_qiangchou",
             "auction_net_amount",
             "auction_fengdan",
+            "auction_weimai",
             "home_qxlive_plate_summary",
             "home_qxlive_top_metrics",
         ],
@@ -176,6 +177,7 @@ SEQUENCE = {
     "auction_qiangchou": 8,
     "auction_net_amount": 9,
     "auction_fengdan": 10,
+    "auction_weimai": 10,
     "cashflow_today": 11,
     "cashflow_3d": 12,
     "cashflow_5d": 13,
@@ -212,6 +214,9 @@ TABLE_SPECS: Dict[str, Dict[str, Any]] = {
     },
     "auction.jjlive.fengdan": {
         "columns": [("排名", "rank"), ("名称", "name"), ("代码", "code"), ("题材1", "tag_1"), ("题材2", "tag_2"), ("连板标签", "board_label"), ("9:15", "amount_915"), ("9:20", "amount_920"), ("9:25", "amount_925"), ("涨幅", "latest_change_pct")],
+    },
+    "auction.jjyd.weimai": {
+        "columns": [("排名", "rank"), ("名称", "name"), ("代码", "code"), ("委买/撮合", "auction_turnover_text"), ("涨幅", "latest_change_pct_text"), ("竞价主力", "main_net_inflow_text"), ("封单", "seal_amount_text"), ("流通Z", "market_cap_text"), ("竞涨", "auction_change_pct_text"), ("概念1", "concept_1"), ("概念2", "concept_2"), ("连板标签", "board_label")],
     },
     "review.daily.top_metrics": {
         "columns": [("序号", "order"), ("指标键", "metric_key"), ("指标名称", "metric_label"), ("指标分组", "metric_group"), ("分类", "metric_category"), ("展示名称", "display_label"), ("日期", "date"), ("数值", "value"), ("晋级率", "display_rate"), ("晋级数", "jinji_count"), ("样本数", "sample_count"), ("比值", "ratio"), ("原值", "raw_value")],
@@ -2615,6 +2620,8 @@ def run_dataset(fetcher: DuanxianxiaFetcher, dataset: str) -> Dict[str, Any]:
         result = fetcher.fetch_auction_net_amount()
     elif dataset == "auction_fengdan":
         result = fetcher.fetch_auction_fengdan()
+    elif dataset == "auction_weimai":
+        result = fetcher.fetch_auction_weimai()
     elif dataset == "cashflow_today":
         result = fetcher.fetch_cashflow_today()
     elif dataset == "cashflow_3d":
@@ -3446,9 +3453,9 @@ def render_summary_text(report: Dict[str, Any]) -> str:
     if top_candidates:
         lines.extend([
             "",
-            "**盘前分析候选**",
+            f"**盘前分析候选（共 {len(top_candidates)} 条）**" if group == "premarket" else f"**分析候选（共 {len(top_candidates)} 条）**",
         ])
-        for cand in top_candidates[:5]:
+        for cand in top_candidates:
             reason_text = "；".join(cand.get("reasons", [])[:3]) or "无"
             risk_text = "；".join(cand.get("risks", [])[:2]) or "无"
             lines.append(

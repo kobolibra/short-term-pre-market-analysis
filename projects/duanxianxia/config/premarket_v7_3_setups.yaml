@@ -1,12 +1,12 @@
-# Premarket v7.3 action-pool production overlay
-# Evidence-balanced excess-return design based on 2026-05-19 and 2026-05-20 review.
-# This is NOT sector-hardcoded and NOT low-cost/20cm-first.
-version: "premarket_v7_3_evidence_balanced_excess_return"
+# Premarket v7.3 selective high-conviction overlay
+# Design goal: 宁缺毋滥.  Produce a short, evidence-backed buy list and push the
+# rest into watch/review.  No sector hard-code; no 20cm/low-cost standalone alpha.
+version: "premarket_v7_3_selective_high_conviction"
 
 output:
-  max_candidates: 30
-  watch_tier_max: 60
-  pool_max: 15
+  max_candidates: 10
+  watch_tier_max: 40
+  pool_max: 10
 
 action_pools:
   broad_theme_names:
@@ -18,6 +18,8 @@ action_pools:
     - "并购重组"
     - "股权转让"
     - "实控人变更"
+
+  # Existing base classifiers remain, but final buy list is gated below.
   high_cost_pct: 8.5
   board_watch_pct: 9.5
 
@@ -33,7 +35,6 @@ action_pools:
   momentum_min_liquidity_score: 55
   momentum_min_amount_wan: 1000
 
-  # Theme catch-up remains available, but weak/medium quality is penalized in ranking.
   theme_catchup_min_theme: 80
   theme_catchup_pct_min: -1.5
   theme_catchup_pct_max: 3.5
@@ -57,7 +58,14 @@ action_pools:
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
 
-  # Broad repair recall restored; it is evidence-balanced, not sector-specific.
+  # Conservative final buy gates.
+  buy_max_auction_pct: 6.5
+  buy_min_amount_wan: 900
+  buy_min_liquidity_score: 35
+  buy_min_expected_score: 45
+
+  # Broad repair recall: useful, but must have real amount/auction support and
+  # must not become a giant noisy list.
   broad_repair_enabled: true
   broad_repair_theme_max: 20
   broad_repair_source_max: 1.0
@@ -66,10 +74,6 @@ action_pools:
   broad_repair_pct_max: 5.0
   broad_repair_min_auction_strength: 12
   broad_repair_min_amount_wan: 800
-  broad_repair_deep_pct_min: -18.0
-  broad_repair_deep_pct_max: -5.0
-  broad_repair_deep_min_auction_strength: 8
-  broad_repair_deep_min_amount_wan: 800
   broad_repair_score_min: 24
 
   high_cost_repair_watch_pct_min: 7.0
@@ -77,15 +81,7 @@ action_pools:
   high_cost_repair_watch_min_amount_wan: 5000
   high_cost_repair_watch_min_theme: 80
 
-  # Expected-return proxy weights.  Main buy-list ordering now follows this
-  # evidence-balanced score instead of decorative action priority order.
-  expected_bonus_momentum: 30
-  expected_bonus_low_open_reversal: 27
-  expected_bonus_broad_repair: 24
-  expected_bonus_theme: 16
-  expected_bonus_auction_follow: 13
-  expected_bonus_fake_watch: 4
-  expected_bonus_high_cost_repair_watch: -8
-  expected_bonus_soft_avoid: -6
-  expected_cost_penalty_start_pct: 5.5
-  expected_cost_penalty_per_pct: 2.0
+  # Expected-return ranking weights.  These are not trained on realized returns;
+  # they reflect premarket evidence quality and risk penalties.
+  expected_cost_penalty_start_pct: 5.0
+  expected_cost_penalty_per_pct: 3.0

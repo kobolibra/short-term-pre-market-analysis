@@ -96,7 +96,7 @@ def load_premarket_v72_bundle(
     date_str: str,
     project_root: Path,
     premarket_auction_cutoff: str = "092900",
-    qxlive_t0_cutoff: str = "093000",
+    qxlive_t0_cutoff: str = "093300",
 ) -> PremarketV72Bundle:
     v71 = load_premarket_bundle(
         date_str,

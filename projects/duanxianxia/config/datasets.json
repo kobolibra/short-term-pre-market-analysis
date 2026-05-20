@@ -86,6 +86,12 @@
       "status": "working"
     },
     {
+      "id": "auction.jjyd.weimai",
+      "label": "竞价异动/涨停委买",
+      "path": "竞价/竞价异动/涨停委买",
+      "status": "working"
+    },
+    {
       "id": "cashflow.stock.today",
       "label": "个股资金流向/今日排行",
       "path": "资金流向/个股资金流向/今日排行",

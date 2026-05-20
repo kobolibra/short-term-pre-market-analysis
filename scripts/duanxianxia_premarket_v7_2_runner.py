@@ -85,12 +85,19 @@ def _normalize_qxlive_top_rows(rows: Any) -> list[dict[str, Any]]:
     return out
 
 
-def run_v7_2(date_str: str, project_root: Path, output_dir: Optional[Path] = None, no_write: bool = False) -> Dict[str, Any]:
+def run_v7_2(
+    date_str: str,
+    project_root: Path,
+    output_dir: Optional[Path] = None,
+    no_write: bool = False,
+    premarket_auction_cutoff_override: Optional[str] = None,
+    qxlive_t0_cutoff_override: Optional[str] = None,
+) -> Dict[str, Any]:
     config = load_v7_2_config(project_root)
     params = config.get("params") or {}
     action_config = config.get("action_pools") or {}
-    cutoff = str(params.get("premarket_auction_cutoff", "092900"))
-    qxlive_cutoff = str(params.get("qxlive_premarket_boundary", "093000"))
+    cutoff = str(premarket_auction_cutoff_override or params.get("premarket_auction_cutoff", "092900"))
+    qxlive_cutoff = str(qxlive_t0_cutoff_override or params.get("qxlive_premarket_boundary", "093300"))
 
     bundle = load_premarket_v72_bundle(date_str, project_root, premarket_auction_cutoff=cutoff, qxlive_t0_cutoff=qxlive_cutoff)
     v71 = bundle.v71
@@ -122,6 +129,11 @@ def run_v7_2(date_str: str, project_root: Path, output_dir: Optional[Path] = Non
         "bundle_summary": bundle.to_summary_dict(),
         "regime": labels.get("regime"),
         "warnings": bundle.warnings,
+        "cutoffs_used": {
+            "premarket_auction_cutoff": cutoff,
+            "qxlive_t0_cutoff": qxlive_cutoff,
+            "late_start_fallback": bool(premarket_auction_cutoff_override or qxlive_t0_cutoff_override),
+        },
         "notes": [
             "v7.2 conservative mode: T0 auction + exact plate-tag strength + hotness dominate.",
             "T0 qxlive HSLN/PB/PBBX are ignored for premarket regime.",

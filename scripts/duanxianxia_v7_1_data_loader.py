@@ -4,7 +4,7 @@ duanxianxia_v7_1_data_loader.py — v7.1 capture 数据加载器
 严格时点隔离:
 - T0 竞价只允许读取 premarket_auction_cutoff 之前的 capture,默认 09:29:00。
 - 若 cutoff 之前没有 capture,直接视为缺失,禁止回退到盘中/盘后 capture。
-- T-1/T-2 qxlive top_metrics 只取 ≤09:30 的盘前快照。
+- T-1/T-2 qxlive top_metrics 只取 ≤09:33 的早盘首批快照（覆盖历史首包时间漂移，避免误报缺失）。
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ DS_CASHFLOW_TODAY = "cashflow.stock.today"
 DS_CASHFLOW_3DAY = "cashflow.stock.3day"
 DS_CASHFLOW_5DAY = "cashflow.stock.5day"
 DS_CASHFLOW_10DAY = "cashflow.stock.10day"
-QXLIVE_PREMARKET_BOUNDARY_HHMMSS = "093000"
+QXLIVE_PREMARKET_BOUNDARY_HHMMSS = "093300"
 PREMARKET_AUCTION_CUTOFF_HHMMSS = "092900"
 DEFAULT_KAIPAN_HISTORY_DAYS = 10
 _HHMMSS_FILE_PATTERN = re.compile(r"^(\d{6})\.json$")

@@ -1,12 +1,12 @@
-# Premarket v7.3 selective high-conviction overlay
-# Design goal: 宁缺毋滥.  Produce a short, evidence-backed buy list and push the
-# rest into watch/review.  No sector hard-code; no 20cm/low-cost standalone alpha.
-version: "premarket_v7_3_selective_high_conviction"
+# Premarket v7.3 next-level selective decision system
+# Philosophy: fewer decisions, higher evidence, explicit rejection reasons.
+# No sector hard-code. No low-cost/20cm standalone alpha. No forced Top30.
+version: "premarket_v7_3_next_level_selective_decision"
 
 output:
-  max_candidates: 10
-  watch_tier_max: 40
-  pool_max: 10
+  max_candidates: 5
+  watch_tier_max: 25
+  pool_max: 8
 
 action_pools:
   broad_theme_names:
@@ -19,7 +19,7 @@ action_pools:
     - "股权转让"
     - "实控人变更"
 
-  # Existing base classifiers remain, but final buy list is gated below.
+  # Base classifiers: keep broad discovery, but final BUY is gated in the overlay.
   high_cost_pct: 8.5
   board_watch_pct: 9.5
 
@@ -58,14 +58,18 @@ action_pools:
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
 
-  # Conservative final buy gates.
-  buy_max_auction_pct: 6.5
+  # Final decision bars.  If not enough evidence, the system should return few
+  # or even zero BUY candidates instead of manufacturing a list.
+  buy_min_conviction: 64
+  buy_min_conviction_cold: 68
+  buy_min_conviction_downgrading: 70
+  buy_hard_max_pct: 7.0
+  buy_soft_max_pct: 6.2
   buy_min_amount_wan: 900
   buy_min_liquidity_score: 35
-  buy_min_expected_score: 45
+  amount_full_wan: 5000
 
-  # Broad repair recall: useful, but must have real amount/auction support and
-  # must not become a giant noisy list.
+  # Broad repair recall: useful only with clean near-flat cost and real amount.
   broad_repair_enabled: true
   broad_repair_theme_max: 20
   broad_repair_source_max: 1.0
@@ -80,8 +84,3 @@ action_pools:
   high_cost_repair_watch_pct_max: 10.5
   high_cost_repair_watch_min_amount_wan: 5000
   high_cost_repair_watch_min_theme: 80
-
-  # Expected-return ranking weights.  These are not trained on realized returns;
-  # they reflect premarket evidence quality and risk penalties.
-  expected_cost_penalty_start_pct: 5.0
-  expected_cost_penalty_per_pct: 3.0

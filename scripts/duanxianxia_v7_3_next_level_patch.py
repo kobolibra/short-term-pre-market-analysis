@@ -1,31 +1,38 @@
-"""v7.3 selective high-conviction premarket overlay.
+"""v7.3 next-level selective decision overlay.
 
-Goal: fewer, cleaner, higher-quality candidates.
+Purpose
+-------
+The old design tried to explain too much and buy too much.  This overlay turns
+v7.3 into a practical premarket decision system:
 
-This replaces the previous decorative/over-expanded overlays.  The report should
-not pretend that a few auction tables can justify a long, complicated buy list.
-Production selection is now deliberately conservative:
-
-- no sector hard-code;
-- no low-cost/20cm standalone alpha;
-- no weak theme catch-up in the buy list;
-- no board/high-cost/fake-strength rows in the buy list;
-- actionable candidates must pass explicit cost, liquidity, source/amount and
-  action-quality gates;
-- if the evidence is not strong enough, the row stays in watch/review pools.
-
-Realized returns are only used by diagnostics, never by production rules.
+1. Preserve broad discovery, but only a small set can become BUY candidates.
+2. A BUY must pass explicit evidence gates: cost, amount, liquidity, source,
+   action-specific structure, and market regime.
+3. Everything else is WATCH or AVOID with a rejection reason.  No forced Top30.
+4. No hard-coded sector.  No low-cost/20cm standalone alpha.  No decorative
+   complexity in the executable list.
+5. Realized returns are review diagnostics only; production uses only premarket
+   fields.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import duanxianxia_v7_3_output as v73
 
 _APPLIED = False
 
-
+BUY_ACTION = "HIGH_CONVICTION_BUY"
 WATCH_ACTION = "QUALITY_WATCH"
+AVOID_ACTION = "STRUCTURAL_AVOID"
+
+SOURCE_RANK_KEYS = (
+    "qiangchou_920_925_rank",
+    "qiangchou_last_second_rank",
+    "vratio_rank",
+    "net_amount_rank",
+    "fengdan_rank",
+)
 
 
 def _num(v: Any, default: Optional[float] = 0.0) -> Optional[float]:
@@ -48,6 +55,10 @@ def _add(tags: List[str], *items: str) -> List[str]:
     return tags
 
 
+def _detail(row: Dict[str, Any]) -> Dict[str, Any]:
+    return row.get("auction_detail") or {}
+
+
 def _m(row: Dict[str, Any]) -> Dict[str, float]:
     pct = v73._auction_pct(row)
     return {
@@ -58,50 +69,91 @@ def _m(row: Dict[str, Any]) -> Dict[str, float]:
         "source": float(v73._metric(row, "source_evidence_score", 0.0) or 0.0),
         "family": float(v73._metric(row, "source_family_count", 0.0) or 0.0),
         "theme": float(v73._metric(row, "theme_strength_t0", 0.0) or 0.0),
+        "net_pressure": float(v73._metric(row, "net_pressure", 0.0) or 0.0),
     }
 
 
+def _regime(row: Dict[str, Any]) -> str:
+    return str(row.get("regime") or "normal")
+
+
 def _entry_tag(row: Dict[str, Any]) -> str:
-    return str(row.get("entry_tag") or (row.get("auction_detail") or {}).get("entry_tag") or "normal")
+    return str(row.get("entry_tag") or _detail(row).get("entry_tag") or "normal")
 
 
 def _auction_type(row: Dict[str, Any]) -> str:
-    return str(row.get("auction_setup_type") or (row.get("auction_detail") or {}).get("auction_setup_type") or "")
+    return str(row.get("auction_setup_type") or _detail(row).get("auction_setup_type") or "")
 
 
-def _rank_present(row: Dict[str, Any], key: str) -> bool:
-    detail = row.get("auction_detail") or {}
-    return detail.get(key) not in (None, "", 0, "0")
+def _rank(row: Dict[str, Any], key: str) -> Optional[int]:
+    v = _detail(row).get(key)
+    try:
+        if v in (None, "", 0, "0"):
+            return None
+        return int(float(str(v).replace(",", "")))
+    except Exception:
+        return None
 
 
-def _has_any_source(row: Dict[str, Any]) -> bool:
-    return (
-        _rank_present(row, "qiangchou_920_925_rank")
-        or _rank_present(row, "qiangchou_last_second_rank")
-        or _rank_present(row, "vratio_rank")
-        or _rank_present(row, "net_amount_rank")
-        or _rank_present(row, "fengdan_rank")
-        or _m(row)["source"] >= 8
-        or _m(row)["family"] >= 1
-    )
+def _source_count(row: Dict[str, Any]) -> int:
+    detail = _detail(row)
+    fam = detail.get("source_families") or []
+    if isinstance(fam, list) and fam:
+        return len([x for x in fam if str(x).strip()])
+    return sum(1 for k in SOURCE_RANK_KEYS if _rank(row, k) is not None)
+
+
+def _has_source(row: Dict[str, Any], max_rank: int = 30) -> bool:
+    if _m(row)["source"] >= 8 or _m(row)["family"] >= 1:
+        return True
+    return any((_rank(row, k) is not None and (_rank(row, k) or 999) <= max_rank) for k in SOURCE_RANK_KEYS)
+
+
+def _top_source(row: Dict[str, Any], max_rank: int = 10) -> bool:
+    return any((_rank(row, k) is not None and (_rank(row, k) or 999) <= max_rank) for k in SOURCE_RANK_KEYS)
+
+
+def _regime_bar(row: Dict[str, Any], cfg: Dict[str, Any]) -> float:
+    r = _regime(row)
+    if "cold" in r:
+        return float(cfg.get("buy_min_conviction_cold", 68))
+    if "hot_to" in r or "downgrad" in r:
+        return float(cfg.get("buy_min_conviction_downgrading", 70))
+    return float(cfg.get("buy_min_conviction", 64))
+
+
+def _fatal_risk(row: Dict[str, Any], cfg: Dict[str, Any]) -> Optional[str]:
+    m = _m(row)
+    if row.get("risk_penalty") == 0:
+        return "hard_risk_kill"
+    if _entry_tag(row) == "avoid" or _auction_type(row) == "FAKE_STRENGTH":
+        return "fake_strength_or_avoid_entry"
+    if _auction_type(row) == "BOARD_LOCK_WATCH" or _entry_tag(row) == "board_watch":
+        return "board_lock_not_excess_return_trade"
+    if m["pct"] >= float(cfg.get("buy_hard_max_pct", 7.0)):
+        return "auction_cost_too_high"
+    if m["amount"] <= 0:
+        return "missing_auction_amount"
+    return None
 
 
 def _broad_repair_score(row: Dict[str, Any], cfg: Dict[str, Any]) -> float:
     m = _m(row)
     pct = m["pct"]
-    if -2.0 <= pct <= 2.5:
-        cost_fit = 20.0
-    elif 2.5 < pct <= 5.0:
-        cost_fit = 10.0
-    elif -10.0 <= pct < -5.0:
-        cost_fit = 6.0
+    if -1.8 <= pct <= 2.3:
+        cost_fit = 22.0
+    elif 2.3 < pct <= 4.8:
+        cost_fit = 11.0
+    elif -6.5 <= pct < -1.8:
+        cost_fit = 8.0
     else:
         cost_fit = 0.0
     return v73._clamp(
         cost_fit
-        + min(30.0, m["auction"] * 0.70)
+        + min(30.0, m["auction"] * 0.72)
         + min(22.0, m["amount"] / 5000.0 * 22.0)
         + min(8.0, max(m["source"], m["theme"] * 0.05))
+        + min(5.0, m["liquidity"] * 0.05)
     )
 
 
@@ -117,8 +169,6 @@ def _is_broad_repair_candidate(row: Dict[str, Any], cfg: Dict[str, Any]) -> bool
     m = _m(row)
     if not (float(cfg.get("broad_repair_pct_min", -2.0)) <= m["pct"] <= float(cfg.get("broad_repair_pct_max", 5.0))):
         return False
-    if m["pct"] >= float(cfg.get("confirmation_high_cost_pct", 7.0)):
-        return False
     if m["theme"] > float(cfg.get("broad_repair_theme_max", 20)):
         return False
     if m["source"] > float(cfg.get("broad_repair_source_max", 1.0)) or m["family"] > float(cfg.get("broad_repair_family_max", 1)):
@@ -130,80 +180,98 @@ def _is_broad_repair_candidate(row: Dict[str, Any], cfg: Dict[str, Any]) -> bool
     return _broad_repair_score(row, cfg) >= float(cfg.get("broad_repair_score_min", 24))
 
 
-def _is_high_cost_repair_watch(row: Dict[str, Any], cfg: Dict[str, Any]) -> bool:
-    if str(row.get("action_type")) != "AVOID":
-        return False
-    m = _m(row)
-    return (
-        float(cfg.get("high_cost_repair_watch_pct_min", 7.0)) <= m["pct"] <= float(cfg.get("high_cost_repair_watch_pct_max", 10.5))
-        and m["amount"] >= float(cfg.get("high_cost_repair_watch_min_amount_wan", 5000))
-        and m["theme"] >= float(cfg.get("high_cost_repair_watch_min_theme", 80))
-    )
-
-
-def _expected_score(row: Dict[str, Any], cfg: Dict[str, Any]) -> float:
+def _conviction(row: Dict[str, Any], cfg: Dict[str, Any]) -> Tuple[float, List[str]]:
     action = str(row.get("action_type"))
     quality = str(row.get("signal_quality") or row.get("action_quality") or "")
     m = _m(row)
     pct = m["pct"]
-    pool_bonus = {
-        "MOMENTUM_CATCHUP": 30.0,
-        "LOW_OPEN_REVERSAL": 28.0,
-        "BROAD_REPAIR_MOMENTUM": 26.0,
-        "AUCTION_FOLLOW": 18.0,
-        "THEME_CATCHUP": 14.0,
-        "SOFT_AVOID_REPAIR_CANDIDATE": -8.0,
-        "FAKE_STRENGTH_WATCH": -12.0,
-        "BOARD_WATCH": -25.0,
-        "HIGH_COST_REPAIR_WATCH": -25.0,
-        "AVOID": -40.0,
-        WATCH_ACTION: -35.0,
-        "DEBUG_ONLY": -80.0,
-    }.get(action, -50.0)
-    quality_bonus = {
-        "momentum": 8.0,
+    reasons: List[str] = []
+
+    base = {
+        "MOMENTUM_CATCHUP": 35.0,
+        "LOW_OPEN_REVERSAL": 33.0,
+        "BROAD_REPAIR_MOMENTUM": 32.0,
+        "AUCTION_FOLLOW": 28.0,
+        "THEME_CATCHUP": 22.0,
+    }.get(action, 0.0)
+    if base <= 0:
+        return -100.0, ["not_buy_action"]
+
+    quality_adj = {
+        "momentum": 9.0,
         "repair": 8.0,
-        "broad_repair": 7.0,
-        "main_attack": 4.0,
-        "strong": 5.0,
-        "medium": -2.0,
-        "weak": -10.0,
-        "soft_avoid": -6.0,
-        "watch_only": -12.0,
-        "hard_avoid": -18.0,
+        "broad_repair": 8.0,
+        "main_attack": 5.0,
+        "strong": 4.0,
+        "medium": -8.0,
+        "weak": -18.0,
     }.get(quality, 0.0)
-    cost_penalty = max(0.0, pct - float(cfg.get("expected_cost_penalty_start_pct", 5.0))) * float(cfg.get("expected_cost_penalty_per_pct", 3.0))
-    amount_bonus = min(14.0, m["amount"] / 5000.0 * 14.0)
-    evidence_bonus = min(10.0, m["source"] * 0.25 + m["family"] * 2.0)
-    auction_bonus = min(18.0, m["auction"] * 0.18)
-    low_cost_bonus = 4.0 if -2.0 <= pct <= 2.5 and action in {"BROAD_REPAIR_MOMENTUM", "LOW_OPEN_REVERSAL", "THEME_CATCHUP"} else 0.0
-    return pool_bonus + quality_bonus + auction_bonus + amount_bonus + evidence_bonus + low_cost_bonus - cost_penalty
+
+    cost = 0.0
+    if action == "LOW_OPEN_REVERSAL":
+        if -5.5 <= pct < -0.3:
+            cost = 12.0; reasons.append("good_low_open_cost")
+        elif -8.5 <= pct < -5.5:
+            cost = 5.0; reasons.append("deep_repair_cost")
+        else:
+            cost = -12.0; reasons.append("bad_reversal_cost")
+    elif action in {"BROAD_REPAIR_MOMENTUM", "THEME_CATCHUP"}:
+        if -1.8 <= pct <= 2.3:
+            cost = 12.0; reasons.append("low_cost")
+        elif 2.3 < pct <= 4.8:
+            cost = 4.0; reasons.append("mid_cost")
+        else:
+            cost = -10.0; reasons.append("cost_window_weak")
+    else:
+        if 1.5 <= pct <= 5.8:
+            cost = 8.0; reasons.append("healthy_attack_cost")
+        else:
+            cost = -10.0; reasons.append("attack_cost_window_weak")
+
+    amount = min(14.0, m["amount"] / float(cfg.get("amount_full_wan", 5000)) * 14.0)
+    auction = min(14.0, m["auction"] * 0.18)
+    source = min(12.0, m["source"] * 0.24 + _source_count(row) * 2.5)
+    liquidity = min(6.0, m["liquidity"] * 0.06)
+
+    penalty = 0.0
+    if pct > float(cfg.get("buy_soft_max_pct", 6.2)):
+        penalty += (pct - float(cfg.get("buy_soft_max_pct", 6.2))) * 4.0
+        reasons.append("high_cost_penalty")
+    if m["liquidity"] < float(cfg.get("buy_min_liquidity_score", 35)):
+        penalty += 10.0; reasons.append("liquidity_penalty")
+    if m["amount"] < float(cfg.get("buy_min_amount_wan", 900)):
+        penalty += 12.0; reasons.append("amount_penalty")
+    if quality == "weak":
+        reasons.append("weak_quality_penalty")
+    if _regime(row).startswith("cold") and action == "THEME_CATCHUP":
+        penalty += 8.0; reasons.append("cold_theme_penalty")
+
+    score = base + quality_adj + cost + amount + auction + source + liquidity - penalty
+    return round(score, 2), reasons
 
 
-def _gate_reason(row: Dict[str, Any], cfg: Dict[str, Any]) -> Optional[str]:
-    """Return None if row is high-conviction actionable; otherwise reason."""
+def _gate(row: Dict[str, Any], cfg: Dict[str, Any]) -> Optional[str]:
+    fatal = _fatal_risk(row, cfg)
+    if fatal:
+        return fatal
     action = str(row.get("action_type"))
     quality = str(row.get("signal_quality") or row.get("action_quality") or "")
     m = _m(row)
-    expected = float(row.get("expected_return_score") or _expected_score(row, cfg))
+    conv = float(row.get("conviction_score") or 0.0)
 
     if action not in {"AUCTION_FOLLOW", "MOMENTUM_CATCHUP", "LOW_OPEN_REVERSAL", "BROAD_REPAIR_MOMENTUM", "THEME_CATCHUP"}:
         return "not_primary_action"
-    if _entry_tag(row) == "avoid" or _auction_type(row) in {"FAKE_STRENGTH", "BOARD_LOCK_WATCH"}:
-        return "avoid_fake_or_board_lock"
-    if m["pct"] >= float(cfg.get("buy_max_auction_pct", 6.5)):
-        return "auction_cost_too_high_for_excess_return"
+    if conv < _regime_bar(row, cfg):
+        return "conviction_below_regime_bar"
     if m["amount"] < float(cfg.get("buy_min_amount_wan", 900)):
         return "auction_amount_too_small"
     if m["liquidity"] < float(cfg.get("buy_min_liquidity_score", 35)):
         return "liquidity_too_weak"
-    if expected < float(cfg.get("buy_min_expected_score", 45)):
-        return "expected_score_below_buy_bar"
 
     if action == "AUCTION_FOLLOW":
-        if not (2.0 <= m["pct"] <= 6.5):
+        if not (2.0 <= m["pct"] <= 6.2):
             return "auction_follow_cost_window_fail"
-        if m["auction"] < 50 or not _has_any_source(row):
+        if m["auction"] < 50 or not _has_source(row, 30):
             return "auction_follow_evidence_fail"
         return None
 
@@ -215,20 +283,18 @@ def _gate_reason(row: Dict[str, Any], cfg: Dict[str, Any]) -> Optional[str]:
         return None
 
     if action == "LOW_OPEN_REVERSAL":
-        if m["pct"] >= 0:
-            return "not_low_open"
-        if m["pct"] < -10.0:
-            return "deep_low_open_too_risky"
-        if m["amount"] < 3000 or m["auction"] < 25:
-            return "low_open_support_not_enough"
-        if m["pct"] < -5.0 and float(row.get("action_score") or 0) < 55:
-            return "deep_low_open_needs_stronger_score"
+        if not (-8.5 <= m["pct"] < -0.3):
+            return "low_open_cost_window_fail"
+        if m["amount"] < (4500 if m["pct"] < -5.5 else 2500):
+            return "low_open_amount_not_enough"
+        if not (_rank(row, "net_amount_rank") is not None or _rank(row, "qiangchou_920_925_rank") is not None):
+            return "low_open_missing_net_or_sustained_support"
         return None
 
     if action == "BROAD_REPAIR_MOMENTUM":
-        if not (-2.0 <= m["pct"] <= 4.8):
+        if not (-1.8 <= m["pct"] <= 4.8):
             return "broad_repair_cost_window_fail"
-        if float(row.get("action_score") or 0) < 35:
+        if float(row.get("action_score") or 0) < 38:
             return "broad_repair_score_too_low"
         if m["auction"] < 15 or m["amount"] < 1000:
             return "broad_repair_support_not_enough"
@@ -239,24 +305,43 @@ def _gate_reason(row: Dict[str, Any], cfg: Dict[str, Any]) -> Optional[str]:
             return "theme_not_strong_quality"
         if not (-0.5 <= m["pct"] <= 2.2):
             return "theme_cost_window_fail"
-        if m["amount"] < 1500:
+        if m["amount"] < 2000:
             return "theme_amount_too_small"
+        if not (_has_source(row, 30) or m["theme"] >= 95):
+            return "theme_lacks_independent_auction_evidence"
         return None
 
     return "unhandled"
 
 
-def _downgrade_to_watch(row: Dict[str, Any], reason: str) -> Dict[str, Any]:
+def _mark_watch(row: Dict[str, Any], reason: str) -> Dict[str, Any]:
     out = dict(row)
     tags = _tags(out)
     _add(tags, "quality_gate_failed", reason)
     out.update(
+        pre_gate_action_type=row.get("action_type"),
         action_type=WATCH_ACTION,
         action_quality="watch_only",
         signal_quality="watch_only",
         action_reason=f"quality_gate_failed:{reason}",
         action_tags=tags,
         action_priority=v73.ACTION_PRIORITY.get(WATCH_ACTION, 900),
+    )
+    return out
+
+
+def _mark_buy(row: Dict[str, Any]) -> Dict[str, Any]:
+    out = dict(row)
+    tags = _tags(out)
+    _add(tags, "high_conviction_buy")
+    out.update(
+        pre_gate_action_type=row.get("action_type"),
+        action_type=BUY_ACTION,
+        action_quality=str(row.get("signal_quality") or row.get("action_quality") or "buy"),
+        signal_quality=str(row.get("signal_quality") or row.get("action_quality") or "buy"),
+        action_reason=f"BUY:{row.get('action_type')}:{row.get('action_reason') or ''}",
+        action_tags=tags,
+        action_priority=v73.ACTION_PRIORITY.get(BUY_ACTION, 1),
     )
     return out
 
@@ -271,10 +356,10 @@ def apply() -> None:
     base_pools = v73._pools
     base_diagnostics = v73._diagnostics
 
-    v73.ACTION_PRIORITY.update({"BROAD_REPAIR_MOMENTUM": 32, WATCH_ACTION: 900, "HIGH_COST_REPAIR_WATCH": 920})
+    v73.ACTION_PRIORITY.update({BUY_ACTION: 1, "BROAD_REPAIR_MOMENTUM": 32, WATCH_ACTION: 900, AVOID_ACTION: 950, "HIGH_COST_REPAIR_WATCH": 920})
     v73.ACTIONABLE.clear()
-    v73.ACTIONABLE.update({"AUCTION_FOLLOW", "MOMENTUM_CATCHUP", "LOW_OPEN_REVERSAL", "BROAD_REPAIR_MOMENTUM", "THEME_CATCHUP"})
-    v73.NON_ACTIONABLE_WATCH.update({WATCH_ACTION, "HIGH_COST_REPAIR_WATCH", "BOARD_WATCH", "FAKE_STRENGTH_WATCH", "SOFT_AVOID_REPAIR_CANDIDATE"})
+    v73.ACTIONABLE.add(BUY_ACTION)
+    v73.NON_ACTIONABLE_WATCH.update({WATCH_ACTION, AVOID_ACTION, "HIGH_COST_REPAIR_WATCH", "BOARD_WATCH", "FAKE_STRENGTH_WATCH", "SOFT_AVOID_REPAIR_CANDIDATE"})
 
     def upgrade_row(row: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
         out = base_upgrade(row, cfg)
@@ -284,49 +369,49 @@ def apply() -> None:
             _add(tags, "no_theme_no_source", "broad_repair_momentum")
             score = _broad_repair_score(out, cfg)
             out.update(action_type="BROAD_REPAIR_MOMENTUM", action_quality="broad_repair", signal_quality="broad_repair", action_reason="no_theme_no_source_broad_repair_momentum", action_score=round(score, 2), action_confidence=v73._confidence(score, 55, 35), action_tags=tags)
-        elif _is_high_cost_repair_watch(out, cfg):
-            _add(tags, "high_cost_fake_strength", "repair_watch_not_actionable")
-            m = _m(out)
-            score = v73._clamp(0.25 * m["auction"] + 0.25 * min(100.0, m["amount"] / 5000.0 * 100.0) + 0.15 * m["theme"])
-            out.update(action_type="HIGH_COST_REPAIR_WATCH", action_quality="watch_only", signal_quality="watch_only", action_reason="high_cost_repair_watch_only", action_score=round(score, 2), action_confidence=v73._confidence(score, 60, 40), action_tags=tags)
 
-        out["expected_return_score"] = round(_expected_score(out, cfg), 2)
+        conv, reasons = _conviction(out, cfg)
+        out["conviction_score"] = conv
+        out["conviction_reasons"] = reasons
+        out["expected_return_score"] = conv
         out["action_priority"] = v73.ACTION_PRIORITY.get(str(out.get("action_type")), 999)
 
-        reason = _gate_reason(out, cfg)
-        if reason is not None and str(out.get("action_type")) in v73.ACTIONABLE:
-            out = _downgrade_to_watch(out, reason)
-            out["expected_return_score"] = round(_expected_score(out, cfg), 2)
+        fatal = _fatal_risk(out, cfg)
+        if fatal and str(out.get("action_type")) in {"BOARD_WATCH", "AVOID", "FAKE_STRENGTH_WATCH", "HIGH_COST_REPAIR_WATCH"}:
+            tags = _tags(out)
+            _add(tags, "structural_avoid", fatal)
+            out.update(action_type=AVOID_ACTION, action_quality="avoid", signal_quality="avoid", action_reason=f"structural_avoid:{fatal}", action_tags=tags, action_priority=v73.ACTION_PRIORITY.get(AVOID_ACTION, 950))
+            out["expected_return_score"] = conv
+            return out
+
+        reason = _gate(out, cfg)
+        if reason is None:
+            out = _mark_buy(out)
+        elif str(out.get("action_type")) in {"AUCTION_FOLLOW", "MOMENTUM_CATCHUP", "LOW_OPEN_REVERSAL", "BROAD_REPAIR_MOMENTUM", "THEME_CATCHUP"}:
+            out = _mark_watch(out, reason)
+        out["expected_return_score"] = conv
+        out["action_priority"] = v73.ACTION_PRIORITY.get(str(out.get("action_type")), 999)
         return out
 
-    def expected_sort(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def conviction_sort(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         return sorted(rows, key=lambda r: (float(r.get("expected_return_score") or -999), float(r.get("action_score") or 0), float(r.get("final_score") or 0)), reverse=True)
 
     def action_sort(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        return sorted(
-            rows,
-            key=lambda r: (
-                0 if r.get("action_type") in v73.ACTIONABLE else 1,
-                -float(r.get("expected_return_score") or -999),
-                int(r.get("action_priority") or 999),
-                -float(r.get("action_score") or 0),
-                -float(r.get("final_score") or 0),
-            ),
-        )
+        return sorted(rows, key=lambda r: (0 if r.get("action_type") == BUY_ACTION else 1, -float(r.get("expected_return_score") or -999), int(r.get("action_priority") or 999), -float(r.get("action_score") or 0)))
 
     def pools(rows: List[Dict[str, Any]], pool_max: int) -> Dict[str, List[Dict[str, Any]]]:
         out = base_pools(rows, pool_max)
         ranked = action_sort(rows)
-        expected = expected_sort(rows)
-        out["selective_buy_pool"] = [v73._compact(r) for r in ranked if r.get("action_type") in v73.ACTIONABLE][:pool_max]
-        out["broad_repair_momentum_pool"] = [v73._compact(r) for r in expected if r.get("action_type") == "BROAD_REPAIR_MOMENTUM"][:pool_max]
+        conv = conviction_sort(rows)
+        out["selective_buy_pool"] = [v73._compact(r) for r in ranked if r.get("action_type") == BUY_ACTION][:pool_max]
         out["quality_watch_pool"] = [v73._compact(r) for r in ranked if r.get("action_type") == WATCH_ACTION][:pool_max]
-        out["high_cost_repair_watch_pool"] = [v73._compact(r) for r in ranked if r.get("action_type") == "HIGH_COST_REPAIR_WATCH"][:pool_max]
+        out["structural_avoid_pool"] = [v73._compact(r) for r in ranked if r.get("action_type") == AVOID_ACTION][:pool_max]
+        out["conviction_leaderboard"] = [v73._compact(r) for r in conv if r.get("action_type") in {BUY_ACTION, WATCH_ACTION}][:pool_max]
         return out
 
     def diagnostics(rows: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
         out = base_diagnostics(rows)
-        gate_reject_winners: List[Dict[str, Any]] = []
+        rejected_winners: List[Dict[str, Any]] = []
         buy_false: List[Dict[str, Any]] = []
         for r in rows:
             ex = _num(v73._perf(r).get("excess_return"), None)
@@ -334,18 +419,18 @@ def apply() -> None:
                 continue
             c = v73._compact(r)
             if r.get("action_type") == WATCH_ACTION and ex >= 5:
-                c["diagnostic"] = "quality_gate_rejected_winner"; gate_reject_winners.append(c)
-            if r.get("action_type") in v73.ACTIONABLE and ex <= -3:
+                c["diagnostic"] = "quality_gate_rejected_winner"; rejected_winners.append(c)
+            if r.get("action_type") == BUY_ACTION and ex <= -3:
                 c["diagnostic"] = "selective_buy_false_positive"; buy_false.append(c)
         key = lambda x: float((x.get("performance") or {}).get("excess_return") or 0)
-        gate_reject_winners.sort(key=key, reverse=True)
+        rejected_winners.sort(key=key, reverse=True)
         buy_false.sort(key=key)
-        out["quality_gate_rejected_winners"] = gate_reject_winners[:30]
+        out["quality_gate_rejected_winners"] = rejected_winners[:30]
         out["selective_buy_false_positives"] = buy_false[:30]
         return out
 
     v73._upgrade_row = upgrade_row
-    v73._sort_expected_return_proxy = expected_sort
+    v73._sort_expected_return_proxy = conviction_sort
     v73._sort_action = action_sort
     v73._pools = pools
     v73._diagnostics = diagnostics

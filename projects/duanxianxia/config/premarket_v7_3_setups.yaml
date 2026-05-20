@@ -1,9 +1,6 @@
 # Premarket v7.3 action-pool production overlay
-# 2026-05-20 review reset:
-# - target post-auction excess_return, not raw close_pct / high-cost board glamour
-# - hard-tech repair/diffusion and low-cost elasticity are primary
-# - generic broad repair, weak theme catch-up, power/robot/high-cost unwind are watch-only
-version: "premarket_v7_3_excess_return_first"
+# Practical reset: adaptive, excess-return first, not sector-hardcoded.
+version: "premarket_v7_3_adaptive_excess_return"
 
 output:
   max_candidates: 30
@@ -11,6 +8,7 @@ output:
   pool_max: 20
 
 action_pools:
+  # Event/broad labels are not killed, but need stronger independent evidence.
   broad_theme_names:
     - "一季报增长"
     - "业绩增长"
@@ -21,69 +19,36 @@ action_pools:
     - "股权转让"
     - "实控人变更"
 
-  hardtech_keywords:
-    - "存储"
-    - "芯片"
-    - "半导体"
-    - "半导体设备"
-    - "HBM"
-    - "CPO"
-    - "MPO"
-    - "光模块"
-    - "光芯片"
-    - "GPU"
-    - "先进封装"
-    - "封装"
-    - "元器件"
-    - "电阻"
-    - "电容"
-    - "PCB"
-    - "算力"
-    - "液冷"
-    - "数据中心"
-    - "端侧AI"
-    - "AI硬件"
-    - "服务器"
-    - "交换机"
-    - "洁净室"
-    - "晶圆"
-    - "硅片"
-    - "光刻"
-    - "刻蚀"
-    - "固态电池"
-    - "锂电设备"
-    - "智能电网"
-    - "电力设备"
-    - "仪器"
-    - "传感器"
-    - "射频"
-    - "存算一体"
-
-  power_retreat_keywords:
-    - "火电"
-    - "煤电"
-    - "水电"
-    - "发电"
-    - "电厂"
-    - "电力运营"
-    - "绿色电力"
-    - "华能"
-    - "京能"
-    - "豫能"
-
-  robot_retreat_keywords:
-    - "机器人"
-    - "减速器"
-    - "机器视觉"
-    - "工业母机"
-
-  generic_theme_keywords:
+  broad_event_themes:
     - "并购重组"
     - "股权转让"
     - "实控人变更"
     - "一季报增长"
     - "业绩增长"
+    - "业绩预增"
     - "摘帽"
+
+  retreat_keywords:
+    - "昨日连板"
+    - "连板"
+    - "高标"
+    - "断板"
+    - "退潮"
+
+  # Dynamic current-day theme leadership. No fixed sector whitelist.
+  dynamic_theme_min_strength: 70
+  dynamic_theme_min_family_count: 1
+  dynamic_theme_min_source: 12
+  broad_event_min_source: 20
+
+  # Cost/liquidity gates for excess-return candidates.
+  low_cost_pct_min: -3.5
+  low_cost_pct_max: 4.5
+  primary_min_amount_wan: 600
+  primary_min_auction_strength: 10
+  retreat_high_cost_pct: 6.5
+  expected_cost_penalty_start_pct: 4.8
+  expected_cost_penalty_per_pct: 3.0
 
   high_cost_pct: 8.5
   board_watch_pct: 9.5
@@ -100,20 +65,19 @@ action_pools:
   momentum_min_liquidity_score: 55
   momentum_min_amount_wan: 1000
 
-  # Weak/medium theme catch-up is no longer a primary premarket action.
+  # Theme catch-up must be current-day confirmed and low-cost; otherwise watch-only.
   theme_catchup_min_theme: 80
   theme_catchup_pct_min: -1.5
   theme_catchup_pct_max: 3.2
   theme_catchup_strong_min_aux_score: 42
   theme_catchup_weak_max_aux_score: 18
   theme_weak_score_penalty: 10
-  theme_action_min_source_family_count: 1
   theme_action_min_amount_wan: 1200
   theme_confirmation_score_penalty: 12
 
   reversal_min_auction_strength: 25
-  net_pressure_full_ratio: 0.002
   deep_low_open_watch_pct: -5.0
+  net_pressure_full_ratio: 0.002
 
   confirmation_high_cost_pct: 6.5
   confirmation_high_cost_score_penalty: 16
@@ -127,48 +91,8 @@ action_pools:
   soft_avoid_pct_max: 4.0
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
-  soft_unwind_high_cost_pct: 5.0
 
-  # New primary excess-return pools.
-  hardtech_bonus: 16
-  elastic_20cm_bonus: 8
-
-  hardtech_repair_pct_min: -6.0
-  hardtech_repair_pct_max: 5.2
-  hardtech_repair_min_auction_strength: 10
-  hardtech_repair_min_amount_wan: 600
-  hardtech_repair_score_min: 34
-
-  low_cost_elastic_pct_min: -3.5
-  low_cost_elastic_pct_max: 4.0
-  low_cost_elastic_min_auction_strength: 10
-  low_cost_elastic_min_amount_wan: 500
+  dynamic_repair_score_min: 36
   low_cost_elastic_score_min: 34
   low_amount_vratio_max_amount_wan: 2500
-
-  # Generic repair is preserved as watch-only. It should not crowd the primary list.
-  generic_repair_pct_min: -2.0
-  generic_repair_pct_max: 4.0
-  generic_repair_min_auction_strength: 12
-  generic_repair_min_amount_wan: 800
   generic_repair_score_min: 38
-
-  high_cost_repair_watch_pct_min: 7.0
-  high_cost_repair_watch_pct_max: 10.5
-  high_cost_repair_watch_min_amount_wan: 5000
-  high_cost_repair_watch_min_theme: 80
-
-  # Expected-return proxy weights. This ranking is still premarket-visible only.
-  expected_bonus_hardtech_low_open: 42
-  expected_bonus_hardtech_repair: 40
-  expected_bonus_low_cost_20cm: 38
-  expected_bonus_low_cost_elastic: 34
-  expected_bonus_low_amount_vratio: 32
-  expected_bonus_momentum: 24
-  expected_bonus_auction_follow: 16
-  expected_bonus_low_open_reversal: 10
-  expected_bonus_theme: 6
-  expected_bonus_fake_watch: -12
-  expected_bonus_high_cost_repair_watch: -24
-  expected_cost_penalty_start_pct: 4.8
-  expected_cost_penalty_per_pct: 3.0

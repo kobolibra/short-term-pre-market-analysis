@@ -1,13 +1,12 @@
-# Premarket v7.3 practical portfolio selection
-# Recalibrated after the 2026-05-19/20/21 reruns: the previous strict gate
-# over-selected synthetic broad-repair/debug names.  This version uses the
-# original expected-return rank as a prior, then requires executable evidence.
-version: "premarket_v7_3_rank_prior_evidence_portfolio"
+# Premarket v7.3 portfolio edge engine
+# A full rebuild: discovery -> edge evaluation -> portfolio construction.
+# Target: few decisions, explicit no-trade, no debug/no-setup BUY, capped WATCH_TOP.
+version: "premarket_v7_3_portfolio_edge_engine_v1"
 
 output:
   max_candidates: 5
-  watch_tier_max: 30
-  pool_max: 10
+  watch_tier_max: 18
+  pool_max: 12
 
 action_pools:
   broad_theme_names:
@@ -20,6 +19,7 @@ action_pools:
     - "股权转让"
     - "实控人变更"
 
+  # Base v7.3 classifiers stay broad; final BUY is decided only by the edge engine.
   high_cost_pct: 8.5
   board_watch_pct: 9.5
 
@@ -58,26 +58,37 @@ action_pools:
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
 
-  # Final portfolio selection.  Normal/cold thresholds are deliberately lower
-  # than the previous over-strict conviction gate, but rows must pass explicit
-  # action-specific evidence gates and type caps.
-  portfolio_buy_min_score: 58
-  portfolio_buy_min_score_cold: 62
-  buy_hard_max_pct: 7.2
-  buy_soft_max_pct: 6.4
+  # Edge score construction.
+  rank_prior_full: 38
+  rank_prior_decay: 0.45
   amount_full_wan: 5000
+  soft_cost_penalty_start_pct: 5.8
+  min_any_buy_amount_wan: 1000
+  min_any_buy_liquidity: 35
+  absolute_cost_kill_pct: 7.2
 
-  max_auction_follow: 2
-  max_momentum: 2
-  max_low_open: 2
-  max_theme: 1
-  max_broad_repair_buy: 0
+  # Regime-aware portfolio bars.  Cold days must be allowed to say no.
+  edge_buy_threshold_normal: 64
+  edge_buy_threshold_warming: 66
+  edge_buy_threshold_cold: 72
+  max_buy_normal: 5
+  max_buy_warming: 4
+  max_buy_cold: 2
 
-  # Broad repair: keep recall/watch, but do not buy by default.  The prior
-  # overlay's main failure was turning too many DEBUG_ONLY/no-setup rows into BUY.
+  # Family caps: avoid one pattern dominating the book.
+  cap_attack: 2
+  cap_momentum: 2
+  cap_reversal: 2
+  cap_theme: 1
+  cap_deep_reversal: 1
+
+  # Deep low-open reversal is high-odds/high-risk and needs exceptional support.
+  deep_reversal_min_amount_wan: 9000
+  deep_reversal_min_auction: 35
+
+  # WATCH_TOP is a near-miss list, not a 79-name dumping ground.
+  watch_top_max: 12
+  watch_edge_gap: 14
+
+  # Broad repair is recall/watch only in v1.  Do not buy DEBUG_ONLY/no-setup rows.
   broad_repair_buy_enabled: false
-  broad_repair_theme_max: 20
-  broad_repair_source_max: 1.0
-  broad_repair_family_max: 1
-  broad_repair_min_auction_strength: 18
-  broad_repair_min_amount_wan: 1500

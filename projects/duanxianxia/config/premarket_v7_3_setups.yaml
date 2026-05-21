@@ -1,14 +1,15 @@
-# Premarket v7.3 portfolio edge engine
-# A full rebuild: discovery -> edge evaluation -> portfolio construction.
-# Target: few decisions, explicit no-trade, no debug/no-setup BUY, capped WATCH_TOP.
-version: "premarket_v7_3_portfolio_edge_engine_v1"
+# v7.3 simple premarket signal selector
+# No decorative concept stack.  Only a small BUY list from real premarket signals.
+version: "premarket_v7_3_simple_signal_selector_v1"
 
 output:
   max_candidates: 5
-  watch_tier_max: 18
-  pool_max: 12
+  watch_tier_max: 15
+  pool_max: 10
 
 action_pools:
+  # Existing base classifiers still create the raw action candidates.  The final
+  # selector below is the trading decision layer.
   broad_theme_names:
     - "一季报增长"
     - "业绩增长"
@@ -19,7 +20,6 @@ action_pools:
     - "股权转让"
     - "实控人变更"
 
-  # Base v7.3 classifiers stay broad; final BUY is decided only by the edge engine.
   high_cost_pct: 8.5
   board_watch_pct: 9.5
 
@@ -58,37 +58,30 @@ action_pools:
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
 
-  # Edge score construction.
-  rank_prior_full: 38
-  rank_prior_decay: 0.45
+  # Final simple signal selector.
+  rank_prior_points: 32
+  rank_prior_decay: 0.35
   amount_full_wan: 5000
-  soft_cost_penalty_start_pct: 5.8
-  min_any_buy_amount_wan: 1000
-  min_any_buy_liquidity: 35
-  absolute_cost_kill_pct: 7.2
+  min_amount_wan: 1200
+  min_liquidity: 35
+  soft_cost_start_pct: 5.8
+  absolute_max_cost_pct: 7.0
 
-  # Regime-aware portfolio bars.  Cold days must be allowed to say no.
-  edge_buy_threshold_normal: 64
-  edge_buy_threshold_warming: 66
-  edge_buy_threshold_cold: 72
+  buy_score_normal: 64
+  buy_score_warming: 66
+  buy_score_cold: 72
   max_buy_normal: 5
   max_buy_warming: 4
   max_buy_cold: 2
 
-  # Family caps: avoid one pattern dominating the book.
-  cap_attack: 2
+  cap_auction_follow: 2
   cap_momentum: 2
   cap_reversal: 2
   cap_theme: 1
   cap_deep_reversal: 1
 
-  # Deep low-open reversal is high-odds/high-risk and needs exceptional support.
   deep_reversal_min_amount_wan: 9000
   deep_reversal_min_auction: 35
 
-  # WATCH_TOP is a near-miss list, not a 79-name dumping ground.
-  watch_top_max: 12
-  watch_edge_gap: 14
-
-  # Broad repair is recall/watch only in v1.  Do not buy DEBUG_ONLY/no-setup rows.
-  broad_repair_buy_enabled: false
+  watch_max: 10
+  watch_score_gap: 12

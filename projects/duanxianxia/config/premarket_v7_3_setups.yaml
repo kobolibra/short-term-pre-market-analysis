@@ -1,12 +1,13 @@
-# Premarket v7.3 next-level selective decision system
-# Philosophy: fewer decisions, higher evidence, explicit rejection reasons.
-# No sector hard-code. No low-cost/20cm standalone alpha. No forced Top30.
-version: "premarket_v7_3_next_level_selective_decision"
+# Premarket v7.3 practical portfolio selection
+# Recalibrated after the 2026-05-19/20/21 reruns: the previous strict gate
+# over-selected synthetic broad-repair/debug names.  This version uses the
+# original expected-return rank as a prior, then requires executable evidence.
+version: "premarket_v7_3_rank_prior_evidence_portfolio"
 
 output:
   max_candidates: 5
-  watch_tier_max: 25
-  pool_max: 8
+  watch_tier_max: 30
+  pool_max: 10
 
 action_pools:
   broad_theme_names:
@@ -19,7 +20,6 @@ action_pools:
     - "股权转让"
     - "实控人变更"
 
-  # Base classifiers: keep broad discovery, but final BUY is gated in the overlay.
   high_cost_pct: 8.5
   board_watch_pct: 9.5
 
@@ -58,29 +58,26 @@ action_pools:
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
 
-  # Final decision bars.  If not enough evidence, the system should return few
-  # or even zero BUY candidates instead of manufacturing a list.
-  buy_min_conviction: 64
-  buy_min_conviction_cold: 68
-  buy_min_conviction_downgrading: 70
-  buy_hard_max_pct: 7.0
-  buy_soft_max_pct: 6.2
-  buy_min_amount_wan: 900
-  buy_min_liquidity_score: 35
+  # Final portfolio selection.  Normal/cold thresholds are deliberately lower
+  # than the previous over-strict conviction gate, but rows must pass explicit
+  # action-specific evidence gates and type caps.
+  portfolio_buy_min_score: 58
+  portfolio_buy_min_score_cold: 62
+  buy_hard_max_pct: 7.2
+  buy_soft_max_pct: 6.4
   amount_full_wan: 5000
 
-  # Broad repair recall: useful only with clean near-flat cost and real amount.
-  broad_repair_enabled: true
+  max_auction_follow: 2
+  max_momentum: 2
+  max_low_open: 2
+  max_theme: 1
+  max_broad_repair_buy: 0
+
+  # Broad repair: keep recall/watch, but do not buy by default.  The prior
+  # overlay's main failure was turning too many DEBUG_ONLY/no-setup rows into BUY.
+  broad_repair_buy_enabled: false
   broad_repair_theme_max: 20
   broad_repair_source_max: 1.0
   broad_repair_family_max: 1
-  broad_repair_pct_min: -2.0
-  broad_repair_pct_max: 5.0
-  broad_repair_min_auction_strength: 12
-  broad_repair_min_amount_wan: 800
-  broad_repair_score_min: 24
-
-  high_cost_repair_watch_pct_min: 7.0
-  high_cost_repair_watch_pct_max: 10.5
-  high_cost_repair_watch_min_amount_wan: 5000
-  high_cost_repair_watch_min_theme: 80
+  broad_repair_min_auction_strength: 18
+  broad_repair_min_amount_wan: 1500

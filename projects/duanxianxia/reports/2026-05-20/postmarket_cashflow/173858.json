@@ -1,0 +1,2176 @@
+{
+  "project": "duanxianxia",
+  "group": "postmarket_cashflow",
+  "group_label": "盘后+资金净流入",
+  "trigger": "analysis_only",
+  "generated_at": "2026-05-20T17:21:28+08:00",
+  "generated_at_utc": "2026-05-20T09:21:28Z",
+  "timezone": "Asia/Shanghai",
+  "expected_count": 10,
+  "success_count": 10,
+  "failure_count": 0,
+  "success": true,
+  "complete": true,
+  "saved": true,
+  "failed_items": [],
+  "incomplete_items": [],
+  "missing_items": [],
+  "items": [
+    {
+      "seq": 6,
+      "dataset": "review_daily",
+      "dataset_id": "review.daily.top_metrics",
+      "dataset_label": "每日复盘顶部指标",
+      "source_path": "复盘/每日复盘",
+      "source_url": "https://duanxianxia.com/api/getChartByQingxu",
+      "fetched_at": "2026-05-20T17:21:30+08:00",
+      "row_count": 17,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/review.daily.top_metrics/172130.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "order",
+        "metric_key",
+        "metric_label",
+        "date",
+        "value",
+        "metric_group",
+        "metric_category",
+        "display_label",
+        "display_rate",
+        "raw_value",
+        "ratio",
+        "jinji_count",
+        "sample_count"
+      ]
+    },
+    {
+      "seq": 5,
+      "dataset": "review_ltgd_range",
+      "dataset_id": "review.ltgd.range",
+      "dataset_label": "龙头高度区间涨幅",
+      "source_path": "复盘/龙头高度/区间涨幅",
+      "source_url": "https://duanxianxia.com/api/getZfByDate",
+      "fetched_at": "2026-05-20T17:21:33+08:00",
+      "row_count": 80,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/review.ltgd.range/172133.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "周期",
+        "板块",
+        "板块顺序",
+        "排名",
+        "代码",
+        "名称",
+        "区间涨幅",
+        "概念",
+        "概念键",
+        "日期区间"
+      ]
+    },
+    {
+      "seq": 15,
+      "dataset": "review_plate",
+      "dataset_id": "review.fupan.plate",
+      "dataset_label": "涨停复盘（按概念）",
+      "source_path": "复盘/涨停复盘（按概念）",
+      "source_url": "https://duanxianxia.com/api/getFupanByYidong",
+      "fetched_at": "2026-05-20T17:21:35+08:00",
+      "row_count": 61,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/review.fupan.plate/172135.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "日期",
+        "题材序号",
+        "题材名称",
+        "题材说明",
+        "题材涨停数",
+        "题材内序号",
+        "名称",
+        "代码",
+        "股价",
+        "涨幅",
+        "涨停类型",
+        "板数",
+        "连板",
+        "首次封板",
+        "最后封板",
+        "开板",
+        "封单额",
+        "成交额",
+        "换手率",
+        "实际流通",
+        "流通市值",
+        "总市值",
+        "异动原因",
+        "异动原因详情",
+        "细标签",
+        "细标签列表",
+        "龙虎榜",
+        "题材股票数"
+      ]
+    },
+    {
+      "seq": 18,
+      "dataset": "home_ztpool",
+      "dataset_id": "home.ztpool",
+      "dataset_label": "主页涨停股票池",
+      "source_path": "主页/涨停股票池",
+      "source_url": "https://duanxianxia.com + /vendor/stockdata/jinjidata.json",
+      "fetched_at": "2026-05-20T17:23:58+08:00",
+      "row_count": 157,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/home.ztpool/172358.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "日期",
+        "分组序号",
+        "分组名称",
+        "组内序号",
+        "晋级率文本",
+        "晋级数",
+        "样本数",
+        "晋级率",
+        "市场",
+        "代码",
+        "名称",
+        "状态",
+        "状态样式",
+        "涨幅",
+        "题材"
+      ]
+    },
+    {
+      "seq": 1,
+      "dataset": "rocket",
+      "dataset_id": "rank.rocket",
+      "dataset_label": "飙升榜",
+      "source_path": "搜索/榜单",
+      "source_url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+      "fetched_at": "2026-05-20T17:24:26+08:00",
+      "row_count": 100,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/rank.rocket/172426.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "value",
+        "raw_rate"
+      ]
+    },
+    {
+      "seq": 4,
+      "dataset": "hotlist_day",
+      "dataset_id": "rank.hot_stock_day",
+      "dataset_label": "热度榜（日）",
+      "source_path": "热度榜/日",
+      "source_url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+      "fetched_at": "2026-05-20T17:24:26+08:00",
+      "row_count": 100,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/rank.hot_stock_day/172426.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "value",
+        "raw_rate"
+      ]
+    },
+    {
+      "seq": 11,
+      "dataset": "cashflow_today",
+      "dataset_id": "cashflow.stock.today",
+      "dataset_label": "个股资金流向/今日排行",
+      "source_path": "资金流向/个股资金流向/今日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "fetched_at": "2026-05-20T17:25:06+08:00",
+      "row_count": 50,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/cashflow.stock.today/172506.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ]
+    },
+    {
+      "seq": 12,
+      "dataset": "cashflow_3d",
+      "dataset_id": "cashflow.stock.3day",
+      "dataset_label": "个股资金流向/3日排行",
+      "source_path": "资金流向/个股资金流向/3日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "fetched_at": "2026-05-20T17:26:46+08:00",
+      "row_count": 150,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/cashflow.stock.3day/172646.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ]
+    },
+    {
+      "seq": 13,
+      "dataset": "cashflow_5d",
+      "dataset_id": "cashflow.stock.5day",
+      "dataset_label": "个股资金流向/5日排行",
+      "source_path": "资金流向/个股资金流向/5日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "fetched_at": "2026-05-20T17:28:56+08:00",
+      "row_count": 150,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/cashflow.stock.5day/172856.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ]
+    },
+    {
+      "seq": 14,
+      "dataset": "cashflow_10d",
+      "dataset_id": "cashflow.stock.10day",
+      "dataset_label": "个股资金流向/10日排行",
+      "source_path": "资金流向/个股资金流向/10日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "fetched_at": "2026-05-20T17:21:28+08:00",
+      "row_count": 150,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/cashflow.stock.10day/100557.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ],
+      "fallback_used": true,
+      "fallback_reason": "reused latest same-day successful capture after live fetch failure",
+      "fallback_source_fetched_at": "2026-05-20T10:05:57+08:00",
+      "original_error": "TimeoutError: Timeout 30000ms exceeded."
+    }
+  ],
+  "analysis": {
+    "enabled": true,
+    "version": "postmarket_ztpool_v2",
+    "analysis_trade_date": "2026-05-20",
+    "capture_trade_date": "2026-05-20",
+    "fallback_datasets": [
+      "pool.hot",
+      "pool.surge"
+    ],
+    "popularity_coverage": {
+      "ztpool_count": 157,
+      "rocket_overlap": 29,
+      "hot_stock_day_overlap": 30,
+      "pool_hot_overlap": 12,
+      "pool_surge_overlap": 4
+    },
+    "popularity_weights": {
+      "rocket": 1.0,
+      "hot_stock_day": 1.0,
+      "pool_hot": 0.96,
+      "pool_surge": 0.51
+    },
+    "market_snapshot": {
+      "情绪指标": "52",
+      "涨停家数": "61",
+      "跌停家数": "22",
+      "连板高度": "8",
+      "上涨家数": "1599",
+      "下跌家数": "3531"
+    },
+    "strong_up_cutoff_score": 31.25,
+    "strong_up_candidates": [
+      {
+        "name": "合百集团",
+        "code": "000417",
+        "status": "成",
+        "group_name": "2进3",
+        "target_board": 3,
+        "gain": 10.05,
+        "advance_rate": "29%",
+        "advance_rate_text": "4/14=29%",
+        "theme": "芯片",
+        "cashflow_hits": [
+          "5day",
+          "10day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.05,
+          "turn": 12.56,
+          "amount": 923332400.01,
+          "ma5": 8.134,
+          "ma10": 7.621,
+          "ma20": 7.0575,
+          "volume_ratio_5": 2.57,
+          "recent20_high": 9.53,
+          "recent20_low": 6.24,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 0.92,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 48,
+          "hot_rank": 83,
+          "hot_pool": true,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 2进3（晋级率 4/14=29%）",
+          "题材 芯片",
+          "资金榜命中 5day/10day",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "日线显著放量 2.57x",
+          "飙升榜前48"
+        ],
+        "risks": [],
+        "signal_profile": [
+          "连板成功",
+          "20日突破",
+          "日线结构强",
+          "资金确认",
+          "活跃池确认"
+        ],
+        "missing_confirmations": [],
+        "score": 34.82
+      },
+      {
+        "name": "川润股份",
+        "code": "002272",
+        "status": "成",
+        "group_name": "2进3",
+        "target_board": 3,
+        "gain": 10.01,
+        "advance_rate": "29%",
+        "advance_rate_text": "4/14=29%",
+        "theme": "液冷",
+        "cashflow_hits": [
+          "3day",
+          "5day",
+          "10day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.01,
+          "turn": 14.89,
+          "amount": 1505371964.37,
+          "ma5": 21.228,
+          "ma10": 20.49,
+          "ma20": 19.614,
+          "volume_ratio_5": 1.09,
+          "recent20_high": 24.94,
+          "recent20_low": 16.91,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 0.0,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 30,
+          "hot_rank": 44,
+          "hot_pool": true,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 2进3（晋级率 4/14=29%）",
+          "题材 液冷",
+          "资金榜命中 3day/5day/10day",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点",
+          "飙升榜前30"
+        ],
+        "risks": [
+          "实体偏弱"
+        ],
+        "signal_profile": [
+          "连板成功",
+          "20日突破",
+          "日线结构良好",
+          "资金确认",
+          "活跃池确认"
+        ],
+        "missing_confirmations": [
+          "更强日线结构"
+        ],
+        "score": 34.72
+      },
+      {
+        "name": "凯迪股份",
+        "code": "605288",
+        "status": "成",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": 10.0,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "机器人概念",
+        "cashflow_hits": [],
+        "ltgd_refs": [],
+        "topic_matches": [
+          "机器人"
+        ],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.0,
+          "turn": 6.87,
+          "amount": 480615324.98,
+          "ma5": 89.244,
+          "ma10": 86.859,
+          "ma20": 85.0005,
+          "volume_ratio_5": 3.4,
+          "recent20_high": 104.61,
+          "recent20_low": 78.03,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 8.0,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 41,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 机器人概念",
+          "复盘热点命中 机器人",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "日线显著放量 3.4x",
+          "飙升榜前41"
+        ],
+        "risks": [
+          "未命中资金流向榜，资金确认偏弱",
+          "连板晋级虽然成立，但缺少资金榜确认，次日溢价持续性仍要打问号"
+        ],
+        "signal_profile": [
+          "连板成功",
+          "低晋级率突围",
+          "20日突破",
+          "日线结构强"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "人气确认"
+        ],
+        "score": 34.7
+      },
+      {
+        "name": "达实智能",
+        "code": "002421",
+        "status": "成",
+        "group_name": "3进4",
+        "target_board": 4,
+        "gain": 10.05,
+        "advance_rate": "50%",
+        "advance_rate_text": "1/2=50%",
+        "theme": "AI应用",
+        "cashflow_hits": [
+          "5day"
+        ],
+        "ltgd_refs": [
+          "5日/主板/涨幅45%"
+        ],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.05,
+          "turn": 26.13,
+          "amount": 2229559546.92,
+          "ma5": 3.562,
+          "ma10": 3.287,
+          "ma20": 3.0605,
+          "volume_ratio_5": 3.44,
+          "recent20_high": 4.27,
+          "recent20_low": 2.65,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 0.0,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 10,
+          "hot_rank": 14,
+          "hot_pool": true,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 3进4（晋级率 1/2=50%）",
+          "题材 AI应用",
+          "资金榜命中 5day",
+          "龙头区间参考 5日/主板/涨幅45%",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "日线显著放量 3.44x"
+        ],
+        "risks": [
+          "实体偏弱"
+        ],
+        "signal_profile": [
+          "连板成功",
+          "20日突破",
+          "日线结构强",
+          "资金确认",
+          "热度确认"
+        ],
+        "missing_confirmations": [],
+        "score": 33.77
+      },
+      {
+        "name": "可立克",
+        "code": "002782",
+        "status": "成",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": 10.0,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "固态变压器",
+        "cashflow_hits": [
+          "3day",
+          "5day",
+          "10day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.0,
+          "turn": 8.79,
+          "amount": 1276425934.84,
+          "ma5": 27.042,
+          "ma10": 24.54,
+          "ma20": 22.696,
+          "volume_ratio_5": 1.22,
+          "recent20_high": 30.35,
+          "recent20_low": 18.48,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 3.7,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": true,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 固态变压器",
+          "资金榜命中 3day/5day/10day",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点",
+          "冲涨池活跃"
+        ],
+        "risks": [],
+        "signal_profile": [
+          "连板成功",
+          "低晋级率突围",
+          "20日突破",
+          "日线结构强",
+          "资金确认"
+        ],
+        "missing_confirmations": [],
+        "score": 32.81
+      },
+      {
+        "name": "法拉电子",
+        "code": "600563",
+        "status": "成",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": 10.0,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "元器件",
+        "cashflow_hits": [
+          "3day",
+          "5day",
+          "10day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.0,
+          "turn": 3.44,
+          "amount": 1240311721.98,
+          "ma5": 141.796,
+          "ma10": 134.354,
+          "ma20": 127.261,
+          "volume_ratio_5": 0.79,
+          "recent20_high": 162.36,
+          "recent20_low": 112.78,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 8.0,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 33,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 元器件",
+          "资金榜命中 3day/5day/10day",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点",
+          "飙升榜前33"
+        ],
+        "risks": [],
+        "signal_profile": [
+          "连板成功",
+          "低晋级率突围",
+          "20日突破",
+          "日线结构强",
+          "资金确认"
+        ],
+        "missing_confirmations": [
+          "人气确认"
+        ],
+        "score": 32.4
+      },
+      {
+        "name": "万润科技",
+        "code": "002654",
+        "status": "成",
+        "group_name": "首板",
+        "target_board": 1,
+        "gain": 9.98,
+        "advance_rate": "76%",
+        "advance_rate_text": "51/67=76%",
+        "theme": "存储",
+        "cashflow_hits": [
+          "today",
+          "3day",
+          "5day",
+          "10day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 9.98,
+          "turn": 30.15,
+          "amount": 4780321066.24,
+          "ma5": 17.634,
+          "ma10": 16.599,
+          "ma20": 15.679,
+          "volume_ratio_5": 2.12,
+          "recent20_high": 19.28,
+          "recent20_low": 13.26,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 0.46,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 20,
+          "hot_rank": 22,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 首板（晋级率 51/67=76%）",
+          "题材 存储",
+          "资金榜命中 today/3day/5day/10day",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "日线显著放量 2.12x",
+          "飙升榜前20"
+        ],
+        "risks": [],
+        "signal_profile": [
+          "首板成功",
+          "20日突破",
+          "日线结构强",
+          "资金确认",
+          "热度确认"
+        ],
+        "missing_confirmations": [],
+        "score": 32.39
+      },
+      {
+        "name": "三孚股份",
+        "code": "603938",
+        "status": "成",
+        "group_name": "2进3",
+        "target_board": 3,
+        "gain": 10.01,
+        "advance_rate": "29%",
+        "advance_rate_text": "4/14=29%",
+        "theme": "存储",
+        "cashflow_hits": [
+          "3day",
+          "10day"
+        ],
+        "ltgd_refs": [
+          "5日/主板/涨幅40%",
+          "10日/主板/涨幅91%"
+        ],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.01,
+          "turn": 2.08,
+          "amount": 419833799.52,
+          "ma5": 46.03,
+          "ma10": 41.292,
+          "ma20": 35.4035,
+          "volume_ratio_5": 0.27,
+          "recent20_high": 53.76,
+          "recent20_low": 27.35,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 5.73,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 83,
+          "hot_rank": 72,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 2进3（晋级率 4/14=29%）",
+          "题材 存储",
+          "资金榜命中 3day/10day",
+          "龙头区间参考 5日/主板/涨幅40%",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点"
+        ],
+        "risks": [
+          "量能较5日均量明显不足"
+        ],
+        "signal_profile": [
+          "连板成功",
+          "20日突破",
+          "日线结构良好",
+          "资金确认"
+        ],
+        "missing_confirmations": [
+          "人气确认",
+          "更强日线结构"
+        ],
+        "score": 31.25
+      }
+    ],
+    "weak_to_strong_candidates": [
+      {
+        "name": "长电科技",
+        "code": "600584",
+        "status": "炸",
+        "group_name": "首板",
+        "target_board": 1,
+        "gain": 8.9,
+        "advance_rate": "76%",
+        "advance_rate_text": "51/67=76%",
+        "theme": "存储",
+        "cashflow_hits": [
+          "today",
+          "3day",
+          "5day",
+          "10day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 8.9,
+          "turn": 15.98,
+          "amount": 18682988444.63,
+          "ma5": 59.544,
+          "ma10": 56.579,
+          "ma20": 50.98,
+          "volume_ratio_5": 1.28,
+          "recent20_high": 66.89,
+          "recent20_low": 43.09,
+          "close_near_high": true,
+          "upper_shadow_pct": 1.1,
+          "body_pct": 10.59,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": 3,
+          "hot_pool": true,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 首板（晋级率 51/67=76%）",
+          "题材 存储",
+          "资金榜命中 today/3day/5day/10day",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点",
+          "实体阳线较扎实",
+          "热度榜前3"
+        ],
+        "risks": [],
+        "signal_profile": [
+          "首板尝试",
+          "日线结构良好",
+          "资金确认",
+          "热度确认"
+        ],
+        "missing_confirmations": [],
+        "score": 23.36
+      },
+      {
+        "name": "旭光电子",
+        "code": "600353",
+        "status": "败",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": 2.93,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "机器人概念",
+        "cashflow_hits": [
+          "3day",
+          "5day",
+          "10day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [
+          "机器人"
+        ],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 2.93,
+          "turn": 9.01,
+          "amount": 1779365451.89,
+          "ma5": 22.09,
+          "ma10": 20.437,
+          "ma20": 18.793,
+          "volume_ratio_5": 0.92,
+          "recent20_high": 24.57,
+          "recent20_low": 15.58,
+          "close_near_high": false,
+          "upper_shadow_pct": 2.84,
+          "body_pct": 0.95,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 机器人概念",
+          "资金榜命中 3day/5day/10day",
+          "复盘热点命中 机器人",
+          "日线站上5/10/20日线",
+          "换手 9.01%"
+        ],
+        "risks": [],
+        "signal_profile": [
+          "连板尝试",
+          "低晋级率环境",
+          "资金确认"
+        ],
+        "missing_confirmations": [
+          "人气确认",
+          "更强日线结构",
+          "突破确认"
+        ],
+        "score": 23.0
+      },
+      {
+        "name": "上海机电",
+        "code": "600835",
+        "status": "败",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": 1.35,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "机器人概念",
+        "cashflow_hits": [
+          "3day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [
+          "机器人"
+        ],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 1.35,
+          "turn": 4.23,
+          "amount": 894370261.71,
+          "ma5": 24.53,
+          "ma10": 24.504,
+          "ma20": 23.9945,
+          "volume_ratio_5": 2.33,
+          "recent20_high": 26.9,
+          "recent20_low": 22.4,
+          "close_near_high": false,
+          "upper_shadow_pct": 2.15,
+          "body_pct": 3.81,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 机器人概念",
+          "资金榜命中 3day",
+          "复盘热点命中 机器人",
+          "日线站上5/10/20日线",
+          "日线显著放量 2.33x",
+          "实体阳线较扎实"
+        ],
+        "risks": [],
+        "signal_profile": [
+          "连板尝试",
+          "低晋级率环境",
+          "日线结构良好",
+          "资金确认"
+        ],
+        "missing_confirmations": [
+          "人气确认",
+          "更强日线结构",
+          "突破确认"
+        ],
+        "score": 21.34
+      },
+      {
+        "name": "联域股份",
+        "code": "001326",
+        "status": "败",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": 1.4,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "机器人概念",
+        "cashflow_hits": [],
+        "ltgd_refs": [],
+        "topic_matches": [
+          "机器人"
+        ],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 1.4,
+          "turn": 10.69,
+          "amount": 167158927.44,
+          "ma5": 60.978,
+          "ma10": 59.252,
+          "ma20": 57.0225,
+          "volume_ratio_5": 1.76,
+          "recent20_high": 66.0,
+          "recent20_low": 53.12,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.29,
+          "body_pct": 1.4,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 机器人概念",
+          "复盘热点命中 机器人",
+          "日线站上5/10/20日线",
+          "日线温和放量 1.76x",
+          "收盘接近全天高点"
+        ],
+        "risks": [
+          "未命中资金流向榜，资金确认偏弱",
+          "虽然尾盘仍有承接，但缺少资金榜确认，弱转强确定性一般"
+        ],
+        "signal_profile": [
+          "连板尝试",
+          "低晋级率环境",
+          "日线结构良好"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "人气确认",
+          "更强日线结构"
+        ],
+        "score": 20.24
+      },
+      {
+        "name": "天创时尚",
+        "code": "603608",
+        "status": "败",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": 2.55,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "机器人概念",
+        "cashflow_hits": [],
+        "ltgd_refs": [],
+        "topic_matches": [
+          "机器人"
+        ],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 2.55,
+          "turn": 13.17,
+          "amount": 965119883.86,
+          "ma5": 15.636,
+          "ma10": 14.781,
+          "ma20": 13.838,
+          "volume_ratio_5": 1.78,
+          "recent20_high": 17.99,
+          "recent20_low": 11.56,
+          "close_near_high": false,
+          "upper_shadow_pct": 3.97,
+          "body_pct": 3.49,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 机器人概念",
+          "复盘热点命中 机器人",
+          "日线站上5/10/20日线",
+          "日线温和放量 1.78x",
+          "实体阳线较扎实"
+        ],
+        "risks": [
+          "未命中资金流向榜，资金确认偏弱",
+          "上影偏长，追涨性价比下降",
+          "虽然尾盘仍有承接，但缺少资金榜确认，弱转强确定性一般"
+        ],
+        "signal_profile": [
+          "连板尝试",
+          "低晋级率环境",
+          "日线结构良好"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "人气确认",
+          "更强日线结构"
+        ],
+        "score": 19.77
+      },
+      {
+        "name": "江南化工",
+        "code": "002226",
+        "status": "败",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": 4.19,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "民用爆破",
+        "cashflow_hits": [
+          "3day",
+          "5day",
+          "10day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 4.19,
+          "turn": 6.91,
+          "amount": 1173625674.15,
+          "ma5": 5.93,
+          "ma10": 5.714,
+          "ma20": 5.606,
+          "volume_ratio_5": 3.75,
+          "recent20_high": 6.63,
+          "recent20_low": 5.32,
+          "close_near_high": false,
+          "upper_shadow_pct": 2.74,
+          "body_pct": 4.03,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 民用爆破",
+          "资金榜命中 3day/5day/10day",
+          "日线站上5/10/20日线",
+          "日线显著放量 3.75x",
+          "实体阳线较扎实"
+        ],
+        "risks": [],
+        "signal_profile": [
+          "连板尝试",
+          "低晋级率环境",
+          "日线结构良好",
+          "资金确认"
+        ],
+        "missing_confirmations": [
+          "人气确认",
+          "更强日线结构",
+          "突破确认"
+        ],
+        "score": 19.55
+      },
+      {
+        "name": "正泰电源",
+        "code": "002150",
+        "status": "败",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": 5.11,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "储能",
+        "cashflow_hits": [
+          "3day",
+          "5day",
+          "10day"
+        ],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 5.11,
+          "turn": 16.37,
+          "amount": 1990859943.35,
+          "ma5": 30.984,
+          "ma10": 30.076,
+          "ma20": 29.5885,
+          "volume_ratio_5": 2.69,
+          "recent20_high": 35.66,
+          "recent20_low": 26.7,
+          "close_near_high": false,
+          "upper_shadow_pct": 3.94,
+          "body_pct": 4.16,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 71,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 储能",
+          "资金榜命中 3day/5day/10day",
+          "日线站上5/10/20日线",
+          "日线显著放量 2.69x",
+          "实体阳线较扎实"
+        ],
+        "risks": [
+          "上影偏长，追涨性价比下降"
+        ],
+        "signal_profile": [
+          "连板尝试",
+          "低晋级率环境",
+          "日线结构良好",
+          "资金确认"
+        ],
+        "missing_confirmations": [
+          "人气确认",
+          "更强日线结构",
+          "突破确认"
+        ],
+        "score": 19.21
+      },
+      {
+        "name": "易德龙",
+        "code": "603380",
+        "status": "败",
+        "group_name": "1进2",
+        "target_board": 2,
+        "gain": -0.05,
+        "advance_rate": "4%",
+        "advance_rate_text": "3/71=4%",
+        "theme": "机器人概念",
+        "cashflow_hits": [],
+        "ltgd_refs": [],
+        "topic_matches": [
+          "机器人"
+        ],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": -0.05,
+          "turn": 6.67,
+          "amount": 462881958.74,
+          "ma5": 39.884,
+          "ma10": 38.86,
+          "ma20": 37.5455,
+          "volume_ratio_5": 2.24,
+          "recent20_high": 44.5,
+          "recent20_low": 33.9,
+          "close_near_high": false,
+          "upper_shadow_pct": 2.25,
+          "body_pct": -1.04,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 1进2（晋级率 3/71=4%）",
+          "题材 机器人概念",
+          "复盘热点命中 机器人",
+          "日线站上5/10/20日线",
+          "日线显著放量 2.24x",
+          "换手 6.67%"
+        ],
+        "risks": [
+          "当日未封住且收盘转弱，次日修复难度更高",
+          "未命中资金流向榜，资金确认偏弱",
+          "实体偏弱"
+        ],
+        "signal_profile": [
+          "连板尝试",
+          "低晋级率环境",
+          "日线结构良好"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "人气确认",
+          "更强日线结构"
+        ],
+        "score": 18.38
+      }
+    ],
+    "risk_watch": [
+      {
+        "name": "利仁科技",
+        "code": "001259",
+        "status": "成",
+        "group_name": "7进8",
+        "target_board": 8,
+        "gain": 10.0,
+        "advance_rate": "100%",
+        "advance_rate_text": "1/1=100%",
+        "theme": "股权转让",
+        "cashflow_hits": [],
+        "ltgd_refs": [
+          "5日/主板/涨幅77%",
+          "10日/主板/涨幅135%"
+        ],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.0,
+          "turn": 20.79,
+          "amount": 763635173.06,
+          "ma5": 67.158,
+          "ma10": 54.653,
+          "ma20": 43.777,
+          "volume_ratio_5": 4.36,
+          "recent20_high": 80.53,
+          "recent20_low": 30.55,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 0.0,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 1,
+          "hot_rank": 81,
+          "hot_pool": true,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 7进8（晋级率 1/1=100%）",
+          "题材 股权转让",
+          "龙头区间参考 5日/主板/涨幅77%",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "日线显著放量 4.36x",
+          "飙升榜前1"
+        ],
+        "risks": [
+          "连板位置已高，次日更容易高开分歧",
+          "未命中资金流向榜，资金确认偏弱",
+          "实体偏弱"
+        ],
+        "signal_profile": [
+          "20日突破",
+          "日线结构强",
+          "活跃池确认"
+        ],
+        "missing_confirmations": [
+          "资金确认"
+        ],
+        "score": 26.17,
+        "watch_reason": "高位成功板，次日更像强上强观察而不是无脑追"
+      },
+      {
+        "name": "威龙股份",
+        "code": "603779",
+        "status": "成",
+        "group_name": "5进6",
+        "target_board": 6,
+        "gain": 10.0,
+        "advance_rate": "100%",
+        "advance_rate_text": "1/1=100%",
+        "theme": "实控人变更",
+        "cashflow_hits": [],
+        "ltgd_refs": [
+          "5日/主板/涨幅77%",
+          "10日/主板/涨幅77%"
+        ],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.0,
+          "turn": 1.54,
+          "amount": 67347852.0,
+          "ma5": 11.01,
+          "ma10": 9.305,
+          "ma20": 8.0125,
+          "volume_ratio_5": 1.2,
+          "recent20_high": 13.2,
+          "recent20_low": 6.1,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 0.0,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 22,
+          "hot_rank": null,
+          "hot_pool": true,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 5进6（晋级率 1/1=100%）",
+          "题材 实控人变更",
+          "龙头区间参考 5日/主板/涨幅77%",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点",
+          "飙升榜前22"
+        ],
+        "risks": [
+          "连板位置已高，次日更容易高开分歧",
+          "未命中资金流向榜，资金确认偏弱",
+          "实体偏弱"
+        ],
+        "signal_profile": [
+          "20日突破",
+          "日线结构良好",
+          "活跃池确认"
+        ],
+        "missing_confirmations": [
+          "资金确认"
+        ],
+        "score": 24.57,
+        "watch_reason": "高位成功板，次日更像强上强观察而不是无脑追"
+      },
+      {
+        "name": "北自科技",
+        "code": "603082",
+        "status": "败",
+        "group_name": "4进5",
+        "target_board": 5,
+        "gain": -10.0,
+        "advance_rate": "0%",
+        "advance_rate_text": "0/1=0%",
+        "theme": "机器人概念",
+        "cashflow_hits": [],
+        "ltgd_refs": [],
+        "topic_matches": [
+          "机器人"
+        ],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": -10.0,
+          "turn": 56.29,
+          "amount": 1083661315.46,
+          "ma5": 44.904,
+          "ma10": 40.07,
+          "ma20": 37.91,
+          "volume_ratio_5": 2.55,
+          "recent20_high": 51.3,
+          "recent20_low": 33.55,
+          "close_near_high": false,
+          "upper_shadow_pct": 10.24,
+          "body_pct": 0.0,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 62,
+          "hot_rank": 45,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 4进5（晋级率 0/1=0%）",
+          "题材 机器人概念",
+          "复盘热点命中 机器人",
+          "日线站上5/10/20日线",
+          "日线显著放量 2.55x",
+          "热度榜前45"
+        ],
+        "risks": [
+          "连板位置已高，次日更容易高开分歧",
+          "当日未封住且收盘转弱，次日修复难度更高",
+          "未命中资金流向榜，资金确认偏弱"
+        ],
+        "signal_profile": [],
+        "missing_confirmations": [
+          "资金确认"
+        ],
+        "score": 11.55,
+        "watch_reason": "炸板/失败后承接不够，优先放入风险观察"
+      },
+      {
+        "name": "达实智能",
+        "code": "002421",
+        "status": "成",
+        "group_name": "3进4",
+        "target_board": 4,
+        "gain": 10.05,
+        "advance_rate": "50%",
+        "advance_rate_text": "1/2=50%",
+        "theme": "AI应用",
+        "cashflow_hits": [
+          "5day"
+        ],
+        "ltgd_refs": [
+          "5日/主板/涨幅45%"
+        ],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 10.05,
+          "turn": 26.13,
+          "amount": 2229559546.92,
+          "ma5": 3.562,
+          "ma10": 3.287,
+          "ma20": 3.0605,
+          "volume_ratio_5": 3.44,
+          "recent20_high": 4.27,
+          "recent20_low": 2.65,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 0.0,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 10,
+          "hot_rank": 14,
+          "hot_pool": true,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 3进4（晋级率 1/2=50%）",
+          "题材 AI应用",
+          "资金榜命中 5day",
+          "龙头区间参考 5日/主板/涨幅45%",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "日线显著放量 3.44x"
+        ],
+        "risks": [
+          "实体偏弱"
+        ],
+        "signal_profile": [
+          "连板成功",
+          "20日突破",
+          "日线结构强",
+          "资金确认",
+          "热度确认"
+        ],
+        "missing_confirmations": [],
+        "score": 33.77,
+        "watch_reason": "高位成功板，次日更像强上强观察而不是无脑追"
+      },
+      {
+        "name": "金海高科",
+        "code": "603311",
+        "status": "败",
+        "group_name": "3进4",
+        "target_board": 4,
+        "gain": 2.36,
+        "advance_rate": "50%",
+        "advance_rate_text": "1/2=50%",
+        "theme": "实控人变更",
+        "cashflow_hits": [],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 2.36,
+          "turn": 14.31,
+          "amount": 929001010.98,
+          "ma5": 25.634,
+          "ma10": 24.157,
+          "ma20": 21.6745,
+          "volume_ratio_5": 2.77,
+          "recent20_high": 29.32,
+          "recent20_low": 17.81,
+          "close_near_high": false,
+          "upper_shadow_pct": 2.54,
+          "body_pct": 6.51,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 3进4（晋级率 1/2=50%）",
+          "题材 实控人变更",
+          "日线站上5/10/20日线",
+          "日线显著放量 2.77x",
+          "实体阳线较扎实"
+        ],
+        "risks": [
+          "未命中资金流向榜，资金确认偏弱",
+          "虽然尾盘仍有承接，但缺少资金榜确认，弱转强确定性一般"
+        ],
+        "signal_profile": [
+          "连板尝试",
+          "日线结构良好"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "人气确认"
+        ],
+        "score": 11.24,
+        "watch_reason": "炸板/失败后承接不够，优先放入风险观察"
+      },
+      {
+        "name": "诚邦股份",
+        "code": "603316",
+        "status": "成",
+        "group_name": "2进3",
+        "target_board": 3,
+        "gain": 9.99,
+        "advance_rate": "29%",
+        "advance_rate_text": "4/14=29%",
+        "theme": "存储",
+        "cashflow_hits": [],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 9.99,
+          "turn": 5.53,
+          "amount": 358398264.99,
+          "ma5": 20.97,
+          "ma10": 19.956,
+          "ma20": 17.8845,
+          "volume_ratio_5": 0.6,
+          "recent20_high": 24.77,
+          "recent20_low": 14.9,
+          "close_near_high": true,
+          "upper_shadow_pct": 0.0,
+          "body_pct": 1.2,
+          "breakout_20": true,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 2进3（晋级率 4/14=29%）",
+          "题材 存储",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点"
+        ],
+        "risks": [
+          "未命中资金流向榜，资金确认偏弱",
+          "量能较5日均量明显不足",
+          "连板晋级虽然成立，但缺少资金榜确认，次日溢价持续性仍要打问号"
+        ],
+        "signal_profile": [
+          "连板成功",
+          "20日突破",
+          "日线结构良好"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "人气确认",
+          "更强日线结构"
+        ],
+        "score": 25.05,
+        "watch_reason": "连板晋级成立但资金确认不足，更适合等次日承接与回流确认"
+      },
+      {
+        "name": "辽宁能源",
+        "code": "600758",
+        "status": "败",
+        "group_name": "2进3",
+        "target_board": 3,
+        "gain": -6.77,
+        "advance_rate": "29%",
+        "advance_rate_text": "4/14=29%",
+        "theme": "电力",
+        "cashflow_hits": [],
+        "ltgd_refs": [],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": -6.77,
+          "turn": 20.65,
+          "amount": 1407398020.34,
+          "ma5": 4.722,
+          "ma10": 4.434,
+          "ma20": 4.227,
+          "volume_ratio_5": 1.63,
+          "recent20_high": 5.62,
+          "recent20_low": 3.8,
+          "close_near_high": false,
+          "upper_shadow_pct": 8.32,
+          "body_pct": -7.16,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": 42,
+          "hot_rank": 63,
+          "hot_pool": false,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 2进3（晋级率 4/14=29%）",
+          "题材 电力",
+          "日线站上5/10/20日线",
+          "日线温和放量 1.63x",
+          "换手 20.65%",
+          "飙升榜前42"
+        ],
+        "risks": [
+          "当日未封住且收盘转弱，次日修复难度更高",
+          "未命中资金流向榜，资金确认偏弱",
+          "实体偏弱"
+        ],
+        "signal_profile": [
+          "连板尝试"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "人气确认",
+          "更强日线结构"
+        ],
+        "score": 8.33,
+        "watch_reason": "炸板/失败后承接不够，优先放入风险观察"
+      },
+      {
+        "name": "海星股份",
+        "code": "603115",
+        "status": "败",
+        "group_name": "2进3",
+        "target_board": 3,
+        "gain": 6.5,
+        "advance_rate": "29%",
+        "advance_rate_text": "4/14=29%",
+        "theme": "电阻电容",
+        "cashflow_hits": [],
+        "ltgd_refs": [
+          "5日/主板/涨幅54%",
+          "10日/主板/涨幅71%"
+        ],
+        "topic_matches": [],
+        "dailyline_snapshot": {
+          "trade_date": "2026-05-20",
+          "pct_chg": 6.5,
+          "turn": 4.79,
+          "amount": 1109045944.74,
+          "ma5": 83.714,
+          "ma10": 73.937,
+          "ma20": 65.491,
+          "volume_ratio_5": 1.29,
+          "recent20_high": 99.0,
+          "recent20_low": 44.0,
+          "close_near_high": true,
+          "upper_shadow_pct": 1.58,
+          "body_pct": 7.16,
+          "breakout_20": false,
+          "above_ma5": true,
+          "above_ma10": true,
+          "above_ma20": true
+        },
+        "popularity": {
+          "rocket_rank": null,
+          "hot_rank": null,
+          "hot_pool": true,
+          "surge_pool": false,
+          "weights": {
+            "rocket": 1.0,
+            "hot_stock_day": 1.0,
+            "pool_hot": 0.96,
+            "pool_surge": 0.51
+          }
+        },
+        "reasons": [
+          "分组 2进3（晋级率 4/14=29%）",
+          "题材 电阻电容",
+          "龙头区间参考 5日/主板/涨幅54%",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点",
+          "实体阳线较扎实",
+          "热门池活跃"
+        ],
+        "risks": [
+          "未命中资金流向榜，资金确认偏弱",
+          "虽然尾盘仍有承接，但缺少资金榜确认，弱转强确定性一般"
+        ],
+        "signal_profile": [
+          "连板尝试",
+          "日线结构良好",
+          "活跃池确认"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "更强日线结构",
+          "突破确认"
+        ],
+        "score": 15.04,
+        "watch_reason": "炸板/失败后承接不够，优先放入风险观察"
+      }
+    ],
+    "quasi_strong_up_watch": [],
+    "missed_continuation_watch": [
+      {
+        "name": "诚邦股份",
+        "code": "603316",
+        "group_name": "2进3",
+        "score": 25.05,
+        "gap_to_strong_up": 6.2,
+        "signal_profile": [
+          "连板成功",
+          "20日突破",
+          "日线结构良好"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "人气确认",
+          "更强日线结构"
+        ],
+        "reasons": [
+          "分组 2进3（晋级率 4/14=29%）",
+          "题材 存储",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点"
+        ],
+        "risks": [
+          "未命中资金流向榜，资金确认偏弱",
+          "量能较5日均量明显不足",
+          "连板晋级虽然成立，但缺少资金榜确认，次日溢价持续性仍要打问号"
+        ]
+      }
+    ],
+    "all_missed_continuation_watch": [
+      {
+        "name": "诚邦股份",
+        "code": "603316",
+        "group_name": "2进3",
+        "score": 25.05,
+        "gap_to_strong_up": 6.2,
+        "signal_profile": [
+          "连板成功",
+          "20日突破",
+          "日线结构良好"
+        ],
+        "missing_confirmations": [
+          "资金确认",
+          "人气确认",
+          "更强日线结构"
+        ],
+        "reasons": [
+          "分组 2进3（晋级率 4/14=29%）",
+          "题材 存储",
+          "日线收盘创20日新高",
+          "日线站上5/10/20日线",
+          "收盘接近全天高点"
+        ],
+        "risks": [
+          "未命中资金流向榜，资金确认偏弱",
+          "量能较5日均量明显不足",
+          "连板晋级虽然成立，但缺少资金榜确认，次日溢价持续性仍要打问号"
+        ]
+      }
+    ],
+    "notes": [
+      "盘后分析当前以 home.ztpool 为主候选池，并分成 强上强 / 弱转强 / 风险观察 三段输出。",
+      "强上强优先看 状态=成 的晋级成功票，再结合 晋级率、收盘涨幅、资金榜命中、日线量价形态 与复盘热点强度排序。",
+      "弱转强优先看 状态 in {炸, 败} 但收盘承接未明显走坏、且仍有资金/热点/人气确认的票。",
+      "高位成功板、炸板后走弱票、以及缺少资金确认的票，会额外进入 风险观察。",
+      "本轮新增把 `rank.rocket`、`rank.hot_stock_day`、可用的 `pool.hot/pool.surge` 与本地日线数据一起并入打分，不再只看板位和资金流。",
+      "本次分析使用了同日最新成功 capture 兜底：pool.hot, pool.surge，避免单次抓取超时导致盘后分析整体失真或为空。",
+      "near-miss 字段说明：`quasi_strong_up_watch` 为几乎上位的准强上强层；`missed_continuation_watch` 为去重后的剩余 near-miss；`all_missed_continuation_watch` 为完整 near-miss 全集。"
+    ]
+  },
+  "bitable_sync": {
+    "enabled": true,
+    "meta_name": "duanxianxia_review",
+    "created_count": 6,
+    "skipped_existing_count": 0,
+    "records": [
+      {
+        "scene": "盘后复盘选股",
+        "code": "000417",
+        "name": "合百集团",
+        "record_id": "recvk9thBzMnbZ",
+        "status": "created"
+      },
+      {
+        "scene": "盘后复盘选股",
+        "code": "002272",
+        "name": "川润股份",
+        "record_id": "recvk9tihy0b6V",
+        "status": "created"
+      },
+      {
+        "scene": "盘后复盘选股",
+        "code": "605288",
+        "name": "凯迪股份",
+        "record_id": "recvk9tiVOHY1q",
+        "status": "created"
+      },
+      {
+        "scene": "盘后复盘选股",
+        "code": "002421",
+        "name": "达实智能",
+        "record_id": "recvk9tjtJsvn2",
+        "status": "created"
+      },
+      {
+        "scene": "盘后复盘选股",
+        "code": "002782",
+        "name": "可立克",
+        "record_id": "recvk9tk5P3qxu",
+        "status": "created"
+      },
+      {
+        "scene": "盘后复盘选股",
+        "code": "001259",
+        "name": "利仁科技",
+        "record_id": "recvk9tkGp8mEx",
+        "status": "created"
+      }
+    ]
+  },
+  "report_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-05-20/postmarket_cashflow/173858.json",
+  "webhook": {
+    "enabled": true,
+    "status": "ok",
+    "success": true,
+    "http_status": 200,
+    "response_excerpt": "{\"StatusCode\":0,\"StatusMessage\":\"success\",\"code\":0,\"data\":{},\"msg\":\"success\"}",
+    "sent_messages": 14
+  },
+  "source_report_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-05-20/postmarket_cashflow/173158.json"
+}

@@ -1,0 +1,591 @@
+{
+  "project": "duanxianxia",
+  "group": "intraday_cashflow",
+  "group_label": "盘中+资金流向",
+  "trigger": "manual_or_cron",
+  "generated_at": "2026-05-20T10:01:33+08:00",
+  "generated_at_utc": "2026-05-20T02:01:33Z",
+  "timezone": "Asia/Shanghai",
+  "expected_count": 9,
+  "success_count": 9,
+  "failure_count": 0,
+  "success": true,
+  "complete": true,
+  "saved": true,
+  "failed_items": [],
+  "incomplete_items": [],
+  "missing_items": [],
+  "items": [
+    {
+      "seq": 1,
+      "dataset": "rocket",
+      "dataset_id": "rank.rocket",
+      "dataset_label": "飙升榜",
+      "source_path": "搜索/榜单",
+      "source_url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+      "fetched_at": "2026-05-20T10:01:35+08:00",
+      "row_count": 100,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/rank.rocket/100135.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "value",
+        "raw_rate"
+      ]
+    },
+    {
+      "seq": 4,
+      "dataset": "hotlist_day",
+      "dataset_id": "rank.hot_stock_day",
+      "dataset_label": "热度榜（日）",
+      "source_path": "热度榜/日",
+      "source_url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+      "fetched_at": "2026-05-20T10:01:35+08:00",
+      "row_count": 100,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/rank.hot_stock_day/100135.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "value",
+        "raw_rate"
+      ]
+    },
+    {
+      "seq": 2,
+      "dataset": "hot",
+      "dataset_id": "pool.hot",
+      "dataset_label": "热门",
+      "source_path": "股票池/热门",
+      "source_url": "https://duanxianxia.com/data/getFxPoolData/",
+      "fetched_at": "2026-05-20T10:01:37+08:00",
+      "row_count": 30,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/pool.hot/100137.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "代码",
+        "名称",
+        "涨幅",
+        "主力",
+        "实际换手",
+        "成交",
+        "流通",
+        "概念"
+      ]
+    },
+    {
+      "seq": 3,
+      "dataset": "surge",
+      "dataset_id": "pool.surge",
+      "dataset_label": "冲涨",
+      "source_path": "股票池/冲涨",
+      "source_url": "https://duanxianxia.com/data/getCzPoolData/",
+      "fetched_at": "2026-05-20T10:01:37+08:00",
+      "row_count": 10,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/pool.surge/100137.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "change_pct",
+        "turnover_ratio",
+        "amount",
+        "float_market_cap",
+        "concept",
+        "concept_1",
+        "concept_2",
+        "raw"
+      ]
+    },
+    {
+      "seq": 17,
+      "dataset": "home_qxlive_top_metrics",
+      "dataset_id": "home.qxlive.top_metrics",
+      "dataset_label": "主页 qxlive 顶部指标按钮组",
+      "source_path": "主页/qxlive/顶部指标按钮组",
+      "source_url": "https://duanxianxia.com/web/qxlive",
+      "fetched_at": "2026-05-20T10:04:26+08:00",
+      "row_count": 12,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/home.qxlive.top_metrics/100426.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "order",
+        "metric_key",
+        "metric_label",
+        "date",
+        "time_point",
+        "value",
+        "button_display_value",
+        "chart_tail_value",
+        "compare_value",
+        "source_series",
+        "display_series",
+        "compare_series",
+        "button_id",
+        "button_text",
+        "raw_value",
+        "raw_chart_tail_value",
+        "raw_compare_value"
+      ]
+    },
+    {
+      "seq": 11,
+      "dataset": "cashflow_today",
+      "dataset_id": "cashflow.stock.today",
+      "dataset_label": "个股资金流向/今日排行",
+      "source_path": "资金流向/个股资金流向/今日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "fetched_at": "2026-05-20T10:04:52+08:00",
+      "row_count": 150,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/cashflow.stock.today/100452.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ]
+    },
+    {
+      "seq": 12,
+      "dataset": "cashflow_3d",
+      "dataset_id": "cashflow.stock.3day",
+      "dataset_label": "个股资金流向/3日排行",
+      "source_path": "资金流向/个股资金流向/3日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "fetched_at": "2026-05-20T10:05:11+08:00",
+      "row_count": 150,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/cashflow.stock.3day/100511.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ]
+    },
+    {
+      "seq": 13,
+      "dataset": "cashflow_5d",
+      "dataset_id": "cashflow.stock.5day",
+      "dataset_label": "个股资金流向/5日排行",
+      "source_path": "资金流向/个股资金流向/5日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "fetched_at": "2026-05-20T10:05:32+08:00",
+      "row_count": 150,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/cashflow.stock.5day/100532.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ]
+    },
+    {
+      "seq": 14,
+      "dataset": "cashflow_10d",
+      "dataset_id": "cashflow.stock.10day",
+      "dataset_label": "个股资金流向/10日排行",
+      "source_path": "资金流向/个股资金流向/10日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "fetched_at": "2026-05-20T10:05:57+08:00",
+      "row_count": 150,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-05-20/cashflow.stock.10day/100557.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ]
+    }
+  ],
+  "analysis": {
+    "enabled": true,
+    "version": "intraday_multisignal_v1",
+    "candidate_count": 403,
+    "market_snapshot": {
+      "情绪指标": "35",
+      "涨停家数": "26",
+      "跌停家数": "8",
+      "亏钱效应": "2",
+      "主力流入": "-307亿",
+      "连板高度": "6",
+      "上涨家数": "1052",
+      "下跌家数": "4404",
+      "今日封板率": "76.5%",
+      "昨涨停表现": "0.28%",
+      "昨连板表现": "3.68%",
+      "沪深5分钟量能": "8:82"
+    },
+    "top_candidates": [
+      {
+        "code": "600584",
+        "name": "长电科技",
+        "score": 98.67,
+        "source_hit_count": 5,
+        "source_hits": [
+          "cashflow.stock.10day",
+          "cashflow.stock.today",
+          "hot",
+          "hotlist_day",
+          "rocket"
+        ],
+        "change_pct": 7.98,
+        "main_force": 300000000.0,
+        "reasons": [
+          "热度榜日内第9",
+          "飙升榜第3",
+          "热门池命中",
+          "热门池主力净流入为正",
+          "今日资金流入前11",
+          "10日资金流入前9"
+        ],
+        "risks": [],
+        "rank": 1
+      },
+      {
+        "code": "000988",
+        "name": "华工科技",
+        "score": 87.24,
+        "source_hit_count": 5,
+        "source_hits": [
+          "cashflow.stock.3day",
+          "hot",
+          "hotlist_day",
+          "rocket",
+          "surge"
+        ],
+        "change_pct": 5.69,
+        "main_force": 86910000.0,
+        "reasons": [
+          "热度榜日内第10",
+          "飙升榜第9",
+          "热门池命中",
+          "热门池主力净流入为正",
+          "冲涨池第9",
+          "3日资金流入前3"
+        ],
+        "risks": [],
+        "rank": 2
+      },
+      {
+        "code": "600522",
+        "name": "中天科技",
+        "score": 83.0,
+        "source_hit_count": 5,
+        "source_hits": [
+          "cashflow.stock.3day",
+          "cashflow.stock.today",
+          "hot",
+          "hotlist_day",
+          "rocket"
+        ],
+        "change_pct": 4.09,
+        "main_force": 200000000.0,
+        "reasons": [
+          "热度榜日内第16",
+          "飙升榜第13",
+          "热门池命中",
+          "热门池主力净流入为正",
+          "今日资金流入前12",
+          "3日资金流入前12"
+        ],
+        "risks": [],
+        "rank": 3
+      },
+      {
+        "code": "002281",
+        "name": "光迅科技",
+        "score": 72.83,
+        "source_hit_count": 4,
+        "source_hits": [
+          "cashflow.stock.3day",
+          "hot",
+          "hotlist_day",
+          "rocket"
+        ],
+        "change_pct": 0.95,
+        "main_force": -420000000.0,
+        "reasons": [
+          "热度榜日内第5",
+          "飙升榜第22",
+          "热门池命中",
+          "3日资金流入前13"
+        ],
+        "risks": [
+          "热门池主力净流入为负"
+        ],
+        "rank": 4
+      },
+      {
+        "code": "600186",
+        "name": "莲花控股",
+        "score": 68.5,
+        "source_hit_count": 5,
+        "source_hits": [
+          "cashflow.stock.3day",
+          "cashflow.stock.5day",
+          "hot",
+          "hotlist_day",
+          "rocket"
+        ],
+        "change_pct": -2.42,
+        "main_force": -150000000.0,
+        "reasons": [
+          "热度榜日内第12",
+          "飙升榜第23",
+          "热门池命中",
+          "3日资金流入前21",
+          "5日资金流入前24"
+        ],
+        "risks": [
+          "热门池主力净流入为负"
+        ],
+        "rank": 5
+      },
+      {
+        "code": "002384",
+        "name": "东山精密",
+        "score": 67.14,
+        "source_hit_count": 4,
+        "source_hits": [
+          "cashflow.stock.3day",
+          "hot",
+          "hotlist_day",
+          "rocket"
+        ],
+        "change_pct": 0.86,
+        "main_force": 15460000.0,
+        "reasons": [
+          "热度榜日内第13",
+          "飙升榜第36",
+          "热门池命中",
+          "热门池主力净流入为正",
+          "3日资金流入前1"
+        ],
+        "risks": [],
+        "rank": 6
+      },
+      {
+        "code": "600487",
+        "name": "亨通光电",
+        "score": 66.42,
+        "source_hit_count": 4,
+        "source_hits": [
+          "cashflow.stock.3day",
+          "hot",
+          "hotlist_day",
+          "rocket"
+        ],
+        "change_pct": 0.69,
+        "main_force": 20810000.0,
+        "reasons": [
+          "热度榜日内第11",
+          "飙升榜第30",
+          "热门池命中",
+          "热门池主力净流入为正",
+          "3日资金流入前18"
+        ],
+        "risks": [],
+        "rank": 7
+      },
+      {
+        "code": "002272",
+        "name": "川润股份",
+        "score": 64.47,
+        "source_hit_count": 6,
+        "source_hits": [
+          "cashflow.stock.3day",
+          "cashflow.stock.5day",
+          "cashflow.stock.today",
+          "hot",
+          "hotlist_day",
+          "rocket"
+        ],
+        "change_pct": 10.01,
+        "main_force": 240000000.0,
+        "reasons": [
+          "热度榜日内第79",
+          "飙升榜第40",
+          "热门池命中",
+          "热门池主力净流入为正",
+          "今日资金流入前29",
+          "3日资金流入前15"
+        ],
+        "risks": [],
+        "rank": 8
+      },
+      {
+        "code": "603986",
+        "name": "兆易创新",
+        "score": 60.67,
+        "source_hit_count": 5,
+        "source_hits": [
+          "cashflow.stock.3day",
+          "cashflow.stock.5day",
+          "cashflow.stock.today",
+          "hotlist_day",
+          "rocket"
+        ],
+        "change_pct": null,
+        "main_force": 0.0,
+        "reasons": [
+          "热度榜日内第24",
+          "飙升榜第4",
+          "今日资金流入前2",
+          "3日资金流入前14",
+          "5日资金流入前10"
+        ],
+        "risks": [],
+        "rank": 9
+      },
+      {
+        "code": "002081",
+        "name": "金螳螂",
+        "score": 57.52,
+        "source_hit_count": 3,
+        "source_hits": [
+          "hot",
+          "hotlist_day",
+          "rocket"
+        ],
+        "change_pct": -1.45,
+        "main_force": 25780000.0,
+        "reasons": [
+          "热度榜日内第8",
+          "飙升榜第15",
+          "热门池命中",
+          "热门池主力净流入为正"
+        ],
+        "risks": [],
+        "rank": 10
+      }
+    ],
+    "notes": [
+      "盘中候选当前基于 热度榜、飙升榜、热门池、冲涨池、qxlive 顶部指标 与可用的资金流向表做多信号排序。",
+      "盘中场景坚持宁缺毋滥，不使用同日旧 capture 冒充最新实时数据；若实时抓取失败，应真实暴露失败。"
+    ]
+  },
+  "bitable_sync": {
+    "enabled": true,
+    "meta_name": "duanxianxia_review",
+    "created_count": 5,
+    "skipped_existing_count": 0,
+    "records": [
+      {
+        "scene": "盘中联动推荐",
+        "code": "600584",
+        "name": "长电科技",
+        "record_id": "recvk7DsKlK8L7",
+        "status": "created"
+      },
+      {
+        "scene": "盘中联动推荐",
+        "code": "000988",
+        "name": "华工科技",
+        "record_id": "recvk7DttGt0Az",
+        "status": "created"
+      },
+      {
+        "scene": "盘中联动推荐",
+        "code": "600522",
+        "name": "中天科技",
+        "record_id": "recvk7Du7SGstP",
+        "status": "created"
+      },
+      {
+        "scene": "盘中联动推荐",
+        "code": "002281",
+        "name": "光迅科技",
+        "record_id": "recvk7DuJgRHcv",
+        "status": "created"
+      },
+      {
+        "scene": "盘中联动推荐",
+        "code": "600186",
+        "name": "莲花控股",
+        "record_id": "recvk7DvqW67mJ",
+        "status": "created"
+      }
+    ]
+  },
+  "report_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-05-20/intraday_cashflow/100650.json",
+  "webhook": {
+    "enabled": true,
+    "status": "ok",
+    "success": true,
+    "http_status": 200,
+    "response_excerpt": "{\"StatusCode\":0,\"StatusMessage\":\"success\",\"code\":0,\"data\":{},\"msg\":\"success\"}",
+    "sent_messages": 10
+  }
+}

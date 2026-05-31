@@ -1,13 +1,13 @@
-# v7.4 production edge engine
-# Direct goal: improve production selection quality, not add meta audit tooling.
-version: "premarket_v7_4_production_edge_engine"
+# Unified v8 production edge engine.
+# Filename is kept for deployment compatibility with existing runner paths.
+version: "premarket_v8_unified_edge_engine"
 
 output:
   max_candidates: 4
   watch_tier_max: 12
   pool_max: 8
 
-action_pools:
+engine:
   broad_theme_names:
     - "一季报增长"
     - "业绩增长"
@@ -18,57 +18,30 @@ action_pools:
     - "股权转让"
     - "实控人变更"
 
-  # Base classifiers remain broad; final BUY is controlled by v7.4 edge engine.
-  high_cost_pct: 8.5
-  board_watch_pct: 9.5
-  follow_pct_min: 2.0
-  follow_pct_max: 7.5
-  follow_min_auction_strength: 50
-  follow_min_source_evidence: 18
-  follow_min_source_family_count: 2
-  momentum_pct_min: 2.0
-  momentum_pct_max: 5.8
-  momentum_min_auction_strength: 50
-  momentum_min_liquidity_score: 55
-  momentum_min_amount_wan: 1000
-  theme_catchup_min_theme: 80
-  theme_catchup_pct_min: -1.5
-  theme_catchup_pct_max: 3.5
-  theme_catchup_strong_min_aux_score: 35
-  theme_catchup_weak_max_aux_score: 12
-  theme_weak_score_penalty: 6
-  reversal_min_auction_strength: 25
-  net_pressure_full_ratio: 0.002
-  confirmation_high_cost_pct: 7.0
-  confirmation_high_cost_score_penalty: 12
-  fake_watch_pct_min: -5.0
-  fake_watch_pct_max: 5.8
-  fake_watch_min_liquidity_score: 45
-  fake_watch_min_amount_wan: 800
-  soft_avoid_pct_min: -3.5
-  soft_avoid_pct_max: 4.0
-  soft_avoid_min_liquidity_score: 0
-  soft_avoid_min_amount_wan: 0
-
-  # v7.4 production edge engine.
+  # Global hard gates. Price/cost uses auction_change_pct only.
   absolute_max_cost_pct: 7.0
   hard_min_amount_wan: 300
   hard_min_liquidity: 20
   amount_quality_full_wan: 9000
   rank_prior_decay_points: 2.5
 
+  # Market regime budget.
+  buy_score_hot: 70
   buy_score_normal: 70
   buy_score_warming: 73
   buy_score_cold: 78
+  max_buy_hot: 4
   max_buy_normal: 4
   max_buy_warming: 3
   max_buy_cold: 1
 
+  # Pattern caps keep BUY concentrated and avoid one-style crowding.
   cap_reversal: 2
   cap_momentum: 1
   cap_follow: 1
   cap_theme_confirmed: 1
 
+  # LOW_OPEN_NET_REVERSAL: discounted cost + real order support.
   reversal_pct_min: -8.2
   reversal_pct_max: -0.5
   reversal_min_amount_wan: 3200
@@ -79,6 +52,7 @@ action_pools:
   deep_reversal_min_amount_wan: 8000
   deep_reversal_min_confirmation: 48
 
+  # CONFIRMED_MOMENTUM: moderate auction cost + independent confirmation.
   momentum_min_pct: 1.2
   momentum_max_pct: 5.2
   momentum_min_amount_wan: 2500
@@ -86,8 +60,8 @@ action_pools:
   momentum_min_liquidity: 45
   momentum_rank_max: 60
   cold_momentum_min_confirmation: 52
-  single_source_momentum_penalty: 4
 
+  # AUCTION_FOLLOW_THROUGH: healthy cost + multi-source auction evidence.
   follow_min_pct: 1.8
   follow_max_pct: 5.8
   follow_min_amount_wan: 3000
@@ -95,12 +69,13 @@ action_pools:
   follow_min_source_count: 2
   follow_best_rank_max: 20
 
-  # Theme is tradable only when auction confirms it. This is not a sector rule.
+  # THEME_AUCTION_CONFIRMED: theme can BUY only after auction confirmation.
   theme_buy_min_theme: 82
   theme_buy_min_pct: -0.8
   theme_buy_max_pct: 3.5
   theme_buy_min_amount_wan: 2800
   theme_buy_min_confirmation: 50
 
+  # Watch band.
   watch_max: 8
   watch_score_gap: 14

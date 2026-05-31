@@ -1,6 +1,6 @@
-# Unified v8 production edge engine.
-# Filename is kept for deployment compatibility with existing runner paths.
-version: "premarket_v8_unified_edge_engine"
+# v9 pure auction alpha engine.
+# Filename is retained for deployment compatibility with existing runner paths.
+version: "premarket_v9_pure_auction_alpha"
 
 output:
   max_candidates: 4
@@ -8,74 +8,71 @@ output:
   pool_max: 8
 
 engine:
-  broad_theme_names:
-    - "一季报增长"
-    - "业绩增长"
-    - "年报增长"
-    - "半年报增长"
-    - "业绩预增"
-    - "并购重组"
-    - "股权转让"
-    - "实控人变更"
-
-  # Global hard gates. Price/cost uses auction_change_pct only.
+  # Global gates. Price/cost uses auction_change_pct only.
   absolute_max_cost_pct: 7.0
   hard_min_amount_wan: 300
   hard_min_liquidity: 20
   amount_quality_full_wan: 9000
-  rank_prior_decay_points: 2.5
+  net_pressure_full_ratio: 0.002
+  rank_prior_decay_points: 2.0
 
-  # Market regime budget.
-  buy_score_hot: 70
-  buy_score_normal: 70
-  buy_score_warming: 73
-  buy_score_cold: 78
-  max_buy_hot: 4
+  # Market-regime budget.
+  buy_score_normal: 71
+  buy_score_warming: 74
+  buy_score_cold: 80
   max_buy_normal: 4
   max_buy_warming: 3
   max_buy_cold: 1
 
-  # Pattern caps keep BUY concentrated and avoid one-style crowding.
+  # Alpha caps: avoid one-style crowding.
   cap_reversal: 2
-  cap_momentum: 1
+  cap_sustained: 1
   cap_follow: 1
-  cap_theme_confirmed: 1
+  cap_theme: 1
+  cap_broad_repair: 1
 
-  # LOW_OPEN_NET_REVERSAL: discounted cost + real order support.
-  reversal_pct_min: -8.2
-  reversal_pct_max: -0.5
-  reversal_min_amount_wan: 3200
-  reversal_min_auction: 22
-  reversal_primary_rank_max: 60
-  reversal_min_source_evidence: 8
+  # REVERSAL_ABSORPTION: low auction cost + absorption.
+  reversal_pct_min: -8.5
+  reversal_pct_max: -0.4
+  reversal_min_orderflow: 38
+  reversal_min_funding: 42
   deep_reversal_pct: -6.5
-  deep_reversal_min_amount_wan: 8000
-  deep_reversal_min_confirmation: 48
+  deep_reversal_min_orderflow: 55
+  deep_reversal_min_funding: 60
 
-  # CONFIRMED_MOMENTUM: moderate auction cost + independent confirmation.
-  momentum_min_pct: 1.2
-  momentum_max_pct: 5.2
-  momentum_min_amount_wan: 2500
-  momentum_min_auction: 50
-  momentum_min_liquidity: 45
-  momentum_rank_max: 60
-  cold_momentum_min_confirmation: 52
+  # BROAD_REPAIR_MOMENTUM: broad repair with real auction orderflow.
+  broad_repair_min_theme: 75
+  broad_repair_min_context: 58
+  broad_repair_min_orderflow: 45
+  broad_repair_min_funding: 45
+  broad_repair_min_pct: -0.5
+  broad_repair_max_pct: 5.2
 
-  # AUCTION_FOLLOW_THROUGH: healthy cost + multi-source auction evidence.
-  follow_min_pct: 1.8
-  follow_max_pct: 5.8
-  follow_min_amount_wan: 3000
-  follow_min_auction: 55
+  # SUSTAINED_ORDERFLOW_MOMENTUM: sustained抢筹 / 净额 / 量比共振.
+  sustained_min_orderflow: 58
+  sustained_min_funding: 46
+  sustained_min_truth: 68
+  sustained_min_pct: 1.0
+  sustained_max_pct: 5.2
+  cold_sustained_min_orderflow: 66
+
+  # MULTI_SOURCE_AUCTION_FOLLOW: multiple independent auction sources.
   follow_min_source_count: 2
-  follow_best_rank_max: 20
+  follow_primary_rank_max: 40
+  follow_min_funding: 44
+  follow_min_pct: 1.5
+  follow_max_pct: 5.8
 
-  # THEME_AUCTION_CONFIRMED: theme can BUY only after auction confirmation.
-  theme_buy_min_theme: 82
-  theme_buy_min_pct: -0.8
-  theme_buy_max_pct: 3.5
-  theme_buy_min_amount_wan: 2800
-  theme_buy_min_confirmation: 50
+  # THEME_CONFIRMED_LOW_COST: theme is only context after auction confirmation.
+  theme_min_strength: 82
+  theme_min_context: 58
+  theme_min_orderflow: 42
+  theme_min_funding: 42
+  theme_min_pct: -0.8
+  theme_max_pct: 3.5
 
   # Watch band.
+  watch_min_orderflow: 35
+  watch_min_funding: 42
   watch_max: 8
   watch_score_gap: 14

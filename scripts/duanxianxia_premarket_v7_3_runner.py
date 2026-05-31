@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Unified v8 premarket runner.
+"""Pure auction-alpha production runner.
 
-The old public filename is kept for compatibility with existing schedulers, but
-runtime is no longer a v7.2 -> v7.3 -> monkey-patch stack.  The flow is now:
+The filename is kept only for deployment compatibility.  Production logic is no
+longer v7.3/v7.4/v8 overlay logic.  The runtime flow is:
 
-    v7.2 raw signal extraction -> v8 unified production edge engine
+    v7.2 capture loading / signal extraction -> v9 pure auction alpha engine
 
-No v7.3 overlay monkey patch is imported.
+The final selector does not depend on old action buckets.  It rebuilds alpha from
+auction microstructure primitives: auction_change_pct, qiangchou, net amount,
+vratio, fengdan, amount/liquidity, risk/tradability, and market-regime budget.
 """
 from __future__ import annotations
 
@@ -28,22 +30,20 @@ except Exception:
     yaml = None
 
 from duanxianxia_premarket_v7_2_runner import DEFAULT_PROJECT_ROOT, run_v7_2
-from duanxianxia_v8_premarket_engine import VERSION as V8_VERSION, auction_pct, build_v8_output
+from duanxianxia_v9_auction_alpha_engine import VERSION as ENGINE_VERSION, auction_pct, build_v9_output
 
 TZ_SHANGHAI = ZoneInfo("Asia/Shanghai")
-CONFIG_REL = Path("config/premarket_v7_3_setups.yaml")  # kept for deployment compatibility
+CONFIG_REL = Path("config/premarket_v7_3_setups.yaml")  # deployment-compatible filename
 
 
-def load_v8_config(project_root: Path) -> Dict[str, Any]:
+def load_engine_config(project_root: Path) -> Dict[str, Any]:
     path = project_root / CONFIG_REL
     if not path.exists():
-        return {"version": V8_VERSION, "engine": {}, "output": {"max_candidates": 4, "watch_tier_max": 12, "pool_max": 8}}
+        return {"version": ENGINE_VERSION, "engine": {}, "output": {"max_candidates": 4, "watch_tier_max": 12, "pool_max": 8}}
     if yaml is None:
-        raise RuntimeError("PyYAML is required for v8 config loading")
+        raise RuntimeError("PyYAML is required for engine config loading")
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    data.setdefault("version", V8_VERSION)
-    # Backward compatibility: old config key was action_pools.  v8 uses engine,
-    # but accepts action_pools to avoid deployment breakage during transition.
+    data.setdefault("version", ENGINE_VERSION)
     if "engine" not in data:
         data["engine"] = data.get("action_pools") or {}
     data.setdefault("output", {"max_candidates": 4, "watch_tier_max": 12, "pool_max": 8})
@@ -85,9 +85,9 @@ def _source_hit_count(row: Mapping[str, Any]) -> int:
 def _candidate_reasons(row: Mapping[str, Any]) -> list[str]:
     parts: list[str] = []
     _push_unique(parts, str(row.get("action_reason") or ""))
-    for tag in row.get("action_tags") or []:
-        if str(tag).strip() in {"buy", "watch", "reject", "avoid"}:
-            _push_unique(parts, str(tag))
+    alpha = str(row.get("alpha_type") or "").strip()
+    if alpha:
+        _push_unique(parts, f"alpha {alpha}")
     theme_detail = row.get("theme_detail") if isinstance(row.get("theme_detail"), Mapping) else {}
     matched_plate = str(theme_detail.get("matched_plate") or row.get("matched_plate") or "").strip()
     if matched_plate:
@@ -95,8 +95,8 @@ def _candidate_reasons(row: Mapping[str, Any]) -> list[str]:
     pct = auction_pct(row)
     if pct is not None:
         _push_unique(parts, f"竞价 {_fmt_num(pct)}%")
-    if row.get("conviction_score") not in (None, ""):
-        _push_unique(parts, f"conviction {_fmt_num(row.get('conviction_score'))}")
+    if row.get("edge_score") not in (None, ""):
+        _push_unique(parts, f"edge {_fmt_num(row.get('edge_score'))}")
     return parts[:5]
 
 
@@ -143,7 +143,7 @@ def _adapt_for_batch(result: Dict[str, Any]) -> Dict[str, Any]:
     for idx, raw in enumerate(top_rows, start=1):
         row = dict(raw)
         row.setdefault("rank", idx)
-        row.setdefault("score", row.get("conviction_score", row.get("action_score", row.get("edge_score"))))
+        row.setdefault("score", row.get("edge_score", row.get("action_score")))
         row.setdefault("source_hit_count", _source_hit_count(row))
         pct = auction_pct(row)
         if pct is not None:
@@ -168,12 +168,12 @@ def render_text(result: Dict[str, Any]) -> str:
     avoid_rows = list(pools.get("AVOID") or [])
 
     lines = [
-        "**盘前 v8 统一生产 edge 决策**",
-        f"- 版本：{result.get('version') or V8_VERSION}",
+        "**盘前 v9 纯竞价 alpha 决策**",
+        f"- 版本：{result.get('version') or ENGINE_VERSION}",
         f"- 交易日：{meta.get('date_t0') or '-'}",
         f"- 候选池：{meta.get('candidate_count') or 0}；BUY 候选：{len(buy_rows)}",
         "- 价格/成本口径：auction_change_pct only",
-        "- 链路：v7.2 原始信号抽取 -> v8 统一生产引擎",
+        "- 核心：order-flow + funding + truth/tradability + payoff cost curve",
     ]
     if paths.get("analysis_path"):
         lines.append(f"- 分析文件：`{paths['analysis_path']}`")
@@ -181,13 +181,13 @@ def render_text(result: Dict[str, Any]) -> str:
     lines.append("")
     lines.append("**BUY / 高置信候选**")
     if not buy_rows:
-        lines.append("- 无。证据不够时不强行推荐。")
+        lines.append("- 无。竞价 alpha 不够时不强行推荐。")
     else:
         for idx, row in enumerate(buy_rows[:5], start=1):
             lines.append(
                 f"- {idx}. {row.get('name')}（{row.get('code')}）"
-                f"｜pattern {row.get('durable_pattern') or '-'}"
-                f"｜edge {_fmt_num(row.get('edge_score') or row.get('conviction_score'))}"
+                f"｜alpha {row.get('alpha_type') or '-'}"
+                f"｜edge {_fmt_num(row.get('edge_score'))}"
                 f"｜竞价 {_fmt_num(auction_pct(row))}%"
                 f"｜金额 {_fmt_num(row.get('auction_amount_wan') or (row.get('auction_detail') or {}).get('auction_amount_wan'))}万"
                 f"｜原因：{row.get('action_reason') or '-'}"
@@ -197,11 +197,11 @@ def render_text(result: Dict[str, Any]) -> str:
         lines.append("")
         lines.append("**WATCH / 临界观察**")
         for idx, row in enumerate(watch_rows[:5], start=1):
-            lines.append(f"- {idx}. {row.get('name')}（{row.get('code')}）｜edge {_fmt_num(row.get('edge_score'))}｜竞价 {_fmt_num(row.get('auction_pct'))}%｜{row.get('action_reason') or '-'}")
+            lines.append(f"- {idx}. {row.get('name')}（{row.get('code')}）｜alpha {row.get('alpha_type') or '-'}｜edge {_fmt_num(row.get('edge_score'))}｜竞价 {_fmt_num(row.get('auction_pct'))}%｜{row.get('action_reason') or '-'}")
 
     if reject_rows:
         lines.append("")
-        lines.append("**REJECT / 证据不足**")
+        lines.append("**REJECT / 竞价 alpha 不足**")
         for idx, row in enumerate(reject_rows[:5], start=1):
             lines.append(f"- {idx}. {row.get('name')}（{row.get('code')}）｜{row.get('action_reason') or '-'}")
 
@@ -214,7 +214,7 @@ def render_text(result: Dict[str, Any]) -> str:
 
 
 def run_v7_3(date_str: str, project_root: Path, output_dir: Optional[Path] = None, no_write: bool = False) -> Dict[str, Any]:
-    cfg_doc = load_v8_config(project_root)
+    cfg_doc = load_engine_config(project_root)
     out_cfg = cfg_doc.get("output") or {}
     engine_cfg = cfg_doc.get("engine") or {}
     max_candidates = int(out_cfg.get("max_candidates", 4))
@@ -222,20 +222,20 @@ def run_v7_3(date_str: str, project_root: Path, output_dir: Optional[Path] = Non
     pool_max = int(out_cfg.get("pool_max", 8))
 
     shaped_v72 = run_v7_2(date_str, project_root, output_dir=None, no_write=True)
-    shaped = build_v8_output(shaped_v72, engine_cfg, max_candidates=max_candidates, watch_tier_max=watch_tier_max, pool_max=pool_max)
+    shaped = build_v9_output(shaped_v72, engine_cfg, max_candidates=max_candidates, watch_tier_max=watch_tier_max, pool_max=pool_max)
     shaped.setdefault("meta", {})
     shaped["meta"]["generated_by"] = "duanxianxia_premarket_v7_3_runner.py"
-    shaped["meta"]["config_version"] = cfg_doc.get("version", V8_VERSION)
+    shaped["meta"]["config_version"] = cfg_doc.get("version", ENGINE_VERSION)
 
     if not no_write:
         if output_dir is None:
             output_dir = project_root / "reports" / date_str / "premarket"
-            analysis_name = f"{datetime.now(TZ_SHANGHAI).strftime('%H%M%S')}_analysis_v8.json"
+            analysis_name = f"{datetime.now(TZ_SHANGHAI).strftime('%H%M%S')}_analysis_v9.json"
         else:
-            analysis_name = "analysis_v8.json"
+            analysis_name = "analysis_v9.json"
         output_dir.mkdir(parents=True, exist_ok=True)
         analysis_path = output_dir / analysis_name
-        anchors_path = output_dir / "intraday_anchors_v8.json"
+        anchors_path = output_dir / "intraday_anchors_v9.json"
         analysis_path.write_text(json.dumps(shaped, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
         anchors_path.write_text(json.dumps(shaped.get("intraday_anchors") or [], ensure_ascii=False, indent=2, default=str), encoding="utf-8")
         shaped["paths"] = {"analysis_path": str(analysis_path), "anchors_path": str(anchors_path)}

@@ -66,34 +66,33 @@ params:
 
   # === auction_strength ===
   auction_top_rank_n: 30
-  auction_bonus_fengdan: 3
+  auction_rank_decay_tau: 8.0
   min_auction_amount_wan: 500
   full_auction_amount_wan: 1000
+  amount_abs_full_wan: 3000
   auction_amount_low_multiplier: 0.5
   auction_amount_mid_multiplier: 0.8
-  auction_turnover_bonus_high_pct: 1.0
-  auction_turnover_bonus_high: 5
-  auction_turnover_bonus_mid_pct: 0.5
-  auction_turnover_bonus_mid: 3
-  auction_amount_bonus_low_wan: 1000
-  auction_amount_bonus_low: 1
-  auction_amount_bonus_mid_wan: 2000
-  auction_amount_bonus_mid: 3
-  auction_amount_bonus_high_wan: 5000
-  auction_amount_bonus_high: 5
-  net_pressure_bonus_low_ratio: 0.0005
-  net_pressure_bonus_low: 3
-  net_pressure_bonus_mid_ratio: 0.001
-  net_pressure_bonus_mid: 5
-  net_pressure_bonus_high_ratio: 0.002
-  net_pressure_bonus_high: 8
+  net_pressure_full_ratio: 0.002
+  amount_pressure_full_ratio: 0.001
 
-  # qiangchou group semantics:
-  #   grab      = 9:20-9:25 sustained抢筹幅度, primary.
-  #   qiangchou = 9:24:59 last-second抢筹, confirmation/terminal impulse.
+  # qiangchou group semantics per current user contract:
+  #   qiangchou = 9:20-9:25 sustained抢筹, primary.
+  #   grab      = final-second抢筹, confirmation/terminal impulse.
   qiangchou_920_925_bonus: 5
   qiangchou_last_second_multiplier: 0.85
   qiangchou_last_second_confirm_bonus: 6
+
+  # Source fusion weights for auction microstructure.
+  source_weight_vratio: 0.20
+  source_weight_qiangchou_920_925: 0.35
+  source_weight_qiangchou_last_second: 0.18
+  source_weight_net_amount: 0.25
+  source_weight_fengdan: 0.20
+  auction_alpha_source_weight: 0.35
+  auction_alpha_price_weight: 0.20
+  auction_alpha_money_weight: 0.20
+  auction_alpha_orderbook_weight: 0.15
+  auction_alpha_resonance_weight: 0.10
 
   # Fengdan behavior.
   fengdan_fake_drop_ratio: 0.30
@@ -105,17 +104,39 @@ params:
   fengdan_consume_weak_bonus: 2
   fengdan_lock_bonus: 15
 
-  # Negative-auction cap.
-  negative_auction_deep_pct: -6.0
-  negative_auction_deep_cap: 20
-  negative_auction_mid_pct: -3.0
-  negative_auction_mid_cap: 35
-  negative_auction_soft_cap: 50
-
-  # Entry/tradability tags.
+  # Price intent and entry/tradability tags.
+  price_intent_low_open_score: 28
+  price_intent_negative_score: 42
+  price_intent_turning_score: 62
+  price_intent_attack_score: 100
+  price_intent_high_cost_score: 72
+  price_intent_very_high_cost_score: 48
+  price_intent_board_watch_score: 35
   entry_board_watch_pct: 9.5
   entry_lock_large_f25_yi: 1.0
   entry_high_open_pct: 8.5
+  board_lock_pct: 9.5
+  high_open_attack_evidence_min: 45
+  healthy_divergence_money_min: 45
+  reversal_net_rank_max: 10
+  reversal_qiangchou_rank_max: 15
+  low_open_reversal_strength_cap: 65
+  negative_non_reversal_cap: 45
+
+  # Turnover / liquidity.
+  turnover_low_pct: 0.3
+  turnover_healthy_high_pct: 1.5
+  turnover_divergence_high_pct: 3.0
+  liquidity_multiplier_min: 0.50
+
+  # Risk multipliers.
+  risk_fake_multiplier: 0.65
+  risk_consume_zero_multiplier: 0.85
+  risk_overheated_turnover_multiplier: 0.90
+  tradability_board_lock_multiplier: 0.75
+  tradability_high_open_multiplier: 0.90
+  tradability_low_amount_multiplier: 0.70
+  fake_strength_risk_max: 0.70
 
   # Hotness.
   hotness_rocket_top_n: 50
@@ -217,10 +238,6 @@ regime_multiplier:
     T0-REVERSAL: 0.90
     T0-DIVERGENCE: 0.85
 
-# Action-pool layer.  These thresholds are intentionally conservative and
-# structural, not optimized from one review day.  Realized excess_return showed
-# why these actions must be separated, but classification only uses premarket
-# observable signals.
 action_pools:
   broad_theme_names:
     - "一季报增长"

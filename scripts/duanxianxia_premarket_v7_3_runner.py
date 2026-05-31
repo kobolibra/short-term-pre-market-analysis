@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""v7.3 premarket runner: selective decision entry."""
+"""v7.3/v7.4 premarket runner: production edge decision entry."""
 from __future__ import annotations
 
 import argparse
@@ -20,7 +20,7 @@ except Exception:
     yaml = None
 
 from duanxianxia_premarket_v7_2_runner import DEFAULT_PROJECT_ROOT, run_v7_2
-import duanxianxia_v7_3_next_level_patch  # noqa: F401 - applies v7.3 overlay
+import duanxianxia_v7_3_next_level_patch  # noqa: F401 - applies v7.4 overlay
 from duanxianxia_v7_3_output import upgrade_shaped_v72_to_v73
 
 TZ_SHANGHAI = ZoneInfo("Asia/Shanghai")
@@ -71,6 +71,22 @@ def _as_float(value: Any) -> Optional[float]:
         return None
 
 
+def _auction_pct(row: Mapping[str, Any]) -> Optional[float]:
+    """Premarket price/cost. Only auction_change_pct / auction_pct are valid."""
+    auction_detail = row.get("auction_detail") if isinstance(row.get("auction_detail"), Mapping) else {}
+    for value in (
+        row.get("auction_pct"),
+        row.get("auction_change_pct"),
+        auction_detail.get("auction_change_pct"),
+    ):
+        pct = _as_float(value)
+        if pct is not None:
+            return pct
+    perf = row.get("performance") if isinstance(row.get("performance"), Mapping) else {}
+    pct = _as_float(perf.get("auction_pct"))
+    return pct
+
+
 def _push_unique(parts: list[str], value: str) -> None:
     text = str(value or "").strip()
     if text and text not in parts:
@@ -96,17 +112,17 @@ def _candidate_reasons(row: Mapping[str, Any]) -> list[str]:
     _push_unique(parts, str(row.get("action_reason") or row.get("setup_reason") or ""))
     for tag in row.get("action_tags") or []:
         text = str(tag).strip()
-        if text in {"high_conviction_buy", "quality_gate_failed", "structural_avoid"}:
+        if text in {"buy", "watch", "reject", "avoid", "high_conviction_buy", "quality_gate_failed", "structural_avoid"}:
             _push_unique(parts, text)
     auction_detail = row.get("auction_detail") if isinstance(row.get("auction_detail"), Mapping) else {}
     theme_detail = row.get("theme_detail") if isinstance(row.get("theme_detail"), Mapping) else {}
-    matched_plate = str(theme_detail.get("matched_plate") or "").strip()
+    matched_plate = str(theme_detail.get("matched_plate") or row.get("matched_plate") or "").strip()
     if matched_plate:
         _push_unique(parts, f"题材 {matched_plate}")
-    primary_signal = str(auction_detail.get("qiangchou_primary_signal") or "").strip()
+    primary_signal = str(auction_detail.get("qiangchou_primary_signal") or row.get("qiangchou_primary_signal") or "").strip()
     if primary_signal:
         _push_unique(parts, f"抢筹 {primary_signal}")
-    pct = _as_float(row.get("auction_pct") or auction_detail.get("latest_change_pct"))
+    pct = _auction_pct(row)
     if pct is not None:
         _push_unique(parts, f"竞价 {_fmt_num(pct)}%")
     if row.get("conviction_score") not in (None, ""):
@@ -120,10 +136,9 @@ def _candidate_risks(row: Mapping[str, Any]) -> list[str]:
     for flag in auction_detail.get("risk_flags") or []:
         _push_unique(parts, str(flag))
     reason = str(row.get("action_reason") or "")
-    if "quality_gate_failed:" in reason:
-        _push_unique(parts, reason.split("quality_gate_failed:", 1)[1])
-    if "structural_avoid:" in reason:
-        _push_unique(parts, reason.split("structural_avoid:", 1)[1])
+    for prefix in ("quality_gate_failed:", "structural_avoid:", "AVOID:", "REJECT:"):
+        if prefix in reason:
+            _push_unique(parts, reason.split(prefix, 1)[1])
     entry_reason = str(row.get("entry_reason") or auction_detail.get("entry_reason") or "").strip()
     if entry_reason and entry_reason != "normal":
         _push_unique(parts, entry_reason)
@@ -160,6 +175,9 @@ def _adapt_for_batch(result: Dict[str, Any]) -> Dict[str, Any]:
         row.setdefault("rank", idx)
         row.setdefault("score", row.get("conviction_score", row.get("action_score", row.get("final_score"))))
         row.setdefault("source_hit_count", _source_hit_count(row))
+        pct = _auction_pct(row)
+        if pct is not None:
+            row.setdefault("auction_pct", pct)
         row.setdefault("reasons", _candidate_reasons(row))
         row.setdefault("risks", _candidate_risks(row))
         patched_top.append(row)
@@ -170,19 +188,29 @@ def _adapt_for_batch(result: Dict[str, Any]) -> Dict[str, Any]:
     return adapted
 
 
+def _pool_rows(pools: Mapping[str, Any], *names: str) -> list[Mapping[str, Any]]:
+    for name in names:
+        rows = pools.get(name)
+        if rows:
+            return list(rows)
+    return []
+
+
 def render_text(result: Dict[str, Any]) -> str:
     meta = result.get("meta") or {}
     paths = result.get("paths") or {}
     buy_rows = list(result.get("actionable_candidates") or result.get("top_candidates") or [])
     pools = result.get("candidate_pools") or {}
-    watch_rows = list(pools.get("quality_watch_pool") or [])
-    avoid_rows = list(pools.get("structural_avoid_pool") or [])
+    watch_rows = _pool_rows(pools, "watch", "quality_watch_pool", "confirmation_watch_pool")
+    reject_rows = _pool_rows(pools, "reject")
+    avoid_rows = _pool_rows(pools, "avoid", "structural_avoid_pool", "avoid_or_risk_pool")
 
     lines = [
-        "**盘前 v7.3 高置信决策**",
+        "**盘前 v7.4 生产 edge 决策**",
         f"- 版本：{(meta.get('version_overlay') or result.get('version') or 'premarket_v7_3')}",
         f"- 交易日：{meta.get('date_t0') or '-'}",
-        f"- 候选池：{meta.get('candidate_count') or 0}；买入候选：{len(buy_rows)}",
+        f"- 候选池：{meta.get('candidate_count') or 0}；BUY 候选：{len(buy_rows)}",
+        "- 价格/成本口径：auction_change_pct only",
     ]
     if paths.get("analysis_path"):
         lines.append(f"- 分析文件：`{paths['analysis_path']}`")
@@ -197,21 +225,27 @@ def render_text(result: Dict[str, Any]) -> str:
                 f"- {idx}. {row.get('name')}（{row.get('code')}）"
                 f"｜原动作 {row.get('pre_gate_action_type') or row.get('action_type') or '-'}"
                 f"｜conviction {_fmt_num(row.get('conviction_score') or row.get('expected_return_score'))}"
-                f"｜竞价 {_fmt_num(row.get('auction_pct'))}%"
-                f"｜金额 {_fmt_num(row.get('auction_amount_wan'))}万"
+                f"｜竞价 {_fmt_num(_auction_pct(row))}%"
+                f"｜金额 {_fmt_num(row.get('auction_amount_wan') or (row.get('auction_detail') or {}).get('auction_amount_wan'))}万"
                 f"｜原因：{row.get('action_reason') or '-'}"
             )
 
     if watch_rows:
         lines.append("")
-        lines.append("**WATCH / 未过买入门槛**")
+        lines.append("**WATCH / 临界观察**")
         for idx, row in enumerate(watch_rows[:5], start=1):
             lines.append(
                 f"- {idx}. {row.get('name')}（{row.get('code')}）"
-                f"｜原动作 {row.get('pre_gate_action_type') or '-'}"
-                f"｜conviction {_fmt_num(row.get('conviction_score') or row.get('expected_return_score'))}"
-                f"｜拒绝原因：{row.get('action_reason') or '-'}"
+                f"｜conviction {_fmt_num(row.get('conviction_score') or row.get('expected_return_score') or row.get('action_score'))}"
+                f"｜竞价 {_fmt_num(_auction_pct(row))}%"
+                f"｜原因：{row.get('action_reason') or '-'}"
             )
+
+    if reject_rows:
+        lines.append("")
+        lines.append("**REJECT / 证据不足**")
+        for idx, row in enumerate(reject_rows[:5], start=1):
+            lines.append(f"- {idx}. {row.get('name')}（{row.get('code')}）｜{row.get('action_reason') or '-'}")
 
     if avoid_rows:
         lines.append("")
@@ -235,6 +269,7 @@ def run_v7_3(date_str: str, project_root: Path, output_dir: Optional[Path] = Non
     shaped.setdefault("meta", {})
     shaped["meta"]["version_overlay"] = overlay.get("version", "premarket_v7_3")
     shaped["meta"]["generated_by"] = "duanxianxia_premarket_v7_3_runner.py"
+    shaped["meta"]["price_cost_field"] = "auction_change_pct"
 
     if not no_write:
         if output_dir is None:

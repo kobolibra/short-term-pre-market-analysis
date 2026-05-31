@@ -338,7 +338,10 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
 
     amount_keys = ["auction_turnover_wan", "auction_turnover_wan_text", "竞额", "竞价成交额", "竞价金额", "auction_amount_wan", "amount", "成交额"]
     turnover_keys = ["turnover_rate_pct", "竞价换手", "竞价换手率", "turnover_rate", "换手率"]
-    pct_keys = ["latest_change_pct", "auction_change_pct", "auction_change_pct_text", "竞价涨幅", "涨幅"]
+    # Price-cost for premarket decisions must prefer the 09:25 auction change.
+    # `latest_change_pct` can become real-time/close change after the open and
+    # is only a fallback for older captures where auction_change_pct is absent.
+    pct_keys = ["auction_change_pct", "auction_change_pct_text", "竞价涨幅", "latest_change_pct", "涨幅"]
 
     out: Dict[str, Dict[str, Any]] = {}
     for raw in candidate_codes or []:

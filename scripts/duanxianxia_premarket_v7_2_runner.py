@@ -66,7 +66,9 @@ def _build_candidate_latest_pct(candidates: list) -> Dict[str, float]:
         code = str(c.get("code") or "").strip()
         if not code:
             continue
-        pct = _to_float(c.get("latest_change_pct")) or _to_float(c.get("auction_change_pct")) or _to_float(c.get("change_pct"))
+        # Premarket cost should be the auction change.  latest_change_pct can be
+        # real-time/close change after the open, so it is only a fallback.
+        pct = _to_float(c.get("auction_change_pct")) or _to_float(c.get("latest_change_pct")) or _to_float(c.get("change_pct"))
         if pct is not None:
             out[code] = pct
     return out

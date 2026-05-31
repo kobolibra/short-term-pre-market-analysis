@@ -1,11 +1,12 @@
-# v7.3 durable premarket signal selector
-# Real signal first.  Theme is watch-only.  Cold/warming momentum is heavily gated.
-version: "premarket_v7_3_durable_signal_selector_v2"
+# v7.4 next-level high-conviction premarket selector
+# Goal: fewer, cleaner BUY signals with better expected win-rate/odds.
+# Production inputs must be visible at/around 09:25.  Close/excess return is review-only.
+version: "premarket_v7_4_next_level_high_conviction"
 
 output:
-  max_candidates: 4
+  max_candidates: 3
   watch_tier_max: 12
-  pool_max: 8
+  pool_max: 10
 
 action_pools:
   broad_theme_names:
@@ -18,7 +19,7 @@ action_pools:
     - "股权转让"
     - "实控人变更"
 
-  # Base classifiers remain broad; final BUY is only durable patterns below.
+  # Base v7.3 classification knobs retained for compatibility.
   high_cost_pct: 8.5
   board_watch_pct: 9.5
   follow_pct_min: 2.0
@@ -50,37 +51,62 @@ action_pools:
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
 
-  # Durable selector.
-  absolute_max_cost_pct: 7.0
-  rank_prior_points: 20
-  rank_prior_decay: 0.25
-  amount_full_wan: 6000
+  # v7.4 durable selector.
+  absolute_max_cost_pct: 6.8
+  hard_min_amount_wan: 500
+  hard_min_liquidity: 25
+  rank_prior_points: 18
+  rank_prior_decay: 0.30
+  amount_full_wan: 7000
 
-  buy_score_normal: 70
-  buy_score_warming: 72
+  buy_score_normal: 72
+  buy_score_warming: 74
   buy_score_cold: 78
-  max_buy_normal: 4
-  max_buy_warming: 3
+  max_buy_normal: 3
+  max_buy_warming: 2
   max_buy_cold: 1
-
   cap_reversal: 2
   cap_momentum: 1
   cap_follow: 1
 
+  # Discounted reversal: needs negative auction cost + real primary order support.
+  reversal_pct_min: -7.5
+  reversal_pct_max: -1.0
   reversal_min_amount_wan: 3500
-  reversal_min_auction: 22
-  deep_reversal_min_amount_wan: 8000
-  deep_reversal_min_auction: 35
+  reversal_min_auction: 24
+  reversal_primary_rank_max: 60
+  deep_reversal_pct: -6.0
+  deep_reversal_min_amount_wan: 9000
+  deep_reversal_min_auction: 38
+  deep_reversal_best_rank_max: 20
 
-  momentum_min_pct: 1.5
-  momentum_max_pct: 5.2
-  momentum_min_amount_wan: 2500
-  momentum_min_auction: 50
-  momentum_min_liquidity: 45
-  volatile_momentum_min_amount_wan: 8000
-  volatile_board_penalty: 10
+  # Confirmed momentum: cheaper, stronger, and more independently confirmed.
+  momentum_min_pct: 1.2
+  momentum_max_pct: 4.8
+  momentum_min_amount_wan: 3000
+  momentum_min_auction: 55
+  momentum_min_liquidity: 50
+  momentum_rank_max: 45
+  momentum_primary_rank_max: 45
+  volatile_momentum_min_source_count: 2
+  volatile_momentum_best_rank_max: 10
+  volatile_momentum_min_amount_wan: 15000
+  volatile_board_penalty: 8
+  crowded_theme_cost_max_cold: 3.2
+  crowded_theme_min_source_count: 3
+  crowded_theme_penalty: 8
 
-  follow_min_amount_wan: 3000
+  # Follow-through: requires multi-source confirmation and no cold volatile-board chase.
+  follow_min_pct: 2.0
+  follow_max_pct: 5.2
+  follow_min_amount_wan: 5000
+  follow_min_auction: 60
+  follow_min_source_count: 2
+  follow_best_rank_max: 20
 
-  watch_max: 8
-  watch_score_gap: 14
+  # Theme catch-up is watch-only in v7.4.
+  theme_watch_min_theme: 80
+  theme_watch_max_pct: 2.2
+
+  watch_max: 10
+  watch_score_gap: 16

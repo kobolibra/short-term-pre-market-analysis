@@ -1,6 +1,6 @@
 # v7.3 durable premarket signal selector
-# Real signal first.  Theme is watch-only.  Cold/warming momentum is heavily gated.
-version: "premarket_v7_3_durable_signal_selector_v2"
+# Validation-first: no exchange/board/sector hard bans from tiny samples.
+version: "premarket_v7_3_durable_signal_selector_v3_validation_first"
 
 output:
   max_candidates: 4
@@ -18,7 +18,7 @@ action_pools:
     - "股权转让"
     - "实控人变更"
 
-  # Base classifiers remain broad; final BUY is only durable patterns below.
+  # Base classifiers remain broad; final BUY is only durable mechanisms below.
   high_cost_pct: 8.5
   board_watch_pct: 9.5
   follow_pct_min: 2.0
@@ -50,8 +50,10 @@ action_pools:
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
 
-  # Durable selector.
+  # Durable selector: general mechanism gates only.
   absolute_max_cost_pct: 7.0
+  hard_min_amount_wan: 0
+  hard_min_liquidity: 0
   rank_prior_points: 20
   rank_prior_decay: 0.25
   amount_full_wan: 6000
@@ -67,8 +69,13 @@ action_pools:
   cap_momentum: 1
   cap_follow: 1
 
+  reversal_pct_min: -8.2
+  reversal_pct_max: -0.5
   reversal_min_amount_wan: 3500
   reversal_min_auction: 22
+  reversal_primary_rank_max: 60
+  reversal_min_source_evidence: 8
+  deep_reversal_pct: -6.5
   deep_reversal_min_amount_wan: 8000
   deep_reversal_min_auction: 35
 
@@ -77,10 +84,23 @@ action_pools:
   momentum_min_amount_wan: 2500
   momentum_min_auction: 50
   momentum_min_liquidity: 45
-  volatile_momentum_min_amount_wan: 8000
-  volatile_board_penalty: 10
+  momentum_rank_max: 60
+  cold_momentum_min_source_count: 2
+  cold_momentum_best_rank_max: 15
+  cold_momentum_min_amount_wan: 8000
+  single_source_momentum_penalty: 4
 
+  follow_min_pct: 2.0
+  follow_max_pct: 5.8
   follow_min_amount_wan: 3000
+  follow_min_auction: 55
+  follow_min_source_count: 2
+  follow_best_rank_max: 20
 
+  theme_watch_min_theme: 80
+  theme_watch_max_pct: 2.5
+  theme_watch_min_amount_wan: 2500
+
+  high_cost_penalty_per_pct: 6
   watch_max: 8
   watch_score_gap: 14

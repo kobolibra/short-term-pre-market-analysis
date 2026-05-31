@@ -1,20 +1,20 @@
 """v7.3 durable premarket signal selector.
 
-This rebuild removes the previous score soup.  The model now does one thing:
-select only the few premarket patterns that have a defensible causal signal.
+This overlay is intentionally validation-first and anti-overfit.
 
-What changed after the 2026-05-19/20/21 reviews
------------------------------------------------
-- THEME_CATCHUP is too unstable as a buy source.  It can be a watch item, not a
-  default BUY.
-- Momentum in cold/cold-to-warming markets must be institutionally confirmed;
-  otherwise it captures crowded high-volatility traps.
-- Low-open reversal is the only pattern where deep negative auction cost can be
-  attractive, but it must have real net/sustained order support.
-- The selector no longer buys because a composite score is high.  A row must
-  first match a named durable pattern, then pass simple evidence checks.
+It does NOT create exchange/board/sector bans from a few review dates.  A few
+failed selections are case studies, not enough evidence to declare that a board,
+style, or theme is structurally bad.  The selector only uses general premarket
+mechanisms:
 
-Production inputs are premarket-only.  Close/excess fields are review-only.
+- auction cost / discount;
+- real order and amount confirmation;
+- independent source breadth;
+- liquidity / tradability;
+- risk tags from the upstream setup engine.
+
+Production inputs are premarket-visible.  Close/excess/dailyline fields are
+review-only diagnostics and must not drive selection.
 """
 from __future__ import annotations
 
@@ -33,6 +33,8 @@ AVOID = "AVOID"
 SOURCE_ACTIONS = {"AUCTION_FOLLOW", "MOMENTUM_CATCHUP", "LOW_OPEN_REVERSAL", "THEME_CATCHUP"}
 BUY_PATTERNS = {"LOW_OPEN_NET_REVERSAL", "CONFIRMED_MOMENTUM", "AUCTION_FOLLOW_THROUGH"}
 RANK_KEYS = ("qiangchou_920_925_rank", "qiangchou_last_second_rank", "vratio_rank", "net_amount_rank", "fengdan_rank")
+PRIMARY_RANK_KEYS = ("qiangchou_920_925_rank", "net_amount_rank", "vratio_rank")
+REVIEW_ONLY_KEYS = {"close_pct", "excess_return", "day_close", "day_high", "day_low", "day_open", "derived_performance", "performance"}
 
 
 def _f(v: Any, default: Optional[float] = 0.0) -> Optional[float]:
@@ -58,8 +60,8 @@ def _rank(row: Dict[str, Any], key: str) -> Optional[int]:
         return None
 
 
-def _best_rank(row: Dict[str, Any]) -> int:
-    ranks = [_rank(row, k) for k in RANK_KEYS]
+def _best_rank(row: Dict[str, Any], keys: Iterable[str] = RANK_KEYS) -> int:
+    ranks = [_rank(row, k) for k in keys]
     ranks = [r for r in ranks if r is not None]
     return min(ranks) if ranks else 999
 
@@ -105,7 +107,7 @@ def _add(tags: List[str], *items: str) -> List[str]:
 def _regime(shaped: Dict[str, Any]) -> str:
     meta = shaped.get("meta") or {}
     reg = meta.get("regime") if isinstance(meta.get("regime"), dict) else {}
-    return str((reg or {}).get("label") or meta.get("regime_label") or "normal")
+    return str((reg or {}).get("label") or (reg or {}).get("regime") or meta.get("regime_label") or "normal")
 
 
 def _entry(row: Dict[str, Any]) -> str:
@@ -116,14 +118,13 @@ def _atype(row: Dict[str, Any]) -> str:
     return str(row.get("auction_setup_type") or _detail(row).get("auction_setup_type") or "")
 
 
-def _is_volatile_board(row: Dict[str, Any]) -> bool:
-    code = str(row.get("code") or "")
-    return code.startswith(("300", "301", "688", "689", "8", "9"))
-
-
 def _has_order_support(row: Dict[str, Any], max_rank: int = 60) -> bool:
     m = _m(row)
     return m["source"] >= 8 or _source_count(row) >= 1 or _best_rank(row) <= max_rank
+
+
+def _has_primary_support(row: Dict[str, Any], max_rank: int = 60) -> bool:
+    return _best_rank(row, PRIMARY_RANK_KEYS) <= max_rank
 
 
 def _hard_reject(row: Dict[str, Any], cfg: Dict[str, Any]) -> Optional[str]:
@@ -139,6 +140,10 @@ def _hard_reject(row: Dict[str, Any], cfg: Dict[str, Any]) -> Optional[str]:
         return "fake_strength_or_avoid"
     if m["pct"] >= float(cfg.get("absolute_max_cost_pct", 7.0)):
         return "cost_too_high"
+    if m["amount"] < float(cfg.get("hard_min_amount_wan", 0)):
+        return "amount_too_small"
+    if m["liquidity"] < float(cfg.get("hard_min_liquidity", 0)):
+        return "liquidity_too_weak"
     return None
 
 
@@ -148,60 +153,69 @@ def _rank_prior(rows: List[Dict[str, Any]]) -> Dict[str, int]:
 
 
 def _pattern(row: Dict[str, Any], shaped: Dict[str, Any], cfg: Dict[str, Any]) -> Tuple[str, Optional[str]]:
-    """Return (pattern, fail_reason).  Pattern is BUY/WATCH capable."""
+    """Return (pattern, fail_reason).  No branch may inspect review returns."""
+    if any(k in row for k in REVIEW_ONLY_KEYS):
+        # Presence is allowed in backfilled review JSON, but explicitly ignored.
+        pass
     hard = _hard_reject(row, cfg)
     if hard:
         return "AVOID", hard
     action = str(row.get("action_type") or "")
     m = _m(row)
     regime = _regime(shaped)
-    coldish = "cold" in regime
+    coldish = "cold" in regime or "warming" in regime
 
     if action == "LOW_OPEN_REVERSAL":
-        # Durable signal: discounted open + net/sustained support.  Deep gaps are
-        # allowed only with exceptional money.
-        if not (-8.2 <= m["pct"] <= -0.5):
+        if not (float(cfg.get("reversal_pct_min", -8.2)) <= m["pct"] <= float(cfg.get("reversal_pct_max", -0.5))):
             return "LOW_OPEN_WATCH", "reversal_cost_not_discounted_or_too_deep"
         if m["amount"] < float(cfg.get("reversal_min_amount_wan", 3500)):
             return "LOW_OPEN_WATCH", "reversal_amount_too_small"
         if m["auction"] < float(cfg.get("reversal_min_auction", 22)):
             return "LOW_OPEN_WATCH", "reversal_auction_too_weak"
-        if not (_rank(row, "net_amount_rank") is not None or _rank(row, "qiangchou_920_925_rank") is not None or m["source"] >= 8):
-            return "LOW_OPEN_WATCH", "reversal_no_net_or_sustained_support"
-        if m["pct"] < -6.5 and (m["amount"] < float(cfg.get("deep_reversal_min_amount_wan", 8000)) or m["auction"] < float(cfg.get("deep_reversal_min_auction", 35))):
+        if not (_has_primary_support(row, int(cfg.get("reversal_primary_rank_max", 60))) or m["source"] >= float(cfg.get("reversal_min_source_evidence", 8))):
+            return "LOW_OPEN_WATCH", "reversal_no_primary_order_support"
+        if m["pct"] < float(cfg.get("deep_reversal_pct", -6.5)) and (
+            m["amount"] < float(cfg.get("deep_reversal_min_amount_wan", 8000))
+            or m["auction"] < float(cfg.get("deep_reversal_min_auction", 35))
+        ):
             return "LOW_OPEN_WATCH", "deep_reversal_support_not_exceptional"
         return "LOW_OPEN_NET_REVERSAL", None
 
     if action == "MOMENTUM_CATCHUP":
-        # Durable signal: not too high, real amount, confirmed by at least one
-        # independent source.  Cold/warming markets punish volatile-board chasers.
         if not (float(cfg.get("momentum_min_pct", 1.5)) <= m["pct"] <= float(cfg.get("momentum_max_pct", 5.2))):
             return "MOMENTUM_WATCH", "momentum_cost_bad"
         if m["amount"] < float(cfg.get("momentum_min_amount_wan", 2500)):
             return "MOMENTUM_WATCH", "momentum_amount_too_small"
         if m["auction"] < float(cfg.get("momentum_min_auction", 50)) or m["liquidity"] < float(cfg.get("momentum_min_liquidity", 45)):
             return "MOMENTUM_WATCH", "momentum_strength_or_liquidity_weak"
-        if not _has_order_support(row, 60):
+        if not _has_order_support(row, int(cfg.get("momentum_rank_max", 60))):
             return "MOMENTUM_WATCH", "momentum_no_independent_order_support"
-        if coldish and _is_volatile_board(row) and not (_best_rank(row) <= 10 and m["amount"] >= float(cfg.get("volatile_momentum_min_amount_wan", 8000))):
-            return "MOMENTUM_WATCH", "cold_volatile_board_momentum_trap"
+        if coldish:
+            # General evidence requirement only.  No exchange/board/sector rule.
+            if not (
+                _source_count(row) >= int(cfg.get("cold_momentum_min_source_count", 2))
+                or _best_rank(row) <= int(cfg.get("cold_momentum_best_rank_max", 15))
+                or m["amount"] >= float(cfg.get("cold_momentum_min_amount_wan", 8000))
+            ):
+                return "MOMENTUM_WATCH", "coldish_momentum_needs_stronger_confirmation"
         return "CONFIRMED_MOMENTUM", None
 
     if action == "AUCTION_FOLLOW":
-        if not (2.0 <= m["pct"] <= 5.8):
+        if not (float(cfg.get("follow_min_pct", 2.0)) <= m["pct"] <= float(cfg.get("follow_max_pct", 5.8))):
             return "FOLLOW_WATCH", "follow_cost_bad"
-        if m["amount"] < float(cfg.get("follow_min_amount_wan", 3000)) or m["auction"] < 55:
+        if m["amount"] < float(cfg.get("follow_min_amount_wan", 3000)) or m["auction"] < float(cfg.get("follow_min_auction", 55)):
             return "FOLLOW_WATCH", "follow_amount_or_strength_weak"
-        if not (_source_count(row) >= 2 or _best_rank(row) <= 20):
+        if not (_source_count(row) >= int(cfg.get("follow_min_source_count", 2)) or _best_rank(row) <= int(cfg.get("follow_best_rank_max", 20))):
             return "FOLLOW_WATCH", "follow_lacks_multi_source_confirmation"
         return "AUCTION_FOLLOW_THROUGH", None
 
     if action == "THEME_CATCHUP":
-        # Theme is too noisy to buy from three-day evidence.  Keep only as watch,
-        # unless future data proves otherwise.
-        if m["theme"] >= 80 and -1.0 <= m["pct"] <= 2.5 and m["amount"] >= 2500:
-            return "THEME_WATCH", "theme_is_watch_only"
-        return "THEME_REJECT", "theme_unstable_no_buy"
+        # Theme-only is not automatically BUY.  This is a mechanism rule: theme
+        # breadth must be confirmed by auction evidence before execution.  It is
+        # not a claim about any particular sector.
+        if m["theme"] >= float(cfg.get("theme_watch_min_theme", 80)) and -1.0 <= m["pct"] <= float(cfg.get("theme_watch_max_pct", 2.5)) and m["amount"] >= float(cfg.get("theme_watch_min_amount_wan", 2500)):
+            return "THEME_WATCH", "theme_requires_auction_confirmation"
+        return "THEME_REJECT", "theme_unconfirmed_premarket"
 
     return "REJECT", "not_durable_pattern"
 
@@ -230,10 +244,10 @@ def _score(row: Dict[str, Any], pattern: str, rank: int, cfg: Dict[str, Any]) ->
     elif pattern == "AUCTION_FOLLOW_THROUGH":
         cost_adj = 5.0 if 2.0 <= m["pct"] <= 5.0 else 0.0
     penalty = 0.0
-    if _is_volatile_board(row) and pattern in {"CONFIRMED_MOMENTUM", "THEME_WATCH"}:
-        penalty += float(cfg.get("volatile_board_penalty", 10))
     if m["pct"] > 5.5:
-        penalty += (m["pct"] - 5.5) * 6.0
+        penalty += (m["pct"] - 5.5) * float(cfg.get("high_cost_penalty_per_pct", 6.0))
+    if pattern == "CONFIRMED_MOMENTUM" and _source_count(row) <= 1 and m["source"] < 8:
+        penalty += float(cfg.get("single_source_momentum_penalty", 4.0))
     score = base + rank_score + amount_score + auction_score + source_score + liquidity_score + cost_adj - penalty
     reasons = [pattern, f"rank={rank}", f"amount={round(amount_score,1)}", f"auction={round(auction_score,1)}", f"source={round(source_score,1)}"]
     return round(v73._clamp(score, -100, 100), 2), reasons
@@ -302,13 +316,16 @@ def _select(rows: List[Dict[str, Any]], shaped: Dict[str, Any], cfg: Dict[str, A
     watch_gap = float(cfg.get("watch_score_gap", 14))
     watch_max = int(cfg.get("watch_max", 8))
     watch_codes: set[str] = set()
+    hard_watch_exclusions = {"fake_strength_or_avoid", "board_lock", "cost_too_high", "hard_risk", "amount_too_small", "liquidity_too_weak"}
     for row in evaluated:
         code = str(row.get("code") or "")
         if code in buy_codes:
             continue
-        if str(row.get("durable_pattern") or "") in {"LOW_OPEN_WATCH", "MOMENTUM_WATCH", "FOLLOW_WATCH", "THEME_WATCH"} or (str(row.get("durable_pattern") or "") in BUY_PATTERNS and float(row.get("edge_score") or -999) >= threshold - watch_gap):
-            if str(row.get("gate_reason") or "") not in {"fake_strength_or_avoid", "board_lock", "cost_too_high", "hard_risk"} and float(row.get("edge_score") or -999) >= threshold - watch_gap:
-                watch_codes.add(code)
+        pattern = str(row.get("durable_pattern") or "")
+        near_buy = pattern in BUY_PATTERNS and float(row.get("edge_score") or -999) >= threshold - watch_gap
+        watch_pattern = pattern in {"LOW_OPEN_WATCH", "MOMENTUM_WATCH", "FOLLOW_WATCH", "THEME_WATCH"}
+        if (near_buy or watch_pattern) and str(row.get("gate_reason") or "") not in hard_watch_exclusions and float(row.get("edge_score") or -999) >= threshold - watch_gap:
+            watch_codes.add(code)
         if len(watch_codes) >= watch_max:
             break
 
@@ -326,7 +343,7 @@ def _select(rows: List[Dict[str, Any]], shaped: Dict[str, Any], cfg: Dict[str, A
         reject_counts[reason] += 1
         if code in watch_codes:
             rebuilt.append(_make(ev, WATCH, reason))
-        elif reason in {"hard_risk", "board_lock", "fake_strength_or_avoid", "cost_too_high"}:
+        elif reason in hard_watch_exclusions:
             rebuilt.append(_make(ev, AVOID, reason))
         elif str(ev.get("action_type") or "") in SOURCE_ACTIONS:
             rebuilt.append(_make(ev, REJECT, reason))
@@ -394,16 +411,16 @@ def apply() -> None:
         buys, rebuilt, reject_counts = _select(rows, shaped, cfg, max_candidates)
         ranked = sort_rows(rebuilt)
         meta = dict(shaped.get("meta") or {})
-        meta["selector"] = "durable_premarket_signal_selector_v2"
+        meta["selector"] = "durable_premarket_signal_selector_v3_validation_first"
         meta["regime_label"] = _regime(shaped)
         meta["buy_count"] = len(buys)
         meta["reject_reason_counts"] = reject_counts
         meta["performance_quality"] = _performance_quality(rebuilt)
         meta["rules"] = [
-            "Only durable patterns can buy: LOW_OPEN_NET_REVERSAL, CONFIRMED_MOMENTUM, AUCTION_FOLLOW_THROUGH.",
-            "THEME_CATCHUP is watch-only until more evidence proves it stable.",
-            "Cold/warming volatile-board momentum requires top-rank and large amount confirmation.",
-            "DEBUG_ONLY, broad repair, board lock, fake strength, and high-cost rows cannot be BUY.",
+            "Only durable mechanisms can BUY: discounted reversal with order support, confirmed momentum, or auction follow-through.",
+            "Theme-only signals are WATCH/REJECT unless auction evidence confirms them; this is not a sector ban.",
+            "Cold/warming regimes require stronger general confirmation for momentum; no exchange/board/sector hard ban is used.",
+            "Close/excess/dailyline fields are review-only and are ignored by selection logic.",
         ]
         return {"version": v73.VERSION, "meta": meta, "setup_stats": shaped.get("setup_stats") or v73.v72.setup_stats_v72(rebuilt), "action_stats": v73._stats(rebuilt), "action_quality_stats": v73._quality_stats(rebuilt), "pool_performance": v73._performance_stats(rebuilt), "review_diagnostics": diagnostics(rebuilt), "candidate_pools": pools(rebuilt, pool_max), "top_candidates": buys[:max_candidates], "actionable_candidates": buys[:max_candidates], "expected_return_candidates": buys[:max_candidates], "watch_tier": ranked[:watch_tier_max], "expected_return_watch_tier": ranked[:watch_tier_max], "legacy_top_candidates": [r for r in v73._sort_score(rebuilt) if r.get("setup_v72") != "none"][:max_candidates], "all_candidates_action_ranked": ranked, "all_candidates_expected_return_ranked": ranked, "all_candidates_debug": v73._sort_score(rebuilt), "intraday_anchors": v73.v72.build_intraday_anchors_v72(buys[:20])}
 

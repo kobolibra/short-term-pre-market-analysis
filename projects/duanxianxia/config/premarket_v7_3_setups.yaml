@@ -1,6 +1,6 @@
-# v7.3 durable premarket signal selector
-# Real signal first.  Theme is watch-only.  Cold/warming momentum is heavily gated.
-version: "premarket_v7_3_durable_signal_selector_v2"
+# v7.4 production edge engine
+# Direct goal: improve production selection quality, not add meta audit tooling.
+version: "premarket_v7_4_production_edge_engine"
 
 output:
   max_candidates: 4
@@ -18,7 +18,7 @@ action_pools:
     - "股权转让"
     - "实控人变更"
 
-  # Base classifiers remain broad; final BUY is only durable patterns below.
+  # Base classifiers remain broad; final BUY is controlled by v7.4 edge engine.
   high_cost_pct: 8.5
   board_watch_pct: 9.5
   follow_pct_min: 2.0
@@ -50,14 +50,15 @@ action_pools:
   soft_avoid_min_liquidity_score: 0
   soft_avoid_min_amount_wan: 0
 
-  # Durable selector.
+  # v7.4 production edge engine.
   absolute_max_cost_pct: 7.0
-  rank_prior_points: 20
-  rank_prior_decay: 0.25
-  amount_full_wan: 6000
+  hard_min_amount_wan: 300
+  hard_min_liquidity: 20
+  amount_quality_full_wan: 9000
+  rank_prior_decay_points: 2.5
 
   buy_score_normal: 70
-  buy_score_warming: 72
+  buy_score_warming: 73
   buy_score_cold: 78
   max_buy_normal: 4
   max_buy_warming: 3
@@ -66,21 +67,40 @@ action_pools:
   cap_reversal: 2
   cap_momentum: 1
   cap_follow: 1
+  cap_theme_confirmed: 1
 
-  reversal_min_amount_wan: 3500
+  reversal_pct_min: -8.2
+  reversal_pct_max: -0.5
+  reversal_min_amount_wan: 3200
   reversal_min_auction: 22
+  reversal_primary_rank_max: 60
+  reversal_min_source_evidence: 8
+  deep_reversal_pct: -6.5
   deep_reversal_min_amount_wan: 8000
-  deep_reversal_min_auction: 35
+  deep_reversal_min_confirmation: 48
 
-  momentum_min_pct: 1.5
+  momentum_min_pct: 1.2
   momentum_max_pct: 5.2
   momentum_min_amount_wan: 2500
   momentum_min_auction: 50
   momentum_min_liquidity: 45
-  volatile_momentum_min_amount_wan: 8000
-  volatile_board_penalty: 10
+  momentum_rank_max: 60
+  cold_momentum_min_confirmation: 52
+  single_source_momentum_penalty: 4
 
+  follow_min_pct: 1.8
+  follow_max_pct: 5.8
   follow_min_amount_wan: 3000
+  follow_min_auction: 55
+  follow_min_source_count: 2
+  follow_best_rank_max: 20
+
+  # Theme is tradable only when auction confirms it. This is not a sector rule.
+  theme_buy_min_theme: 82
+  theme_buy_min_pct: -0.8
+  theme_buy_max_pct: 3.5
+  theme_buy_min_amount_wan: 2800
+  theme_buy_min_confirmation: 50
 
   watch_max: 8
   watch_score_gap: 14

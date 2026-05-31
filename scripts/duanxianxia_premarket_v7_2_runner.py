@@ -31,8 +31,6 @@ from duanxianxia_v7_2_theme_strength import compute_theme_strengths
 TZ_SHANGHAI = ZoneInfo("Asia/Shanghai")
 DEFAULT_PROJECT_ROOT = Path("/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia")
 CONFIG_REL = Path("config/premarket_v7_2_setups.yaml")
-
-
 IGNORED_QXLIVE_KEYS = {"HSLN", "PB", "PBBX"}
 
 
@@ -60,20 +58,19 @@ def _to_float(v: Any) -> Optional[float]:
         return None
 
 
-def _build_candidate_latest_pct(candidates: list) -> Dict[str, float]:
+def _build_candidate_auction_pct(candidates: list) -> Dict[str, float]:
     out: Dict[str, float] = {}
     for c in candidates or []:
         code = str(c.get("code") or "").strip()
         if not code:
             continue
-        pct = _to_float(c.get("latest_change_pct")) or _to_float(c.get("auction_change_pct")) or _to_float(c.get("change_pct"))
+        pct = _to_float(c.get("auction_change_pct")) or _to_float(c.get("竞价涨幅"))
         if pct is not None:
             out[code] = pct
     return out
 
 
 def _normalize_qxlive_top_rows(rows: Any) -> list[dict[str, Any]]:
-    """Keep real qxlive rows, but strip metrics explicitly disabled for premarket."""
     out: list[dict[str, Any]] = []
     for row in rows or []:
         if not isinstance(row, dict):
@@ -85,14 +82,7 @@ def _normalize_qxlive_top_rows(rows: Any) -> list[dict[str, Any]]:
     return out
 
 
-def run_v7_2(
-    date_str: str,
-    project_root: Path,
-    output_dir: Optional[Path] = None,
-    no_write: bool = False,
-    premarket_auction_cutoff_override: Optional[str] = None,
-    qxlive_t0_cutoff_override: Optional[str] = None,
-) -> Dict[str, Any]:
+def run_v7_2(date_str: str, project_root: Path, output_dir: Optional[Path] = None, no_write: bool = False, premarket_auction_cutoff_override: Optional[str] = None, qxlive_t0_cutoff_override: Optional[str] = None) -> Dict[str, Any]:
     config = load_v7_2_config(project_root)
     params = config.get("params") or {}
     action_config = config.get("action_pools") or {}
@@ -101,7 +91,6 @@ def run_v7_2(
 
     bundle = load_premarket_v72_bundle(date_str, project_root, premarket_auction_cutoff=cutoff, qxlive_t0_cutoff=qxlive_cutoff)
     v71 = bundle.v71
-
     candidates = build_candidates_from_auction(v71, config.get("theme_aliases") or [])
     labels = compute_all_labels(v71, candidates, config, project_root)
     codes = [c["code"] for c in candidates if c.get("code")]
@@ -111,44 +100,19 @@ def run_v7_2(
     else:
         bundle.warnings.append("v7.2 regime fallback: missing T0 home.qxlive.top_metrics")
 
-    candidate_latest_pct = _build_candidate_latest_pct(candidates)
+    candidate_auction_pct = _build_candidate_auction_pct(candidates)
     auction_strengths = compute_auction_strengths(codes, v71.auction_vratio, v71.auction_qiangchou, v71.auction_netamount, v71.auction_fengdan, params)
-    hotness_scores = compute_hotness_scores(bundle.rocket_rows, bundle.hot_stock_day_rows, codes, params, candidate_latest_pct=candidate_latest_pct)
+    # Function argument is legacy-named candidate_latest_pct; pass auction pct so
+    # hotness cap is still based only on auction_change_pct in premarket analysis.
+    hotness_scores = compute_hotness_scores(bundle.rocket_rows, bundle.hot_stock_day_rows, codes, params, candidate_latest_pct=candidate_auction_pct)
     theme_strengths = compute_theme_strengths(candidates, bundle.kaipan_plate_t0_rows, labels.get("theme_history") or {}, labels.get("industry_t1") or {}, params)
     decisions = classify_candidates_v72(candidates, labels, auction_strengths, theme_strengths, hotness_scores, config, max_candidates=None)
 
     out_cfg = config.get("output") or {}
     max_candidates = int(out_cfg.get("max_candidates", 30))
     watch_tier_max = int(out_cfg.get("watch_tier_max", 50))
-    meta = {
-        "date_t0": bundle.date_t0,
-        "date_t1": bundle.date_t1,
-        "date_t2": bundle.date_t2,
-        "generated_at": datetime.now(TZ_SHANGHAI).isoformat(timespec="seconds"),
-        "candidate_count": len(candidates),
-        "bundle_summary": bundle.to_summary_dict(),
-        "regime": labels.get("regime"),
-        "warnings": bundle.warnings,
-        "cutoffs_used": {
-            "premarket_auction_cutoff": cutoff,
-            "qxlive_t0_cutoff": qxlive_cutoff,
-            "late_start_fallback": bool(premarket_auction_cutoff_override or qxlive_t0_cutoff_override),
-        },
-        "notes": [
-            "v7.2 conservative mode: T0 auction + exact plate-tag strength + hotness dominate.",
-            "T0 qxlive HSLN/PB/PBBX are ignored for premarket regime.",
-            "T0 plate 主力流入 and 涨停数量 are ignored; only 板块强度 is used.",
-            "T-1 review tables are not used as premarket scoring factors when use_t1_review_context=false.",
-            "Action-pool output separates auction follow, theme catch-up, low-open reversal, board watch, confirmation, and avoid; do not read top_candidates as one homogeneous flat rank.",
-        ],
-    }
-    shaped = shape_v7_2_output(
-        decisions,
-        meta=meta,
-        max_candidates=max_candidates,
-        watch_tier_max=watch_tier_max,
-        action_config=action_config,
-    )
+    meta = {"date_t0": bundle.date_t0, "date_t1": bundle.date_t1, "date_t2": bundle.date_t2, "generated_at": datetime.now(TZ_SHANGHAI).isoformat(timespec="seconds"), "candidate_count": len(candidates), "bundle_summary": bundle.to_summary_dict(), "regime": labels.get("regime"), "warnings": bundle.warnings, "cutoffs_used": {"premarket_auction_cutoff": cutoff, "qxlive_t0_cutoff": qxlive_cutoff, "late_start_fallback": bool(premarket_auction_cutoff_override or qxlive_t0_cutoff_override)}, "notes": ["v7.2 conservative mode: T0 auction + exact plate-tag strength + hotness dominate.", "Premarket price/cost analysis uses auction_change_pct only.", "T0 qxlive HSLN/PB/PBBX are ignored for premarket regime.", "T0 plate 主力流入 and 涨停数量 are ignored; only 板块强度 is used.", "T-1 review tables are not used as premarket scoring factors when use_t1_review_context=false."]}
+    shaped = shape_v7_2_output(decisions, meta=meta, max_candidates=max_candidates, watch_tier_max=watch_tier_max, action_config=action_config)
 
     if not no_write:
         if output_dir is None:
@@ -156,16 +120,7 @@ def run_v7_2(
             analysis_name = f"{datetime.now(TZ_SHANGHAI).strftime('%H%M%S')}_analysis_v7_2.json"
         else:
             analysis_name = "analysis_v7_2.json"
-        shaped["paths"] = write_v7_2_outputs(
-            str(output_dir),
-            decisions,
-            meta=meta,
-            max_candidates=max_candidates,
-            watch_tier_max=watch_tier_max,
-            analysis_filename=analysis_name,
-            anchors_filename="intraday_anchors.json",
-            action_config=action_config,
-        )
+        shaped["paths"] = write_v7_2_outputs(str(output_dir), decisions, meta=meta, max_candidates=max_candidates, watch_tier_max=watch_tier_max, analysis_filename=analysis_name, anchors_filename="intraday_anchors.json", action_config=action_config)
     return shaped
 
 

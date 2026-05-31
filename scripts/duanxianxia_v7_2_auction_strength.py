@@ -1,30 +1,11 @@
 """
 duanxianxia_v7_2_auction_strength.py — production T0 auction microstructure model.
 
-This module is the first layer of the premarket selector.  It converts raw
-auction tables into a compact, production-visible signal object used by setup
-classification and the v7.4 edge engine.
+盘前选股分析只使用 `auction_change_pct` / `竞价涨幅` 作为价格/成本口径。
+`latest_change_pct`、`涨幅`、`current_change_pct` 不参与盘前选股分析。
 
-Key production fixes in this version
-------------------------------------
-1. Separate price roles instead of using one ambiguous `latest_pct` everywhere:
-   - `auction_change_pct` / `竞价涨幅` = auction cost / opening auction intent.
-   - `latest_change_pct` / `涨幅` = current/latest quote display when available.
-   Downstream compatibility keeps `latest_change_pct` equal to auction cost in
-   `auction_detail`, while the display quote is exposed as `current_change_pct`.
-
-2. Correct qiangchou group semantics according to the current user contract:
-   - group `qiangchou` = 9:20-9:25 sustained抢筹, primary.
-   - group `grab` = final-second抢筹, confirmation/terminal impulse.
-
-3. Score auction evidence as microstructure, not a flat rank max:
-   - independent source evidence via noisy-or;
-   - amount pressure / net pressure;
-   - orderbook quality from 9:15/9:20/9:25 seal behavior;
-   - liquidity / turnover health;
-   - risk and tradability multipliers.
-
-The function signature is unchanged.
+This module converts raw 09:25 auction tables into production-visible auction
+signals for v7.2/v7.3/v7.4.  The public function signature is unchanged.
 """
 
 from __future__ import annotations
@@ -149,7 +130,7 @@ def _noisy_or(weighted_scores_0_100: Dict[str, Tuple[float, float]]) -> float:
     return max(0.0, min(100.0, (1.0 - remain) * 100.0))
 
 
-def _classify_fengdan(row: Optional[Dict[str, Any]], quote_pct: Optional[float], params: Dict[str, Any]) -> Dict[str, Any]:
+def _classify_fengdan(row: Optional[Dict[str, Any]], auction_pct: Optional[float], params: Dict[str, Any]) -> Dict[str, Any]:
     if row is None:
         return {"status": "none", "consume_type": None, "amount_915_yi": None, "amount_920_yi": None, "amount_925_yi": None, "ratio_920_915": None, "ratio_925_920": None, "reason": "missing_row"}
     a915 = _money_yi_from_keys(row, ["amount_915", "9:15", "915", "f15"]) or 0.0
@@ -170,7 +151,7 @@ def _classify_fengdan(row: Optional[Dict[str, Any]], quote_pct: Optional[float],
         return resp("fake", "915_large_but_920_collapsed")
     if a920 > 0 and r25 is not None and r25 < consume_ratio:
         return resp("consume", f"920_to_925_consumed ratio={round(r25, 4)}", "zero" if a925 <= 0 else "partial")
-    if a920 > 0 and a925 > 0 and r25 is not None and r25 >= lock_ratio and quote_pct is not None and quote_pct >= lock_pct:
+    if a920 > 0 and a925 > 0 and r25 is not None and r25 >= lock_ratio and auction_pct is not None and auction_pct >= lock_pct:
         return resp("lock", f"920_to_925_locked ratio={round(r25, 4)}")
     if a925 > 0:
         return resp("stable", "925_valid")
@@ -249,13 +230,11 @@ def _resonance_score(scores: Dict[str, float], ranks: Dict[str, Optional[int]], 
     return min(100.0, min(100.0, len(families) / 4.0 * 70.0) + min(30.0, len(top_families) * 10.0)), len(families), len(top_families), families
 
 
-def _risk_and_tradability(auction_pct: Optional[float], quote_pct: Optional[float], amount_wan: Optional[float], turnover_state: Optional[str], f_status: str, consume_type: Optional[str], f25_yi: Optional[float], params: Dict[str, Any]) -> Tuple[float, float, List[str], str, str]:
+def _risk_and_tradability(auction_pct: Optional[float], amount_wan: Optional[float], turnover_state: Optional[str], f_status: str, consume_type: Optional[str], f25_yi: Optional[float], params: Dict[str, Any]) -> Tuple[float, float, List[str], str, str]:
     risk = 1.0
     trad = 1.0
     flags: List[str] = []
     entry_tag, entry_reason = "normal", "normal"
-    display_pct = quote_pct if quote_pct is not None else auction_pct
-    cost_pct = auction_pct
 
     if f_status == "fake":
         risk *= float(params.get("risk_fake_multiplier", 0.65))
@@ -264,16 +243,16 @@ def _risk_and_tradability(auction_pct: Optional[float], quote_pct: Optional[floa
     elif f_status == "consume" and consume_type == "zero":
         risk *= float(params.get("risk_consume_zero_multiplier", 0.85))
         flags.append("consume_zero")
-    elif f_status == "lock" and display_pct is not None and display_pct >= float(params.get("entry_board_watch_pct", 9.5)):
+    elif f_status == "lock" and auction_pct is not None and auction_pct >= float(params.get("entry_board_watch_pct", 9.5)):
         trad *= float(params.get("tradability_board_lock_multiplier", 0.75))
         flags.append("board_lock_hard_to_buy")
         if (f25_yi or 0) >= float(params.get("entry_lock_large_f25_yi", 1.0)):
             entry_tag, entry_reason = "board_watch", "lock_near_limit_large_f25"
 
-    if cost_pct is not None and cost_pct >= float(params.get("entry_high_open_pct", 8.5)) and entry_tag == "normal":
+    if auction_pct is not None and auction_pct >= float(params.get("entry_high_open_pct", 8.5)) and entry_tag == "normal":
         trad *= float(params.get("tradability_high_open_multiplier", 0.90))
         entry_tag, entry_reason = "high_open_confirm", "near_limit_high_open"
-    if cost_pct is not None and cost_pct < 0:
+    if auction_pct is not None and auction_pct < 0:
         flags.append("negative_auction_cost")
     if amount_wan is not None and amount_wan < float(params.get("min_auction_amount_wan", 500)):
         trad *= float(params.get("tradability_low_amount_multiplier", 0.70))
@@ -318,7 +297,6 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
     amount_keys = ["auction_turnover_wan", "auction_turnover_wan_text", "竞额", "竞价成交额", "竞价金额", "auction_amount_wan", "amount", "成交额"]
     turnover_keys = ["turnover_rate_pct", "竞价换手", "竞价换手率", "turnover_rate", "换手率"]
     auction_pct_keys = ["auction_change_pct", "auction_change_pct_text", "竞价涨幅"]
-    quote_pct_keys = ["latest_change_pct", "最新涨幅", "涨幅", "change_pct"]
 
     out: Dict[str, Dict[str, Any]] = {}
     for raw in candidate_codes or []:
@@ -333,16 +311,10 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
         f_rank = _to_int((f_row or {}).get("rank") or (f_row or {}).get("排名"))
 
         auction_pct = _first_pct(n_row, auction_pct_keys) or _first_pct(v_row, auction_pct_keys) or _first_pct(qs_row, auction_pct_keys) or _first_pct(ql_row, auction_pct_keys) or _first_pct(f_row, auction_pct_keys)
-        quote_pct = _first_pct(n_row, quote_pct_keys) or _first_pct(v_row, quote_pct_keys) or _first_pct(qs_row, quote_pct_keys) or _first_pct(ql_row, quote_pct_keys) or _first_pct(f_row, quote_pct_keys)
-        if auction_pct is None:
-            auction_pct = quote_pct
-        if quote_pct is None:
-            quote_pct = auction_pct
-
         amount_wan = _first_money_wan(v_row, amount_keys) or _first_money_wan(qs_row, amount_keys) or _first_money_wan(ql_row, amount_keys) or _first_money_wan(n_row, amount_keys)
         turnover_pct = _first_pct(v_row, turnover_keys) or _first_pct(qs_row, turnover_keys) or _first_pct(ql_row, turnover_keys) or _first_pct(n_row, turnover_keys)
 
-        f_behavior = _classify_fengdan(f_row, quote_pct, p)
+        f_behavior = _classify_fengdan(f_row, auction_pct, p)
         f_status = str(f_behavior.get("status") or "none")
         consume_type = f_behavior.get("consume_type")
 
@@ -376,7 +348,7 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
         orderbook_score = _orderbook_quality_score(f_status, consume_type, f_behavior.get("ratio_925_920"), p)
         resonance_score, family_count, top_family_count, source_families = _resonance_score(source_scores, {"vratio": v_rank, "qiangchou_920_925": qs_rank, "qiangchou_last_second": ql_rank, "net_amount": n_rank, "fengdan": f_rank}, top_n)
         amount_mult = 1.0 if amount_wan is None or amount_wan >= float(p.get("min_auction_amount_wan", 500)) else float(p.get("auction_amount_low_multiplier", 0.5))
-        risk_mult, trad_mult, risk_flags, entry_tag, entry_reason = _risk_and_tradability(auction_pct, quote_pct, amount_wan, turnover_state, f_status, consume_type, f_behavior.get("amount_925_yi"), p)
+        risk_mult, trad_mult, risk_flags, entry_tag, entry_reason = _risk_and_tradability(auction_pct, amount_wan, turnover_state, f_status, consume_type, f_behavior.get("amount_925_yi"), p)
 
         alpha = (
             float(p.get("auction_alpha_source_weight", 0.35)) * source_evidence
@@ -420,8 +392,6 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
             "auction_turnover_pct": turnover_pct,
             "turnover_state": turnover_state,
             "auction_change_pct": auction_pct,
-            "current_change_pct": quote_pct,
-            "latest_change_pct": auction_pct,
             "net_pressure": net_pressure,
             "amount_pressure": amount_pressure,
             "vratio_rank": v_rank,
@@ -460,12 +430,12 @@ def _self_test() -> None:
     assert out["002297"]["qiangchou_920_925_rank"] == 2, out["002297"]
     assert out["002297"]["qiangchou_last_second_rank"] == 1, out["002297"]
     assert out["002297"]["auction_change_pct"] == 3.35, out["002297"]
-    assert out["002297"]["current_change_pct"] == 4.10, out["002297"]
-    assert out["002297"]["latest_change_pct"] == 3.35, out["002297"]
+    assert "latest_change_pct" not in out["002297"], out["002297"]
+    assert "current_change_pct" not in out["002297"], out["002297"]
     assert out["002297"]["source_evidence_score"] > 0, out["002297"]
     assert out["000001"]["auction_amount_multiplier"] == 0.5, out["000001"]
     assert out["000002"]["auction_setup_type"] == "LOW_OPEN_REVERSAL", out["000002"]
-    print("auction_strength production microstructure _self_test passed")
+    print("auction_strength auction_change_pct-only _self_test passed")
 
 
 if __name__ == "__main__":

@@ -1,17 +1,8 @@
 """v7.3 action-pool output upgrade.
 
 Formalizes the action-pool report so the trading view is no longer one mixed
-Top30.  Production classification still uses only premarket-visible fields; any
-close_pct/excess_return fields are used only for review diagnostics.
-
-v7.3.1 review-driven refinements, without using realized returns in production:
-- High-cost confirmation is tagged by auction cost itself; source evidence no
-  longer prevents the high-cost risk label.
-- FAKE_STRENGTH is split into repair-watch, soft-avoid repair candidate, and hard avoid.
-- Review diagnostics separate debug/avoid/soft-avoid/fake-watch missed winners
-  and high-cost confirmation failures.
-- expected_return_candidates is a review/display ordering separate from the
-  action execution order, so Top30 is not misread as pure return forecast.
+Top30. Production classification uses only premarket-visible fields. Close /
+excess fields are review-only diagnostics.
 """
 from __future__ import annotations
 
@@ -62,12 +53,18 @@ def _metric(d: Dict[str, Any], key: str, default: Optional[float] = 0.0) -> Opti
 
 
 def _auction_pct(d: Dict[str, Any]) -> Optional[float]:
+    """Production auction cost. Only auction_change_pct / auction_pct are valid."""
     if d.get("auction_pct") is not None:
         return _f(d.get("auction_pct"), None)
-    perf = d.get("derived_performance") or d.get("performance") or {}
-    if isinstance(perf, dict) and perf.get("auction_pct") is not None:
-        return _f(perf.get("auction_pct"), None)
-    return _metric(d, "latest_change_pct", None)
+    if d.get("auction_change_pct") is not None:
+        return _f(d.get("auction_change_pct"), None)
+    a = _detail(d)
+    if a.get("auction_change_pct") is not None:
+        return _f(a.get("auction_change_pct"), None)
+    s = d.get("signal_summary") or {}
+    if s.get("auction_change_pct") is not None:
+        return _f(s.get("auction_change_pct"), None)
+    return None
 
 
 def _clamp(x: float, lo: float = 0.0, hi: float = 100.0) -> float:
@@ -145,12 +142,6 @@ def _fake_strength_watchable(out: Dict[str, Any], cfg: Dict[str, Any], pct: Opti
 
 
 def _soft_avoid_repair_candidate(out: Dict[str, Any], cfg: Dict[str, Any], pct: Optional[float], liq: float, amt: float) -> bool:
-    """Non-actionable avoid split for review/repair monitoring.
-
-    This intentionally does not promote a stock into actionable pools.  It only
-    separates avoid rows that are not obvious hard avoids so multi-day review can
-    learn which repair candidates are real.
-    """
     if out.get("risk_penalty") == 0 or pct is None:
         return False
     return (
@@ -178,17 +169,11 @@ def _upgrade_row(d: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
 
     if action == "AVOID" and (auction_type == "FAKE_STRENGTH" or entry_tag == "avoid" or "fake_strength" in reason):
         if _fake_strength_watchable(out, cfg, pct, liq, amt):
-            if "fake_strength" not in tags:
-                tags.append("fake_strength")
-            if "needs_intraday_repair" not in tags:
-                tags.append("needs_intraday_repair")
+            _ = [tags.append(x) for x in ("fake_strength", "needs_intraday_repair") if x not in tags]
             score = _clamp(0.30 * auction + 0.25 * liq + 0.20 * min(100, amt / 5000 * 100) + 0.15 * max(0.0, 6.0 - abs(float(pct or 0))) * 10 + 0.10 * max(src, theme * 0.2))
             out.update(action_type="FAKE_STRENGTH_WATCH", action_confidence=_confidence(score, 58, 38), action_score=round(score, 2), action_reason="fake_strength_needs_intraday_repair_confirmation", action_quality="repair_watch", signal_quality="repair_watch", action_tags=tags)
         elif _soft_avoid_repair_candidate(out, cfg, pct, liq, amt):
-            if "soft_avoid" not in tags:
-                tags.append("soft_avoid")
-            if "repair_candidate_review_only" not in tags:
-                tags.append("repair_candidate_review_only")
+            _ = [tags.append(x) for x in ("soft_avoid", "repair_candidate_review_only") if x not in tags]
             score = _clamp(0.20 * auction + 0.25 * liq + 0.20 * min(100, amt / 5000 * 100) + 0.15 * max(src, theme * 0.2))
             out.update(action_type="SOFT_AVOID_REPAIR_CANDIDATE", action_confidence=_confidence(score, 55, 35), action_score=round(score, 2), action_reason="avoid_but_repair_candidate_review_only", action_quality="soft_avoid", signal_quality="soft_avoid", action_tags=tags)
         else:
@@ -210,13 +195,9 @@ def _upgrade_row(d: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
         else:
             quality = "watch"
             score = float(out.get("action_score") or 0)
-            # High cost itself is a risk; do not let partial evidence hide it.
             if pct is not None and pct >= float(cfg.get("confirmation_high_cost_pct", 7.0)):
                 quality = "high_cost_watch"
-                if "high_cost_confirmation" not in tags:
-                    tags.append("high_cost_confirmation")
-                if "needs_stronger_intraday_hold" not in tags:
-                    tags.append("needs_stronger_intraday_hold")
+                _ = [tags.append(x) for x in ("high_cost_confirmation", "needs_stronger_intraday_hold") if x not in tags]
                 score = _clamp(score - float(cfg.get("confirmation_high_cost_score_penalty", 12)))
             out.update(action_quality=quality, signal_quality=quality, action_score=round(score, 2), action_tags=tags)
 
@@ -257,36 +238,13 @@ def _sort_score(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 
 def _sort_expected_return_proxy(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Display-only expected-return proxy using premarket-visible structure.
-
-    This is not trained on realized returns; it separates review display from
-    action execution priority so users do not read action Top30 as pure alpha rank.
-    """
-    pool_bonus = {
-        "MOMENTUM_CATCHUP": 28,
-        "LOW_OPEN_REVERSAL": 24,
-        "THEME_CATCHUP": 16,
-        "AUCTION_FOLLOW": 12,
-        "CONFIRMATION_WATCH": 4,
-        "FAKE_STRENGTH_WATCH": 2,
-        "SOFT_AVOID_REPAIR_CANDIDATE": -5,
-        "BOARD_WATCH": -8,
-        "AVOID": -25,
-        "DEBUG_ONLY": -60,
-    }
+    pool_bonus = {"MOMENTUM_CATCHUP": 28, "LOW_OPEN_REVERSAL": 24, "THEME_CATCHUP": 16, "AUCTION_FOLLOW": 12, "CONFIRMATION_WATCH": 4, "FAKE_STRENGTH_WATCH": 2, "SOFT_AVOID_REPAIR_CANDIDATE": -5, "BOARD_WATCH": -8, "AVOID": -25, "DEBUG_ONLY": -60}
     quality_bonus = {"strong": 6, "medium": 3, "momentum": 8, "repair": 6, "main_attack": 3, "weak": -1, "high_cost_watch": -10, "hard_avoid": -15}
 
     def score(r: Dict[str, Any]) -> float:
         pct = _auction_pct(r)
         cost_penalty = max(0.0, float(pct or 0) - 5.5) * 2.0 if pct is not None else 0.0
-        return (
-            pool_bonus.get(str(r.get("action_type")), -40)
-            + quality_bonus.get(str(r.get("signal_quality") or r.get("action_quality")), 0)
-            + min(20.0, float(_metric(r, "auction_strength", 0.0) or 0.0) * 0.12)
-            + min(10.0, float(_metric(r, "liquidity_score", 50.0) or 50.0) * 0.06)
-            + min(10.0, float(_metric(r, "auction_amount_wan", 0.0) or 0.0) / 5000 * 10)
-            - cost_penalty
-        )
+        return pool_bonus.get(str(r.get("action_type")), -40) + quality_bonus.get(str(r.get("signal_quality") or r.get("action_quality")), 0) + min(20.0, float(_metric(r, "auction_strength", 0.0) or 0.0) * 0.12) + min(10.0, float(_metric(r, "liquidity_score", 50.0) or 50.0) * 0.06) + min(10.0, float(_metric(r, "auction_amount_wan", 0.0) or 0.0) / 5000 * 10) - cost_penalty
 
     return sorted(rows, key=lambda r: (score(r), float(r.get("action_score") or 0), float(r.get("final_score") or 0)), reverse=True)
 
@@ -337,46 +295,24 @@ def _diagnostics(rows: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
         action = r.get("action_type")
         quality = r.get("signal_quality") or r.get("action_quality")
         if action in {"CONFIRMATION_WATCH", "DEBUG_ONLY", "AVOID", "FAKE_STRENGTH_WATCH", "SOFT_AVOID_REPAIR_CANDIDATE"} and ex >= 8:
-            c["diagnostic"] = "missed_or_non_actionable_winner"
-            missed.append(c)
-            if action == "DEBUG_ONLY":
-                debug_missed.append(c)
-            elif action == "AVOID":
-                avoid_missed.append(c)
-            elif action == "SOFT_AVOID_REPAIR_CANDIDATE":
-                soft_avoid_missed.append(c)
-            elif action == "FAKE_STRENGTH_WATCH":
-                fake_watch_winners.append(c)
+            c["diagnostic"] = "missed_or_non_actionable_winner"; missed.append(c)
+            if action == "DEBUG_ONLY": debug_missed.append(c)
+            elif action == "AVOID": avoid_missed.append(c)
+            elif action == "SOFT_AVOID_REPAIR_CANDIDATE": soft_avoid_missed.append(c)
+            elif action == "FAKE_STRENGTH_WATCH": fake_watch_winners.append(c)
         if action in ACTIONABLE and ex <= -3:
             c["diagnostic"] = "actionable_false_positive"; false_pos.append(c)
         if action == "CONFIRMATION_WATCH" and quality == "high_cost_watch" and ex <= -3:
             c["diagnostic"] = "high_cost_confirmation_failure"; high_cost_failures.append(c)
     key = lambda x: float((x.get("performance") or {}).get("excess_return") or 0)
-    missed.sort(key=key, reverse=True)
-    debug_missed.sort(key=key, reverse=True)
-    avoid_missed.sort(key=key, reverse=True)
-    soft_avoid_missed.sort(key=key, reverse=True)
-    fake_watch_winners.sort(key=key, reverse=True)
-    false_pos.sort(key=key)
-    high_cost_failures.sort(key=key)
+    for arr, rev in [(missed, True), (debug_missed, True), (avoid_missed, True), (soft_avoid_missed, True), (fake_watch_winners, True), (false_pos, False), (high_cost_failures, False)]:
+        arr.sort(key=key, reverse=rev)
     return {"missed_winners": missed[:30], "debug_missed_winners": debug_missed[:30], "avoid_missed_winners": avoid_missed[:30], "soft_avoid_missed_winners": soft_avoid_missed[:30], "fake_strength_watch_winners": fake_watch_winners[:30], "false_positives": false_pos[:30], "high_cost_confirmation_failures": high_cost_failures[:30]}
 
 
 def _pools(rows: List[Dict[str, Any]], pool_max: int) -> Dict[str, List[Dict[str, Any]]]:
     ranked = _sort_action(rows); legacy = _sort_score(rows)
-    spec = {
-        "main_attack_pool": lambda r: r.get("action_type") == "AUCTION_FOLLOW",
-        "momentum_catchup_pool": lambda r: r.get("action_type") == "MOMENTUM_CATCHUP",
-        "theme_rotation_pool": lambda r: r.get("setup_v72") == "T0-ROTATE",
-        "theme_catchup_pool": lambda r: r.get("action_type") == "THEME_CATCHUP",
-        "low_open_reversal_pool": lambda r: r.get("action_type") == "LOW_OPEN_REVERSAL",
-        "board_watch_pool": lambda r: r.get("action_type") == "BOARD_WATCH",
-        "confirmation_watch_pool": lambda r: r.get("action_type") == "CONFIRMATION_WATCH",
-        "fake_strength_watch_pool": lambda r: r.get("action_type") == "FAKE_STRENGTH_WATCH",
-        "soft_avoid_repair_pool": lambda r: r.get("action_type") == "SOFT_AVOID_REPAIR_CANDIDATE",
-        "avoid_or_risk_pool": lambda r: r.get("action_type") == "AVOID",
-        "debug_only_pool": lambda r: r.get("action_type") == "DEBUG_ONLY",
-    }
+    spec = {"main_attack_pool": lambda r: r.get("action_type") == "AUCTION_FOLLOW", "momentum_catchup_pool": lambda r: r.get("action_type") == "MOMENTUM_CATCHUP", "theme_rotation_pool": lambda r: r.get("setup_v72") == "T0-ROTATE", "theme_catchup_pool": lambda r: r.get("action_type") == "THEME_CATCHUP", "low_open_reversal_pool": lambda r: r.get("action_type") == "LOW_OPEN_REVERSAL", "board_watch_pool": lambda r: r.get("action_type") == "BOARD_WATCH", "confirmation_watch_pool": lambda r: r.get("action_type") == "CONFIRMATION_WATCH", "fake_strength_watch_pool": lambda r: r.get("action_type") == "FAKE_STRENGTH_WATCH", "soft_avoid_repair_pool": lambda r: r.get("action_type") == "SOFT_AVOID_REPAIR_CANDIDATE", "avoid_or_risk_pool": lambda r: r.get("action_type") == "AVOID", "debug_only_pool": lambda r: r.get("action_type") == "DEBUG_ONLY"}
     out: Dict[str, List[Dict[str, Any]]] = {}
     for name, pred in spec.items():
         source = legacy if name == "theme_rotation_pool" else ranked
@@ -385,22 +321,12 @@ def _pools(rows: List[Dict[str, Any]], pool_max: int) -> Dict[str, List[Dict[str
 
 
 def _rebuild_v73(shaped: Dict[str, Any], rows: List[Dict[str, Any]], max_candidates: int, watch_tier_max: int, pool_max: int) -> Dict[str, Any]:
-    ranked = _sort_action(rows)
-    expected = _sort_expected_return_proxy(rows)
-    legacy = _sort_score(rows)
+    ranked = _sort_action(rows); expected = _sort_expected_return_proxy(rows); legacy = _sort_score(rows)
     actionable = [r for r in ranked if r.get("action_type") in ACTIONABLE]
     expected_actionable = [r for r in expected if r.get("action_type") in ACTIONABLE]
     meta = dict(shaped.get("meta") or {})
     notes = list(meta.get("interpretation_notes") or [])
-    required_notes = [
-        "v7.3 is action-pool first: use candidate_pools/actionable_candidates as the trading view, not the legacy mixed rank.",
-        "top_candidates/actionable_candidates follow action execution priority; expected_return_candidates is a separate display-only proxy order.",
-        "DEBUG_ONLY rows are retained only for debug/review and are excluded from trading pools.",
-        "MOMENTUM_CATCHUP is separated from AUCTION_FOLLOW because it has price momentum but incomplete theme/source evidence.",
-        "action_quality/signal_quality describe premarket evidence quality, not realized return quality.",
-        "High-cost confirmation rows require stronger intraday hold; high_cost_watch is a risk tag, not an automatic buy/sell decision.",
-        "FAKE_STRENGTH_WATCH and SOFT_AVOID_REPAIR_CANDIDATE are not actionable at premarket; they require intraday repair confirmation before any consideration.",
-    ]
+    required_notes = ["v7.3 is action-pool first: use candidate_pools/actionable_candidates as the trading view, not the legacy mixed rank.", "top_candidates/actionable_candidates follow action execution priority; expected_return_candidates is a separate display-only proxy order.", "DEBUG_ONLY rows are retained only for debug/review and are excluded from trading pools.", "MOMENTUM_CATCHUP is separated from AUCTION_FOLLOW because it has price momentum but incomplete theme/source evidence.", "action_quality/signal_quality describe premarket evidence quality, not realized return quality.", "High-cost confirmation rows require stronger intraday hold; high_cost_watch is a risk tag, not an automatic buy/sell decision.", "FAKE_STRENGTH_WATCH and SOFT_AVOID_REPAIR_CANDIDATE are not actionable at premarket; they require intraday repair confirmation before any consideration."]
     for note in required_notes:
         if note not in notes:
             notes.append(note)
@@ -427,8 +353,7 @@ def _coerce_perf_value(key: str, value: Any) -> Any:
     if value in (None, "", "None", "null", "NULL"):
         return None
     if key == "dailyline_found":
-        if isinstance(value, bool):
-            return value
+        if isinstance(value, bool): return value
         return str(value).strip().lower() in {"1", "true", "yes", "y"}
     parsed = _f(value, None)
     return parsed if parsed is not None else value
@@ -443,24 +368,20 @@ def load_performance_map_from_flat(path: str | Path) -> Dict[str, Dict[str, Any]
         for line in p.read_text(encoding="utf-8").splitlines():
             if line.strip():
                 item = json.loads(line)
-                if isinstance(item, dict):
-                    rows.append(item)
+                if isinstance(item, dict): rows.append(item)
     else:
         with p.open("r", encoding="utf-8-sig", newline="") as fp:
             rows = list(csv.DictReader(fp))
     out: Dict[str, Dict[str, Any]] = {}
     for row in rows:
         code = _code_key(row.get("code") or row.get("股票代码") or row.get("代码"))
-        if not code:
-            continue
+        if not code: continue
         perf: Dict[str, Any] = {}
         for key in PERFORMANCE_KEYS:
             if key in row:
                 val = _coerce_perf_value(key, row.get(key))
-                if val is not None:
-                    perf[key] = val
-        if perf:
-            out[code] = perf
+                if val is not None: perf[key] = val
+        if perf: out[code] = perf
     return out
 
 
@@ -470,13 +391,11 @@ def attach_performance_to_rows(rows: List[Dict[str, Any]], performance_by_code: 
         copied = dict(row)
         code = _code_key(copied.get("code") or copied.get("股票代码") or copied.get("代码"))
         perf = dict(copied.get("derived_performance") or copied.get("performance") or {})
-        if code in performance_by_code:
-            perf.update(performance_by_code[code])
+        if code in performance_by_code: perf.update(performance_by_code[code])
         if perf:
             copied["derived_performance"] = perf
             for key in PERFORMANCE_KEYS:
-                if perf.get(key) is not None:
-                    copied[key] = perf.get(key)
+                if perf.get(key) is not None: copied[key] = perf.get(key)
         out.append(copied)
     return out
 
@@ -509,11 +428,11 @@ def write_v7_3_outputs(output_dir: str, decisions: List[Dict[str, Any]], meta: O
 
 def _self_test() -> None:
     rows = [
-        {"code":"000001","name":"follow","setup_v72":"T0-ROTATE","confidence":"high","final_score":60,"auction_strength":76,"theme_strength_t0":95,"auction_detail":{"latest_change_pct":5,"source_evidence_score":30,"source_family_count":3,"auction_amount_wan":5000,"liquidity_score":90}},
-        {"code":"000002","name":"momentum","setup_v72":"T0-GENERAL","confidence":"low","final_score":40,"auction_strength":55,"theme_strength_t0":20,"auction_detail":{"latest_change_pct":3,"source_evidence_score":0,"auction_amount_wan":3000,"liquidity_score":80}},
+        {"code":"000001","name":"follow","setup_v72":"T0-ROTATE","confidence":"high","final_score":60,"auction_strength":76,"theme_strength_t0":95,"auction_detail":{"auction_change_pct":5,"source_evidence_score":30,"source_family_count":3,"auction_amount_wan":5000,"liquidity_score":90}},
+        {"code":"000002","name":"momentum","setup_v72":"T0-GENERAL","confidence":"low","final_score":40,"auction_strength":55,"theme_strength_t0":20,"auction_detail":{"auction_change_pct":3,"source_evidence_score":0,"auction_amount_wan":3000,"liquidity_score":80}},
         {"code":"000003","name":"debug","setup_v72":"none","confidence":"none","final_score":0,"auction_strength":0,"theme_strength_t0":0},
-        {"code":"000004","name":"fake_watch","setup_v72":"none","confidence":"none","final_score":0,"entry_tag":"avoid","auction_setup_type":"FAKE_STRENGTH","risk_penalty":10,"auction_strength":20,"auction_detail":{"latest_change_pct":1.0,"auction_amount_wan":2000,"liquidity_score":70}},
-        {"code":"000005","name":"high_cost","setup_v72":"T0-GENERAL","confidence":"low","final_score":30,"action_type":"CONFIRMATION_WATCH","auction_strength":30,"auction_detail":{"latest_change_pct":7.5,"auction_amount_wan":2000,"liquidity_score":70}},
+        {"code":"000004","name":"fake_watch","setup_v72":"none","confidence":"none","final_score":0,"entry_tag":"avoid","auction_setup_type":"FAKE_STRENGTH","risk_penalty":10,"auction_strength":20,"auction_detail":{"auction_change_pct":1.0,"auction_amount_wan":2000,"liquidity_score":70}},
+        {"code":"000005","name":"high_cost","setup_v72":"T0-GENERAL","confidence":"low","final_score":30,"action_type":"CONFIRMATION_WATCH","auction_strength":30,"auction_detail":{"auction_change_pct":7.5,"auction_amount_wan":2000,"liquidity_score":70}},
     ]
     out = shape_v7_3_output(rows, action_config={"momentum_min_amount_wan":1000})
     assert out["version"] == VERSION

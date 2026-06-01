@@ -98,10 +98,11 @@ def _market_env_score(m: Dict[str, Optional[float]], params: Dict[str, Any]) -> 
         score += norm * 100.0 * w
         weight += w
 
+    breadth = _breadth_ratio(m.get("SZ"), m.get("XD"))
     add(m.get("QX"), 20, 80, 0.22)                       # 情绪
     add(m.get("KQXY"), 0, 30, 0.14, invert=True)         # 亏钱效应(越高越差)
     add(m.get("DT"), 0, 40, 0.10, invert=True)           # 跌停家数(越多越差)
-    add(_breadth_ratio(m.get("SZ"), m.get("XD")) and _breadth_ratio(m.get("SZ"), m.get("XD")) * 100.0, 25, 70, 0.14)  # 广度
+    add(breadth * 100.0 if breadth is not None else None, 25, 70, 0.14)  # 广度
     add(m.get("LBGD"), 2, 9, 0.12)                       # 连板高度
     add(m.get("ZT"), 20, 100, 0.08)                      # 涨停家数
     add(m.get("LBBX"), -5, 8, 0.10)                      # 昨连板表现
@@ -171,6 +172,7 @@ def _self_test() -> None:
     assert env["metrics_t0"]["PBBX"] == 1.1
     assert env["market_env_score"] > 50
     assert "HSLN" in env["retained_metrics"]
+    assert env["breadth_ratio_t0"] == 0.7
     print("v9_market_env _self_test passed")
 
 

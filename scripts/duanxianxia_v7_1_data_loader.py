@@ -4,7 +4,7 @@ duanxianxia_v7_1_data_loader.py — v7.1 capture 数据加载器
 严格时点隔离:
 - T0 竞价只允许读取 premarket_auction_cutoff 之前的 capture,默认 09:29:00。
 - 若 cutoff 之前没有 capture,直接视为缺失,禁止回退到盘中/盘后 capture。
-- T-1/T-2 qxlive top_metrics 只取 ≤09:33 的早盘首批快照（覆盖历史首包时间漂移，避免误报缺失）。
+- T-1/T-2 qxlive top_metrics 只取 ≤09:33 的早盘首批快照（覆盖历史首包时间漂移,避免误报缺失）。
 """
 
 from __future__ import annotations
@@ -23,6 +23,7 @@ DS_AUCTION_VRATIO = "auction.jjyd.vratio"
 DS_AUCTION_QIANGCHOU = "auction.jjyd.qiangchou"
 DS_AUCTION_NETAMOUNT = "auction.jjyd.net_amount"
 DS_AUCTION_FENGDAN = "auction.jjlive.fengdan"
+DS_AUCTION_WEIMAI = "auction.jjyd.weimai"   # 竞价异动/涨停委买
 DS_HOME_KAIPAN = "home.kaipan.plate.summary"
 DS_HOME_ZTPOOL = "home.ztpool"
 DS_HOME_QXLIVE_TOP = "home.qxlive.top_metrics"
@@ -140,6 +141,7 @@ class PremarketDataBundle:
     auction_qiangchou: List[Dict[str, Any]]
     auction_netamount: List[Dict[str, Any]]
     auction_fengdan: List[Dict[str, Any]]
+    auction_weimai: List[Dict[str, Any]]
     kaipan_t1_rows: List[Dict[str, Any]]
     kaipan_t1_meta: Dict[str, Any]
     cashflow_today_t1: List[Dict[str, Any]]
@@ -159,7 +161,7 @@ class PremarketDataBundle:
     def to_summary_dict(self) -> Dict[str, Any]:
         return {
             "date_t0": self.date_t0, "date_t1": self.date_t1, "date_t2": self.date_t2, "project_root": self.project_root,
-            "counts": {"auction_vratio": len(self.auction_vratio), "auction_qiangchou": len(self.auction_qiangchou), "auction_netamount": len(self.auction_netamount), "auction_fengdan": len(self.auction_fengdan), "kaipan_t1": len(self.kaipan_t1_rows), "cashflow_today_t1": len(self.cashflow_today_t1), "cashflow_3day_t1": len(self.cashflow_3day_t1), "cashflow_5day_t1": len(self.cashflow_5day_t1), "cashflow_10day_t1": len(self.cashflow_10day_t1), "fupan_t1": len(self.fupan_t1), "ltgd_5day_t1": len(self.ltgd_5day_t1), "ztpool_t1": len(self.ztpool_t1), "qxlive_top_t1": len(self.qxlive_top_t1_rows), "qxlive_top_t2": len(self.qxlive_top_t2_rows), "kaipan_history": len(self.kaipan_history)},
+            "counts": {"auction_vratio": len(self.auction_vratio), "auction_qiangchou": len(self.auction_qiangchou), "auction_netamount": len(self.auction_netamount), "auction_fengdan": len(self.auction_fengdan), "auction_weimai": len(self.auction_weimai), "kaipan_t1": len(self.kaipan_t1_rows), "cashflow_today_t1": len(self.cashflow_today_t1), "cashflow_3day_t1": len(self.cashflow_3day_t1), "cashflow_5day_t1": len(self.cashflow_5day_t1), "cashflow_10day_t1": len(self.cashflow_10day_t1), "fupan_t1": len(self.fupan_t1), "ltgd_5day_t1": len(self.ltgd_5day_t1), "ztpool_t1": len(self.ztpool_t1), "qxlive_top_t1": len(self.qxlive_top_t1_rows), "qxlive_top_t2": len(self.qxlive_top_t2_rows), "kaipan_history": len(self.kaipan_history)},
             "kaipan_t1_meta_keys": sorted(self.kaipan_t1_meta.keys()), "warnings": self.warnings,
         }
 
@@ -187,6 +189,7 @@ def load_premarket_bundle(date_t0: str, project_root: Path | str, *, history_day
     auction_qiangchou = _t0(DS_AUCTION_QIANGCHOU)
     auction_netamount = _t0(DS_AUCTION_NETAMOUNT)
     auction_fengdan = _t0(DS_AUCTION_FENGDAN)
+    auction_weimai = _t0(DS_AUCTION_WEIMAI)
 
     kaipan_t1 = load_capture_at_time(project_root, date_t1_str, DS_HOME_KAIPAN, pick="latest")
     kaipan_t1_rows = _extract_rows(kaipan_t1)
@@ -225,7 +228,7 @@ def load_premarket_bundle(date_t0: str, project_root: Path | str, *, history_day
             kaipan_history.append((ds, _extract_rows(cap), _extract_meta(cap)))
         cur = previous_trading_day(project_root, cur, n=1)
 
-    return PremarketDataBundle(date_t0, date_t1_str, date_t2_str, str(project_root), auction_vratio, auction_qiangchou, auction_netamount, auction_fengdan, kaipan_t1_rows, kaipan_t1_meta, cashflow_today_t1, cashflow_3day_t1, cashflow_5day_t1, cashflow_10day_t1, fupan_t1, ltgd_5day_t1, ztpool_t1, qxlive_top_t1_rows, qxlive_top_t1_meta, qxlive_top_t2_rows, qxlive_top_t2_meta, kaipan_history, warnings)
+    return PremarketDataBundle(date_t0, date_t1_str, date_t2_str, str(project_root), auction_vratio, auction_qiangchou, auction_netamount, auction_fengdan, auction_weimai, kaipan_t1_rows, kaipan_t1_meta, cashflow_today_t1, cashflow_3day_t1, cashflow_5day_t1, cashflow_10day_t1, fupan_t1, ltgd_5day_t1, ztpool_t1, qxlive_top_t1_rows, qxlive_top_t1_meta, qxlive_top_t2_rows, qxlive_top_t2_meta, kaipan_history, warnings)
 
 def _main() -> int:
     p = argparse.ArgumentParser()

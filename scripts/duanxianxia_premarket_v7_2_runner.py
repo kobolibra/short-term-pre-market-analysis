@@ -85,14 +85,18 @@ def _normalize_qxlive_top_rows(rows: Any) -> list[dict[str, Any]]:
     return out
 
 
-def run_v7_2(
+def build_v72_decisions(
     date_str: str,
     project_root: Path,
-    output_dir: Optional[Path] = None,
-    no_write: bool = False,
     premarket_auction_cutoff_override: Optional[str] = None,
     qxlive_t0_cutoff_override: Optional[str] = None,
 ) -> Dict[str, Any]:
+    """Run the v7.2 pipeline through the raw `decisions` stage (no shaping/writing).
+
+    Returns the full intermediate context so downstream engines (e.g. v9) can
+    consume the exact same decisions + data bundle that v7.2 produced. This is
+    the single source of truth for the premarket candidate set.
+    """
     config = load_v7_2_config(project_root)
     params = config.get("params") or {}
     action_config = config.get("action_pools") or {}
@@ -122,9 +126,6 @@ def run_v7_2(
     theme_strengths = compute_theme_strengths(candidates, bundle.kaipan_plate_t0_rows, labels.get("theme_history") or {}, labels.get("industry_t1") or {}, params)
     decisions = classify_candidates_v72(candidates, labels, auction_strengths, theme_strengths, hotness_scores, config, max_candidates=None)
 
-    out_cfg = config.get("output") or {}
-    max_candidates = int(out_cfg.get("max_candidates", 30))
-    watch_tier_max = int(out_cfg.get("watch_tier_max", 50))
     meta = {
         "date_t0": bundle.date_t0,
         "date_t1": bundle.date_t1,
@@ -148,6 +149,45 @@ def run_v7_2(
             "Action-pool output separates auction follow, theme catch-up, low-open reversal, board watch, confirmation, and avoid; do not read top_candidates as one homogeneous flat rank.",
         ],
     }
+
+    return {
+        "config": config,
+        "params": params,
+        "action_config": action_config,
+        "bundle": bundle,
+        "candidates": candidates,
+        "labels": labels,
+        "auction_strengths": auction_strengths,
+        "theme_strengths": theme_strengths,
+        "hotness_scores": hotness_scores,
+        "decisions": decisions,
+        "meta": meta,
+        "cutoffs": {"premarket_auction_cutoff": cutoff, "qxlive_t0_cutoff": qxlive_cutoff},
+    }
+
+
+def run_v7_2(
+    date_str: str,
+    project_root: Path,
+    output_dir: Optional[Path] = None,
+    no_write: bool = False,
+    premarket_auction_cutoff_override: Optional[str] = None,
+    qxlive_t0_cutoff_override: Optional[str] = None,
+) -> Dict[str, Any]:
+    ctx = build_v72_decisions(
+        date_str,
+        project_root,
+        premarket_auction_cutoff_override=premarket_auction_cutoff_override,
+        qxlive_t0_cutoff_override=qxlive_t0_cutoff_override,
+    )
+    config = ctx["config"]
+    action_config = ctx["action_config"]
+    decisions = ctx["decisions"]
+    meta = ctx["meta"]
+
+    out_cfg = config.get("output") or {}
+    max_candidates = int(out_cfg.get("max_candidates", 30))
+    watch_tier_max = int(out_cfg.get("watch_tier_max", 50))
     shaped = shape_v7_2_output(
         decisions,
         meta=meta,

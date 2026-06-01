@@ -5,6 +5,12 @@ duanxianxia_v9_output.py — 全保真 v9/v10 输出层。
 每行额外挂 row['full'],包含各 detail/raw/source_hits/signal_summary/risk_detail/
 label_snapshot/anchors;顶层 meta 挂 market_env 全量 12 指标。
 与 v7.2/v7.3 output 共存,不抢占原函数名。
+
+动作层(BUY/WATCH/DROP):在 shape_v9_output 阶段对已排序候选打动作标签,
+采用 regime 自适应的"分位数 + 绝对下限 + 数量上限"闸门(REGIME_ACTION_GATE),
+取代旧的固定 edge 阈值(68~75),避免 edge 实际分布偏低时买入列表恒空。
+动作字段(action_type/action_score/setup)随 shaped 持久化进 analysis_v9.json,
+并产出 action_stats / setup_stats / meta['action_gate']。
 """
 from __future__ import annotations
 
@@ -22,6 +28,108 @@ ALPHA_POOL = {
     "THEME_BACKGROUND": ("theme_background_pool", 40),
 }
 
+# alpha_type -> setup 归类标签
+SETUP_BY_ALPHA = {
+    "AUCTION_ORDERFLOW": "竞价资金流抢筹",
+    "LOW_OPEN_REVERSAL": "低开反包",
+    "ORDERBOOK_WEIMAI": "盘口委买承接",
+    "THEME_BACKGROUND": "题材背景接力",
+}
+
+# regime 自适应动作闸门:买入=按 edge 排名进入 top 分位 且 edge>=绝对下限 且 不超数量上限。
+# 用分位数取代固定阈值,使闸门随当日 edge 分布自适应;绝对下限仅作"弱势日清零"保护。
+REGIME_ACTION_GATE: Dict[str, Dict[str, float]] = {
+    "cold":            {"buy_top_frac": 0.015, "buy_floor": 50.0, "max_buys": 1},
+    "cold_to_warming": {"buy_top_frac": 0.030, "buy_floor": 48.0, "max_buys": 3},
+    "warming":         {"buy_top_frac": 0.030, "buy_floor": 48.0, "max_buys": 3},
+    "normal":          {"buy_top_frac": 0.050, "buy_floor": 45.0, "max_buys": 4},
+    "hot":             {"buy_top_frac": 0.080, "buy_floor": 42.0, "max_buys": 5},
+}
+DEFAULT_ACTION_GATE: Dict[str, float] = {"buy_top_frac": 0.030, "buy_floor": 48.0, "max_buys": 3}
+RISK_EXTRA_MARGIN = 8.0   # 风险行买入需额外 edge 余量
+WATCH_TOP_FRAC = 0.25     # 观察:edge 排名 top 25%
+WATCH_FLOOR = 35.0        # 观察:edge 绝对下限
+
+
+def _regime_label(market_env: Any, meta: Optional[Dict[str, Any]]) -> str:
+    sources = [market_env]
+    if isinstance(meta, dict):
+        sources.append(meta.get("regime"))
+    for src in sources:
+        if isinstance(src, dict):
+            reg = src.get("regime")
+            if isinstance(reg, dict):
+                lab = reg.get("regime") or reg.get("label")
+                if lab:
+                    return str(lab)
+            if isinstance(reg, str) and reg:
+                return reg
+            lab = src.get("label")
+            if isinstance(lab, str) and lab:
+                return lab
+        elif isinstance(src, str) and src:
+            return src
+    return ""
+
+
+def _edge_of(row: Dict[str, Any]) -> float:
+    try:
+        return float(row.get("edge_score") or 0)
+    except Exception:
+        return 0.0
+
+
+def _assign_actions(
+    ranked: List[Dict[str, Any]],
+    market_env: Optional[Dict[str, Any]],
+    meta: Optional[Dict[str, Any]],
+):
+    """对已按 edge 降序排好的候选原地打 action_type/action_score/setup,返回统计与闸门信息。"""
+    regime = _regime_label(market_env, meta)
+    gate = REGIME_ACTION_GATE.get(regime, DEFAULT_ACTION_GATE)
+    n = len(ranked)
+    buy_floor = float(gate["buy_floor"])
+    max_buys = int(gate["max_buys"])
+    buy_rank_cap = max(1, int(round(n * float(gate["buy_top_frac"])))) if n else 0
+    watch_rank_cap = max(buy_rank_cap, int(round(n * WATCH_TOP_FRAC))) if n else 0
+
+    action_stats: Dict[str, int] = {"BUY": 0, "WATCH": 0, "DROP": 0}
+    setup_stats: Dict[str, int] = {}
+    buys = 0
+    for idx, row in enumerate(ranked):
+        edge = _edge_of(row)
+        risk = bool(row.get("risk_flag"))
+        floor = buy_floor + (RISK_EXTRA_MARGIN if risk else 0.0)
+        if (idx < buy_rank_cap) and (edge >= floor) and (buys < max_buys):
+            action = "BUY"
+            buys += 1
+        elif (idx < watch_rank_cap) and (edge >= WATCH_FLOOR):
+            action = "WATCH"
+        else:
+            action = "DROP"
+        setup = SETUP_BY_ALPHA.get(str(row.get("alpha_type")), "其他")
+        if risk and action != "BUY":
+            setup = "风险规避"
+        row["action_type"] = action
+        row["action_score"] = round(edge, 2)
+        row["setup"] = setup
+        action_stats[action] += 1
+        if action != "DROP":
+            setup_stats[setup] = setup_stats.get(setup, 0) + 1
+    gate_info = {
+        "regime": regime or "(unknown)",
+        "buy_top_frac": float(gate["buy_top_frac"]),
+        "buy_rank_cap": buy_rank_cap,
+        "buy_floor": buy_floor,
+        "max_buys": max_buys,
+        "watch_rank_cap": watch_rank_cap,
+        "watch_floor": WATCH_FLOOR,
+        "risk_extra_margin": RISK_EXTRA_MARGIN,
+        "candidate_count": n,
+        "buy_selected": action_stats["BUY"],
+    }
+    return action_stats, setup_stats, gate_info
+
 
 def _full(d: Dict[str, Any]) -> Dict[str, Any]:
     """全保真:保留所有 detail 与原始/诊断字段。"""
@@ -33,6 +141,7 @@ def _full(d: Dict[str, Any]) -> Dict[str, Any]:
         "edge_components": d.get("edge_components") or {},
         "action_type": d.get("action_type"),
         "action_score": d.get("action_score"),
+        "setup": d.get("setup"),
         "final_score": d.get("final_score"),
         "risk_flag": d.get("risk_flag"),
         "risk_detail": d.get("risk_detail") or {},
@@ -64,6 +173,8 @@ def _compact(d: Dict[str, Any]) -> Dict[str, Any]:
         "alpha_type": d.get("alpha_type"),
         "edge_score": d.get("edge_score"),
         "action_type": d.get("action_type"),
+        "action_score": d.get("action_score"),
+        "setup": d.get("setup"),
         "auction_pct": a.get("latest_change_pct"),
         "auction_strength": d.get("auction_strength"),
         "auction_amount_wan": a.get("auction_amount_wan"),
@@ -123,8 +234,11 @@ def shape_v9_output(
     pool_max: int = 15,
 ) -> Dict[str, Any]:
     ranked = _sort(decisions)
+    # 动作层:原地标注 action_type/action_score/setup(随后 _compact/_full/build_pools 自动携带)
+    action_stats, setup_stats, action_gate = _assign_actions(ranked, market_env, meta)
     shaped_meta = dict(meta or {})
     shaped_meta["market_env"] = market_env or {}   # qxlive 全量 12 指标进 meta
+    shaped_meta["action_gate"] = action_gate
     shaped_meta.setdefault("interpretation_notes", [])
     shaped_meta["interpretation_notes"] = list(shaped_meta["interpretation_notes"]) + [
         "v9 全量重构:所有盘前下载数据均保留(原始+派生+解释),每行挂 full 明细。",
@@ -132,12 +246,15 @@ def shape_v9_output(
         "auction.jjyd.weimai 已完整接入 weimai_detail 与 edge 辅助因子。",
         "板块主力流入/涨停数量/子标签匹配已进 theme_detail 与 edge 背景因子。",
         "qxlive 12 指标全量保留(含 HSLN/PB/PBBX),进 meta.market_env 与 edge 背景/风险。",
+        "动作层:BUY/WATCH/DROP 由 regime 自适应分位数闸门标定(见 meta.action_gate),已随分析文件持久化。",
     ]
     return {
         "version": VERSION,
         "meta": shaped_meta,
         "market_env": market_env or {},
         "alpha_stats": _alpha_stats(ranked),
+        "action_stats": action_stats,
+        "setup_stats": setup_stats,
         "candidate_pools": build_pools(ranked, pool_max=pool_max),
         "top_candidates": [_compact(d) for d in ranked[:max_candidates]],
         "all_candidates": [_compact(d) for d in ranked],   # 全量,含 full

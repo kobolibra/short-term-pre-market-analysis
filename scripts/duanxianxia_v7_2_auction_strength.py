@@ -9,10 +9,15 @@ proposal:
 - Split the auction signal into alpha / liquidity / tradability / risk.
 - Classify auction behavior first, then let setup/output rank within pools.
 
-User constraints from 2026-05 discussion are preserved:
-- `auction.jjyd.qiangchou` group `grab` = 9:20-9:25 sustained抢筹, primary.
-- `auction.jjyd.qiangchou` group `qiangchou` = 9:24:59 last-second抢筹,
+Group semantics (verified against duanxianxia_batch.py TABLE_SPECS
+["auction.jjyd.qiangchou"].group_titles, the scraper's source of truth, and the
+production build_premarket_analysis labeling):
+- `auction.jjyd.qiangchou` group `qiangchou` = 9:20-9:25 sustained抢筹, primary.
+- `auction.jjyd.qiangchou` group `grab` = 竞价最后1秒 last-second抢筹,
   useful as confirmation but discounted.
+A previous revision had these two groups swapped; the 9:20-9:25 sustained signal
+is now correctly read from group `qiangchou` and weighted as primary, while the
+last-second signal is read from group `grab`.
 - T0 主力流入 / 今日封板率 / T0 plate 涨停数量 are not used here.
 """
 
@@ -331,8 +336,10 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
     tau = float(p.get("auction_rank_decay_tau", 8.0))
 
     v_idx = _index_by_code_min_rank(vratio_rows)
-    q_grab_idx = _index_by_code_min_rank(qiangchou_rows, "grab")
-    q_last_idx = _index_by_code_min_rank(qiangchou_rows, "qiangchou")
+    # Group semantics: "qiangchou" = 9:20-9:25 sustained (primary);
+    # "grab" = 竞价最后1秒 last-second (confirmation). See module docstring.
+    q_920_925_idx = _index_by_code_min_rank(qiangchou_rows, "qiangchou")
+    q_last_idx = _index_by_code_min_rank(qiangchou_rows, "grab")
     n_idx = _index_by_code_min_rank(netamount_rows)
     f_idx = _index_by_code_min_rank([r for r in (fengdan_rows or []) if str(r.get("section_kind") or "").strip() in {"", "live"}])
 
@@ -345,7 +352,8 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
         code = _norm_code(raw)
         if not code or code in out:
             continue
-        v_row, qg_row, ql_row, n_row, f_row = v_idx.get(code), q_grab_idx.get(code), q_last_idx.get(code), n_idx.get(code), f_idx.get(code)
+        # qg_* = 9:20-9:25 sustained (primary); ql_* = last-second (group "grab").
+        v_row, qg_row, ql_row, n_row, f_row = v_idx.get(code), q_920_925_idx.get(code), q_last_idx.get(code), n_idx.get(code), f_idx.get(code)
         v_rank = _to_int((v_row or {}).get("rank") or (v_row or {}).get("排名"))
         qg_rank = _to_int((qg_row or {}).get("rank") or (qg_row or {}).get("排名"))
         ql_rank = _to_int((ql_row or {}).get("rank") or (ql_row or {}).get("排名"))
@@ -441,9 +449,9 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
             "amount_pressure": amount_pressure,
             "vratio_rank": v_rank,
             "qiangchou_rank": qg_rank if qg_rank is not None else ql_rank,
-            "qiangchou_grab_rank": qg_rank,
             "qiangchou_920_925_rank": qg_rank,
             "qiangchou_last_second_rank": ql_rank,
+            "qiangchou_grab_rank": ql_rank,
             "qiangchou_primary_signal": "9:20-9:25" if qg_rank is not None else ("last_second" if ql_rank is not None else None),
             "net_amount_rank": n_rank,
             "fengdan_rank": f_rank,
@@ -463,17 +471,22 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
 
 
 def _self_test() -> None:
+    # group "qiangchou" => 9:20-9:25 sustained (primary); group "grab" => last-second.
     q = [
-        {"group": "grab", "rank": 2, "code": "002297", "auction_turnover_wan": "11203", "latest_change_pct": "3.35", "turnover_rate_pct": 1.12},
         {"group": "qiangchou", "rank": 1, "code": "002297", "auction_turnover_wan": "11203", "latest_change_pct": "3.35", "turnover_rate_pct": 1.12},
+        {"group": "grab", "rank": 2, "code": "002297", "auction_turnover_wan": "11203", "latest_change_pct": "3.35", "turnover_rate_pct": 1.12},
         {"group": "qiangchou", "rank": 1, "code": "000001", "auction_turnover_wan": "200", "latest_change_pct": "6.0", "turnover_rate_pct": 0.1},
         {"group": "grab", "rank": 3, "code": "000002", "auction_turnover_wan": "3000", "latest_change_pct": "-1.0", "turnover_rate_pct": 1.0},
     ]
     n = [{"rank": 5, "code": "002297", "main_net_inflow_wan": 5000, "market_cap_yi": 100, "auction_turnover_wan": 11203, "latest_change_pct": 3.35}, {"rank": 1, "code": "000002", "main_net_inflow_wan": 4000, "market_cap_yi": 80, "latest_change_pct": -1.0}]
     f = [{"rank": 1, "code": "002297", "amount_915": "1亿", "amount_920": "1.2亿", "amount_925": "1.3亿", "latest_change_pct": "9.8%", "section_kind": "live"}]
     out = compute_auction_strengths(["002297", "000001", "000002"], [], q, n, f, {})
-    assert out["002297"]["qiangchou_920_925_rank"] == 2, out["002297"]
-    assert out["002297"]["qiangchou_last_second_rank"] == 1, out["002297"]
+    # 9:20-9:25 (primary) now read from group "qiangchou" => rank 1.
+    assert out["002297"]["qiangchou_920_925_rank"] == 1, out["002297"]
+    # last-second now read from group "grab" => rank 2.
+    assert out["002297"]["qiangchou_last_second_rank"] == 2, out["002297"]
+    assert out["002297"]["qiangchou_grab_rank"] == 2, out["002297"]
+    assert out["002297"]["qiangchou_primary_signal"] == "9:20-9:25", out["002297"]
     assert out["002297"]["source_evidence_score"] > 0, out["002297"]
     assert out["002297"]["auction_alpha_score"] > 0, out["002297"]
     assert out["000001"]["auction_amount_multiplier"] == 0.5, out["000001"]

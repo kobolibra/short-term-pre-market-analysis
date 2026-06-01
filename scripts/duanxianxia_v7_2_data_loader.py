@@ -5,6 +5,7 @@ New optional T0 captures:
 - rank.hot_stock_day          (热度榜)
 - home.kaipan.plate.summary   (板块汇总，用于 T0 theme_strength)
 - home.qxlive.top_metrics     (主页 qxlive 顶部指标，用于 T0 regime)
+- auction.jjyd.weimai         (涨停委买，用于 T0 竞价封板/封板确认)
 
 This loader is intentionally tolerant: if some datasets are missing, v7.2
 continues to run and corresponding T0 signals are treated as missing instead of
@@ -23,6 +24,7 @@ DS_RANK_ROCKET = "rank.rocket"
 DS_RANK_HOT_STOCK_DAY = "rank.hot_stock_day"
 DS_KAIPAN_PLATE_SUMMARY = "home.kaipan.plate.summary"
 DS_HOME_QXLIVE_TOP = "home.qxlive.top_metrics"
+DS_AUCTION_WEIMAI = "auction.jjyd.weimai"
 
 
 @dataclass
@@ -32,6 +34,7 @@ class PremarketV72Bundle:
     hot_stock_day_rows: List[Dict[str, Any]]
     kaipan_plate_t0_rows: List[Dict[str, Any]]
     qxlive_top_t0_rows: List[Dict[str, Any]]
+    auction_weimai_rows: List[Dict[str, Any]]
     warnings: List[str]
 
     @property
@@ -53,6 +56,7 @@ class PremarketV72Bundle:
             "hot_stock_day_rows": len(self.hot_stock_day_rows),
             "kaipan_plate_t0_rows": len(self.kaipan_plate_t0_rows),
             "qxlive_top_t0_rows": len(self.qxlive_top_t0_rows),
+            "auction_weimai_rows": len(self.auction_weimai_rows),
             "v72_warnings": self.warnings,
         })
         return base
@@ -109,6 +113,7 @@ def load_premarket_v72_bundle(
     hotday, _hotday_path = _latest_capture(project_root, date_str, DS_RANK_HOT_STOCK_DAY, premarket_auction_cutoff)
     kaipan_t0, _kaipan_path = _latest_capture(project_root, date_str, DS_KAIPAN_PLATE_SUMMARY, premarket_auction_cutoff)
     qxlive_t0, _qxlive_path = _latest_capture(project_root, date_str, DS_HOME_QXLIVE_TOP, qxlive_t0_cutoff)
+    weimai, _weimai_path = _latest_capture(project_root, date_str, DS_AUCTION_WEIMAI, premarket_auction_cutoff)
 
     if not rocket:
         warnings.append(f"missing_or_empty:{DS_RANK_ROCKET}")
@@ -118,6 +123,8 @@ def load_premarket_v72_bundle(
         warnings.append(f"missing_or_empty:{DS_KAIPAN_PLATE_SUMMARY}:t0")
     if not qxlive_t0:
         warnings.append(f"missing_or_empty:{DS_HOME_QXLIVE_TOP}:t0")
+    if not weimai:
+        warnings.append(f"missing_or_empty:{DS_AUCTION_WEIMAI}")
 
     if hasattr(v71, "warnings") and v71.warnings:
         warnings.extend(v71.warnings)
@@ -128,5 +135,6 @@ def load_premarket_v72_bundle(
         hot_stock_day_rows=hotday,
         kaipan_plate_t0_rows=kaipan_t0,
         qxlive_top_t0_rows=qxlive_t0,
+        auction_weimai_rows=weimai,
         warnings=warnings,
     )

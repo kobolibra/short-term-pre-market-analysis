@@ -79,7 +79,7 @@ def load_v7_1_config(project_root: Path) -> Dict[str, Any]:
             sys.stderr.write(f"[v7.1 runner WARN] config load failed {path}: {exc}; using defaults\n")
     return {"version":"premarket_v7_1", "params":params, "theme_aliases":DEFAULT_ALIASES, "output":{"max_candidates":30}}
 
-def build_candidates_from_auction(bundle: Any, theme_aliases: Optional[List[List[str]]] = None) -> List[Dict[str, Any]]:
+def build_candidates_from_auction(bundle: Any, theme_aliases: Optional[List[List[str]]] = None, extra_auction_rows: Optional[Dict[str, List[Dict[str, Any]]]] = None) -> List[Dict[str, Any]]:
     candidates: Dict[str, Dict[str, Any]] = {}; canon_map = build_canon_map(theme_aliases or [])
     def ensure(row: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         code = _norm_code(row.get("code") or row.get("代码"))
@@ -101,6 +101,8 @@ def build_candidates_from_auction(bundle: Any, theme_aliases: Optional[List[List
                     if x and x not in item["matched_themes"]: item["matched_themes"].append(x)
             item["raw_rows"][source] = row
     add(bundle.auction_vratio, "vratio"); add(bundle.auction_qiangchou, "qiangchou"); add(bundle.auction_netamount, "net_amount"); add(bundle.auction_fengdan, "fengdan")
+    for _src, _rows in (extra_auction_rows or {}).items():
+        add(_rows, _src)
     return list(candidates.values())
 
 def load_dailyline_dict(project_root: Path, codes: List[str]) -> Dict[str, List[Dict[str, Any]]]:

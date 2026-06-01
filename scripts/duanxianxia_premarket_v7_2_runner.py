@@ -102,7 +102,12 @@ def run_v7_2(
     bundle = load_premarket_v72_bundle(date_str, project_root, premarket_auction_cutoff=cutoff, qxlive_t0_cutoff=qxlive_cutoff)
     v71 = bundle.v71
 
-    candidates = build_candidates_from_auction(v71, config.get("theme_aliases") or [])
+    weimai_rows = getattr(bundle, "auction_weimai_rows", None) or []
+    candidates = build_candidates_from_auction(
+        v71,
+        config.get("theme_aliases") or [],
+        extra_auction_rows={"weimai": weimai_rows},
+    )
     labels = compute_all_labels(v71, candidates, config, project_root)
     codes = [c["code"] for c in candidates if c.get("code")]
 
@@ -112,7 +117,7 @@ def run_v7_2(
         bundle.warnings.append("v7.2 regime fallback: missing T0 home.qxlive.top_metrics")
 
     candidate_latest_pct = _build_candidate_latest_pct(candidates)
-    auction_strengths = compute_auction_strengths(codes, v71.auction_vratio, v71.auction_qiangchou, v71.auction_netamount, v71.auction_fengdan, params)
+    auction_strengths = compute_auction_strengths(codes, v71.auction_vratio, v71.auction_qiangchou, v71.auction_netamount, v71.auction_fengdan, params, weimai_rows=weimai_rows)
     hotness_scores = compute_hotness_scores(bundle.rocket_rows, bundle.hot_stock_day_rows, codes, params, candidate_latest_pct=candidate_latest_pct)
     theme_strengths = compute_theme_strengths(candidates, bundle.kaipan_plate_t0_rows, labels.get("theme_history") or {}, labels.get("industry_t1") or {}, params)
     decisions = classify_candidates_v72(candidates, labels, auction_strengths, theme_strengths, hotness_scores, config, max_candidates=None)
@@ -138,6 +143,7 @@ def run_v7_2(
             "v7.2 conservative mode: T0 auction + exact plate-tag strength + hotness dominate.",
             "T0 qxlive HSLN/PB/PBBX are ignored for premarket regime.",
             "T0 plate 主力流入 and 涨停数量 are ignored; only 板块强度 is used.",
+            "T0 auction.jjyd.weimai (涨停委买) is wired in: it seeds candidates and feeds auction strength / AUCTION_LIMIT_UP tagging.",
             "T-1 review tables are not used as premarket scoring factors when use_t1_review_context=false.",
             "Action-pool output separates auction follow, theme catch-up, low-open reversal, board watch, confirmation, and avoid; do not read top_candidates as one homogeneous flat rank.",
         ],

@@ -4,7 +4,8 @@ duanxianxia_v7_1_data_loader.py — v7.1 capture 数据加载器
 严格时点隔离:
 - T0 竞价只允许读取 premarket_auction_cutoff 之前的 capture,默认 09:29:00。
 - 若 cutoff 之前没有 capture,直接视为缺失,禁止回退到盘中/盘后 capture。
-- T-1/T-2 qxlive top_metrics 只取 ≤09:33 的早盘首批快照（覆盖历史首包时间漂移，避免误报缺失）。
+- T-1/T-2 qxlive top_metrics 只取 ≤09:33 的早盘首批快照（覆盖历史首包时间漂移,避免误报缺失）。
+- T0 板块汇总/qxlive 顶部指标同样只取 cutoff 之前的早盘快照,缺失即视为缺失(不前视)。
 """
 
 from __future__ import annotations
@@ -23,6 +24,7 @@ DS_AUCTION_VRATIO = "auction.jjyd.vratio"
 DS_AUCTION_QIANGCHOU = "auction.jjyd.qiangchou"
 DS_AUCTION_NETAMOUNT = "auction.jjyd.net_amount"
 DS_AUCTION_FENGDAN = "auction.jjlive.fengdan"
+DS_AUCTION_WEIMAI = "auction.jjyd.weimai"   # 竞价异动/涨停委买
 DS_HOME_KAIPAN = "home.kaipan.plate.summary"
 DS_HOME_ZTPOOL = "home.ztpool"
 DS_HOME_QXLIVE_TOP = "home.qxlive.top_metrics"
@@ -140,6 +142,7 @@ class PremarketDataBundle:
     auction_qiangchou: List[Dict[str, Any]]
     auction_netamount: List[Dict[str, Any]]
     auction_fengdan: List[Dict[str, Any]]
+    auction_weimai: List[Dict[str, Any]]
     kaipan_t1_rows: List[Dict[str, Any]]
     kaipan_t1_meta: Dict[str, Any]
     cashflow_today_t1: List[Dict[str, Any]]
@@ -155,11 +158,16 @@ class PremarketDataBundle:
     qxlive_top_t2_meta: Dict[str, Any]
     kaipan_history: List[Tuple[str, List[Dict[str, Any]], Dict[str, Any]]] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
+    # T0 早盘快照(≤cutoff/≤09:33),供 v9 全量层使用;缺失即为空,不前视。
+    kaipan_t0_rows: List[Dict[str, Any]] = field(default_factory=list)
+    kaipan_t0_meta: Dict[str, Any] = field(default_factory=dict)
+    qxlive_top_t0_rows: List[Dict[str, Any]] = field(default_factory=list)
+    qxlive_top_t0_meta: Dict[str, Any] = field(default_factory=dict)
 
     def to_summary_dict(self) -> Dict[str, Any]:
         return {
             "date_t0": self.date_t0, "date_t1": self.date_t1, "date_t2": self.date_t2, "project_root": self.project_root,
-            "counts": {"auction_vratio": len(self.auction_vratio), "auction_qiangchou": len(self.auction_qiangchou), "auction_netamount": len(self.auction_netamount), "auction_fengdan": len(self.auction_fengdan), "kaipan_t1": len(self.kaipan_t1_rows), "cashflow_today_t1": len(self.cashflow_today_t1), "cashflow_3day_t1": len(self.cashflow_3day_t1), "cashflow_5day_t1": len(self.cashflow_5day_t1), "cashflow_10day_t1": len(self.cashflow_10day_t1), "fupan_t1": len(self.fupan_t1), "ltgd_5day_t1": len(self.ltgd_5day_t1), "ztpool_t1": len(self.ztpool_t1), "qxlive_top_t1": len(self.qxlive_top_t1_rows), "qxlive_top_t2": len(self.qxlive_top_t2_rows), "kaipan_history": len(self.kaipan_history)},
+            "counts": {"auction_vratio": len(self.auction_vratio), "auction_qiangchou": len(self.auction_qiangchou), "auction_netamount": len(self.auction_netamount), "auction_fengdan": len(self.auction_fengdan), "auction_weimai": len(self.auction_weimai), "kaipan_t1": len(self.kaipan_t1_rows), "kaipan_t0": len(self.kaipan_t0_rows), "cashflow_today_t1": len(self.cashflow_today_t1), "cashflow_3day_t1": len(self.cashflow_3day_t1), "cashflow_5day_t1": len(self.cashflow_5day_t1), "cashflow_10day_t1": len(self.cashflow_10day_t1), "fupan_t1": len(self.fupan_t1), "ltgd_5day_t1": len(self.ltgd_5day_t1), "ztpool_t1": len(self.ztpool_t1), "qxlive_top_t1": len(self.qxlive_top_t1_rows), "qxlive_top_t0": len(self.qxlive_top_t0_rows), "qxlive_top_t2": len(self.qxlive_top_t2_rows), "kaipan_history": len(self.kaipan_history)},
             "kaipan_t1_meta_keys": sorted(self.kaipan_t1_meta.keys()), "warnings": self.warnings,
         }
 
@@ -187,10 +195,18 @@ def load_premarket_bundle(date_t0: str, project_root: Path | str, *, history_day
     auction_qiangchou = _t0(DS_AUCTION_QIANGCHOU)
     auction_netamount = _t0(DS_AUCTION_NETAMOUNT)
     auction_fengdan = _t0(DS_AUCTION_FENGDAN)
+    auction_weimai = _t0(DS_AUCTION_WEIMAI)
 
     kaipan_t1 = load_capture_at_time(project_root, date_t1_str, DS_HOME_KAIPAN, pick="latest")
     kaipan_t1_rows = _extract_rows(kaipan_t1)
     kaipan_t1_meta = _extract_meta(kaipan_t1)
+
+    # T0 板块汇总:今日早盘 ≤cutoff 的首批快照(题材强度/资金/涨停数的当日口径)。
+    kaipan_t0 = load_capture_at_time(project_root, date_t0, DS_HOME_KAIPAN, max_hhmmss=premarket_auction_cutoff, pick="earliest_before", raise_if_missing=False)
+    kaipan_t0_rows = _extract_rows(kaipan_t0)
+    kaipan_t0_meta = _extract_meta(kaipan_t0)
+    if not kaipan_t0_rows:
+        warnings.append(f"missing_or_empty: {DS_HOME_KAIPAN} t0")
 
     def _try(ds: str, d: str = date_t1_str, *, pick: str = "latest", max_hhmmss: Optional[str] = None) -> List[Dict[str, Any]]:
         cap = load_capture_at_time(project_root, d, ds, pick=pick, max_hhmmss=max_hhmmss, raise_if_missing=False)
@@ -207,6 +223,12 @@ def load_premarket_bundle(date_t0: str, project_root: Path | str, *, history_day
     ltgd_all = _try(DS_REVIEW_LTGD)
     ltgd_5day_t1 = [r for r in ltgd_all if str(r.get("周期", "") or "").strip() == "5日"]
     ztpool_t1 = _try(DS_HOME_ZTPOOL)
+
+    # T0 qxlive 顶部指标:今日早盘 ≤09:33 首批快照(当日市场环境/regime 口径)。
+    q0 = load_capture_at_time(project_root, date_t0, DS_HOME_QXLIVE_TOP, max_hhmmss=qxlive_premarket_boundary, pick="earliest_before", raise_if_missing=False)
+    qxlive_top_t0_rows = _extract_rows(q0); qxlive_top_t0_meta = _extract_meta(q0)
+    if not qxlive_top_t0_rows:
+        warnings.append(f"missing_or_empty: {DS_HOME_QXLIVE_TOP} t0")
 
     q1 = load_capture_at_time(project_root, date_t1_str, DS_HOME_QXLIVE_TOP, max_hhmmss=qxlive_premarket_boundary, pick="earliest_before", raise_if_missing=False)
     qxlive_top_t1_rows = _extract_rows(q1); qxlive_top_t1_meta = _extract_meta(q1)
@@ -225,7 +247,7 @@ def load_premarket_bundle(date_t0: str, project_root: Path | str, *, history_day
             kaipan_history.append((ds, _extract_rows(cap), _extract_meta(cap)))
         cur = previous_trading_day(project_root, cur, n=1)
 
-    return PremarketDataBundle(date_t0, date_t1_str, date_t2_str, str(project_root), auction_vratio, auction_qiangchou, auction_netamount, auction_fengdan, kaipan_t1_rows, kaipan_t1_meta, cashflow_today_t1, cashflow_3day_t1, cashflow_5day_t1, cashflow_10day_t1, fupan_t1, ltgd_5day_t1, ztpool_t1, qxlive_top_t1_rows, qxlive_top_t1_meta, qxlive_top_t2_rows, qxlive_top_t2_meta, kaipan_history, warnings)
+    return PremarketDataBundle(date_t0, date_t1_str, date_t2_str, str(project_root), auction_vratio, auction_qiangchou, auction_netamount, auction_fengdan, auction_weimai, kaipan_t1_rows, kaipan_t1_meta, cashflow_today_t1, cashflow_3day_t1, cashflow_5day_t1, cashflow_10day_t1, fupan_t1, ltgd_5day_t1, ztpool_t1, qxlive_top_t1_rows, qxlive_top_t1_meta, qxlive_top_t2_rows, qxlive_top_t2_meta, kaipan_history, warnings, kaipan_t0_rows=kaipan_t0_rows, kaipan_t0_meta=kaipan_t0_meta, qxlive_top_t0_rows=qxlive_top_t0_rows, qxlive_top_t0_meta=qxlive_top_t0_meta)
 
 def _main() -> int:
     p = argparse.ArgumentParser()

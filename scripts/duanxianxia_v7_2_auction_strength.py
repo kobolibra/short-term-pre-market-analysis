@@ -9,11 +9,24 @@ proposal:
 - Split the auction signal into alpha / liquidity / tradability / risk.
 - Classify auction behavior first, then let setup/output rank within pools.
 
-User constraints from 2026-05 discussion are preserved:
-- `auction.jjyd.qiangchou` group `grab` = 9:20-9:25 sustained抢筹, primary.
-- `auction.jjyd.qiangchou` group `qiangchou` = 9:24:59 last-second抢筹,
+Group semantics (verified against duanxianxia_batch.py TABLE_SPECS
+["auction.jjyd.qiangchou"].group_titles, the scraper's source of truth, and the
+production build_premarket_analysis labeling):
+- `auction.jjyd.qiangchou` group `qiangchou` = 9:20-9:25 sustained抢筹, primary.
+- `auction.jjyd.qiangchou` group `grab` = 竞价最后1秒 last-second抢筹,
   useful as confirmation but discounted.
+A previous revision had these two groups swapped; the 9:20-9:25 sustained signal
+is now correctly read from group `qiangchou` and weighted as primary, while the
+last-second signal is read from group `grab`.
 - T0 主力流入 / 今日封板率 / T0 plate 涨停数量 are not used here.
+
+Weimai (涨停委买, auction.jjyd.weimai): T0 limit-up bid queue. A code present in
+this list is queuing to buy at the limit during the call auction — a strong
+lock/limit-up confirmation. It is fused as an independent evidence source and,
+when the code is opening at/near the limit, promotes the setup to
+AUCTION_LIMIT_UP. This dataset is downloaded in the premarket group and was
+previously unused by the production analyzer; it is now wired in. Backward
+compatible: weimai_rows defaults to None.
 """
 
 from __future__ import annotations
@@ -307,9 +320,12 @@ def _auction_setup_type(
     risk_mult: float,
     entry_tag: str,
     params: Dict[str, Any],
+    in_weimai: bool = False,
 ) -> str:
     if entry_tag == "avoid" or risk_mult <= float(params.get("fake_strength_risk_max", 0.70)):
         return "FAKE_STRENGTH"
+    if in_weimai and latest_pct is not None and latest_pct >= float(params.get("auction_limit_up_pct", 9.5)):
+        return "AUCTION_LIMIT_UP"
     if latest_pct is not None and latest_pct >= float(params.get("board_lock_pct", 9.5)) and f_status == "lock":
         return "BOARD_LOCK_WATCH"
     if latest_pct is not None and latest_pct < 0:
@@ -325,34 +341,44 @@ def _auction_setup_type(
     return "GENERAL_WATCH"
 
 
-def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict[str, Any]], qiangchou_rows: List[Dict[str, Any]], netamount_rows: List[Dict[str, Any]], fengdan_rows: List[Dict[str, Any]], params: Optional[Dict[str, Any]] = None) -> Dict[str, Dict[str, Any]]:
+def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict[str, Any]], qiangchou_rows: List[Dict[str, Any]], netamount_rows: List[Dict[str, Any]], fengdan_rows: List[Dict[str, Any]], params: Optional[Dict[str, Any]] = None, weimai_rows: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Dict[str, Any]]:
     p = params or {}
     top_n = int(p.get("auction_top_rank_n", 30))
     tau = float(p.get("auction_rank_decay_tau", 8.0))
 
     v_idx = _index_by_code_min_rank(vratio_rows)
-    q_grab_idx = _index_by_code_min_rank(qiangchou_rows, "grab")
-    q_last_idx = _index_by_code_min_rank(qiangchou_rows, "qiangchou")
+    # Group semantics: "qiangchou" = 9:20-9:25 sustained (primary);
+    # "grab" = 竞价最后1秒 last-second (confirmation). See module docstring.
+    q_920_925_idx = _index_by_code_min_rank(qiangchou_rows, "qiangchou")
+    q_last_idx = _index_by_code_min_rank(qiangchou_rows, "grab")
     n_idx = _index_by_code_min_rank(netamount_rows)
     f_idx = _index_by_code_min_rank([r for r in (fengdan_rows or []) if str(r.get("section_kind") or "").strip() in {"", "live"}])
+    # 涨停委买 (auction limit-up bid queue): T0 lock/limit-up confirmation.
+    w_idx = _index_by_code_min_rank(weimai_rows)
 
     amount_keys = ["auction_turnover_wan", "auction_turnover_wan_text", "竞额", "竞价成交额", "竞价金额", "auction_amount_wan", "amount", "成交额"]
     turnover_keys = ["turnover_rate_pct", "竞价换手", "竞价换手率", "turnover_rate", "换手率"]
     pct_keys = ["latest_change_pct", "auction_change_pct", "auction_change_pct_text", "竞价涨幅", "涨幅"]
+    weimai_seal_keys = ["seal_amount_wan", "seal_amount_text", "封单额", "封单金额", "封单", "seal_amount", "委买额"]
 
     out: Dict[str, Dict[str, Any]] = {}
     for raw in candidate_codes or []:
         code = _norm_code(raw)
         if not code or code in out:
             continue
-        v_row, qg_row, ql_row, n_row, f_row = v_idx.get(code), q_grab_idx.get(code), q_last_idx.get(code), n_idx.get(code), f_idx.get(code)
+        # qg_* = 9:20-9:25 sustained (primary); ql_* = last-second (group "grab").
+        v_row, qg_row, ql_row, n_row, f_row = v_idx.get(code), q_920_925_idx.get(code), q_last_idx.get(code), n_idx.get(code), f_idx.get(code)
+        w_row = w_idx.get(code)
         v_rank = _to_int((v_row or {}).get("rank") or (v_row or {}).get("排名"))
         qg_rank = _to_int((qg_row or {}).get("rank") or (qg_row or {}).get("排名"))
         ql_rank = _to_int((ql_row or {}).get("rank") or (ql_row or {}).get("排名"))
         n_rank = _to_int((n_row or {}).get("rank") or (n_row or {}).get("排名"))
         f_rank = _to_int((f_row or {}).get("rank") or (f_row or {}).get("排名"))
+        w_rank = _to_int((w_row or {}).get("rank") or (w_row or {}).get("排名"))
+        in_weimai = w_row is not None
+        weimai_seal_wan = _first_money_wan(w_row, weimai_seal_keys)
 
-        latest_pct = _first_pct(n_row, pct_keys) or _first_pct(v_row, pct_keys) or _first_pct(qg_row, pct_keys) or _first_pct(ql_row, pct_keys) or _first_pct(f_row, pct_keys)
+        latest_pct = _first_pct(n_row, pct_keys) or _first_pct(v_row, pct_keys) or _first_pct(qg_row, pct_keys) or _first_pct(ql_row, pct_keys) or _first_pct(f_row, pct_keys) or _first_pct(w_row, pct_keys)
         amount_wan = _first_money_wan(v_row, amount_keys) or _first_money_wan(qg_row, amount_keys) or _first_money_wan(ql_row, amount_keys) or _first_money_wan(n_row, amount_keys)
         turnover_pct = _first_pct(v_row, turnover_keys) or _first_pct(qg_row, turnover_keys) or _first_pct(ql_row, turnover_keys) or _first_pct(n_row, turnover_keys)
 
@@ -361,12 +387,14 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
         consume_type = f_behavior.get("consume_type")
 
         q_last_score = _exp_rank_score(ql_rank, top_n, tau) * float(p.get("qiangchou_last_second_multiplier", 0.85))
+        weimai_score = _exp_rank_score(w_rank, top_n, tau) if in_weimai else 0.0
         source_scores = {
             "vratio": _exp_rank_score(v_rank, top_n, tau),
             "qiangchou_920_925": _exp_rank_score(qg_rank, top_n, tau),
             "qiangchou_last_second": q_last_score,
             "net_amount": _exp_rank_score(n_rank, top_n, tau),
             "fengdan": _exp_rank_score(f_rank, top_n, tau) if f_status not in {"fake", "none"} else 0.0,
+            "weimai": weimai_score,
         }
         weights = {
             "vratio": float(p.get("source_weight_vratio", 0.20)),
@@ -374,6 +402,7 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
             "qiangchou_last_second": float(p.get("source_weight_qiangchou_last_second", 0.18)),
             "net_amount": float(p.get("source_weight_net_amount", 0.25)),
             "fengdan": float(p.get("source_weight_fengdan", 0.20)),
+            "weimai": float(p.get("source_weight_weimai", 0.30)),
         }
         source_evidence = _noisy_or({k: (v, weights[k]) for k, v in source_scores.items()})
         legacy_base = max({
@@ -382,13 +411,14 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
             "qiangchou_last_second": _linear_rank_score(ql_rank, top_n) * float(p.get("qiangchou_last_second_multiplier", 0.85)),
             "net_amount": _linear_rank_score(n_rank, top_n),
             "fengdan": _linear_rank_score(f_rank, top_n) if f_status not in {"fake", "none"} else 0.0,
+            "weimai": _linear_rank_score(w_rank, top_n) if in_weimai else 0.0,
         }.values())
 
         price_score = _price_intent_score(latest_pct, p)
         turnover_score, turnover_state = _turnover_health_score(turnover_pct, p)
         money_score, net_pressure, amount_pressure = _amount_scores(amount_wan, n_row, p)
         orderbook_score = _orderbook_quality_score(f_status, consume_type, f_behavior.get("ratio_925_920"), p)
-        resonance_score, family_count, top_family_count, source_families = _resonance_score(source_scores, {"vratio": v_rank, "qiangchou_920_925": qg_rank, "qiangchou_last_second": ql_rank, "net_amount": n_rank, "fengdan": f_rank}, top_n)
+        resonance_score, family_count, top_family_count, source_families = _resonance_score(source_scores, {"vratio": v_rank, "qiangchou_920_925": qg_rank, "qiangchou_last_second": ql_rank, "net_amount": n_rank, "fengdan": f_rank, "weimai": w_rank}, top_n)
         amount_mult, amount_missing = _auction_amount_multiplier(amount_wan, p)
         risk_mult, trad_mult, risk_flags, entry_tag, entry_reason = _risk_and_tradability(latest_pct, amount_wan, turnover_state, f_status, consume_type, f_behavior.get("amount_925_yi"), p)
 
@@ -403,7 +433,12 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
         liquidity_mult = max(float(p.get("liquidity_multiplier_min", 0.50)), min(1.15, liquidity_score / 100.0 + 0.15))
         total = max(0.0, min(100.0, alpha * liquidity_mult * risk_mult * trad_mult * amount_mult))
 
-        auction_type = _auction_setup_type(latest_pct, f_status, consume_type, qg_rank, ql_rank, n_rank, source_evidence, money_score, risk_mult, entry_tag, p)
+        auction_type = _auction_setup_type(latest_pct, f_status, consume_type, qg_rank, ql_rank, n_rank, source_evidence, money_score, risk_mult, entry_tag, p, in_weimai=in_weimai)
+        if in_weimai:
+            if "auction_limit_up_weimai" not in risk_flags:
+                risk_flags.append("auction_limit_up_weimai")
+            if entry_tag in {"normal", "high_open_confirm"} and latest_pct is not None and latest_pct >= float(p.get("entry_board_watch_pct", 9.5)):
+                entry_tag, entry_reason = "board_watch", "auction_limit_up_lock"
         if auction_type == "LOW_OPEN_REVERSAL":
             # Keep low-open reversal visible but prevent it from ranking like a
             # normal high-open attack unless the downstream setup explicitly
@@ -441,15 +476,18 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
             "amount_pressure": amount_pressure,
             "vratio_rank": v_rank,
             "qiangchou_rank": qg_rank if qg_rank is not None else ql_rank,
-            "qiangchou_grab_rank": qg_rank,
             "qiangchou_920_925_rank": qg_rank,
             "qiangchou_last_second_rank": ql_rank,
+            "qiangchou_grab_rank": ql_rank,
             "qiangchou_primary_signal": "9:20-9:25" if qg_rank is not None else ("last_second" if ql_rank is not None else None),
             "net_amount_rank": n_rank,
             "fengdan_rank": f_rank,
             "fengdan_status": f_status,
             "fengdan_consume_type": consume_type,
             "fengdan_behavior_reason": f_behavior.get("reason"),
+            "weimai_rank": w_rank,
+            "in_weimai_limit_up": in_weimai,
+            "weimai_seal_amount_wan": weimai_seal_wan,
             "entry_tag": entry_tag,
             "entry_reason": entry_reason,
             "fengdan_amount_915_yi": f_behavior.get("amount_915_yi"),
@@ -463,21 +501,38 @@ def compute_auction_strengths(candidate_codes: List[str], vratio_rows: List[Dict
 
 
 def _self_test() -> None:
+    # group "qiangchou" => 9:20-9:25 sustained (primary); group "grab" => last-second.
     q = [
-        {"group": "grab", "rank": 2, "code": "002297", "auction_turnover_wan": "11203", "latest_change_pct": "3.35", "turnover_rate_pct": 1.12},
         {"group": "qiangchou", "rank": 1, "code": "002297", "auction_turnover_wan": "11203", "latest_change_pct": "3.35", "turnover_rate_pct": 1.12},
+        {"group": "grab", "rank": 2, "code": "002297", "auction_turnover_wan": "11203", "latest_change_pct": "3.35", "turnover_rate_pct": 1.12},
         {"group": "qiangchou", "rank": 1, "code": "000001", "auction_turnover_wan": "200", "latest_change_pct": "6.0", "turnover_rate_pct": 0.1},
         {"group": "grab", "rank": 3, "code": "000002", "auction_turnover_wan": "3000", "latest_change_pct": "-1.0", "turnover_rate_pct": 1.0},
     ]
     n = [{"rank": 5, "code": "002297", "main_net_inflow_wan": 5000, "market_cap_yi": 100, "auction_turnover_wan": 11203, "latest_change_pct": 3.35}, {"rank": 1, "code": "000002", "main_net_inflow_wan": 4000, "market_cap_yi": 80, "latest_change_pct": -1.0}]
     f = [{"rank": 1, "code": "002297", "amount_915": "1亿", "amount_920": "1.2亿", "amount_925": "1.3亿", "latest_change_pct": "9.8%", "section_kind": "live"}]
-    out = compute_auction_strengths(["002297", "000001", "000002"], [], q, n, f, {})
-    assert out["002297"]["qiangchou_920_925_rank"] == 2, out["002297"]
-    assert out["002297"]["qiangchou_last_second_rank"] == 1, out["002297"]
+    w = [
+        {"rank": 1, "code": "300750", "seal_amount_wan": "5000", "latest_change_pct": "9.95"},
+        {"rank": 2, "code": "002297", "seal_amount_wan": "3000", "latest_change_pct": "3.35"},
+    ]
+    out = compute_auction_strengths(["002297", "000001", "000002", "300750"], [], q, n, f, {}, weimai_rows=w)
+    # 9:20-9:25 (primary) now read from group "qiangchou" => rank 1.
+    assert out["002297"]["qiangchou_920_925_rank"] == 1, out["002297"]
+    # last-second now read from group "grab" => rank 2.
+    assert out["002297"]["qiangchou_last_second_rank"] == 2, out["002297"]
+    assert out["002297"]["qiangchou_grab_rank"] == 2, out["002297"]
+    assert out["002297"]["qiangchou_primary_signal"] == "9:20-9:25", out["002297"]
     assert out["002297"]["source_evidence_score"] > 0, out["002297"]
     assert out["002297"]["auction_alpha_score"] > 0, out["002297"]
     assert out["000001"]["auction_amount_multiplier"] == 0.5, out["000001"]
     assert out["000002"]["auction_setup_type"] == "LOW_OPEN_REVERSAL", out["000002"]
+    # weimai wiring: 002297 is in weimai list at rank 2.
+    assert out["002297"]["in_weimai_limit_up"] is True, out["002297"]
+    assert out["002297"]["weimai_rank"] == 2, out["002297"]
+    assert "weimai" in out["002297"]["source_families"], out["002297"]
+    # 300750 only appears via weimai (near limit) => AUCTION_LIMIT_UP, still scored.
+    assert out["300750"]["in_weimai_limit_up"] is True, out["300750"]
+    assert out["300750"]["auction_setup_type"] == "AUCTION_LIMIT_UP", out["300750"]
+    assert out["300750"]["source_evidence_score"] > 0, out["300750"]
     print("auction_strength v8-style _self_test passed")
 
 

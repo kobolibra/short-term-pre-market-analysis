@@ -1,0 +1,726 @@
+{
+  "project": "duanxianxia",
+  "dataset_kind": "rocket",
+  "dataset_id": "rank.rocket",
+  "dataset_label": "飙升榜",
+  "source_path": "搜索/榜单",
+  "source_url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+  "fetched_at": "2026-06-01T20:49:46+08:00",
+  "fetched_at_utc": "2026-06-01T12:49:46Z",
+  "timezone": "Asia/Shanghai",
+  "row_count": 100,
+  "headers": [
+    "rank",
+    "code",
+    "name",
+    "value",
+    "raw_rate"
+  ],
+  "rows": [
+    {
+      "rank": 1,
+      "code": "603629",
+      "name": "利通电子",
+      "value": "+1w",
+      "raw_rate": "13253"
+    },
+    {
+      "rank": 2,
+      "code": "002081",
+      "name": "金螳螂",
+      "value": "+1w",
+      "raw_rate": "11552"
+    },
+    {
+      "rank": 3,
+      "code": "300442",
+      "name": "润泽科技",
+      "value": "+1w",
+      "raw_rate": "10879"
+    },
+    {
+      "rank": 4,
+      "code": "600759",
+      "name": "ST洲际",
+      "value": "+9624",
+      "raw_rate": "9624"
+    },
+    {
+      "rank": 5,
+      "code": "603890",
+      "name": "春秋电子",
+      "value": "+4857",
+      "raw_rate": "4857"
+    },
+    {
+      "rank": 6,
+      "code": "603601",
+      "name": "再升科技",
+      "value": "+4619",
+      "raw_rate": "4619"
+    },
+    {
+      "rank": 7,
+      "code": "300364",
+      "name": "中文在线",
+      "value": "+3929",
+      "raw_rate": "3929"
+    },
+    {
+      "rank": 8,
+      "code": "002062",
+      "name": "宏润建设",
+      "value": "+2772",
+      "raw_rate": "2772"
+    },
+    {
+      "rank": 9,
+      "code": "300175",
+      "name": "ST朗源",
+      "value": "+2714",
+      "raw_rate": "2714"
+    },
+    {
+      "rank": 10,
+      "code": "300353",
+      "name": "东土科技",
+      "value": "+2681",
+      "raw_rate": "2681"
+    },
+    {
+      "rank": 11,
+      "code": "301669",
+      "name": "高特电子",
+      "value": "+2533",
+      "raw_rate": "2533"
+    },
+    {
+      "rank": 12,
+      "code": "002200",
+      "name": "*ST交投",
+      "value": "+2460",
+      "raw_rate": "2460"
+    },
+    {
+      "rank": 13,
+      "code": "002565",
+      "name": "顺灏股份",
+      "value": "+2459",
+      "raw_rate": "2459"
+    },
+    {
+      "rank": 14,
+      "code": "605589",
+      "name": "圣泉集团",
+      "value": "+2422",
+      "raw_rate": "2422"
+    },
+    {
+      "rank": 15,
+      "code": "600421",
+      "name": "退市华嵘",
+      "value": "+2329",
+      "raw_rate": "2329"
+    },
+    {
+      "rank": 16,
+      "code": "300657",
+      "name": "弘信电子",
+      "value": "+2234",
+      "raw_rate": "2234"
+    },
+    {
+      "rank": 17,
+      "code": "002655",
+      "name": "共达电声",
+      "value": "+1915",
+      "raw_rate": "1915"
+    },
+    {
+      "rank": 18,
+      "code": "600121",
+      "name": "郑州煤电",
+      "value": "+1719",
+      "raw_rate": "1719"
+    },
+    {
+      "rank": 19,
+      "code": "002050",
+      "name": "三花智控",
+      "value": "+1709",
+      "raw_rate": "1709"
+    },
+    {
+      "rank": 20,
+      "code": "002580",
+      "name": "圣阳股份",
+      "value": "+1688",
+      "raw_rate": "1688"
+    },
+    {
+      "rank": 21,
+      "code": "600027",
+      "name": "华电国际",
+      "value": "+1605",
+      "raw_rate": "1605"
+    },
+    {
+      "rank": 22,
+      "code": "001314",
+      "name": "亿道信息",
+      "value": "+1600",
+      "raw_rate": "1600"
+    },
+    {
+      "rank": 23,
+      "code": "000681",
+      "name": "视觉中国",
+      "value": "+1387",
+      "raw_rate": "1387"
+    },
+    {
+      "rank": 24,
+      "code": "002559",
+      "name": "亚威股份",
+      "value": "+1318",
+      "raw_rate": "1318"
+    },
+    {
+      "rank": 25,
+      "code": "601918",
+      "name": "新集能源",
+      "value": "+1280",
+      "raw_rate": "1280"
+    },
+    {
+      "rank": 26,
+      "code": "002279",
+      "name": "久其软件",
+      "value": "+1215",
+      "raw_rate": "1215"
+    },
+    {
+      "rank": 27,
+      "code": "600580",
+      "name": "卧龙电驱",
+      "value": "+1214",
+      "raw_rate": "1214"
+    },
+    {
+      "rank": 28,
+      "code": "002173",
+      "name": "创新医疗",
+      "value": "+1131",
+      "raw_rate": "1131"
+    },
+    {
+      "rank": 29,
+      "code": "600280",
+      "name": "中央商场",
+      "value": "+1103",
+      "raw_rate": "1103"
+    },
+    {
+      "rank": 30,
+      "code": "300763",
+      "name": "锦浪科技",
+      "value": "+1088",
+      "raw_rate": "1088"
+    },
+    {
+      "rank": 31,
+      "code": "300975",
+      "name": "商络电子",
+      "value": "+1056",
+      "raw_rate": "1056"
+    },
+    {
+      "rank": 32,
+      "code": "002600",
+      "name": "领益智造",
+      "value": "+1056",
+      "raw_rate": "1056"
+    },
+    {
+      "rank": 33,
+      "code": "688811",
+      "name": "有研复材",
+      "value": "+1051",
+      "raw_rate": "1051"
+    },
+    {
+      "rank": 34,
+      "code": "603296",
+      "name": "华勤技术",
+      "value": "+1050",
+      "raw_rate": "1050"
+    },
+    {
+      "rank": 35,
+      "code": "600979",
+      "name": "广安爱众",
+      "value": "+973",
+      "raw_rate": "973"
+    },
+    {
+      "rank": 36,
+      "code": "002210",
+      "name": "飞马国际",
+      "value": "+949",
+      "raw_rate": "949"
+    },
+    {
+      "rank": 37,
+      "code": "688783",
+      "name": "西安奕材",
+      "value": "+927",
+      "raw_rate": "927"
+    },
+    {
+      "rank": 38,
+      "code": "300913",
+      "name": "兆龙互连",
+      "value": "+924",
+      "raw_rate": "924"
+    },
+    {
+      "rank": 39,
+      "code": "301236",
+      "name": "软通动力",
+      "value": "+909",
+      "raw_rate": "909"
+    },
+    {
+      "rank": 40,
+      "code": "603876",
+      "name": "鼎胜新材",
+      "value": "+891",
+      "raw_rate": "891"
+    },
+    {
+      "rank": 41,
+      "code": "600995",
+      "name": "南网储能",
+      "value": "+889",
+      "raw_rate": "889"
+    },
+    {
+      "rank": 42,
+      "code": "600110",
+      "name": "诺德股份",
+      "value": "+867",
+      "raw_rate": "867"
+    },
+    {
+      "rank": 43,
+      "code": "600143",
+      "name": "金发科技",
+      "value": "+860",
+      "raw_rate": "860"
+    },
+    {
+      "rank": 44,
+      "code": "002938",
+      "name": "鹏鼎控股",
+      "value": "+842",
+      "raw_rate": "842"
+    },
+    {
+      "rank": 45,
+      "code": "600690",
+      "name": "海尔智家",
+      "value": "+823",
+      "raw_rate": "823"
+    },
+    {
+      "rank": 46,
+      "code": "002195",
+      "name": "岩山科技",
+      "value": "+817",
+      "raw_rate": "817"
+    },
+    {
+      "rank": 47,
+      "code": "600188",
+      "name": "兖矿能源",
+      "value": "+811",
+      "raw_rate": "811"
+    },
+    {
+      "rank": 48,
+      "code": "002044",
+      "name": "美年健康",
+      "value": "+805",
+      "raw_rate": "805"
+    },
+    {
+      "rank": 49,
+      "code": "600666",
+      "name": "奥瑞德",
+      "value": "+796",
+      "raw_rate": "796"
+    },
+    {
+      "rank": 50,
+      "code": "603659",
+      "name": "璞泰来",
+      "value": "+792",
+      "raw_rate": "792"
+    },
+    {
+      "rank": 51,
+      "code": "603256",
+      "name": "宏和科技",
+      "value": "+792",
+      "raw_rate": "792"
+    },
+    {
+      "rank": 52,
+      "code": "300124",
+      "name": "汇川技术",
+      "value": "+760",
+      "raw_rate": "760"
+    },
+    {
+      "rank": 53,
+      "code": "300212",
+      "name": "*ST易录",
+      "value": "+748",
+      "raw_rate": "748"
+    },
+    {
+      "rank": 54,
+      "code": "002782",
+      "name": "可立克",
+      "value": "+731",
+      "raw_rate": "731"
+    },
+    {
+      "rank": 55,
+      "code": "300274",
+      "name": "阳光电源",
+      "value": "+724",
+      "raw_rate": "724"
+    },
+    {
+      "rank": 56,
+      "code": "000055",
+      "name": "方大集团",
+      "value": "+709",
+      "raw_rate": "709"
+    },
+    {
+      "rank": 57,
+      "code": "603039",
+      "name": "泛微网络",
+      "value": "+700",
+      "raw_rate": "700"
+    },
+    {
+      "rank": 58,
+      "code": "300017",
+      "name": "网宿科技",
+      "value": "+691",
+      "raw_rate": "691"
+    },
+    {
+      "rank": 59,
+      "code": "603327",
+      "name": "福蓉科技",
+      "value": "+685",
+      "raw_rate": "685"
+    },
+    {
+      "rank": 60,
+      "code": "300773",
+      "name": "拉卡拉",
+      "value": "+684",
+      "raw_rate": "684"
+    },
+    {
+      "rank": 61,
+      "code": "002871",
+      "name": "伟隆股份",
+      "value": "+680",
+      "raw_rate": "680"
+    },
+    {
+      "rank": 62,
+      "code": "000661",
+      "name": "长春高新",
+      "value": "+664",
+      "raw_rate": "664"
+    },
+    {
+      "rank": 63,
+      "code": "001210",
+      "name": "金房能源",
+      "value": "+648",
+      "raw_rate": "648"
+    },
+    {
+      "rank": 64,
+      "code": "600727",
+      "name": "鲁北化工",
+      "value": "+647",
+      "raw_rate": "647"
+    },
+    {
+      "rank": 65,
+      "code": "000932",
+      "name": "华菱钢铁",
+      "value": "+638",
+      "raw_rate": "638"
+    },
+    {
+      "rank": 66,
+      "code": "002603",
+      "name": "以岭药业",
+      "value": "+633",
+      "raw_rate": "633"
+    },
+    {
+      "rank": 67,
+      "code": "300496",
+      "name": "中科创达",
+      "value": "+632",
+      "raw_rate": "632"
+    },
+    {
+      "rank": 68,
+      "code": "002356",
+      "name": "赫美集团",
+      "value": "+621",
+      "raw_rate": "621"
+    },
+    {
+      "rank": 69,
+      "code": "600403",
+      "name": "大有能源",
+      "value": "+620",
+      "raw_rate": "620"
+    },
+    {
+      "rank": 70,
+      "code": "600163",
+      "name": "中闽能源",
+      "value": "+617",
+      "raw_rate": "617"
+    },
+    {
+      "rank": 71,
+      "code": "002601",
+      "name": "龙佰集团",
+      "value": "+612",
+      "raw_rate": "612"
+    },
+    {
+      "rank": 72,
+      "code": "603896",
+      "name": "寿仙谷",
+      "value": "+612",
+      "raw_rate": "612"
+    },
+    {
+      "rank": 73,
+      "code": "000625",
+      "name": "长安汽车",
+      "value": "+609",
+      "raw_rate": "609"
+    },
+    {
+      "rank": 74,
+      "code": "000510",
+      "name": "新金路",
+      "value": "+601",
+      "raw_rate": "601"
+    },
+    {
+      "rank": 75,
+      "code": "300811",
+      "name": "铂科新材",
+      "value": "+597",
+      "raw_rate": "597"
+    },
+    {
+      "rank": 76,
+      "code": "603203",
+      "name": "快克智能",
+      "value": "+594",
+      "raw_rate": "594"
+    },
+    {
+      "rank": 77,
+      "code": "301439",
+      "name": "泓淋电力",
+      "value": "+591",
+      "raw_rate": "591"
+    },
+    {
+      "rank": 78,
+      "code": "600798",
+      "name": "宁波海运",
+      "value": "+582",
+      "raw_rate": "582"
+    },
+    {
+      "rank": 79,
+      "code": "603341",
+      "name": "龙旗科技",
+      "value": "+581",
+      "raw_rate": "581"
+    },
+    {
+      "rank": 80,
+      "code": "600956",
+      "name": "新天绿能",
+      "value": "+576",
+      "raw_rate": "576"
+    },
+    {
+      "rank": 81,
+      "code": "600036",
+      "name": "招商银行",
+      "value": "+574",
+      "raw_rate": "574"
+    },
+    {
+      "rank": 82,
+      "code": "002230",
+      "name": "科大讯飞",
+      "value": "+558",
+      "raw_rate": "558"
+    },
+    {
+      "rank": 83,
+      "code": "000883",
+      "name": "湖北能源",
+      "value": "+557",
+      "raw_rate": "557"
+    },
+    {
+      "rank": 84,
+      "code": "605199",
+      "name": "ST葫芦娃",
+      "value": "+552",
+      "raw_rate": "552"
+    },
+    {
+      "rank": 85,
+      "code": "002837",
+      "name": "英维克",
+      "value": "+551",
+      "raw_rate": "551"
+    },
+    {
+      "rank": 86,
+      "code": "600310",
+      "name": "广西能源",
+      "value": "+544",
+      "raw_rate": "544"
+    },
+    {
+      "rank": 87,
+      "code": "603823",
+      "name": "百合花",
+      "value": "+542",
+      "raw_rate": "542"
+    },
+    {
+      "rank": 88,
+      "code": "601225",
+      "name": "陕西煤业",
+      "value": "+540",
+      "raw_rate": "540"
+    },
+    {
+      "rank": 89,
+      "code": "300395",
+      "name": "菲利华",
+      "value": "+529",
+      "raw_rate": "529"
+    },
+    {
+      "rank": 90,
+      "code": "601778",
+      "name": "晶科科技",
+      "value": "+529",
+      "raw_rate": "529"
+    },
+    {
+      "rank": 91,
+      "code": "000531",
+      "name": "穗恒运A",
+      "value": "+523",
+      "raw_rate": "523"
+    },
+    {
+      "rank": 92,
+      "code": "688079",
+      "name": "美迪凯",
+      "value": "+522",
+      "raw_rate": "522"
+    },
+    {
+      "rank": 93,
+      "code": "002452",
+      "name": "长高电新",
+      "value": "+521",
+      "raw_rate": "521"
+    },
+    {
+      "rank": 94,
+      "code": "300170",
+      "name": "汉得信息",
+      "value": "+518",
+      "raw_rate": "518"
+    },
+    {
+      "rank": 95,
+      "code": "002925",
+      "name": "盈趣科技",
+      "value": "+516",
+      "raw_rate": "516"
+    },
+    {
+      "rank": 96,
+      "code": "600869",
+      "name": "远东股份",
+      "value": "+516",
+      "raw_rate": "516"
+    },
+    {
+      "rank": 97,
+      "code": "601399",
+      "name": "国机重装",
+      "value": "+514",
+      "raw_rate": "514"
+    },
+    {
+      "rank": 98,
+      "code": "000034",
+      "name": "神州数码",
+      "value": "+510",
+      "raw_rate": "510"
+    },
+    {
+      "rank": 99,
+      "code": "603363",
+      "name": "傲农生物",
+      "value": "+509",
+      "raw_rate": "509"
+    },
+    {
+      "rank": 100,
+      "code": "002426",
+      "name": "胜利精密",
+      "value": "+505",
+      "raw_rate": "505"
+    }
+  ],
+  "meta": {
+    "source": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+    "field": "skyrocket_hour",
+    "count": 100
+  }
+}

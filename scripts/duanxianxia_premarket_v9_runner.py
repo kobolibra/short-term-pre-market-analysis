@@ -5,13 +5,18 @@ duanxianxia_premarket_v9_runner.py — v9 full-data premarket DECISION engine.
 Pipeline:
     build_v72_decisions(date)  -> 完整 v7.2 decisions + 全量数据 bundle
     assemble_v9(bundle.v71, decisions, ...) -> v9 六层全保真重打分 (含 edge_score)
-    _select_buys(...)          -> regime 自适应保守买入闸门 (与 v7.3 纪律同源)
+                                               + 动作层 (BUY/WATCH/DROP, 见 v9_output)
+    _select_buys(...)          -> 读取 v9_output 分位数动作闸门产出的 BUY 行
     _adapt_for_batch(...)      -> batch.py 所需结构 (enabled/top_candidates/...)
 
 本引擎不侵入 v7.x 计算:它复用 v7.2 的完整 decisions 与数据 bundle,
-仅在其上做 v9 全字段装配 + 重打分 + 买入筛选。
+仅在其上做 v9 全字段装配 + 重打分 + 动作决策。
 
-⚠️ 风险提示:此处买入闸门 (REGIME_BUY_GATE / RISK_EXTRA_MARGIN) 为本次新增,
+动作决策层 (BUY/WATCH/DROP) 与买入闸门已下沉到 duanxianxia_v9_output.py,
+采用 regime 自适应的"分位数 + 绝对下限 + 数量上限"闸门(REGIME_ACTION_GATE),
+取代旧的固定 edge 阈值(68~78),避免 edge 实际分布偏低时买入列表恒空。
+
+⚠️ 风险提示:动作闸门参数 (REGIME_ACTION_GATE / RISK_EXTRA_MARGIN) 为本次新增,
    尚未经过历史回测验证。实盘前应先纸面验证。如需回退到 v7.3,改
    duanxianxia_premarket_v7_runner.py 中的 ACTIVE_ENGINE 一行即可。
 
@@ -38,17 +43,6 @@ import duanxianxia_v9_assemble as v9asm
 import duanxianxia_v9_output as v9out
 
 TZ_SHANGHAI = ZoneInfo("Asia/Shanghai")
-
-# regime 自适应买入闸门 (edge 阈值 + 最大买入数),与 v7.3 选择性纪律同源。
-REGIME_BUY_GATE: Dict[str, Dict[str, float]] = {
-    "cold": {"edge_threshold": 78.0, "max_buys": 1},
-    "cold_to_warming": {"edge_threshold": 72.0, "max_buys": 3},
-    "warming": {"edge_threshold": 72.0, "max_buys": 3},
-    "normal": {"edge_threshold": 70.0, "max_buys": 4},
-    "hot": {"edge_threshold": 68.0, "max_buys": 5},
-}
-DEFAULT_BUY_GATE: Dict[str, float] = {"edge_threshold": 72.0, "max_buys": 3}
-RISK_EXTRA_MARGIN = 8.0
 
 ALPHA_LABELS = {
     "AUCTION_ORDERFLOW": "竞价资金流",
@@ -155,30 +149,17 @@ def _to_batch_row(row: Mapping[str, Any], rank: int) -> Dict[str, Any]:
 
 
 def _select_buys(ranked: List[Mapping[str, Any]], market_env: Any, meta: Optional[Mapping[str, Any]]):
-    regime = _regime_label(market_env, meta)
-    gate = REGIME_BUY_GATE.get(regime, DEFAULT_BUY_GATE)
-    thr = float(gate["edge_threshold"])
-    max_buys = int(gate["max_buys"])
-    buys: List[Mapping[str, Any]] = []
-    for row in ranked:
-        try:
-            edge = float(row.get("edge_score"))
-        except Exception:
-            continue
-        if edge < thr:
-            continue
-        if row.get("risk_flag") and edge < thr + RISK_EXTRA_MARGIN:
-            continue
-        buys.append(row)
-        if len(buys) >= max_buys:
-            break
-    gate_info = {
-        "regime": regime or "(unknown)",
-        "edge_threshold": thr,
-        "max_buys": max_buys,
-        "selected": len(buys),
-        "risk_extra_margin": RISK_EXTRA_MARGIN,
-    }
+    """读取 v9_output 动作层结果:action_type == 'BUY' 即买入候选。
+
+    闸门参数已在 shape_v9_output 阶段按 regime 分位数标定并写入 meta['action_gate'],
+    此处不再重复计算阈值,仅消费动作标签,保证决策"单一来源"。
+    """
+    buys = [row for row in ranked if str(row.get("action_type")) == "BUY"]
+    gate_info: Dict[str, Any] = {}
+    if isinstance(meta, Mapping) and isinstance(meta.get("action_gate"), Mapping):
+        gate_info = dict(meta["action_gate"])
+    gate_info.setdefault("regime", _regime_label(market_env, meta) or "(unknown)")
+    gate_info["selected"] = len(buys)
     return buys, gate_info
 
 
@@ -190,7 +171,10 @@ def _adapt_for_batch(shaped: Mapping[str, Any]) -> Dict[str, Any]:
     buys, gate_info = _select_buys(ranked, market_env, meta)
     buy_codes = {str(b.get("code")) for b in buys}
     buy_rows = [_to_batch_row(b, i + 1) for i, b in enumerate(buys)]
-    watch_src = [r for r in ranked if str(r.get("code")) not in buy_codes][:10]
+    watch_src = [
+        r for r in ranked
+        if str(r.get("action_type")) == "WATCH" and str(r.get("code")) not in buy_codes
+    ][:15]
     watch_rows = [_to_batch_row(r, i + 1) for i, r in enumerate(watch_src)]
 
     out["enabled"] = True
@@ -265,13 +249,13 @@ def render_text(result: Mapping[str, Any]) -> str:
         "**盘前 v9 全量数据决策**",
         f"- 引擎：{meta.get('engine') or 'premarket_v9'}（基于 {meta.get('base_pipeline') or 'premarket_v7_2'}）",
         f"- 交易日：{meta.get('date_t0') or '-'}",
-        f"- regime：{gate.get('regime')}｜阈值 {gate.get('edge_threshold')}｜上限 {gate.get('max_buys')}",
-        f"- 候选池：{result.get('candidate_count') or 0}；买入候选：{len(result.get('top_candidates') or [])}",
+        f"- regime：{gate.get('regime')}｜买入下限 edge {gate.get('buy_floor')}｜Top {gate.get('buy_rank_cap')}｜上限 {gate.get('max_buys')}",
+        f"- 候选池：{result.get('candidate_count') or 0}；买入候选：{len(result.get('top_candidates') or [])}；观察：{len(result.get('watch_candidates') or [])}",
     ]
     if paths.get("analysis_path"):
         lines.append(f"- 分析文件：`{paths['analysis_path']}`")
     lines.append("")
-    lines.append("**BUY / 高 edge 候选**")
+    lines.append("**BUY 候选**")
     buy_rows = result.get("top_candidates") or []
     if not buy_rows:
         lines.append("- 无。证据不足时不强行推荐。")

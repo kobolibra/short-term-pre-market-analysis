@@ -28,6 +28,7 @@ from duanxianxia_fetcher import (
 from feishu_bitable_cli import create_record, feishu_request, load_meta
 
 WORKSPACE_ROOT = Path("/home/investmentofficehku/.openclaw/workspace")
+OPENCLAW_ROOT = WORKSPACE_ROOT.parent
 PROJECT_ROOT = WORKSPACE_ROOT / "projects" / "duanxianxia"
 REPORT_ROOT = PROJECT_ROOT / "reports"
 CAPTURE_ROOT = PROJECT_ROOT / "captures"
@@ -79,6 +80,7 @@ def load_workspace_env(env_path: Path) -> None:
         return
 
 
+load_workspace_env(OPENCLAW_ROOT / ".env")
 load_workspace_env(WORKSPACE_ROOT / ".env")
 
 GROUPS: Dict[str, Dict[str, Any]] = {
@@ -1837,7 +1839,10 @@ def build_dailyline_stock_pool_from_captures(target_date: str) -> Tuple[List[Dic
 
 
 def fetch_all_bitable_records(meta_name: str = "duanxianxia_review") -> List[Dict[str, Any]]:
-    meta = load_meta(meta_name)
+    try:
+        meta = load_meta(meta_name)
+    except SystemExit:
+        return []
     app_token = meta["app_token"]
     table_id = meta["table_id"]
     page_token = ""
@@ -2020,7 +2025,19 @@ def sync_analysis_to_bitable(report: Dict[str, Any], meta_name: str = "duanxianx
             "reason": "no supported analysis records",
         }
 
-    meta = load_meta(meta_name)
+    try:
+        meta = load_meta(meta_name)
+    except SystemExit as exc:
+        return {
+            "enabled": False,
+            "meta_name": meta_name,
+            "created_count": 0,
+            "skipped_existing_count": 0,
+            "records": [],
+            "reason": str(exc),
+            "status": "skipped_missing_meta",
+        }
+
     records: List[Dict[str, Any]] = []
     created_count = 0
     skipped_existing_count = 0

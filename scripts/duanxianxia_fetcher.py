@@ -1939,10 +1939,42 @@ class DuanxianxiaFetcher:
                     "5d": "5日排行",
                     "10d": "10日排行",
                 }
+                period_index_map = {
+                    "today": 0,
+                    "3d": 1,
+                    "5d": 2,
+                    "10d": 3,
+                }
                 tab_label = label_map[period]
                 if period != "today":
-                    page.get_by_text(tab_label, exact=True).click()
-                    page.wait_for_timeout(1800)
+                    page.wait_for_selector('span.commonTab3_market-type-tag__394Ne', timeout=15000)
+                    before_first_code = page.locator('table tbody tr td').nth(2).inner_text(timeout=15000).strip()
+                    clicked = page.evaluate(
+                        """({label, tabIndex}) => {
+                            const tabs = Array.from(document.querySelectorAll('span.commonTab3_market-type-tag__394Ne'));
+                            const byText = tabs.find(el => (el.innerText || '').trim() === label);
+                            const target = byText || tabs[tabIndex];
+                            if (!target) return false;
+                            target.scrollIntoView({block: 'center', inline: 'center'});
+                            target.click();
+                            return true;
+                        }""",
+                        {"label": tab_label, "tabIndex": period_index_map[period]},
+                    )
+                    if not clicked:
+                        raise RuntimeError(f"cashflow period tab not found: {tab_label}")
+                    page.wait_for_function(
+                        """prev => {
+                            const cells = document.querySelectorAll('table tbody tr td');
+                            if (!cells || cells.length < 3) return false;
+                            const firstCode = (cells[2].innerText || '').trim();
+                            const active = document.querySelector('span.commonTab3_active-tag__DGODb');
+                            const activeText = active ? (active.innerText || '').trim() : '';
+                            return activeText === prev.label && firstCode && firstCode !== prev.before;
+                        }""",
+                        arg={"label": tab_label, "before": before_first_code},
+                        timeout=15000,
+                    )
 
                 first_page = self._extract_cashflow_rows_from_page(page)
                 total_pages = first_page["total_pages"]

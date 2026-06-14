@@ -2168,7 +2168,31 @@ def _stock_query_timeout_handler(signum: int, frame: Any) -> None:  # noqa: ARG0
     raise StockQueryTimeoutError("baostock single-stock query timed out")
 
 
-def download_dailyline_for_stock(bs: Any, stock: Dict[str, Any], end_date: str, start_date: str, retries: int = 2) -> Dict[str, Any]:
+def _is_baostock_transient_error(message: str) -> bool:
+    text = str(message or "")
+    transient_markers = [
+        "10002007",
+        "网络接收错误",
+        "Connection reset by peer",
+        "Broken pipe",
+        "single-stock query timed out",
+        "接收数据异常",
+    ]
+    return any(marker in text for marker in transient_markers)
+
+
+def _baostock_relogin(bs: Any) -> None:
+    try:
+        bs.logout()
+    except Exception:
+        pass
+    time.sleep(1.0)
+    login_res = bs.login()
+    if getattr(login_res, "error_code", "0") != "0":
+        raise RuntimeError(f"BAOSTOCK_RELOGIN_ERR {login_res.error_code} {login_res.error_msg}")
+
+
+def download_dailyline_for_stock(bs: Any, stock: Dict[str, Any], end_date: str, start_date: str, retries: int = 3) -> Dict[str, Any]:
     code = str(stock.get("股票代码") or "")
     bs_code = str(stock.get("baostock代码") or "")
     path = DAILYLINE_STOCK_ROOT / f"{code}.csv"
@@ -2236,6 +2260,11 @@ def download_dailyline_for_stock(bs: Any, stock: Dict[str, Any], end_date: str, 
         except Exception as exc:  # noqa: BLE001
             last_error = f"{type(exc).__name__}: {exc}"
             if attempt < retries:
+                if _is_baostock_transient_error(last_error):
+                    try:
+                        _baostock_relogin(bs)
+                    except Exception as relogin_exc:  # noqa: BLE001
+                        last_error = f"{last_error} | relogin_failed: {type(relogin_exc).__name__}: {relogin_exc}"
                 time.sleep(1.0 + attempt)
                 continue
         finally:

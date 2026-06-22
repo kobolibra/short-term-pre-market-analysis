@@ -40,6 +40,31 @@ def _first_nonempty(*rowsets: Optional[List[Any]]) -> List[Any]:
     return []
 
 
+def _auction_amount_pct_map(decisions: List[Dict[str, Any]]) -> Dict[str, float]:
+    """v10: 对当天全体候选的竞价成交额(auction_amount_wan)标定横截面百分位(0-100)。
+
+    必须在逐行 compute_edge_v9 之前按全体候选标定;缺失个股由调用方取中性 50。
+    """
+    pairs: List[tuple] = []
+    for d in decisions or []:
+        ad = d.get("auction_detail") or {}
+        v = ad.get("auction_amount_wan")
+        try:
+            if v not in (None, "", "-", "None"):
+                pairs.append((str(d.get("code") or "").strip(), float(str(v).replace(",", "").strip())))
+        except Exception:
+            pass
+    pct_map: Dict[str, float] = {}
+    if len(pairs) > 1:
+        pairs.sort(key=lambda kv: kv[1])
+        m = len(pairs)
+        for rank, (code, _) in enumerate(pairs):
+            pct_map[code] = rank / (m - 1) * 100.0
+    elif len(pairs) == 1:
+        pct_map[pairs[0][0]] = 50.0
+    return pct_map
+
+
 def assemble_v9(
     bundle: Any,                         # PremarketDataBundle (含 auction_weimai / T0 等全量字段)
     decisions: List[Dict[str, Any]],     # 现有 v7 引擎产出的候选
@@ -90,6 +115,9 @@ def assemble_v9(
         params=p,
     )
 
+    # v10: 竞价成交额横截面百分位(在逐行 edge 之前按全体候选标定)
+    amt_pct_map = _auction_amount_pct_map(decisions)
+
     enriched: List[Dict[str, Any]] = []
     for d in decisions or []:
         code = str(d.get("code") or "").strip()
@@ -101,6 +129,10 @@ def assemble_v9(
             row["theme_detail"] = v9_theme
             row["theme_strength_t0"] = v9_theme.get("theme_strength_t0")
         row["context_detail"] = context.get(code, {})
+        # v10: 注入竞价成交额横截面百分位(不改原始 decision 的 auction_detail)
+        _ad = dict(row.get("auction_detail") or {})
+        _ad["auction_amount_pct"] = amt_pct_map.get(code, 50.0)
+        row["auction_detail"] = _ad
         edge = v9edge.compute_edge_v9(row, market_env, p)
         row.update(edge)
         enriched.append(row)

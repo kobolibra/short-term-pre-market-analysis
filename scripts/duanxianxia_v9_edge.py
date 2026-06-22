@@ -1,9 +1,26 @@
 """
-duanxianxia_v9_edge.py — 四类因子合成的 v10 alpha edge。
+duanxianxia_v9_edge.py — 四类因子合成的 alpha edge。
 
-edge = main(主) + aux(辅) + background(背景) - risk_penalty(风险)
-产出 edge_score(0-100) / edge_components / alpha_type / risk_flag / risk_detail,
-全部作为可解释字段输出,不丢。
+v10 改动(基于 11 天真实数据的字段 IC 反推,口径=excess_ret=收盘涨幅-竞价涨幅):
+  edge_score 不再用旧的 main/aux/background(0.50/0.22/0.28)线性合成,
+  改为按 excess IC 重配权重的核心打分:
+    edge = clamp(
+        0.23*auction_amount_pct(竞价成交额当日横截面百分位)
+      + 0.19*auction_strength + 0.18*liquidity
+      + 0.14*money + 0.14*pressure_score
+      + 0.08*weimai_strength + 0.05*orderbook
+      - risk_penalty )
+  剔除了对 excess 无效的 low_cost / source_evidence / background(题材/环境/龙头/资金连续)
+  的正向加分(它们多为同日内常数或噪音);high-open 等仍保留在 risk_penalty 端。
+  main/aux/background 等分量仍照常计算并输出,仅作可解释诊断 + alpha_type 判定。
+
+  注:auction_amount_pct 需横截面信息,由 assemble_v9 在调用本函数前注入到
+  decision['auction_detail']['auction_amount_pct'](缺失=中性 50)。
+
+  money 回退 bug 修复:不再在 money_intent_score 缺失时回退到 net_amount_rank
+  (后者是秩,方向相反、量纲不同)。
+
+产出 edge_score(0-100) / edge_components / alpha_type / risk_flag / risk_detail。
 """
 from __future__ import annotations
 
@@ -50,13 +67,16 @@ def compute_edge_v9(
     auction_strength = _f(decision.get("auction_strength") or a.get("auction_strength"))
     pct = a.get("latest_change_pct")
     pct = _f(pct, None) if pct is not None else _f(decision.get("auction_pct"), None)
-    money = _f(a.get("money_intent_score") or a.get("net_amount_rank") or 0.0)
+    # v10: money 只取 money_intent_score;不再回退到 net_amount_rank(秩,方向相反、量纲不同)
+    money = _f(a.get("money_intent_score"), 0.0)
     net_pressure = _f(a.get("net_pressure"), 0.0)
     orderbook = _f(a.get("orderbook_quality_score"), 45.0)
     liquidity = _f(a.get("liquidity_score"), 50.0)
     source_evidence = _f(a.get("source_evidence_score"), 0.0)
+    # v10: 竞价成交额当日横截面百分位(0-100),由 assemble_v9 注入;缺失=中性 50
+    auction_amount_pct = _f(a.get("auction_amount_pct"), 50.0)
 
-    # --- 主因子:订单流 + 资金 + 成本赔率 ---
+    # --- 主因子:订单流 + 资金 + 成本赔率(诊断 + alpha_type 用) ---
     low_cost = _low_cost_score(pct, float(p.get("edge_lowcost_lo", -1.5)), float(p.get("edge_lowcost_hi", 4.0)))
     pressure_score = _clamp(max(0.0, net_pressure) / float(p.get("net_pressure_full", 0.002)) * 100.0) if net_pressure else 0.0
     main_factor = _clamp(
@@ -66,11 +86,11 @@ def compute_edge_v9(
         + 0.10 * min(100.0, source_evidence * 3.0)
     )
 
-    # --- 辅助:weimai + 封单/盘口真实性 ---
+    # --- 辅助:weimai + 封单/盘口真实性(诊断 + alpha_type 用) ---
     weimai_strength = _f(w.get("weimai_strength"), 0.0)
     aux_factor = _clamp(0.55 * weimai_strength + 0.30 * orderbook + 0.15 * liquidity)
 
-    # --- 背景:题材 + 市场环境 + 历史资金 + 龙头高度 ---
+    # --- 背景:题材 + 市场环境 + 历史资金 + 龙头高度(诊断 + alpha_type 用) ---
     theme = _f(decision.get("theme_strength_t0") or t.get("theme_strength_t0"), 0.0)
     env_score = _f(env.get("market_env_score"), 50.0)
     continuity = {"strong": 80.0, "medium": 55.0, "weak": 30.0, "unknown": 45.0}.get(str(c.get("cashflow_continuity") or "unknown"), 45.0)
@@ -87,7 +107,7 @@ def compute_edge_v9(
     if liquidity <= float(p.get("edge_low_liquidity", 35)):
         risk_detail["low_liquidity"] = liquidity
         risk_penalty += float(p.get("edge_low_liquidity_penalty", 12))
-    if str(a.get("fengdan_status") or "").lower() in {"fake", "consume", "假封单", "消耗"}:
+    if str(a.get("fengdan_status") or "").lower() in {"fake", "consume", "\u5047\u5c01\u5355", "\u6d88\u8017"}:
         risk_detail["fake_or_consuming_seal"] = a.get("fengdan_status")
         risk_penalty += float(p.get("edge_fake_seal_penalty", 16))
     if str(a.get("auction_setup_type") or "") == "FAKE_STRENGTH":
@@ -100,14 +120,19 @@ def compute_edge_v9(
     if env_flags:
         risk_detail["market_env_flags"] = env_flags
 
-    edge_score = _clamp(
-        float(p.get("edge_w_main", 0.50)) * main_factor
-        + float(p.get("edge_w_aux", 0.22)) * aux_factor
-        + float(p.get("edge_w_background", 0.28)) * background_factor
-        - risk_penalty
+    # --- v10 IC 加权 edge 核心(取代旧 0.50/0.22/0.28 合成) ---
+    edge_core = (
+        float(p.get("edge_w_amt", 0.23)) * auction_amount_pct
+        + float(p.get("edge_w_auction", 0.19)) * auction_strength
+        + float(p.get("edge_w_liquidity", 0.18)) * liquidity
+        + float(p.get("edge_w_money", 0.14)) * money
+        + float(p.get("edge_w_pressure", 0.14)) * pressure_score
+        + float(p.get("edge_w_weimai", 0.08)) * weimai_strength
+        + float(p.get("edge_w_orderbook", 0.05)) * orderbook
     )
+    edge_score = _clamp(edge_core - risk_penalty)
 
-    # alpha_type:主导因子
+    # alpha_type:主导因子(沿用 main/aux/background 贡献占比,仅作标签)
     contributions = {
         "AUCTION_ORDERFLOW": float(p.get("edge_w_main", 0.50)) * main_factor,
         "ORDERBOOK_WEIMAI": float(p.get("edge_w_aux", 0.22)) * aux_factor,
@@ -133,6 +158,7 @@ def compute_edge_v9(
                 "weimai_strength": round(weimai_strength, 2),
                 "orderbook": round(orderbook, 2),
                 "liquidity": round(liquidity, 2),
+                "auction_amount_pct": round(auction_amount_pct, 2),
                 "theme_strength_t0": round(theme, 2),
                 "market_env_score": round(env_score, 2),
                 "cashflow_continuity_score": round(continuity, 2),

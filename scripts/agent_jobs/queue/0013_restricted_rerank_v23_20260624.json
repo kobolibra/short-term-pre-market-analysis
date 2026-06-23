@@ -1,0 +1,8 @@
+{
+  "id": "0013_restricted_rerank_v23_20260624",
+  "script": "scripts/v23_restricted_rerank.py",
+  "args": ["--min-train", "5", "--epochs", "80"],
+  "timeout": 2400,
+  "created": "2026-06-24T00:32:00+08:00",
+  "note": "Evaluate constrained top-of-book reranker: MLP only inside v10_amt Top-M, sparse IC-prior formula, Top-3/5 same-day alpha."
+}

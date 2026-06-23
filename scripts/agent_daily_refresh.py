@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """agent_daily_refresh.py — 每日自动把核心分析套件重新入队(只增不覆盖)。
 
-让盘前选股分析“持续迭代”: 每天随新数据自动重跑
-  v10_optimize / v12_reflection / v13_lowopen_reverse / v14_horizon / v15_cohort_selector,
+让盘前选股分析“持续迭代”: 每天随新数据自动重跑核心回测/反思/重构套件,
 结果由 runner 发布到 agent-results 分支。
 
 幂等: 每天每脚本只入队一次(队列文件按日期命名; 已存在则跳过)。
@@ -19,12 +18,26 @@ from pathlib import Path
 WS = Path(__file__).resolve().parent.parent
 QUEUE_DIR = WS / "scripts" / "agent_jobs" / "queue"
 
+# 核心持续回测套件:
+# v10-v15: 原有排序/反思/失败模式/低开/周期/cohort
+# v16-v17: 持仓出场(目标位/止损)证伪与监控
+# v18-v19: Top-K 集中度与逐日稳健性
+# v20-v22: 环境/特征/torch 排序重构地基
+# v23: 受限头部重排器(最新候选方向)
 SUITE = [
     ("v10_optimize.py", ["--no-regen", "--top-n", "30"]),
     ("v12_reflection.py", ["--top-n", "30"]),
     ("v13_lowopen_reverse.py", ["--low-open-max", "2.0", "--top-n", "30"]),
     ("v14_horizon.py", ["--top-n", "30"]),
     ("v15_cohort_selector.py", ["--top-n", "30", "--min-train", "5", "--low-open-max", "2.0"]),
+    ("v16_strategy.py", ["--top-n", "30", "--min-train", "5"]),
+    ("v17_exit.py", ["--top-n", "30"]),
+    ("v18_concentration.py", []),
+    ("v19_topk_robust.py", []),
+    ("v20_env_probe.py", []),
+    ("v21_feature_export.py", []),
+    ("v22_torch_ranker.py", ["--min-train", "5", "--epochs", "120"]),
+    ("v23_restricted_rerank.py", ["--min-train", "5", "--epochs", "80"]),
 ]
 
 

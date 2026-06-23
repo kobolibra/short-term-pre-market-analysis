@@ -3,7 +3,7 @@
 """agent_daily_refresh.py — 每日自动把核心分析套件重新入队(只增不覆盖)。
 
 让盘前选股分析“持续迭代”: 每天随新数据自动重跑
-  v10_optimize / v12_reflection / v13_lowopen_reverse / v14_horizon,
+  v10_optimize / v12_reflection / v13_lowopen_reverse / v14_horizon / v15_cohort_selector,
 结果由 runner 发布到 agent-results 分支。
 
 幂等: 每天每脚本只入队一次(队列文件按日期命名; 已存在则跳过)。
@@ -24,6 +24,7 @@ SUITE = [
     ("v12_reflection.py", ["--top-n", "30"]),
     ("v13_lowopen_reverse.py", ["--low-open-max", "2.0", "--top-n", "30"]),
     ("v14_horizon.py", ["--top-n", "30"]),
+    ("v15_cohort_selector.py", ["--top-n", "30", "--min-train", "5", "--low-open-max", "2.0"]),
 ]
 
 

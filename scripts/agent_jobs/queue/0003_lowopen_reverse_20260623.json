@@ -1,0 +1,8 @@
+{
+  "id": "0003_lowopen_reverse_20260623",
+  "script": "scripts/v13_lowopen_reverse.py",
+  "args": ["--low-open-max", "2.0", "--top-n", "30"],
+  "timeout": 2400,
+  "created": "2026-06-23T16:20:00+08:00",
+  "note": "Reverse-engineer the dropped low-open / risk-flagged winners: cohort excess, top-30 winner share, within-cohort field IC + selector capture@30."
+}

@@ -1,0 +1,8 @@
+{
+  "id": "0001_failure_mode_20260623",
+  "script": "scripts/v11_failure_mode_backtest.py",
+  "args": ["--high-open", "3.0"],
+  "timeout": 1800,
+  "created": "2026-06-23T15:12:00+08:00",
+  "note": "Backtest whether high-open + last_second grab + weak env is a systematic negative-excess failure mode (motivated by 000823 limit-down on 2026-06-23)."
+}

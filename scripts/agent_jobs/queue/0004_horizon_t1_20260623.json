@@ -1,0 +1,8 @@
+{
+  "id": "0004_horizon_t1_20260623",
+  "script": "scripts/v14_horizon.py",
+  "args": ["--top-n", "30"],
+  "timeout": 2400,
+  "created": "2026-06-23T16:50:00+08:00",
+  "note": "Extend evaluation to T+1: next-day open/close/high + hold-open-to-next-close/high returns, by action, field IC, and edge capture."
+}

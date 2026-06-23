@@ -1,0 +1,8 @@
+{
+  "id": "0007_exit_v17_20260623",
+  "script": "scripts/v17_exit.py",
+  "args": ["--top-n", "30"],
+  "timeout": 2400,
+  "created": "2026-06-23T19:42:00+08:00",
+  "note": "Downside stop-loss exit (cut left tail, uncapped upside) sweep S=3/5/8; select by amt and edge Top-30."
+}

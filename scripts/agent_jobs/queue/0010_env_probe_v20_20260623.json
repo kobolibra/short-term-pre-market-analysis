@@ -1,0 +1,8 @@
+{
+  "id": "0010_env_probe_v20_20260623",
+  "script": "scripts/v20_env_probe.py",
+  "args": [],
+  "timeout": 1200,
+  "created": "2026-06-23T20:40:00+08:00",
+  "note": "Rebuild step 0: probe ML libraries + quantify trainable data volume."
+}

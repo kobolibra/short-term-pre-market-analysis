@@ -7,7 +7,8 @@
 #
 # 说明：
 # - git reset --hard origin/main 使工作树严格跟随远端 main（丢弃本地未推送的代码改动）。
-#   captures/reports/dailyline 等数据如在 .gitignore 内不受影响。
+#   captures/reports/dailyline 等数据如在 .gitignore 内不受影响。未跟踪的队列文件(daily_*.json)不被 reset 删除。
+# - 每轮先调用 agent_daily_refresh.py 把当日分析套件入队(幂等，每天每脚本一次)，再跑 worker。
 # - 跑完后把 reports/_audit 下的小结果文件快照发布到独立分支 agent-results（force-push，
 #   仅本机写，永不与 main 代码推送冲突），供 AI 直接经 GitHub 读取，避开外部隐道网址。
 #   原始大数据（*_analysis_v9.json、captures、dailyline）从不上传，只由服务器脚本本地读。
@@ -51,6 +52,8 @@ publish_results() {
   else
     echo "git sync FAILED (check remote/credentials)"
   fi
+  echo "--- daily refresh enqueue ---"
+  /usr/bin/python3 scripts/agent_daily_refresh.py
   /usr/bin/python3 scripts/agent_job_worker.py
   echo "--- publish results ---"
   publish_results

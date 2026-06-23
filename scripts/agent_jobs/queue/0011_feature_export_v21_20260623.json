@@ -1,0 +1,8 @@
+{
+  "id": "0011_feature_export_v21_20260623",
+  "script": "scripts/v21_feature_export.py",
+  "args": [],
+  "timeout": 1800,
+  "created": "2026-06-23T21:00:00+08:00",
+  "note": "Rebuild step 1: export feature matrix CSV + per-feature IC priors for v22 torch ranker."
+}

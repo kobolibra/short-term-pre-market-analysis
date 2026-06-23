@@ -1,0 +1,8 @@
+{
+  "id": "0006_strategy_v16_20260623",
+  "script": "scripts/v16_strategy.py",
+  "args": ["--top-n", "30", "--min-train", "5"],
+  "timeout": 2400,
+  "created": "2026-06-23T19:06:00+08:00",
+  "note": "Act-on-findings: T+1 high-sell target-exit backtest (executable sell targets) + v10_amt/edge rank-blend ensemble (walk-forward alpha)."
+}

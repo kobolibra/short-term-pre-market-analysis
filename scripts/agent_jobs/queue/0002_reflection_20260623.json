@@ -1,0 +1,8 @@
+{
+  "id": "0002_reflection_20260623",
+  "script": "scripts/v12_reflection.py",
+  "args": ["--top-n", "30"],
+  "timeout": 2400,
+  "created": "2026-06-23T15:40:00+08:00",
+  "note": "Full-history reflection: daily top winners, why-not-selected (gating vs ranking), pick performance, field IC, weight-adjustment recommendations."
+}

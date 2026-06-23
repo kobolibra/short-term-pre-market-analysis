@@ -1,0 +1,8 @@
+{
+  "id": "0012_torch_ranker_v22_20260623",
+  "script": "scripts/v22_torch_ranker.py",
+  "args": ["--min-train", "5", "--epochs", "120"],
+  "timeout": 2400,
+  "created": "2026-06-23T21:25:00+08:00",
+  "note": "Rebuild step 2: torch pairwise cross-sectional ranker, walk-forward OOS vs v10_amt (cap5/cap30/IC/top5)."
+}

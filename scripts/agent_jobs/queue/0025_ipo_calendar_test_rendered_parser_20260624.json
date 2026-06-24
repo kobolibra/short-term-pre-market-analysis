@@ -1,0 +1,8 @@
+{
+  "id": "0025_ipo_calendar_test_rendered_parser_20260624",
+  "script": "scripts/ipo_calendar_notify.py",
+  "args": ["--date", "2026-06-24", "--no-send", "--run-weekends"],
+  "timeout": 1200,
+  "created": "2026-06-24T22:06:00+08:00",
+  "note": "Retest strictly provided 9fzt stockApply URL after rendered-text parser fix; no Feishu send."
+}

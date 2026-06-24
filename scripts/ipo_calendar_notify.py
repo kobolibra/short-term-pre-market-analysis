@@ -8,11 +8,12 @@
   - 保存独立数据到 projects/ipo_calendar/；
   - 通过飞书机器人推送摘要。
 
-与 duanxianxia 选股项目隔离：数据、报告都落在 projects/ipo_calendar。
+与 duanxianxia 选股项目隔离：数据、报告都落在 projects/ipo_calendar/。
 
 飞书配置（不提交 secrets）：
-  - IPO_FEISHU_WEBHOOK_URL 或 FEISHU_WEBHOOK_URL 或 LARK_WEBHOOK_URL
-  - 可选签名密钥：IPO_FEISHU_SIGN_SECRET 或 FEISHU_SIGN_SECRET 或 LARK_SIGN_SECRET
+  - 推荐：IPO_FEISHU_WEBHOOK_URL
+  - 兼容：FEISHU_WEBHOOK_URL / LARK_WEBHOOK_URL / FEISHU_WEBHOOK / LARK_WEBHOOK / WEBHOOK_URL
+  - 可选签名密钥：IPO_FEISHU_SIGN_SECRET / FEISHU_SIGN_SECRET / LARK_SIGN_SECRET
 
 用法：
   python3 scripts/ipo_calendar_notify.py
@@ -41,6 +42,7 @@ from zoneinfo import ZoneInfo
 DEFAULT_URL = "https://stock.9fzt.com/dataCenter/stockApply.html"
 TZ = ZoneInfo("Asia/Shanghai")
 ROOT = Path(__file__).resolve().parent.parent
+OPENCLAW_ROOT = ROOT.parent
 PROJECT = ROOT / "projects" / "ipo_calendar"
 DATA_DIR = PROJECT / "data"
 AUDIT_DIR = PROJECT / "reports" / "_audit"
@@ -52,6 +54,31 @@ HEADERS = [
     "有效报价配售对象家数", "招股书",
 ]
 DATE_FIELDS = ["申购日期", "网上申购缴款日期", "上市日期"]
+
+
+def load_env_file(path: Path) -> None:
+    if not path.exists():
+        return
+    try:
+        for raw_line in path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            if not key:
+                continue
+            value = value.strip()
+            if value and len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+                value = value[1:-1]
+            os.environ.setdefault(key, value)
+    except Exception:
+        return
+
+
+# Cron 环境通常很瘦；显式加载工作区 .env，方便服务器已有 webhook secret 复用。
+load_env_file(OPENCLAW_ROOT / ".env")
+load_env_file(ROOT / ".env")
 
 
 def today_str() -> str:
@@ -81,6 +108,7 @@ def fetch_html(url: str, timeout: int = 25) -> str:
 def clean_cell(s: str) -> str:
     s = re.sub(r"<script[\s\S]*?</script>", "", s, flags=re.I)
     s = re.sub(r"<style[\s\S]*?</style>", "", s, flags=re.I)
+    s = re.sub(r"<a[^>]+href=['\"]([^'\"]+)['\"][^>]*>[\s\S]*?</a>", r"\1", s, flags=re.I)
     s = re.sub(r"<[^>]+>", " ", s)
     s = html_lib.unescape(s)
     s = s.replace("\\--", "--").replace("\u00a0", " ")
@@ -88,26 +116,19 @@ def clean_cell(s: str) -> str:
 
 
 def parse_stock_apply_table(page_html: str) -> List[Dict[str, Any]]:
-    """Parse server-rendered 9fzt stockApply table.
-
-    The page currently renders a normal HTML table. We avoid external dependencies
-    so the script can run on the VM with stdlib only.
-    """
+    """Parse server-rendered 9fzt stockApply table with stdlib only."""
     rows: List[Dict[str, Any]] = []
     for tr in re.findall(r"<tr[^>]*>([\s\S]*?)</tr>", page_html, flags=re.I):
         cells_raw = re.findall(r"<t[dh][^>]*>([\s\S]*?)</t[dh]>", tr, flags=re.I)
         cells = [clean_cell(c) for c in cells_raw]
         if len(cells) < 12:
             continue
-        # Data rows start with 序号 + 6-digit stock code.
         if not re.fullmatch(r"\d+", cells[0] or ""):
             continue
         if not re.fullmatch(r"\d{6}", cells[1] or ""):
             continue
-        # Pad/truncate to expected columns.
         vals = (cells + [""] * len(HEADERS))[: len(HEADERS)]
-        rec = dict(zip(HEADERS, vals))
-        rows.append(rec)
+        rows.append(dict(zip(HEADERS, vals)))
     return rows
 
 
@@ -115,17 +136,13 @@ def normalize_md(mmdd: str, year: int) -> Optional[str]:
     s = (mmdd or "").strip()
     if not s or s in {"--", "-", "—"}:
         return None
-    # 06-24 / 6-24 / 2026-06-24 all accepted.
     m = re.search(r"(?:(\d{4})[-/])?(\d{1,2})[-/](\d{1,2})", s)
     if not m:
         return None
     y = int(m.group(1) or year)
     mo = int(m.group(2))
     d = int(m.group(3))
-    try:
-        return f"{y:04d}-{mo:02d}-{d:02d}"
-    except Exception:
-        return None
+    return f"{y:04d}-{mo:02d}-{d:02d}"
 
 
 def match_events(rows: List[Dict[str, Any]], target_date: str) -> List[Dict[str, Any]]:
@@ -142,15 +159,26 @@ def match_events(rows: List[Dict[str, Any]], target_date: str) -> List[Dict[str,
             item["事件"] = events
             item["事件标签"] = "+".join(events)
             out.append(item)
-    # Event priority: listing first, then subscribe, then payment; stable by code.
     pri = {"上市日期": 0, "申购日期": 1, "网上申购缴款日期": 2}
     out.sort(key=lambda x: (min(pri.get(e, 9) for e in x["事件"]), x.get("代码", "")))
     return out
 
 
+def first_env(names: List[str]) -> Optional[str]:
+    for n in names:
+        v = os.getenv(n)
+        if v:
+            return v
+    return None
+
+
 def webhook_config(cli_url: Optional[str]) -> tuple[Optional[str], Optional[str]]:
-    url = cli_url or os.getenv("IPO_FEISHU_WEBHOOK_URL") or os.getenv("FEISHU_WEBHOOK_URL") or os.getenv("LARK_WEBHOOK_URL")
-    secret = os.getenv("IPO_FEISHU_SIGN_SECRET") or os.getenv("FEISHU_SIGN_SECRET") or os.getenv("LARK_SIGN_SECRET")
+    url = cli_url or first_env([
+        "IPO_FEISHU_WEBHOOK_URL", "FEISHU_WEBHOOK_URL", "LARK_WEBHOOK_URL",
+        "IPO_FEISHU_WEBHOOK", "FEISHU_WEBHOOK", "LARK_WEBHOOK", "WEBHOOK_URL",
+        "FEISHU_BOT_WEBHOOK", "LARK_BOT_WEBHOOK", "DXX_FEISHU_WEBHOOK_URL",
+    ])
+    secret = first_env(["IPO_FEISHU_SIGN_SECRET", "FEISHU_SIGN_SECRET", "LARK_SIGN_SECRET"])
     return url, secret
 
 
@@ -167,12 +195,7 @@ def post_feishu(text: str, webhook_url: str, secret: Optional[str] = None, timeo
         payload["timestamp"] = ts
         payload["sign"] = feishu_sign(secret, ts)
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-    req = urllib.request.Request(
-        webhook_url,
-        data=data,
-        headers={"Content-Type": "application/json; charset=utf-8", "User-Agent": "ipo-calendar-bot/1.0"},
-        method="POST",
-    )
+    req = urllib.request.Request(webhook_url, data=data, headers={"Content-Type": "application/json; charset=utf-8", "User-Agent": "ipo-calendar-bot/1.0"}, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             body = resp.read().decode("utf-8", errors="ignore")
@@ -203,11 +226,10 @@ def build_message(target_date: str, events: List[Dict[str, Any]], source_url: st
         ]
     lines += ["", f"数据源：九方智投新股申购（抓取行数 {total_rows}）", source_url]
     text = "\n".join(lines)
-    # Feishu text message limit can vary; keep safe.
     return text[:3600] + ("\n…(已截断)" if len(text) > 3600 else "")
 
 
-def write_outputs(target_date: str, rows: List[Dict[str, Any]], events: List[Dict[str, Any]], msg: str, send_result: Dict[str, Any]) -> Dict[str, str]:
+def write_outputs(target_date: str, rows: List[Dict[str, Any]], events: List[Dict[str, Any]], msg: str, send_result: Dict[str, Any], source_url: str) -> Dict[str, str]:
     day_dir = DATA_DIR / target_date
     day_dir.mkdir(parents=True, exist_ok=True)
     AUDIT_DIR.mkdir(parents=True, exist_ok=True)
@@ -220,19 +242,9 @@ def write_outputs(target_date: str, rows: List[Dict[str, Any]], events: List[Dic
 
     raw_path.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
     events_path.write_text(json.dumps(events, ensure_ascii=False, indent=2), encoding="utf-8")
-    rec = {
-        "generated_at": datetime.now(TZ).isoformat(timespec="seconds"),
-        "date": target_date,
-        "source_url": DEFAULT_URL,
-        "raw_rows": len(rows),
-        "event_count": len(events),
-        "events": events,
-        "message": msg,
-        "send_result": send_result,
-    }
+    rec = {"generated_at": datetime.now(TZ).isoformat(timespec="seconds"), "date": target_date, "source_url": source_url, "raw_rows": len(rows), "event_count": len(events), "events": events, "message": msg, "send_result": send_result}
     report_json.write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
     latest_json.write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
-
     md_lines = [f"# 新股日历 {target_date}", "", f"- 生成: {rec['generated_at']}", f"- 抓取行数: {len(rows)} ｜匹配事件: {len(events)}", f"- 飞书发送: {send_result}", "", "## 消息正文", "", "```", msg, "```"]
     report_md.write_text("\n".join(md_lines), encoding="utf-8")
     latest_md.write_text("\n".join(md_lines), encoding="utf-8")
@@ -263,17 +275,16 @@ def main() -> int:
     msg = build_message(target_date, events, args.url, len(rows))
 
     webhook_url, secret = webhook_config(args.webhook_url)
-    send_result: Dict[str, Any]
     if args.no_send:
         send_result = {"ok": None, "skipped": "--no-send"}
     elif (not events) and not args.send_empty:
         send_result = {"ok": None, "skipped": "no events and --send-empty not set"}
     elif not webhook_url:
-        send_result = {"ok": False, "error": "missing webhook url env IPO_FEISHU_WEBHOOK_URL/FEISHU_WEBHOOK_URL/LARK_WEBHOOK_URL"}
+        send_result = {"ok": False, "error": "missing webhook url env IPO_FEISHU_WEBHOOK_URL/FEISHU_WEBHOOK_URL/LARK_WEBHOOK_URL/..."}
     else:
         send_result = post_feishu(msg, webhook_url, secret)
 
-    paths = write_outputs(target_date, rows, events, msg, send_result)
+    paths = write_outputs(target_date, rows, events, msg, send_result, args.url)
     print(json.dumps({"date": target_date, "raw_rows": len(rows), "event_count": len(events), "events": events, "send_result": send_result, "paths": paths}, ensure_ascii=False, indent=2))
     return 0 if (send_result.get("ok") is not False or args.no_send or ((not events) and not args.send_empty)) else 1
 

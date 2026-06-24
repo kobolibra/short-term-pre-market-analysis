@@ -1,0 +1,8 @@
+{
+  "id": "0017_shadow_strategy_v26_fix_20260624",
+  "script": "scripts/v26_shadow_strategy.py",
+  "args": [],
+  "timeout": 1200,
+  "created": "2026-06-24T14:35:00+08:00",
+  "note": "Run fixed v26 shadow strategy report from latest premarket analysis without same-day dailyline/excess dependency."
+}

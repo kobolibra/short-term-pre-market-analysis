@@ -1,0 +1,8 @@
+{
+  "id": "0020_risk_filter_v28_20260624",
+  "script": "scripts/v28_risk_filter_validation.py",
+  "args": ["--min-train", "5"],
+  "timeout": 1800,
+  "created": "2026-06-24T20:50:00+08:00",
+  "note": "Validate whether risk_flag/open-gap filters should be applied to sparse_ic Top5 after v27 showed risk=Y drag."
+}

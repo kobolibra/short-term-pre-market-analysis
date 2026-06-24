@@ -1,0 +1,8 @@
+{
+  "id": "0018_shadow_outcome_v27_20260624",
+  "script": "scripts/v27_shadow_outcome.py",
+  "args": [],
+  "timeout": 1200,
+  "created": "2026-06-24T15:50:00+08:00",
+  "note": "Evaluate v26 shadow strategy outcomes once same-day dailyline labels are available; pending-safe for T+1 hold."
+}

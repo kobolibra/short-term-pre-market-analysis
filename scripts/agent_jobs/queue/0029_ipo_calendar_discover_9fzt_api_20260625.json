@@ -1,0 +1,7 @@
+{
+  "id": "0029_ipo_calendar_discover_9fzt_api_20260625",
+  "script": "scripts/ipo_calendar_discover_9fzt_api.py",
+  "args": [],
+  "timeout": 1200,
+  "note": "Fetch the user-provided 9fzt stockApply page, download its JS chunks with urllib, and discover the internal API used by that page."
+}

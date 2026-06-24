@@ -27,6 +27,7 @@ QUEUE_DIR = WS / "scripts" / "agent_jobs" / "queue"
 # v24: 日级空仓门控
 # v25: sparse_ic 可部署公式全面验证
 # v26: 双模型影子策略报告(最新候选组合输出)
+# v27: 影子组合真实结果评估(盘后/次日标签可用时自动补全)
 SUITE = [
     ("v10_optimize.py", ["--no-regen", "--top-n", "30"]),
     ("v12_reflection.py", ["--top-n", "30"]),
@@ -44,6 +45,7 @@ SUITE = [
     ("v24_day_gate.py", ["--min-train", "6"]),
     ("v25_sparse_validation.py", ["--min-train", "5"]),
     ("v26_shadow_strategy.py", []),
+    ("v27_shadow_outcome.py", []),
 ]
 
 

@@ -1,0 +1,8 @@
+{
+  "id": "0026_ipo_calendar_headless_fix_test_20260624",
+  "script": "scripts/ipo_calendar_notify.py",
+  "args": ["--date", "2026-06-24", "--no-send", "--run-weekends"],
+  "timeout": 1200,
+  "created": "2026-06-24T22:09:00+08:00",
+  "note": "Retest strict 9fzt stockApply parser with headless browser fallback; no Feishu send."
+}

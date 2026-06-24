@@ -1,0 +1,8 @@
+{
+  "id": "0021_ipo_calendar_test_20260624",
+  "script": "scripts/ipo_calendar_notify.py",
+  "args": ["--date", "2026-06-24", "--no-send", "--run-weekends"],
+  "timeout": 1200,
+  "created": "2026-06-24T20:55:00+08:00",
+  "note": "Test standalone 9fzt IPO calendar parser for 2026-06-24 without Feishu send; writes projects/ipo_calendar outputs."
+}

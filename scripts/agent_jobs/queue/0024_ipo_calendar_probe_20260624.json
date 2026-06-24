@@ -1,0 +1,8 @@
+{
+  "id": "0024_ipo_calendar_probe_20260624",
+  "script": "scripts/ipo_calendar_probe.py",
+  "args": [],
+  "timeout": 1200,
+  "created": "2026-06-24T22:08:00+08:00",
+  "note": "Probe 9fzt HTML and fallback IPO data endpoints from the VM to diagnose parser/source accessibility."
+}

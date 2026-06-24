@@ -25,7 +25,8 @@ QUEUE_DIR = WS / "scripts" / "agent_jobs" / "queue"
 # v20-v22: 环境/特征/torch 排序重构地基
 # v23: 受限头部重排器
 # v24: 日级空仓门控
-# v25: sparse_ic 可部署公式全面验证(最新候选方向)
+# v25: sparse_ic 可部署公式全面验证
+# v26: 双模型影子策略报告(最新候选组合输出)
 SUITE = [
     ("v10_optimize.py", ["--no-regen", "--top-n", "30"]),
     ("v12_reflection.py", ["--top-n", "30"]),
@@ -42,6 +43,7 @@ SUITE = [
     ("v23_restricted_rerank.py", ["--min-train", "5", "--epochs", "80"]),
     ("v24_day_gate.py", ["--min-train", "6"]),
     ("v25_sparse_validation.py", ["--min-train", "5"]),
+    ("v26_shadow_strategy.py", []),
 ]
 
 

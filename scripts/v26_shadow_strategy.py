@@ -8,6 +8,9 @@
   C) 次日持仓策略: v10_amt Top30 (竞价买入 -> 次日收盘)
 并列出重叠、冲突、risk/action 信息。
 
+重要: 影子策略报告必须能在盘前/盘中生成, 因此不能依赖 same-day dailyline/excess。
+本脚本直接读取最新 reports/<date>/premarket/*_analysis_v9.json 候选池, 只使用盘前可见字段。
+
 sparse_ic = 0.24*amt_x_auc + 0.22*auction_strength + 0.18*liquidity +
             0.13*pressure_score + 0.12*money_x_liq + 0.11*money
 所有 sparse 特征使用当日日内截面分位秩。
@@ -24,42 +27,70 @@ SCRIPTS_DIR = Path(__file__).parent.resolve()
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 import v10_optimize as v10
-import v12_reflection as v12
 
 SPARSE_W = {"deriv.amt_x_auc": 0.24, "auction_strength": 0.22, "liquidity": 0.18,
             "pressure_score": 0.13, "deriv.money_x_liq": 0.12, "money": 0.11}
 
 
-def latest_analysis_date(root, want=None):
+def latest_analysis(root, want=None):
     rep = root / "reports"
-    dates = []
+    candidates = []
     for dd in sorted(rep.glob("20*-*-*")):
+        if want and dd.name != want:
+            continue
         pm = dd / "premarket"
-        if pm.is_dir() and list(pm.glob("*_analysis_v9.json")):
-            dates.append(dd.name)
-    if want:
-        return want if want in dates else None
-    return dates[-1] if dates else None
+        files = sorted(pm.glob("*_analysis_v9.json")) if pm.is_dir() else []
+        if files:
+            candidates.append((dd.name, files[-1]))
+    if not candidates:
+        return None, None
+    return candidates[-1]
 
 
-def load_one_day(root, date):
-    daily = v10.Daily(root)
-    days = v12.load_days_plus(root, daily)
-    for d in days:
-        if d["date"] == date:
-            return d
-    return None
+def extract_rows(analysis):
+    cands = analysis.get("all_candidates") or []
+    rows = []
+    for rec in cands:
+        if not isinstance(rec, dict) or not rec.get("code"):
+            continue
+        e = v10.extract(rec)
+        full = rec.get("full") if isinstance(rec.get("full"), dict) else {}
+        ad = full.get("auction_detail") or {}
+        rd = full.get("risk_detail") or {}
+        rf = full.get("risk_flag")
+        if rf is None:
+            rf = rec.get("risk_flag")
+        e["action"] = str(rec.get("action_type") or full.get("action_type") or "").strip().upper()
+        e["risk_flag"] = bool(rf)
+        e["weak_breadth"] = "weak_breadth" in (rd.get("market_env_flags") or [])
+        e["primary_signal"] = str(ad.get("qiangchou_primary_signal") or "").strip()
+        e["setup"] = str(ad.get("auction_setup_type") or "").strip()
+        e["alpha"] = str(rec.get("alpha_pattern") or full.get("alpha_pattern") or "").strip()
+        rows.append(e)
+    # 竞价金额分位与衍生项, 与 v10/v12 保持一致
+    amtp = [(i, rows[i]["f"].get("auction_amount_wan")) for i in range(len(rows))
+            if rows[i]["f"].get("auction_amount_wan") is not None]
+    amap = v10.pctl(amtp)
+    for i, r in enumerate(rows):
+        r["amt"] = amap.get(i, 50.0)
+        r["d"] = v10.derived(r["f"], r["amt"])
+    return rows
 
 
-def build_scores(day):
-    rows = day["rows"]
-    # v10_amt raw score
+def field_value(r, fld):
+    if fld == "amt_pct":
+        return r.get("amt")
+    if fld.startswith("deriv."):
+        return r.get("d", {}).get(fld)
+    return r.get("f", {}).get(fld)
+
+
+def build_scores(rows):
     for r in rows:
         r["_v10_amt"] = v10.score(r["f"], r["amt"], v10.V10AMT_W)
-    # sparse percentile score
     xr = {}
     for fld in SPARSE_W:
-        iv = [(i, v10.field_value(rows[i], fld)) for i in range(len(rows)) if v10.field_value(rows[i], fld) is not None]
+        iv = [(i, field_value(rows[i], fld)) for i in range(len(rows)) if field_value(rows[i], fld) is not None]
         xr[fld] = v10.pctl(iv) if iv else {}
     for i, r in enumerate(rows):
         r["_sparse_ic"] = sum(SPARSE_W[f] * xr[f].get(i, 50.0) for f in SPARSE_W)
@@ -76,9 +107,11 @@ def slim(r):
             "v10_amt": round(r.get("_v10_amt", 0), 3), "sparse_ic": round(r.get("_sparse_ic", 0), 3),
             "edge_old": r.get("edge_old"), "final": r.get("final"),
             "latest_change_pct": f.get("latest_change_pct"),
-            "amt_pct": r.get("amt"), "auction_strength": f.get("auction_strength"),
+            "amt_pct": round(r.get("amt", 50.0), 3), "auction_strength": f.get("auction_strength"),
             "liquidity": f.get("liquidity"), "money": f.get("money"),
-            "pressure_score": f.get("pressure_score"), "sparse_parts": r.get("_sparse_parts")}
+            "pressure_score": f.get("pressure_score"), "weimai_strength": f.get("weimai_strength"),
+            "orderbook": f.get("orderbook"), "primary_signal": r.get("primary_signal"),
+            "setup": r.get("setup"), "alpha": r.get("alpha"), "sparse_parts": r.get("_sparse_parts")}
 
 
 def main():
@@ -87,21 +120,22 @@ def main():
     ap.add_argument("--date", default=None)
     args = ap.parse_args()
     root = Path(args.project_root)
-    date = latest_analysis_date(root, args.date)
-    if not date:
-        raise RuntimeError(f"no analysis date found: {args.date}")
-    day = load_one_day(root, date)
-    if not day:
-        raise RuntimeError(f"date {date} has analysis but no trainable rows/excess; likely same-day dailyline missing")
-    build_scores(day)
-    rows = day["rows"]
+    date, path = latest_analysis(root, args.date)
+    if not date or not path:
+        raise RuntimeError(f"no analysis file found: {args.date}")
+    analysis = json.loads(path.read_text(encoding="utf-8"))
+    rows = extract_rows(analysis)
+    if len(rows) < 5:
+        raise RuntimeError(f"date {date} has too few candidates: {len(rows)}")
+    build_scores(rows)
+
     sparse_top5 = pick(rows, "_sparse_ic", 5)
     v10_top3 = pick(rows, "_v10_amt", 3)
     v10_top30 = pick(rows, "_v10_amt", 30)
     overlap_same = sorted(set(r["code"] for r in sparse_top5) & set(r["code"] for r in v10_top3))
     overlap_hold = sorted(set(r["code"] for r in sparse_top5) & set(r["code"] for r in v10_top30))
     report = {"generated_at": datetime.now().isoformat(timespec="seconds"), "date": date,
-              "n_candidates": len(rows),
+              "analysis_file": str(path.relative_to(root)), "n_candidates": len(rows),
               "strategy_defs": {"same_day_top5": "sparse_ic Top5, buy auction open, sell same-day close",
                                 "aggressive_same_day_top3": "v10_amt Top3, buy auction open, sell same-day close",
                                 "t1_hold_top30": "v10_amt Top30, buy auction open, sell next trading day close"},
@@ -120,7 +154,8 @@ def main():
         return L
 
     L = ["# v26 双模型影子策略报告", "", f"- 生成: {report['generated_at']} ｜日期: **{date}** ｜候选数: {len(rows)}",
-         "- 只读影子报告, 未改生产逻辑。", "",
+         f"- 分析文件: `{report['analysis_file']}`",
+         "- 只读影子报告, 未改生产逻辑; 不依赖 same-day 收盘/dailyline。", "",
          "## 策略定论", "",
          "- 当日 Top5: **sparse_ic**（v25 OOS Top5均值 1.491 / 胜率75% / p10 -2.02）",
          "- 激进 Top3: **v10_amt**（v25 OOS Top3最强）",

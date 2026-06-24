@@ -2,22 +2,19 @@
 # -*- coding: utf-8 -*-
 """ipo_calendar_notify.py — 独立新股日历抓取 + 飞书推送。
 
+数据源严格使用用户指定页面：
+  https://stock.9fzt.com/dataCenter/stockApply.html
+
 每天交易日上午 8 点运行：
-  - 抓取 https://stock.9fzt.com/dataCenter/stockApply.html 新股申购表；
+  - 抓取/解析九方智投新股申购表；
   - 筛选“今天”为 申购日期 / 网上申购缴款日期 / 上市日期 的股票；
   - 保存独立数据到 projects/ipo_calendar/；
   - 通过飞书机器人推送摘要。
 
-与 duanxianxia 选股项目隔离：数据、报告都落在 projects/ipo_calendar/。
+与 duanxianxia 隔离：数据、报告都落在 projects/ipo_calendar/。
 
-飞书配置（不提交 secrets）：
-  - 推荐：IPO_FEISHU_WEBHOOK_URL
-  - 兼容：FEISHU_WEBHOOK_URL / LARK_WEBHOOK_URL / FEISHU_WEBHOOK / LARK_WEBHOOK / WEBHOOK_URL
-  - 可选签名密钥：IPO_FEISHU_SIGN_SECRET / FEISHU_SIGN_SECRET / LARK_SIGN_SECRET
-
-用法：
-  python3 scripts/ipo_calendar_notify.py
-  python3 scripts/ipo_calendar_notify.py --date 2026-06-24 --no-send
+注意：9fzt 页面在不同环境可能返回 HTML 表格，也可能返回已渲染文本/脚本骨架。
+本脚本只围绕该 URL 解析：先解析 HTML <tr>，失败后解析页面文本中的管道表格。
 """
 from __future__ import annotations
 
@@ -76,7 +73,6 @@ def load_env_file(path: Path) -> None:
         return
 
 
-# Cron 环境通常很瘦；显式加载工作区 .env，方便服务器已有 webhook secret 复用。
 load_env_file(OPENCLAW_ROOT / ".env")
 load_env_file(ROOT / ".env")
 
@@ -93,6 +89,7 @@ def fetch_html(url: str, timeout: int = 25) -> str:
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
             "Cache-Control": "no-cache",
+            "Referer": url,
         },
     )
     with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -115,8 +112,7 @@ def clean_cell(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
-def parse_stock_apply_table(page_html: str) -> List[Dict[str, Any]]:
-    """Parse server-rendered 9fzt stockApply table with stdlib only."""
+def parse_html_table(page_html: str) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for tr in re.findall(r"<tr[^>]*>([\s\S]*?)</tr>", page_html, flags=re.I):
         cells_raw = re.findall(r"<t[dh][^>]*>([\s\S]*?)</t[dh]>", tr, flags=re.I)
@@ -130,6 +126,38 @@ def parse_stock_apply_table(page_html: str) -> List[Dict[str, Any]]:
         vals = (cells + [""] * len(HEADERS))[: len(HEADERS)]
         rows.append(dict(zip(HEADERS, vals)))
     return rows
+
+
+def parse_pipe_text(text: str) -> List[Dict[str, Any]]:
+    """Parse rendered markdown-like pipe table text, e.g. web-rendered 9fzt output."""
+    rows: List[Dict[str, Any]] = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line.startswith("|") or not line.endswith("|"):
+            continue
+        if "---" in line:
+            continue
+        cells = [c.strip().replace("\\.", ".").replace("\\--", "--") for c in line.strip("|").split("|")]
+        if len(cells) < 12:
+            continue
+        if not re.fullmatch(r"\d+", cells[0] or ""):
+            continue
+        if not re.fullmatch(r"\d{6}", cells[1] or ""):
+            continue
+        vals = (cells + [""] * len(HEADERS))[: len(HEADERS)]
+        rows.append(dict(zip(HEADERS, vals)))
+    return rows
+
+
+def parse_stock_apply_page(page: str) -> List[Dict[str, Any]]:
+    rows = parse_html_table(page)
+    if rows:
+        return rows
+    text = html_lib.unescape(page)
+    text = re.sub(r"<br\s*/?>", "\n", text, flags=re.I)
+    text = re.sub(r"</tr>", "\n", text, flags=re.I)
+    text = re.sub(r"<[^>]+>", " ", text)
+    return parse_pipe_text(text)
 
 
 def normalize_md(mmdd: str, year: int) -> Optional[str]:
@@ -229,7 +257,7 @@ def build_message(target_date: str, events: List[Dict[str, Any]], source_url: st
     return text[:3600] + ("\n…(已截断)" if len(text) > 3600 else "")
 
 
-def write_outputs(target_date: str, rows: List[Dict[str, Any]], events: List[Dict[str, Any]], msg: str, send_result: Dict[str, Any], source_url: str) -> Dict[str, str]:
+def write_outputs(target_date: str, rows: List[Dict[str, Any]], events: List[Dict[str, Any]], msg: str, send_result: Dict[str, Any], source_url: str, parse_debug: Dict[str, Any]) -> Dict[str, str]:
     day_dir = DATA_DIR / target_date
     day_dir.mkdir(parents=True, exist_ok=True)
     AUDIT_DIR.mkdir(parents=True, exist_ok=True)
@@ -242,7 +270,7 @@ def write_outputs(target_date: str, rows: List[Dict[str, Any]], events: List[Dic
 
     raw_path.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
     events_path.write_text(json.dumps(events, ensure_ascii=False, indent=2), encoding="utf-8")
-    rec = {"generated_at": datetime.now(TZ).isoformat(timespec="seconds"), "date": target_date, "source_url": source_url, "raw_rows": len(rows), "event_count": len(events), "events": events, "message": msg, "send_result": send_result}
+    rec = {"generated_at": datetime.now(TZ).isoformat(timespec="seconds"), "date": target_date, "source_url": source_url, "raw_rows": len(rows), "event_count": len(events), "events": events, "message": msg, "send_result": send_result, "parse_debug": parse_debug}
     report_json.write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
     latest_json.write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
     md_lines = [f"# 新股日历 {target_date}", "", f"- 生成: {rec['generated_at']}", f"- 抓取行数: {len(rows)} ｜匹配事件: {len(events)}", f"- 飞书发送: {send_result}", "", "## 消息正文", "", "```", msg, "```"]
@@ -268,9 +296,14 @@ def main() -> int:
         return 0
 
     page = fetch_html(args.url)
-    rows = parse_stock_apply_table(page)
+    rows = parse_stock_apply_page(page)
+    parse_debug = {"page_len": len(page), "html_tr_count": len(re.findall(r"<tr[^>]*>", page, re.I)), "code_like_count": len(re.findall(r"\b\d{6}\b", page)), "snippet": page[:500]}
     if not rows:
-        raise RuntimeError("failed to parse any stockApply rows from 9fzt page")
+        # 落盘 debug，明确说明是该 URL 在服务器返回未渲染内容，而非换数据源。
+        AUDIT_DIR.mkdir(parents=True, exist_ok=True)
+        (AUDIT_DIR / "latest_ipo_calendar_parse_failed.html").write_text(page, encoding="utf-8")
+        (AUDIT_DIR / "latest_ipo_calendar_parse_failed.json").write_text(json.dumps(parse_debug, ensure_ascii=False, indent=2), encoding="utf-8")
+        raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
     events = match_events(rows, target_date)
     msg = build_message(target_date, events, args.url, len(rows))
 
@@ -284,7 +317,7 @@ def main() -> int:
     else:
         send_result = post_feishu(msg, webhook_url, secret)
 
-    paths = write_outputs(target_date, rows, events, msg, send_result, args.url)
+    paths = write_outputs(target_date, rows, events, msg, send_result, args.url, parse_debug)
     print(json.dumps({"date": target_date, "raw_rows": len(rows), "event_count": len(events), "events": events, "send_result": send_result, "paths": paths}, ensure_ascii=False, indent=2))
     return 0 if (send_result.get("ok") is not False or args.no_send or ((not events) and not args.send_empty)) else 1
 

@@ -1,0 +1,8 @@
+{
+  "id": "0015_sparse_validation_v25_20260624",
+  "script": "scripts/v25_sparse_validation.py",
+  "args": ["--min-train", "5"],
+  "timeout": 1800,
+  "created": "2026-06-24T08:25:00+08:00",
+  "note": "Validate sparse IC-prior deployable formula vs v10_amt across same-day Top-K and T+1 hold horizons."
+}

@@ -5,9 +5,11 @@
 让盘前选股分析“持续迭代”: 每天随新数据自动重跑核心回测/反思/重构套件,
 结果由 runner 发布到 agent-results 分支。
 
-幂等: 每天每脚本只入队一次(队列文件按日期命名; 已存在则跳过)。
+幂等: 大多数脚本每天只入队一次(队列文件按日期命名; 已存在则跳过)。
 worker 凭 <id>.result.json 是否存在决定是否执行, 故 id 含日期 → 每天跑一次。
-新交易日的 v9 分析由现有盘前 cron 产生, 分析套件会自动把新增交易日纳入。
+
+例外: v27_shadow_outcome 是盘后标签评估。盘后 dailyline 可能较晚落地, 所以 v27
+按小时入队重试, 直到后续某次拿到 same-day / T+1 标签。脚本本身 pending-safe。
 """
 from __future__ import annotations
 import json
@@ -27,8 +29,7 @@ QUEUE_DIR = WS / "scripts" / "agent_jobs" / "queue"
 # v24: 日级空仓门控
 # v25: sparse_ic 可部署公式全面验证
 # v26: 双模型影子策略报告(最新候选组合输出)
-# v27: 影子组合真实结果评估(盘后/次日标签可用时自动补全)
-SUITE = [
+SUITE_DAILY = [
     ("v10_optimize.py", ["--no-regen", "--top-n", "30"]),
     ("v12_reflection.py", ["--top-n", "30"]),
     ("v13_lowopen_reverse.py", ["--low-open-max", "2.0", "--top-n", "30"]),
@@ -45,23 +46,30 @@ SUITE = [
     ("v24_day_gate.py", ["--min-train", "6"]),
     ("v25_sparse_validation.py", ["--min-train", "5"]),
     ("v26_shadow_strategy.py", []),
+]
+
+# pending-safe label evaluator: retry hourly because same-day dailyline / T+1 labels land later
+SUITE_HOURLY = [
     ("v27_shadow_outcome.py", []),
 ]
 
 
-def today_str():
+def now_shanghai():
     try:
         from zoneinfo import ZoneInfo
-        return datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
+        return datetime.now(ZoneInfo("Asia/Shanghai"))
     except Exception:
-        return datetime.now().strftime("%Y-%m-%d")
+        return datetime.now()
 
 
 def main():
     QUEUE_DIR.mkdir(parents=True, exist_ok=True)
-    today = today_str()
+    now = now_shanghai()
+    today = now.strftime("%Y-%m-%d")
+    hour = now.strftime("%H")
     created = []
-    for script, args in SUITE:
+
+    for script, args in SUITE_DAILY:
         stem = script[:-3]
         job_id = f"daily_{today}_{stem}"
         qf = QUEUE_DIR / f"{job_id}.json"
@@ -72,11 +80,28 @@ def main():
             "script": f"scripts/{script}",
             "args": args,
             "timeout": 2400,
-            "created": datetime.now().isoformat(timespec="seconds"),
+            "created": now.isoformat(timespec="seconds"),
             "note": f"daily auto-refresh {today}",
         }, ensure_ascii=False, indent=2), encoding="utf-8")
         created.append(job_id)
-    print(json.dumps({"today": today, "enqueued": created}, ensure_ascii=False))
+
+    for script, args in SUITE_HOURLY:
+        stem = script[:-3]
+        job_id = f"hourly_{today}_{hour}_{stem}"
+        qf = QUEUE_DIR / f"{job_id}.json"
+        if qf.exists():
+            continue
+        qf.write_text(json.dumps({
+            "id": job_id,
+            "script": f"scripts/{script}",
+            "args": args,
+            "timeout": 1200,
+            "created": now.isoformat(timespec="seconds"),
+            "note": f"hourly retry {today} {hour}:00 for pending-safe shadow outcome labels",
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        created.append(job_id)
+
+    print(json.dumps({"today": today, "hour": hour, "enqueued": created}, ensure_ascii=False))
     return 0
 
 

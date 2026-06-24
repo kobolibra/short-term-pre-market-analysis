@@ -1,0 +1,8 @@
+{
+  "id": "0023_install_ipo_calendar_cron_20260624",
+  "script": "scripts/install_ipo_calendar_cron.py",
+  "args": [],
+  "timeout": 1200,
+  "created": "2026-06-24T22:05:00+08:00",
+  "note": "Install standalone weekday 08:00 IPO calendar cron on the VM, separate from duanxianxia."
+}

@@ -5,15 +5,11 @@
 数据源严格使用用户指定页面：
   https://stock.9fzt.com/dataCenter/stockApply.html
 
-每天交易日上午 8 点运行：
-  - 抓取/渲染九方智投新股申购表；
-  - 筛选“今天”为 申购日期 / 网上申购缴款日期 / 上市日期 的股票；
-  - 保存独立数据到 projects/ipo_calendar/；
-  - 通过飞书机器人推送摘要。
+每天交易日上午 8 点运行：抓取九方智投新股申购表，筛选今天为
+申购日期 / 网上申购缴款日期 / 上市日期 的股票，并推送飞书。
 
-关键：该页面在服务器普通 HTTP 下可能只返回 JS 骨架；所以脚本先尝试直接解析，失败后自动用
-chromium/google-chrome/chromium-browser 的 --headless --dump-dom 渲染，再解析表格。
-不换源，不用别的数据源。
+注意：该页面在不同环境可能返回：HTML 表格、Next/React DOM、或无 table 的渲染文本。
+本脚本只使用这一个 9fzt URL，但解析方式会兼容这些返回形态。
 """
 from __future__ import annotations
 
@@ -44,6 +40,7 @@ OPENCLAW_ROOT = ROOT.parent
 PROJECT = ROOT / "projects" / "ipo_calendar"
 DATA_DIR = PROJECT / "data"
 AUDIT_DIR = PROJECT / "reports" / "_audit"
+DXX_IPO_DEBUG_DIR = ROOT / "projects" / "duanxianxia" / "reports" / "_audit" / "ipo_calendar_debug"
 
 HEADERS = [
     "序号", "代码", "股票名称", "发行总数(万股)", "网上发行(万股)", "申购上限(万股)",
@@ -103,30 +100,20 @@ def fetch_html(url: str, timeout: int = 25) -> str:
     return raw.decode("utf-8", errors="ignore")
 
 
-def render_with_chromium(url: str, timeout: int = 45) -> Tuple[Optional[str], Dict[str, Any]]:
-    """Render given URL with system headless browser if present."""
+def render_with_chromium(url: str, timeout: int = 90) -> Tuple[Optional[str], Dict[str, Any]]:
     debug: Dict[str, Any] = {"method": "chromium_dump_dom", "attempts": []}
-    candidates = ["chromium", "chromium-browser", "google-chrome", "google-chrome-stable", "chrome"]
-    for exe in candidates:
+    for exe in ["chromium", "chromium-browser", "google-chrome", "google-chrome-stable", "chrome"]:
         path = shutil.which(exe)
         debug["attempts"].append({"exe": exe, "path": path})
         if not path:
             continue
         cmd = [
-            path,
-            "--headless=new",
-            "--disable-gpu",
-            "--no-sandbox",
-            "--disable-dev-shm-usage",
-            "--virtual-time-budget=8000",
-            "--run-all-compositor-stages-before-draw",
-            "--dump-dom",
-            url,
+            path, "--headless=new", "--disable-gpu", "--no-sandbox", "--disable-dev-shm-usage",
+            "--virtual-time-budget=15000", "--run-all-compositor-stages-before-draw", "--dump-dom", url,
         ]
         try:
             proc = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout)
-            rec = {"exe": exe, "rc": proc.returncode, "stdout_len": len(proc.stdout or ""), "stderr_tail": (proc.stderr or "")[-800:]}
-            debug["attempts"].append(rec)
+            debug["attempts"].append({"exe": exe, "rc": proc.returncode, "stdout_len": len(proc.stdout or ""), "stderr_tail": (proc.stderr or "")[-1000:]})
             if proc.returncode == 0 and proc.stdout and len(proc.stdout) > 1000:
                 debug["ok_exe"] = exe
                 return proc.stdout, debug
@@ -141,23 +128,33 @@ def clean_cell(s: str) -> str:
     s = re.sub(r"<a[^>]+href=['\"]([^'\"]+)['\"][^>]*>[\s\S]*?</a>", r"\1", s, flags=re.I)
     s = re.sub(r"<[^>]+>", " ", s)
     s = html_lib.unescape(s)
-    s = s.replace("\\--", "--").replace("\u00a0", " ")
+    s = s.replace("\\--", "--").replace("\u00a0", " ").replace("&nbsp;", " ")
     return re.sub(r"\s+", " ", s).strip()
+
+
+def row_from_cells(cells: List[str]) -> Optional[Dict[str, Any]]:
+    cells = [clean_cell(c) for c in cells]
+    cells = [c if c else "--" for c in cells]
+    # 有些渲染结果会多出一个全空占位行，或者首列为空。
+    if cells and cells[0] in {"", "--"} and len(cells) > 1 and re.fullmatch(r"\d+", cells[1] or ""):
+        cells = cells[1:]
+    if len(cells) < 12:
+        return None
+    if not re.fullmatch(r"\d+", cells[0] or ""):
+        return None
+    if not re.fullmatch(r"\d{6}", cells[1] or ""):
+        return None
+    vals = (cells + [""] * len(HEADERS))[: len(HEADERS)]
+    return dict(zip(HEADERS, vals))
 
 
 def parse_html_table(page_html: str) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for tr in re.findall(r"<tr[^>]*>([\s\S]*?)</tr>", page_html, flags=re.I):
         cells_raw = re.findall(r"<t[dh][^>]*>([\s\S]*?)</t[dh]>", tr, flags=re.I)
-        cells = [clean_cell(c) for c in cells_raw]
-        if len(cells) < 12:
-            continue
-        if not re.fullmatch(r"\d+", cells[0] or ""):
-            continue
-        if not re.fullmatch(r"\d{6}", cells[1] or ""):
-            continue
-        vals = (cells + [""] * len(HEADERS))[: len(HEADERS)]
-        rows.append(dict(zip(HEADERS, vals)))
+        row = row_from_cells(cells_raw)
+        if row:
+            rows.append(row)
     return rows
 
 
@@ -170,40 +167,163 @@ def parse_pipe_text(text: str) -> List[Dict[str, Any]]:
         if "---" in line:
             continue
         cells = [c.strip().replace("\\.", ".").replace("\\--", "--") for c in line.strip("|").split("|")]
-        if len(cells) < 12:
+        row = row_from_cells(cells)
+        if row:
+            rows.append(row)
+    return rows
+
+
+def html_to_loose_text(page: str) -> str:
+    text = page
+    text = re.sub(r"<script[\s\S]*?</script>", "\n", text, flags=re.I)
+    text = re.sub(r"<style[\s\S]*?</style>", "\n", text, flags=re.I)
+    # 保留单元格/块边界。React DOM 通常不是 table，但 div/span 边界足够恢复文本 token。
+    text = re.sub(r"</(td|th|span|p|li|a|button)>", " | ", text, flags=re.I)
+    text = re.sub(r"</(tr|div|section|ul|ol|table|tbody|thead)>", "\n", text, flags=re.I)
+    text = re.sub(r"<br\s*/?>", "\n", text, flags=re.I)
+    text = re.sub(r"<a[^>]+href=['\"]([^'\"]+)['\"][^>]*>", r" \1 ", text, flags=re.I)
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = html_lib.unescape(text)
+    text = text.replace("\\--", "--").replace("\u00a0", " ").replace("&nbsp;", " ")
+    return re.sub(r"[ \t\r\f\v]+", " ", text)
+
+
+def parse_loose_text(text: str) -> List[Dict[str, Any]]:
+    """Parse rows from whitespace/pipe text, e.g. '1 301583 托伦斯 4636.84 ...'."""
+    rows: List[Dict[str, Any]] = []
+    # 先按行试；如果整页被压成一行，再用 serial+code 边界切分。
+    candidates: List[str] = []
+    for line in text.splitlines():
+        line = line.strip(" |\t")
+        if re.search(r"(^|\s)\d{1,4}\s+\d{6}\s+", line):
+            candidates.append(line)
+    flat = re.sub(r"\s+", " ", text).strip()
+    starts = list(re.finditer(r"(?<!\d)(\d{1,4})\s+(\d{6})\s+", flat))
+    for i, m in enumerate(starts):
+        end = starts[i + 1].start() if i + 1 < len(starts) else min(len(flat), m.start() + 1500)
+        seg = flat[m.start():end].strip(" |")
+        candidates.append(seg)
+
+    seen = set()
+    for seg in candidates:
+        parts = [p.strip(" |") for p in re.split(r"\s+|\s*\|\s*", seg) if p.strip(" |")]
+        if len(parts) < 12:
             continue
-        if not re.fullmatch(r"\d+", cells[0] or ""):
+        # 找 serial+code 起点，前面可能混有表头文字。
+        start = None
+        for i in range(0, min(8, len(parts) - 2)):
+            if re.fullmatch(r"\d{1,4}", parts[i]) and re.fullmatch(r"\d{6}", parts[i + 1]):
+                start = i
+                break
+        if start is None:
             continue
-        if not re.fullmatch(r"\d{6}", cells[1] or ""):
+        parts = parts[start:]
+        row = row_from_cells(parts[: len(HEADERS)])
+        if not row:
             continue
-        vals = (cells + [""] * len(HEADERS))[: len(HEADERS)]
-        rows.append(dict(zip(HEADERS, vals)))
+        key = row.get("代码")
+        if key in seen:
+            continue
+        seen.add(key)
+        rows.append(row)
+    return rows
+
+
+def parse_next_data(page: str) -> List[Dict[str, Any]]:
+    """If Next.js embeds row data, recover it. Generic and 9fzt-only."""
+    m = re.search(r"<script[^>]+id=['\"]__NEXT_DATA__['\"][^>]*>([\s\S]*?)</script>", page, flags=re.I)
+    if not m:
+        return []
+    try:
+        data = json.loads(html_lib.unescape(m.group(1)))
+    except Exception:
+        return []
+    rows: List[Dict[str, Any]] = []
+    seen = set()
+
+    def maybe_row(obj: Any) -> Optional[Dict[str, Any]]:
+        if not isinstance(obj, dict):
+            return None
+        blob = json.dumps(obj, ensure_ascii=False)
+        if not re.search(r"\b\d{6}\b", blob):
+            return None
+        # 常见中英文字段兜底映射。
+        code = obj.get("代码") or obj.get("SECURITY_CODE") or obj.get("APPLY_CODE") or obj.get("stockCode") or obj.get("code")
+        name = obj.get("股票名称") or obj.get("SECURITY_NAME") or obj.get("SECURITY_NAME_ABBR") or obj.get("stockName") or obj.get("name")
+        if not code or not re.fullmatch(r"\d{6}", str(code)):
+            return None
+        r = {h: "" for h in HEADERS}
+        r["序号"] = str(len(rows) + 1)
+        r["代码"] = str(code)
+        r["股票名称"] = str(name or "")
+        mapping = {
+            "发行总数(万股)": ["发行总数(万股)", "ISSUE_NUM", "TOTAL_ISSUE_NUM"],
+            "网上发行(万股)": ["网上发行(万股)", "ONLINE_ISSUE_NUM"],
+            "申购上限(万股)": ["申购上限(万股)", "ONLINE_APPLY_UPPER", "TOP_APPLY_MARKETCAP"],
+            "发行价(元)": ["发行价(元)", "ISSUE_PRICE", "ONLINE_APPLY_PRICE"],
+            "首日收盘价(元)": ["首日收盘价(元)", "CLOSE_PRICE"],
+            "申购日期": ["申购日期", "APPLY_DATE", "ONLINE_ISSUE_DATE"],
+            "中签率公告日": ["中签率公告日", "BALLOT_NUM_DATE", "ASSIGN_DATE"],
+            "网上申购缴款日期": ["网上申购缴款日期", "BALLOT_PAY_DATE", "ONLINE_PAY_DATE", "START_DATE"],
+            "上市日期": ["上市日期", "LISTING_DATE", "OPEN_DATE", "SELECT_LISTING_DATE"],
+            "筹集资金(万元)": ["筹集资金(万元)", "TOTAL_RAISE_FUNDS"],
+            "实际筹集资金": ["实际筹集资金", "NET_RAISE_FUNDS"],
+            "发行市盈率": ["发行市盈率", "AFTER_ISSUE_PE", "PREDICT_PE_THREE"],
+            "行业市盈率": ["行业市盈率", "INDUSTRY_PE", "INDUSTRY_PE_RATIO"],
+            "中签率": ["中签率", "BALLOT_NUM"],
+            "询价累积报价倍数": ["询价累积报价倍数", "OFFLINE_VAS_MULTIPLE"],
+            "有效报价配售对象家数": ["有效报价配售对象家数", "OFFLINE_VAP_OBJECT"],
+            "招股书": ["招股书"],
+        }
+        for out_k, keys in mapping.items():
+            for k in keys:
+                if obj.get(k) not in (None, ""):
+                    r[out_k] = str(obj.get(k))
+                    break
+        return r
+
+    def walk(x: Any) -> None:
+        if isinstance(x, dict):
+            r = maybe_row(x)
+            if r and r["代码"] not in seen:
+                seen.add(r["代码"]); rows.append(r)
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+
+    walk(data)
     return rows
 
 
 def parse_stock_apply_page(page: str) -> List[Dict[str, Any]]:
-    rows = parse_html_table(page)
-    if rows:
-        return rows
-    text = html_lib.unescape(page)
-    text = re.sub(r"<br\s*/?>", "\n", text, flags=re.I)
-    text = re.sub(r"</tr>", "\n", text, flags=re.I)
-    text = re.sub(r"<[^>]+>", " ", text)
-    return parse_pipe_text(text)
+    parsers = [
+        ("html_table", lambda p: parse_html_table(p)),
+        ("pipe_raw", lambda p: parse_pipe_text(html_lib.unescape(p))),
+        ("next_data", lambda p: parse_next_data(p)),
+        ("loose_text", lambda p: parse_loose_text(html_to_loose_text(p))),
+    ]
+    for _name, fn in parsers:
+        rows = fn(page)
+        if rows:
+            return rows
+    return []
 
 
 def fetch_and_parse_9fzt(url: str) -> Tuple[List[Dict[str, Any]], Dict[str, Any], str]:
     debug: Dict[str, Any] = {"source_url": url, "stages": []}
     raw = fetch_html(url)
-    rows = parse_stock_apply_page(raw)
-    debug["stages"].append({"stage": "direct_http", "page_len": len(raw), "rows": len(rows), "tr_count": len(re.findall(r"<tr[^>]*>", raw, re.I)), "code_count": len(re.findall(r"\b\d{6}\b", raw)), "snippet": raw[:500]})
-    if rows:
-        return rows, debug, raw
+    for stage_name, page in [("direct_http", raw)]:
+        rows = parse_stock_apply_page(page)
+        debug["stages"].append({"stage": stage_name, "page_len": len(page), "rows": len(rows), "tr_count": len(re.findall(r"<tr[^>]*>", page, re.I)), "code_count": len(re.findall(r"\b\d{6}\b", page)), "has_next_data": "__NEXT_DATA__" in page, "snippet": page[:800]})
+        if rows:
+            return rows, debug, page
     rendered, rdebug = render_with_chromium(url)
     debug["stages"].append({"stage": "headless_render", **rdebug})
     if rendered:
         rows = parse_stock_apply_page(rendered)
-        debug["stages"].append({"stage": "parse_rendered", "page_len": len(rendered), "rows": len(rows), "tr_count": len(re.findall(r"<tr[^>]*>", rendered, re.I)), "code_count": len(re.findall(r"\b\d{6}\b", rendered)), "snippet": rendered[:500]})
+        debug["stages"].append({"stage": "parse_rendered", "page_len": len(rendered), "rows": len(rows), "tr_count": len(re.findall(r"<tr[^>]*>", rendered, re.I)), "code_count": len(re.findall(r"\b\d{6}\b", rendered)), "has_next_data": "__NEXT_DATA__" in rendered, "snippet": rendered[:800]})
         if rows:
             return rows, debug, rendered
     return [], debug, rendered or raw
@@ -211,9 +331,9 @@ def fetch_and_parse_9fzt(url: str) -> Tuple[List[Dict[str, Any]], Dict[str, Any]
 
 def normalize_md(mmdd: str, year: int) -> Optional[str]:
     s = (mmdd or "").strip()
-    if not s or s in {"--", "-", "—"}:
+    if not s or s in {"--", "-", "—", "None", "null"}:
         return None
-    m = re.search(r"(?:(\d{4})[-/])?(\d{1,2})[-/](\d{1,2})", s)
+    m = re.search(r"(?:(\d{4})[-/年])?(\d{1,2})[-/月](\d{1,2})", s)
     if not m:
         return None
     y = int(m.group(1) or year)
@@ -320,12 +440,20 @@ def write_outputs(target_date: str, rows: List[Dict[str, Any]], events: List[Dic
     raw_path.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
     events_path.write_text(json.dumps(events, ensure_ascii=False, indent=2), encoding="utf-8")
     rec = {"generated_at": datetime.now(TZ).isoformat(timespec="seconds"), "date": target_date, "source_url": source_url, "raw_rows": len(rows), "event_count": len(events), "events": events, "message": msg, "send_result": send_result, "parse_debug": parse_debug}
-    report_json.write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
-    latest_json.write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
+    for p in [report_json, latest_json]:
+        p.write_text(json.dumps(rec, ensure_ascii=False, indent=2), encoding="utf-8")
     md_lines = [f"# 新股日历 {target_date}", "", f"- 生成: {rec['generated_at']}", f"- 抓取行数: {len(rows)} ｜匹配事件: {len(events)}", f"- 飞书发送: {send_result}", "", "## 消息正文", "", "```", msg, "```"]
-    report_md.write_text("\n".join(md_lines), encoding="utf-8")
-    latest_md.write_text("\n".join(md_lines), encoding="utf-8")
+    for p in [report_md, latest_md]:
+        p.write_text("\n".join(md_lines), encoding="utf-8")
     return {"raw": str(raw_path), "events": str(events_path), "report_json": str(report_json), "report_md": str(report_md)}
+
+
+def write_failure_debug(page: str, parse_debug: Dict[str, Any]) -> None:
+    AUDIT_DIR.mkdir(parents=True, exist_ok=True)
+    DXX_IPO_DEBUG_DIR.mkdir(parents=True, exist_ok=True)
+    for base in [AUDIT_DIR, DXX_IPO_DEBUG_DIR]:
+        (base / "latest_ipo_calendar_parse_failed.html").write_text(page, encoding="utf-8")
+        (base / "latest_ipo_calendar_parse_failed.json").write_text(json.dumps(parse_debug, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def main() -> int:
@@ -346,10 +474,8 @@ def main() -> int:
 
     rows, parse_debug, page = fetch_and_parse_9fzt(args.url)
     if not rows:
-        AUDIT_DIR.mkdir(parents=True, exist_ok=True)
-        (AUDIT_DIR / "latest_ipo_calendar_parse_failed.html").write_text(page, encoding="utf-8")
-        (AUDIT_DIR / "latest_ipo_calendar_parse_failed.json").write_text(json.dumps(parse_debug, ensure_ascii=False, indent=2), encoding="utf-8")
-        raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM even after headless render; raw page saved for debug")
+        write_failure_debug(page, parse_debug)
+        raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
     events = match_events(rows, target_date)
     msg = build_message(target_date, events, args.url, len(rows))
 

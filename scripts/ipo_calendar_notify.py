@@ -6,15 +6,14 @@
   https://stock.9fzt.com/dataCenter/stockApply.html
 
 每天交易日上午 8 点运行：
-  - 抓取/解析九方智投新股申购表；
+  - 抓取/渲染九方智投新股申购表；
   - 筛选“今天”为 申购日期 / 网上申购缴款日期 / 上市日期 的股票；
   - 保存独立数据到 projects/ipo_calendar/；
   - 通过飞书机器人推送摘要。
 
-与 duanxianxia 隔离：数据、报告都落在 projects/ipo_calendar/。
-
-注意：9fzt 页面在不同环境可能返回 HTML 表格，也可能返回已渲染文本/脚本骨架。
-本脚本只围绕该 URL 解析：先解析 HTML <tr>，失败后解析页面文本中的管道表格。
+关键：该页面在服务器普通 HTTP 下可能只返回 JS 骨架；所以脚本先尝试直接解析，失败后自动用
+chromium/google-chrome/chromium-browser 的 --headless --dump-dom 渲染，再解析表格。
+不换源，不用别的数据源。
 """
 from __future__ import annotations
 
@@ -26,6 +25,8 @@ import html as html_lib
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 import time
 import traceback
@@ -33,7 +34,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo
 
 DEFAULT_URL = "https://stock.9fzt.com/dataCenter/stockApply.html"
@@ -102,6 +103,38 @@ def fetch_html(url: str, timeout: int = 25) -> str:
     return raw.decode("utf-8", errors="ignore")
 
 
+def render_with_chromium(url: str, timeout: int = 45) -> Tuple[Optional[str], Dict[str, Any]]:
+    """Render given URL with system headless browser if present."""
+    debug: Dict[str, Any] = {"method": "chromium_dump_dom", "attempts": []}
+    candidates = ["chromium", "chromium-browser", "google-chrome", "google-chrome-stable", "chrome"]
+    for exe in candidates:
+        path = shutil.which(exe)
+        debug["attempts"].append({"exe": exe, "path": path})
+        if not path:
+            continue
+        cmd = [
+            path,
+            "--headless=new",
+            "--disable-gpu",
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--virtual-time-budget=8000",
+            "--run-all-compositor-stages-before-draw",
+            "--dump-dom",
+            url,
+        ]
+        try:
+            proc = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout)
+            rec = {"exe": exe, "rc": proc.returncode, "stdout_len": len(proc.stdout or ""), "stderr_tail": (proc.stderr or "")[-800:]}
+            debug["attempts"].append(rec)
+            if proc.returncode == 0 and proc.stdout and len(proc.stdout) > 1000:
+                debug["ok_exe"] = exe
+                return proc.stdout, debug
+        except Exception as e:
+            debug["attempts"].append({"exe": exe, "error": f"{type(e).__name__}: {e}"})
+    return None, debug
+
+
 def clean_cell(s: str) -> str:
     s = re.sub(r"<script[\s\S]*?</script>", "", s, flags=re.I)
     s = re.sub(r"<style[\s\S]*?</style>", "", s, flags=re.I)
@@ -129,7 +162,6 @@ def parse_html_table(page_html: str) -> List[Dict[str, Any]]:
 
 
 def parse_pipe_text(text: str) -> List[Dict[str, Any]]:
-    """Parse rendered markdown-like pipe table text, e.g. web-rendered 9fzt output."""
     rows: List[Dict[str, Any]] = []
     for raw in text.splitlines():
         line = raw.strip()
@@ -158,6 +190,23 @@ def parse_stock_apply_page(page: str) -> List[Dict[str, Any]]:
     text = re.sub(r"</tr>", "\n", text, flags=re.I)
     text = re.sub(r"<[^>]+>", " ", text)
     return parse_pipe_text(text)
+
+
+def fetch_and_parse_9fzt(url: str) -> Tuple[List[Dict[str, Any]], Dict[str, Any], str]:
+    debug: Dict[str, Any] = {"source_url": url, "stages": []}
+    raw = fetch_html(url)
+    rows = parse_stock_apply_page(raw)
+    debug["stages"].append({"stage": "direct_http", "page_len": len(raw), "rows": len(rows), "tr_count": len(re.findall(r"<tr[^>]*>", raw, re.I)), "code_count": len(re.findall(r"\b\d{6}\b", raw)), "snippet": raw[:500]})
+    if rows:
+        return rows, debug, raw
+    rendered, rdebug = render_with_chromium(url)
+    debug["stages"].append({"stage": "headless_render", **rdebug})
+    if rendered:
+        rows = parse_stock_apply_page(rendered)
+        debug["stages"].append({"stage": "parse_rendered", "page_len": len(rendered), "rows": len(rows), "tr_count": len(re.findall(r"<tr[^>]*>", rendered, re.I)), "code_count": len(re.findall(r"\b\d{6}\b", rendered)), "snippet": rendered[:500]})
+        if rows:
+            return rows, debug, rendered
+    return [], debug, rendered or raw
 
 
 def normalize_md(mmdd: str, year: int) -> Optional[str]:
@@ -295,15 +344,12 @@ def main() -> int:
         print(json.dumps({"date": target_date, "skipped": "weekend"}, ensure_ascii=False))
         return 0
 
-    page = fetch_html(args.url)
-    rows = parse_stock_apply_page(page)
-    parse_debug = {"page_len": len(page), "html_tr_count": len(re.findall(r"<tr[^>]*>", page, re.I)), "code_like_count": len(re.findall(r"\b\d{6}\b", page)), "snippet": page[:500]}
+    rows, parse_debug, page = fetch_and_parse_9fzt(args.url)
     if not rows:
-        # 落盘 debug，明确说明是该 URL 在服务器返回未渲染内容，而非换数据源。
         AUDIT_DIR.mkdir(parents=True, exist_ok=True)
         (AUDIT_DIR / "latest_ipo_calendar_parse_failed.html").write_text(page, encoding="utf-8")
         (AUDIT_DIR / "latest_ipo_calendar_parse_failed.json").write_text(json.dumps(parse_debug, ensure_ascii=False, indent=2), encoding="utf-8")
-        raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+        raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM even after headless render; raw page saved for debug")
     events = match_events(rows, target_date)
     msg = build_message(target_date, events, args.url, len(rows))
 

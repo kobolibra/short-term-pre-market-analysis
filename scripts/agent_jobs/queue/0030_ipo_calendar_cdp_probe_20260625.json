@@ -1,0 +1,7 @@
+{
+  "id": "0030_ipo_calendar_cdp_probe_20260625",
+  "script": "scripts/ipo_calendar_cdp_probe.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Launch provided 9fzt URL in headless browser briefly and inspect netlog/API URLs for stockApply data."
+}

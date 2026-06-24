@@ -1,0 +1,8 @@
+{
+  "id": "0019_shadow_outcome_v27_retry_20260624_1815",
+  "script": "scripts/v27_shadow_outcome.py",
+  "args": [],
+  "timeout": 1200,
+  "created": "2026-06-24T18:15:00+08:00",
+  "note": "Retry v27 after close; same-day dailyline may now be available. Pending-safe for T+1 hold."
+}

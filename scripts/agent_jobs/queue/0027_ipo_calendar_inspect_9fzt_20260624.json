@@ -1,0 +1,7 @@
+{
+  "id": "0027_ipo_calendar_inspect_9fzt_20260624",
+  "script": "scripts/ipo_calendar_inspect_9fzt.py",
+  "args": [],
+  "timeout": 1200,
+  "note": "Inspect exact provided 9fzt stockApply HTML/Next.js payload on VM and publish IPO audit for parser fix."
+}

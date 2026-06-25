@@ -1,0 +1,7 @@
+{
+  "id": "0035_ipo_calendar_signed_fetch_retry_20260625",
+  "script": "scripts/ipo_calendar_signed_fetch.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Retry of 0034 (which ran before the script was synced to main). Signed GET to api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list. signature=md5('sjdxfnqogbzoun13d971ckh8p'+sortedParamValues+ts), timestamp header. Output latest_9fzt_signed.json with first real IPO rows."
+}

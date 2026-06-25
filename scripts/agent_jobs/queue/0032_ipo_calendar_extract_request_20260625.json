@@ -1,0 +1,7 @@
+{
+  "id": "0032_ipo_calendar_extract_request_20260625",
+  "script": "scripts/ipo_calendar_extract_request.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Found path /api/1/stock/a/ipo/list. Extract baseURL/appcode/sign from JS chunks and probe path across api.9fzt.com, hq.9fzt.com, api-hq.chongnengjihua.com with/without /gw and appcodes. Output projects/ipo_calendar/reports/_audit/latest_9fzt_request_extract.json"
+}

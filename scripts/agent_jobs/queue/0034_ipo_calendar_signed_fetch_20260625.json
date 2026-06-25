@@ -1,0 +1,7 @@
+{
+  "id": "0034_ipo_calendar_signed_fetch_20260625",
+  "script": "scripts/ipo_calendar_signed_fetch.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Signed GET to api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list. Headers signature=md5('sjdxfnqogbzoun13d971ckh8p'+sortedParamValues+ts), timestamp=ts. Try /news and no-prefix, several param sets. Output latest_9fzt_signed.json with first real IPO rows."
+}

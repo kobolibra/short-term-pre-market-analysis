@@ -1,0 +1,7 @@
+{
+  "id": "0031_ipo_calendar_endpoint_probe_20260625",
+  "script": "scripts/ipo_calendar_endpoint_probe.py",
+  "args": [],
+  "timeout": 1200,
+  "note": "Decisively locate the 9fzt stockApply data endpoint by probing api.9fzt.com/gw, api.9fzt.com and stock.9fzt.com with GET/POST and capturing response bodies (incl auth errors). Output projects/ipo_calendar/reports/_audit/latest_9fzt_endpoint.json"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "0036_ipo_calendar_find_ipo_params_20260626",
+  "script": "scripts/ipo_calendar_find_ipo_params.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Signature accepted (/news returns 参数非法). Extract getIpoList call site from stockApply JS + brute-force date/type param sets against /news/api/1/stock/a/ipo/list. Output latest_9fzt_ipo_params.json with the param set that returns real rows."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "0038_premarket_blend_v29_20260626",
+  "script": "scripts/v29_blend_optimize.py",
+  "args": ["--top-n", "30", "--min-train", "5"],
+  "timeout": 900,
+  "note": "Walk-forward compare 5 premarket ranking strategies. Hypothesis: blending high-ICIR derivs (deriv.amt_x_auc 0.531, deriv.money_x_liq 0.437 — omitted by v10_amt) lifts both OOS IC and decision-relevant Top5/Top3 actual excess. Output reports/_audit/premarket_blend_v29.{json,md}."
+}

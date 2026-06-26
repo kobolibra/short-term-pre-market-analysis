@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Find the correct params for the 9fzt IPO list endpoint.
+Read the 9fzt IPO list call site directly (no guessing).
+
+The agent's own web fetcher cannot open this site (JS => content-type 500,
+SPA page => render timeout), so the JS must be downloaded server-side here.
 
 Signature is already accepted: with /news prefix the endpoint returns
-  {"code":20001,"message":"\u53c2\u6570\u975e\u6cd5"}  (illegal params)
-so the signature + host + path + /news prefix are all correct; we only need
-the right query params. This script (a) extracts the JS call site for
-getIpoList to read real param names, and (b) brute-forces common param sets.
+  {"code":20001,"message":"\u53c2\u6570\u975e\u6cd5"}  (illegal params),
+proving signature + host + path + /news are correct; only the query params
+are unknown. This script:
+  1. Downloads the page, finds all JS chunk URLs.
+  2. Saves the FULL stockApply page chunk JS (and any chunk mentioning
+     getIpoList / ipo/list) to disk + into the JSON so the exact param
+     object passed to getIpoList can be read line by line.
+  3. As a secondary safety net, brute-forces common param sets.
 """
 import hashlib, time, json, os, ssl, re, calendar, datetime
 import urllib.request, urllib.parse, urllib.error
@@ -21,6 +28,7 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 OUT_DIR = "/home/investmentofficehku/.openclaw/workspace/projects/ipo_calendar/reports/_audit"
 OUT = os.path.join(OUT_DIR, "latest_9fzt_ipo_params.json")
+JS_DIR = os.path.join(OUT_DIR, "9fzt_js")
 
 
 def _ctx():
@@ -30,7 +38,7 @@ def _ctx():
     return c
 
 
-def get(url, timeout=25):
+def get(url, timeout=30):
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=timeout, context=_ctx()) as r:
         return r.read().decode("utf-8", "replace")
@@ -115,33 +123,37 @@ def call(params):
 
 
 def main():
-    out = {"generated_at": datetime.datetime.now().isoformat(), "js": {}, "probes": []}
+    out = {"generated_at": datetime.datetime.now().isoformat(),
+           "chunks_saved": [], "full_js": {}, "probes": []}
+    os.makedirs(JS_DIR, exist_ok=True)
     try:
         html = get(PAGE)
         out["page_len"] = len(html)
         chunks = find_chunks(html)
         out["chunk_count"] = len(chunks)
-        kws = ["getIpoList", "ipo/list", "kpAY", "Ipo", "beginDate", "endDate",
-               "startDate", "applyDate", "tradeDate", "month", "queryDate",
-               "pageNum", "pageSize"]
+        out["chunk_urls"] = chunks
         for cu in chunks:
-            if "stockApply" not in cu:
+            name = cu.split("/")[-1]
+            # download every same-origin _next chunk; keep full text of the
+            # ones that actually contain the IPO call.
+            if "/_next/" not in cu:
                 continue
             try:
                 js = get(cu)
             except Exception as e:
-                out["js"][cu] = "ERR " + repr(e)
+                out["full_js"][name] = "ERR " + repr(e)
                 continue
-            snips = []
-            for kw in kws:
-                i = 0
-                while len(snips) < 60:
-                    idx = js.find(kw, i)
-                    if idx < 0:
-                        break
-                    snips.append({"kw": kw, "snippet": js[max(0, idx - 220):idx + 320]})
-                    i = idx + len(kw)
-            out["js"][cu] = {"len": len(js), "snips": snips}
+            has_ipo = ("ipo/list" in js) or ("getIpoList" in js) or ("stockApply" in cu)
+            if has_ipo:
+                fn = os.path.join(JS_DIR, name)
+                try:
+                    with open(fn, "w", encoding="utf-8") as f:
+                        f.write(js)
+                    out["chunks_saved"].append({"name": name, "len": len(js), "path": fn})
+                except Exception as e:
+                    out["chunks_saved"].append({"name": name, "err": repr(e)})
+                # include full text in JSON (cap to keep file readable)
+                out["full_js"][name] = js[:120000]
     except Exception as e:
         out["js_err"] = repr(e)
 
@@ -163,11 +175,10 @@ def main():
         {"date": td},
         {"tradeDate": td},
         {"applyDate": td},
-        {"type": "1"}, {"type": "0"}, {"type": "2"},
-        {"status": "1"}, {"listStatus": "1"}, {"queryType": "1"},
-        {"market": "1"}, {"market": "0"},
+        {"type": "1"}, {"type": "0"},
+        {"status": "1"}, {"queryType": "1"},
+        {"market": "1"},
         {"beginDate": d1, "endDate": d2, "pageNum": 1, "pageSize": 50},
-        {"beginDate": d1, "endDate": d2, "type": 1},
         {"pageNum": "1", "pageSize": "30"},
         {"year": today.year, "month": today.month},
     ]
@@ -182,9 +193,8 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
-    print("wrote", OUT, "probes", len(out["probes"]), "hit", bool(hit))
-    if hit:
-        print("HIT params:", hit.get("params"), "len:", hit.get("data_len") or hit.get("nested_len"))
+    print("wrote", OUT, "chunks_saved", len(out["chunks_saved"]),
+          "probes", len(out["probes"]), "hit", bool(hit))
 
 
 if __name__ == "__main__":

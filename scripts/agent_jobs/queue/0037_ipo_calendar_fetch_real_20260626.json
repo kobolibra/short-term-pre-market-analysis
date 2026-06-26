@@ -1,0 +1,7 @@
+{
+  "id": "0037_ipo_calendar_fetch_real_20260626",
+  "script": "scripts/ipo_calendar_fetch_real.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Use EXACT params read from JS getData(): listedSector=0, pageNum, pageSize=50, sortField=onlineStartDate, sortType=0. Dump count + ipoList rows + real field names to latest_9fzt_signed.json."
+}

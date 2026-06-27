@@ -1,0 +1,7 @@
+{
+  "id": "0061_net_amount_deepdive_v51_20260627",
+  "script": "scripts/0061_net_amount_deepdive_v51_20260627.py",
+  "args": [],
+  "timeout": 120,
+  "note": "表⑤ auction.jjyd.net_amount 字段IC+归一化+分桶+交互分析"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "0050_premarket_clean_ic_v39_20260627",
+  "script": "scripts/v39_premarket_clean_ic.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Leakage fix for v38/0049. v38 top IC (cashflow 涨跌幅 0.82 ICIR~8, pool change_pct 0.49) are look-ahead: cashflow.* and pool.* snapshots are captured AFTER open (~10:01) or after close (~20:49), so their change/flow fields ~= realized same-day return. Also v38 used files[-1] (post-close snapshot) for auction data, contaminating latest_change_pct. This job selects ONLY the pre-open snapshot (HHMMSS<=093000, latest within the pre-open batch) per dataset; datasets with no pre-open snapshot (cashflow/pool) are recorded as post_open_excluded; then recomputes per-field daily cross-sectional Spearman IC/ICIR. This is the true premarket predictive power. Output reports/_audit/premarket_clean_ic_v39.{json,md}."
+}

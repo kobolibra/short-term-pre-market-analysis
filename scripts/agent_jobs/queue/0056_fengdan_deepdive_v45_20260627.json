@@ -1,0 +1,7 @@
+{
+  "id": "0056_fengdan_deepdive_v45_20260627",
+  "script": "scripts/v45_fengdan_deepdive.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Complete the 封单 (auction.jjlive.fengdan) table analysis. 0050 showed numeric fields weak/negative. v45 adds: field coverage (amount_915/920/925 sparsity), seal-time decay ratios r920/915 & r925/915 IC (撤单/sincerity), board_label buckets (板位) mean forward excess raw + day-demeaned + coarse(today_1st/today_multi/yest_board/none), and section sentiment timing (seal_total/yizi_count/t15/t20/t25 vs daily mean excess). Premarket <=09:30 snapshot, excess=(close-open)/preclose*100. Output reports/_audit/fengdan_deepdive_v45.{json,md}."
+}

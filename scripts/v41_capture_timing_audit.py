@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""v41_capture_timing_audit.py — job 0051: 扫描所有 captures 的 fetched_at, 确认每个数据集到底盘前还是盘中抓取.
+"""v41_capture_timing_audit.py — job: 扫描所有 captures 的 fetched_at, 确认每个数据集到底盘前还是盘中抓取.
 
 动机: GitHub 仓库只提交了 4 个日期, 无法逐日确认 pool/cashflow 的抓取时点. 本作业在服务器端
-(拥有完整 22 天)扫描每个数据集每份快照的 fetched_at(HH:MM:SS), 统计最早/最晚抓取时间、
+(拥有完整多天)扫描每个数据集每份快照的 fetched_at(HH:MM:SS), 统计最早/最晚抓取时间、
 盘前(<=09:30)快照数 vs 盘中/后数, 以及每日首次抓取时间. 纯只读.
 输出 reports/_audit/capture_timing_audit_v41.{json,md}
 用法: python3 scripts/v41_capture_timing_audit.py
@@ -21,6 +21,8 @@ if str(SCRIPTS_DIR) not in sys.path:
 import v10_optimize as v10
 
 PREOPEN = "09:30:00"
+YES = "\u662f"
+NO = "\u5426"
 
 
 def hhmmss(fetched_at):
@@ -50,7 +52,7 @@ def main():
                 if t is None:
                     stem = f.stem
                     if len(stem) == 6 and stem.isdigit():
-                        t = f"{stem[:2]}:{stem[2:4]}:{stem[4:]}"
+                        t = stem[:2] + ":" + stem[2:4] + ":" + stem[4:]
                 if t is None:
                     continue
                 info["n_files"] += 1
@@ -76,7 +78,7 @@ def main():
         }
     report = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "job": "0051_capture_timing_audit_v41",
+        "job": "capture_timing_audit_v41",
         "preopen_cutoff": PREOPEN,
         "n_dates": len(date_dirs),
         "datasets": out,
@@ -85,13 +87,14 @@ def main():
     audit.mkdir(parents=True, exist_ok=True)
     (audit / "capture_timing_audit_v41.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-    L = ["# 抓取时点审计 v41 (job 0051)", "",
-         f"- 生成: {report['generated_at']} ｜日期数: {len(date_dirs)} ｜盘前阈值: {PREOPEN}", "",
-         "| 数据集 | 文件数 | 盘前(<=9:30) | 盘中/后 | 最早 | 最晚 | 纯盘前? |",
+    L = ["# \u6293\u53d6\u65f6\u70b9\u5ba1\u8ba1 v41", "",
+         "- \u751f\u6210: " + report["generated_at"] + " \uff5c\u65e5\u671f\u6570: " + str(len(date_dirs)) + " \uff5c\u76d8\u524d\u9608\u503c: " + PREOPEN, "",
+         "| \u6570\u636e\u96c6 | \u6587\u4ef6\u6570 | \u76d8\u524d(<=9:30) | \u76d8\u4e2d/\u540e | \u6700\u65e9 | \u6700\u665a | \u7eaf\u76d8\u524d? |",
          "|---|---|---|---|---|---|---|"]
     for ds in sorted(out):
         o = out[ds]
-        L.append(f"| {ds} | {o['n_files']} | {o['preopen_files']} | {o['intraday_files']} | {o['earliest']} | {o['latest']} | {'\u662f' if o['is_premarket_dataset'] else '\u5426'} |")
+        flag = YES if o["is_premarket_dataset"] else NO
+        L.append("| " + ds + " | " + str(o["n_files"]) + " | " + str(o["preopen_files"]) + " | " + str(o["intraday_files"]) + " | " + str(o["earliest"]) + " | " + str(o["latest"]) + " | " + flag + " |")
     (audit / "capture_timing_audit_v41.md").write_text("\n".join(L), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2, default=str))
     return 0

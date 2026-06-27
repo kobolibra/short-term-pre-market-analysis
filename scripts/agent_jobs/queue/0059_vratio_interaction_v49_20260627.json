@@ -1,0 +1,7 @@
+{
+  "id": "0059_vratio_interaction_v49_20260627",
+  "script": "scripts/v49_vratio_interaction.py",
+  "args": [],
+  "timeout": 900,
+  "note": "vratio interaction/conditional: double-high (turnover x volume_ratio_multiple / x auction_volume_ratio) quadrant + gates + conditional IC + minrank/product interaction IC; tests whether ratio adds value when absolute turnover also large"
+}

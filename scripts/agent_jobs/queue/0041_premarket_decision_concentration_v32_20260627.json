@@ -1,0 +1,7 @@
+{
+  "id": "0041_premarket_decision_concentration_v32_20260627",
+  "script": "scripts/v32_decision_concentration.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Pivot to decision layer per HANDOFF 4.1. Jobs 0038/0039/0040 converge: field-level tinkering does NOT robustly lift v10_amt OOS ranking (0040's Top3 blowup was a right-tail outlier false-positive: IC flat, capture down, median down). So freeze the production v10_amt ranking (score(CORE,V10AMT_W) - risk_penalty) and study the DECISION policy only: equal-weight baskets at top_k in {1,2,3,5,10}, each with/without excluding risk_flag names. Metrics per policy: per-day basket mean excess series -> mean/median/std/info_ratio(mean/std)/win_rate_days/worst_day, plus pooled-pick mean/median/win/limitdown. Verdict: best concentration by info_ratio (robust to outliers, unlike 0040's pooled mean), whether production Top3 is optimal, and whether risk-gating helps. Output reports/_audit/premarket_decision_concentration_v32.{json,md}."
+}

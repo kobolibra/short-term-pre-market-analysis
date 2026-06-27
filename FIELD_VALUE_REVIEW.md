@@ -90,9 +90,32 @@
   - ✅ 新增可用(条件过滤, 非做多因子): 在高成交额集合内, 优先非过热(低/中 auction_volume_ratio)标的。
   - 表③相对表② = 冗余偏劣, 不单独纳入; 价值降级为上述一条条件过滤规则。
 
+## 表④ 竞价委买/涨停委买表 auction.jjyd.weimai — ✅ 完成(0050+0060)
+源 竞价/竞价异动/涨停委买(getWeimai系), ~09:28 抓取, 每日~143行(快照单日150行)。**它存在的理由 = 唯一提供竞价时点资金流分解(主力/超大单/大单净流入)的盘前表**, 这是抢筹/量比表都没有的维度。
+字段(33): rank/code/name、price、latest_change_pct、auction_turnover(_wan)、auction_change_pct、main_net_inflow(_wan/_full)、turnover_rate_pct、seal_volume、auction_amount(_wan)、seal_volume_again、concept/concept_1/2、market_cap(_yi)、**super_large_net_inflow(超大单净流入)**、**large_order_net_inflow(大单净流入)**、board_label、seal_amount_wan、*_text 副本、raw。注: main_net_inflow==main_net_inflow_full(重复列)。
+- 覆盖率(0060, 18天2570行): 三大资金流字段(主力/超大单/大单)、market_cap、auction_amount_wan 均 100%; **seal_amount_wan 仅 6.2%(基本空)**。
+- 字段 IC(0060, n18): main_net_inflow_full 0.103/0.554; super_large_net_inflow 0.094/0.548; market_cap_yi 0.069/0.377(体量基线); seal_volume 0.064/0.397; main_net_inflow_wan 0.043; seal_amount_wan 0.033(n12稀疏); auction_amount_wan 0.018≈噪声; latest_change_pct 0.015≈噪声; auction_turnover_wan **-0.014**; turnover_rate_pct **-0.019**; **large_order_net_inflow -0.068/-0.445(负!)**; auction_change_pct -0.102(仅n6, 不可信)。
+- **归一化资金强度 IC(本表核心检验: 净流入是真信号还是体量代理?)**: 
+  - **superlarge_over_turnover 0.135/0.713(最强! 较原始 0.094 提升)**
+  - **main_net_over_turnover 0.120/0.667(较原始 0.103 提升)**
+  - main_net_over_mktcap 0.105/0.581(与原始持平)
+  - superlarge_over_mktcap 0.030(除以市值后衰减)
+  -> **结论: 归一化后 IC/ICIR 不降反升 -> 竞价净流入是真信号, 不是体量代理(与表③量比正相反: 量比归一化后归零)。用“净流入/成交额”比绝对额更好——衡量的是买盘的相对强度/拥挤度而非票的大小。** 这直接验证了用户“多探索归一化/非线性”的方向。
+- 冗余(0060 avg spearman): **super_large_net_inflow ~ large_order_net_inflow = -0.919(近完美反相!)** -> 二者是同一笔单分类的镜像(超大单买=大单卖), large_order 不提供独立信息, 其负IC即超大单正IC的镜像; super_large ~ market_cap 0.602(超大单偏向大票); main_net_inflow_full ~ super_large 仅 0.317(**主力净流入与超大单净流入只中度相关 -> 两者各有独立成分, 不冗余**)。
+- **交互/条件 成交额 × 主力净流入(0060, 去均值超额)**: HH双高 +0.469(n687, 最优) > LH(低量+高流入) +0.428(n600) > LL -0.311 > **HL(高量+净流出) -0.611(n600, 最差)**。条件IC: **高成交额子集内 主力净流入 IC 0.099/0.505(仍强!)**; 高流入子集内 成交额 IC -0.031/-0.262(≈0/略负)。-> **与表③恰好相反: 这里资金流是载体(carrier), 成交额是次要; 净流入符号/强度本身就是独立 alpha。** 双高闸口 top33 +0.169 / top20 -0.314(极端双高反而回落, 拥挤)。
+- **净流入符号桶(0060)**: net_inflow_pos +0.372(n1447) vs **net_inflow_neg -0.479(n1123)** -> 去均值价差 **0.85**! **约44%上了涨停委买榜的票实际竞价净流出, 且系统性跑输。净流入符号 = 一条强二元过滤(净流出直接剔除)。** 信息原理: 涨停委买榜=大委买单堆积的票, 但委买可虚挂诱多; 真实主力净流入符号区分“真承接 vs 诱多对倒”。
+- **board_label 板位桶(0060, 去均值超额)**: 昨3连板 +0.614(n18) > (none) +0.248(n1913) > 昨日首板 -0.344 > 3连板 -0.914 > 2连板 -1.15 > 4连板 -1.267 > 首板 -1.421 > 昨2连板 -1.546。-> **与表①封单同构: 当日连板(首板/2/3/4连板)强负(已封到顶回落), 无标签/昨日高位接力为正。**
+- 与抢筹重叠(0060, 16天): weimai 日均143.2行 vs qiangchou 47.7行, 重叠仅9.2行 -> **仅6.5%的weimai在抢筹榜, 93.5%为weimai独有 universe -> 表④是基本独立的标的池。**
+- **结论**: 
+  - ✅ **保留(本表核心独有 alpha, 全项目新增独立维度)**: main_net_inflow_full(主力净流入)、super_large_net_inflow(超大单净流入); **优先用归一化形式 net_inflow/auction_turnover(超大单/成交额 IC 0.135/0.713 为单因子新高)**。与抢筹三因子只中度相关, 可纳入组合作独立资金流维度。
+  - ✅ **保留(强二元过滤)**: 竞价主力净流入符号 -> 净流出(占比~44%)直接剔除(价差0.85)。
+  - ✅ 保留(分类过滤): board_label(同表①: 昨日高位接力正/当日连板剔除); seal_volume 弱正可作辅助。
+  - ❌ 丢弃: large_order_net_inflow(超大单的-0.919镜像, 无独立信息)、auction_turnover_wan/turnover_rate_pct(本宽universe上转负, 由抢筹表更优捕获)、latest_change_pct/auction_amount_wan(噪声)、auction_change_pct(n6不可信)、market_cap(体量基线, 已被归一化吸收)、seal_amount_wan(6%空)、*_text/raw/rank、main_net_inflow_wan/main_net_inflow(=full重复列)。
+  - 💡 关键洞察: ①竞价净流入是少数“归一化后更强”的真信号(对照表③量比归一化即死), 应以 净流入/成交额 入模; ②资金流维度的交互结构与量价维度相反——净流入是载体, 成交额是配角; ③“超大单买+大单卖”的微观结构(large_order全负)是同一净额的镜像分解, 不要当两个因子用; ④涨停委买榜近半为净流出诱多, 符号过滤价值极高。
+
 ---
 
 ## Job 台账
-- 0050 v39 干净IC ✓; 0051 v41 失败(f-string反斜杠); 0052 v41修复 时点审计 ✓; 0053 v42 冗余/组合 ✓; 0054 v43 T-1滞后 ✓; 0055 v44 去相关组合 ✓; 0056 v45 封单深挖 ✓; 0057 v46 抢筹深挖 ✓; 0058 v48 量比深挖 ✓; 0059 v49 量比交互/条件 ✓。
+- 0050 v39 干净IC ✓; 0051 v41 失败(f-string反斜杠); 0052 v41修复 时点审计 ✓; 0053 v42 冗余/组合 ✓; 0054 v43 T-1滞后 ✓; 0055 v44 去相关组合 ✓; 0056 v45 封单深挖 ✓; 0057 v46 抢筹深挖 ✓; 0058 v48 量比深挖 ✓; 0059 v49 量比交互/条件 ✓; 0060 v50 委买深挖(资金流归一化/交互/符号) ✓。
 - v47 自算开盘gap方案 已废弃(用户否决, 改用 auction_change_pct)。
-- **下一个 job id = 0060**。
+- **下一个 job id = 0061**。

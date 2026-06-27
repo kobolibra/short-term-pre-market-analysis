@@ -1,0 +1,7 @@
+{
+  "id": "0047_premarket_feature_audit_v35_rerun_20260627",
+  "script": "scripts/v35_feature_audit.py",
+  "args": [],
+  "timeout": 600,
+  "note": "RE-QUEUE of v35 (job 0044 failed: queue used 'command' instead of 'script'). Complementary to v36: works on the persisted v9 candidate schema. (1) Tests the buried raw ratios (委买/封单比, 封单/流通比, 大单占比, 净流入压强) + turnover_intensity=竞价成交额/流通市值 as independent cross-sectional factors vs excess, with IC/ICIR/coverage, vs the production headline amt. (2) Conditional IC of amt and turnover_intensity bucketed by open position (latest_change_pct: 低开/平开/高开/高开>=7) to test the 放量×位置 reversal logic. Pure descriptive, no production change. Output reports/_audit/premarket_feature_audit_v35.{json,md}."
+}

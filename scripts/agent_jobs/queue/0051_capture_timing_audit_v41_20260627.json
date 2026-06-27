@@ -1,0 +1,7 @@
+{
+  "id": "0051_capture_timing_audit_v41_20260627",
+  "script": "scripts/v41_capture_timing_audit.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Confirm capture timing across ALL server-side dates (GitHub only has 4). Scans fetched_at of every snapshot for every dataset; reports earliest/latest time, preopen(<=09:30) vs intraday counts, per-date first-fetch time, and is_premarket_dataset flag. Settles whether pool.hot/pool.surge are premarket or intraday. Output reports/_audit/capture_timing_audit_v41.{json,md}."
+}

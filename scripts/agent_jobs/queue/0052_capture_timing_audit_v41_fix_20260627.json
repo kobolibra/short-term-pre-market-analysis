@@ -1,0 +1,7 @@
+{
+  "id": "0052_capture_timing_audit_v41_fix_20260627",
+  "script": "scripts/v41_capture_timing_audit.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Re-run of 0051 after fixing py3.10 f-string backslash SyntaxError. Scans fetched_at of every snapshot across all dates; per-dataset preopen vs intraday counts + per-date first-fetch time. Reconciles user's note that pool was later added to premarket vs v39 showing pool preopen_days=0. Output reports/_audit/capture_timing_audit_v41.{json,md}."
+}

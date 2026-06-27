@@ -1,0 +1,7 @@
+{
+  "id": "0043_premarket_weighted_concentration_v34_20260627",
+  "script": "scripts/v34_weighted_concentration.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Answer the operational worry that equal-weight Top1/Top2 (best per 0041/0042) is too few names (single-name blowup, capacity, slippage). Root cause: v10_amt signal is strongest at the very top and decays fast, so equal-weighting deeper names dilutes the top-of-book alpha. This job freezes the v10_amt ranking and tests whether holding ENOUGH names (Top5/8/10) but tilting weights to the top recovers most of the concentration alpha. Schemes per k in {3,5,8,10}: equal (1/k), rank (linear k-i), score (softmax of (score-max)/std). Reports per-scheme cumulative/mean/info_ratio/win/worst plus effective number of names (1/sum w^2) so diversification is explicit, with equal_top1/top2 as reference. Verdict: best diversified (k>=5, non-equal) scheme by info_ratio and by cumulative, and whether weighted Top8/10 approaches equal_top2 return/IR while holding more names. Output reports/_audit/premarket_weighted_concentration_v34.{json,md}."
+}

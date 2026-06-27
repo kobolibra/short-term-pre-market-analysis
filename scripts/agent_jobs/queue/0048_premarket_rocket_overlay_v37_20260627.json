@@ -1,0 +1,7 @@
+{
+  "id": "0048_premarket_rocket_overlay_v37_20260627",
+  "script": "scripts/v37_rocket_overlay_combo.py",
+  "args": [],
+  "timeout": 600,
+  "note": "v36 audit found rocket_rank (飙升榜排名) is the strongest single factor (IC 0.222, ICIR 1.03) yet production edge ignores it. This job blends rocket attention percentile (BLEND=0.30) into the production edge score per day and walk-forward compares daily cross-sectional Spearman IC and Top3 cumulative excess vs the production baseline. Read-only validation, does not touch production. Output reports/_audit/premarket_rocket_overlay_v37.{json,md}."
+}

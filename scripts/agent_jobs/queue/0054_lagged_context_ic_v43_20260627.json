@@ -1,0 +1,7 @@
+{
+  "id": "0054_lagged_context_ic_v43_20260627",
+  "script": "scripts/v43_lagged_context_ic.py",
+  "args": [],
+  "timeout": 900,
+  "note": "0052 proved pool.*/cashflow.*/review.*/ztpool are intraday(~10:01) or evening(~17:20) captures, unusable same-day (leak). This job tests them leak-free as T-1 lagged signals: for prediction date D use each dataset's most recent capture date < D (files[-1]), compute per-field daily Spearman IC/ICIR vs D excess. Tells us whether yesterday's pool/cashflow/review data has genuine next-morning predictive value. Output reports/_audit/lagged_context_ic_v43.{json,md}."
+}

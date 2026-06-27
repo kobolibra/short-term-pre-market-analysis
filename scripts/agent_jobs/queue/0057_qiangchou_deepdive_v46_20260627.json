@@ -1,0 +1,7 @@
+{
+  "id": "0057_qiangchou_deepdive_v46_20260627",
+  "script": "scripts/v46_qiangchou_deepdive.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Table-2 qiangchou (auction.jjyd.qiangchou) deep-dive. Confirm coverage of seal_amount_wan & yesterday_auction_turnover_wan (suspected all-null), own-n IC for auction_turnover_wan/turnover_rate_pct/auction_change_pct/auction_volume_ratio/grab_strength/latest_change_pct, pairwise redundancy among them, curated qiangchou-sublist vs grab-only group bucket forward excess (raw+demeaned), and today/yesterday turnover ratio IC. Premarket <=09:30, excess=(close-open)/preclose*100. Output reports/_audit/qiangchou_deepdive_v46.{json,md}."
+}

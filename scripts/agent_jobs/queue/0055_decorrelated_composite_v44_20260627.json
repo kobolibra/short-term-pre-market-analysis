@@ -1,0 +1,7 @@
+{
+  "id": "0055_decorrelated_composite_v44_20260627",
+  "script": "scripts/v44_decorrelated_composite.py",
+  "args": [],
+  "timeout": 900,
+  "note": "0053 showed the 7 auction factors are highly redundant (turnover~xlflow~mainflow corr 0.6-1.0) so equal-weight of all 7 (IC 0.151) < single best QC.turnover (0.163). 0054 found T-1 review.fupan.plate activity (amount IC 0.103, turnrate 0.087) is independent of same-day auction, and home.ztpool promo rate is reverse (-0.07). v44 builds a DECORRELATED composite: one representative per independent cluster (A_turnover, B_turnrate, C_gap) plus T-1 signals (D_fp_amount, E_fp_turnrate, neg F_ztpool_promo). Reports per-factor IC, cross-correlation matrix, and several signed-z composites (comp_SD, comp_SD_FP, comp_ALL, comp_AB_D, comp_A_D) vs single best 0.163. Goal: does adding the independent T-1 fupan activity push composite IC above 0.163? Output reports/_audit/decorrelated_composite_v44.{json,md}."
+}

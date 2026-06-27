@@ -1,0 +1,7 @@
+{
+  "id": "0060_weimai_deepdive_v50_20260627",
+  "script": "scripts/v50_weimai_deepdive.py",
+  "args": [],
+  "timeout": 900,
+  "note": "weimai (limit-up bid) field IC + normalized inflow-intensity (net/turnover, net/mktcap) + turnover x main_net_inflow interaction/conditional + inflow sign bucket + board_label + qiangchou overlap; tests if premarket inflow is real signal or size proxy"
+}

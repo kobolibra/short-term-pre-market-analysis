@@ -1,0 +1,7 @@
+{
+  "id": "0039_premarket_marginal_ic_v30_20260627",
+  "script": "scripts/v30_marginal_ic.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Marginal incremental-IC test: does ANY non-core field add walk-forward OOS IC on top of v10_amt (base+lambda*z(field), lambda in {0.15,0.30})? If all negative, v10_amt is a linear local optimum given current data. Output reports/_audit/premarket_marginal_ic_v30.{json,md}."
+}

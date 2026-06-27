@@ -1,0 +1,13 @@
+{
+  "id": "0044_premarket_feature_audit_v35_20260627",
+  "title": "盘前特征审计 v35 — 被埋原始比率 + 换手强度归一 + 成交额×开盘位置条件IC",
+  "description": "next-level 第1+2步的地基: 纯描述性特征审计, 不改生产逻辑。(1) 把被 weimai_strength 揉掉的原始比率(委买/封单比、封单/流通比、大单占比、净流入压强)与「换手强度=竞价成交额/流通市值」作为独立因子测横截面 IC/ICIR/覆盖率, vs 现役头号 amt。(2) 按 latest_change_pct 分桌测 amt/turnover 的条件 IC, 验证「放量×位置」反转逻辑。",
+  "command": "python3 scripts/v35_feature_audit.py",
+  "timeout_sec": 600,
+  "created_at": "2026-06-27T15:06:00+08:00",
+  "created_by": "agent",
+  "outputs": [
+    "projects/duanxianxia/reports/_audit/premarket_feature_audit_v35.json",
+    "projects/duanxianxia/reports/_audit/premarket_feature_audit_v35.md"
+  ]
+}

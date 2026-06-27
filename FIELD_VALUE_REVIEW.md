@@ -50,11 +50,23 @@
 - 表头情绪择时(vs当日均值收益, n18): seal_total -0.44、t25 -0.48、yizi_count -0.37、t20 -0.35、t15 -0.22。-> 竞价过热=当日整体更差(反向择时, 小样本待确认)。
 - **结论**: 丢弃所有金额字段+latest_change_pct+撤单率; 保留 board_label 作分类过滤(昨日板正/今日封板剔除); 保留表头总量作过热反向仓位信号。
 
-## 表② 抢筹表 auction.jjyd.qiangchou — 进行中
-(最强信号源: auction_turnover_wan 0.163 / turnover_rate_pct 0.135 / latest_change_pct 0.130 均出自此表)
+## 表② 竞价抢筹表 auction.jjyd.qiangchou — ✅ 完成(0050+0053+0057)
+源 竞价/竞价异动/竞价抢筹, ~09:28 抓取, 每日~59行, 合并两子表: group=grab(竞价抢筹全榜) + group=qiangchou(最极端精选, 每日~5只)。同一code可同时出现在两组。**全项目最强信号源。**
+字段: group/rank/code/name、auction_volume_ratio(量比)、seal_amount_wan、auction_change_pct、latest_change_pct、auction_turnover_wan(竞价成交额)、concept(题材)、*_text 副本、yesterday_auction_turnover_wan、grab_strength(抢筹强度)、turnover_rate_pct(换手率)、raw。
+- 覆盖率(0057, 681行): seal_amount_wan 1.6%(11/681) -> 基本空; yesterday_auction_turnover_wan 0%(全空) -> 今/昨竞价额比值无法算(n0)。
+- 字段 IC(0057, n16): auction_turnover_wan 0.163/ICIR0.665; turnover_rate_pct 0.135/ICIR0.731(最稳); latest_change_pct 0.130/0.357; auction_volume_ratio 0.068/0.228(弱); auction_change_pct 0.038/0.501(仅n6, 数值列多为空); **grab_strength 0.027/0.15(厂商合成分, 几乎无预测力!)**。
+- 冗余(0057 avg spearman): auction_change_pct~latest_change_pct 0.78(重复); turnover~量比 0.66; turnover~换手率 0.64; turnover~涨幅 0.20; 换手率~涨幅 0.27; 其余<0.2。-> 独立维度仍是 资金规模/换手率/涨幅gap 三维。
+- 分组桶(0057, 去市场均值超额): grab_only -0.013(n630) vs **qiangchou 精选 +0.159(n51)** -> 精选子表标签本身带 ~+0.17 额外超额(小样本n51, 弱正)。
+- **结论**: 
+  - ✅ 保留(核心三因子): auction_turnover_wan、turnover_rate_pct、latest_change_pct(=gap, 满覆盖, 优先于稀疏的 auction_change_pct)。撑起 comp_SD 0.179。
+  - ✅ 保留(分类): group=='qiangchou' 精选标签作正向加分(弱)。
+  - ❌ 丢弃: grab_strength(厂商合成分=噪声, 教训: 别信现成合成强度分)、auction_volume_ratio(量比 弱且与成交额冗余0.66)、auction_change_pct(稀疏, 用 latest_change_pct 替代)、*_text 副本、raw、rank、seal_amount_wan(空)、yesterday_auction_turnover_wan(空)。
+  - 💡 关键洞察: 厂商最显眼的“抢筹强度”指标(grab_strength)预测力几乎为零(IC0.027), 真正有价值的是底层原始量(成交额/换手率/高开), 印证“用原始数据自建因子 > 用厂商合成分”。
+
+## 表③ 竞价量比表 auction.jjyd.vratio — 待开始
 
 ---
 
 ## Job 台账
-- 0050 v39 干净IC ✓; 0051 v41 失败(f-string反斜杠); 0052 v41修复 时点审计 ✓; 0053 v42 冗余/组合 ✓; 0054 v43 T-1滞后 ✓; 0055 v44 去相关组合 ✓; 0056 v45 封单深挖 ✓。
-- **下一个 job id = 0057**。
+- 0050 v39 干净IC ✓; 0051 v41 失败(f-string反斜杠); 0052 v41修复 时点审计 ✓; 0053 v42 冗余/组合 ✓; 0054 v43 T-1滞后 ✓; 0055 v44 去相关组合 ✓; 0056 v45 封单深挖 ✓; 0057 v46 抢筹深挖 ✓。
+- **下一个 job id = 0058**。

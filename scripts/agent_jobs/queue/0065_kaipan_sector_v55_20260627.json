@@ -1,0 +1,7 @@
+{
+  "id": "0065_kaipan_sector_v55_20260627",
+  "script": "scripts/0065_kaipan_sector_v55_20260627.py",
+  "args": [],
+  "timeout": 180,
+  "note": "表⑥ home.kaipan.plate.summary join股票级 IC+分桶 v55"
+}

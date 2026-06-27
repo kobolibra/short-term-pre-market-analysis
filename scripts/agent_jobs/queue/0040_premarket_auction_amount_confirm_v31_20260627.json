@@ -1,0 +1,7 @@
+{
+  "id": "0040_premarket_auction_amount_confirm_v31_20260627",
+  "script": "scripts/v31_auction_amount_confirm.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Follow-up to job 0039 (v30 marginal IC). 0039 found auction_amount_wan is the only broadly-robust field that marginally lifts OOS IC over v10_amt (both lambdas positive, improved 10/15 & 11/15 days, mean delta +0.0036); qiangchou_920_925_rank both-lambda positive but only 5/15 days. Per HANDOFF 4.1 branch2 + 2.3, add candidate at small weight and walk-forward re-validate at the DECISION layer (not just IC). Builds base=v10_amt_raw=clip(score(CORE,V10AMT_W)-risk,0,100) and variants clip(base + w*z_day(field),0,100) for field in {auction_amount_wan, qiangchou_920_925_rank}, w in {2,4,6,8}. Walk-forward (min_train=5) compares OOS IC, capture@30, Top3/Top5 pooled excess (mean/median/win_rate/limitdown_rate). A variant is 'recommended' only if it beats production v10_amt on IC AND Top3/Top5 real excess AND does not raise Top3 limitdown rate (v29 bar). Output reports/_audit/premarket_auction_confirm_v31.{json,md}."
+}

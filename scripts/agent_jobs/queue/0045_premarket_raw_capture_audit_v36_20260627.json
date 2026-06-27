@@ -1,0 +1,13 @@
+{
+  "id": "0045_premarket_raw_capture_audit_v36_20260627",
+  "title": "全量盘前原始抓取审计 v36 — 9 个数据集 schema + 第一性原理微观结构因子 IC",
+  "description": "回应“确保考虑所有盘前下载数据 + 第一性原理选指标”。直接读 captures/<date>/<dataset_id>/ 原始抓取，不走 v9 压缩。(1) 输出 9 个盘前数据集的实际 schema(字段并集+覆盖率+样本行)，经验性学习字段名。(2) 按第一性原理构造被压掉/未用的原始因子(竞价量比、竞价换手率、竞额日增速、抢筹幅度、主力净买/流通压强、封单915/920/925时序斜率、委买/封单比、封单/流通比、大单占比、换手强度、飙升/热度榜)，测其对当日 excess 的每日横截面 Spearman IC/ICIR/覆盖率。纯描述性，不改生产逻辑。",
+  "command": "python3 scripts/v36_raw_capture_audit.py",
+  "timeout_sec": 900,
+  "created_at": "2026-06-27T15:14:00+08:00",
+  "created_by": "agent",
+  "outputs": [
+    "projects/duanxianxia/reports/_audit/premarket_raw_capture_audit_v36.json",
+    "projects/duanxianxia/reports/_audit/premarket_raw_capture_audit_v36.md"
+  ]
+}

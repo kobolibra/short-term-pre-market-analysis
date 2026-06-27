@@ -1,0 +1,7 @@
+{
+  "id": "0049_premarket_all_fields_ic_v38_20260627",
+  "script": "scripts/v38_all_fields_ic.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Exhaustive answer to 'were all fields tested?' v36 only tested 16 engineered factors from ~9 fields/9 datasets. This job auto-detects EVERY numeric field of all 13 stock-level premarket datasets (vratio, qiangchou, net_amount, fengdan, weimai, rocket, hot_stock_day, cashflow today/3day/5day/10day, pool.hot, pool.surge), handles 亿/万 unit suffixes, and computes per-field daily cross-sectional Spearman IC/ICIR/coverage vs same-day excess=(close-open)/preclose*100. No preset direction (signed IC, sorted by |IC|). Plate/market-level datasets (kaipan, qxlive) get schema export only. Read-only. Output reports/_audit/premarket_all_fields_ic_v38.{json,md}."
+}

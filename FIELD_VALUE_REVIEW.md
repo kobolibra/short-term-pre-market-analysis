@@ -65,11 +65,24 @@
   - 💡 关键洞察: 厂商最显眼的“抢筹强度”(grab_strength)预测力几乎为零(IC0.027), 真正有价值的是底层原始量(成交额/换手率/高开)。
   - ⚠ 待办(上游): 补全 auction_change_pct 采集覆盖率(当前多日未填)。
 
-## 表③ 竞价量比表 auction.jjyd.vratio — 待开始
+## 表③ 竞价量比/竞价爆量表 auction.jjyd.vratio — ✅ 完成(0050+0058)
+源 竞价异动/竞价爆量(getVratioData/11), ~09:28 抓取, 每日~85行(快照单日155行), 按 volume_ratio_multiple(放量倍数)降序。字段与抢筹表大体重叠, 但有两个抢筹表没有/没法用的字段, 是它存在的理由: (1) yesterday_auction_turnover_wan 这里满覆盖(抢筹表全空); (2) 多出 volume_ratio_multiple(放量倍数=今日竞价额/昨日竞价额)。
+字段: rank/code/name、auction_volume_ratio(量比)、seal_amount_wan、auction_change_pct(竞价涨幅gap)、latest_change_pct、auction_turnover_wan(竞价成交额)、concept、*_text 副本、yesterday_auction_turnover_wan、volume_ratio_multiple(放量倍数)、turnover_rate_pct(换手率)、raw。
+- 覆盖率(0058, 16天1364行): yesterday_auction_turnover_wan 100%、volume_ratio_multiple 100%(均满覆盖, 区别于抢筹表); seal_amount_wan 3.4%(基本空)。
+- 字段 IC(0058, n16): latest_change_pct 0.119/0.369; auction_turnover_wan 0.093/0.487(本表最稳正); auction_volume_ratio 0.058/0.335; turnover_rate_pct 0.041/0.239; auction_change_pct -0.026/-0.231(仅n6, 采集稀疏不可信); **volume_ratio_multiple -0.028/-0.264(负!)**。
+- 放量倍数独立复算(today/yesterday turnover IC, n16): -0.029/-0.271 -> 与字段值一致, 确认为负。
+- 冗余(0058 avg spearman): auction_turnover_wan ~ volume_ratio_multiple -0.038(正交, 印证“水平 vs 变化”两维度独立, 但变化维无正IC故无用); auction_change~latest 0.787; turnover~量比 0.634; turnover~换手 0.58。
+- 与抢筹表重叠(0058, 16天): vratio 日均85.2行 vs qiangchou 47.7行, 重叠仅13.6行 -> 仅16%的vratio出现在抢筹; 84%为vratio-only。
+- 分桶(去市场均值超额): vratio_only +0.058(n1146, 近乎持平) vs in_qiangchou -0.306(n218, 反而更差); 原始超额两桶皆负(-0.48/-0.85), 即爆量高关注票整体倾向回吐。
+- **结论**: 
+  - ❌ 本表独有卖点 volume_ratio_multiple(放量倍数)证伪: IC -0.028(负), 独立复算 -0.029 印证。信息原理: 极端放量倍数被昨日竞价额极小的票主导(如昨1万->今197万=倍数197), 分母不稳定 -> 选出微盘垃圾股随后均值回归 -> 因子被基数效应污染, 不仅不正反而略反向。
+  - ❌ vratio 不提供任何独立 alpha。唯二为正的 auction_turnover_wan(0.093)/turnover_rate_pct(0.041)即抢筹表已捕获且更强的因子(抢筹 0.163/0.135); 本表更弱因 universe 更宽更杂(85 vs 48)。
+  - ❌ 丢弃: volume_ratio_multiple、yesterday_auction_turnover_wan(满覆盖但派生比值负IC, 无可用因子)、auction_volume_ratio(量比 弱+冗余)、latest_change_pct(时点依赖)、auction_change_pct(本表n6且符号翻负, 不可信)、*_text、raw、rank、seal_amount_wan(空)。
+  - 💡 关键洞察: “今日竞价额暴增 vs 昨日”这个直觉性强信号(放量倍数)在数据上无效甚至略反向, 根因是分母基数效应(微盘污染); 真正有效的仍是绝对竞价成交额本身, 且在抢筹精选 universe 里更强。表③相对表② = 冗余偏劣, 不单独纳入。
 
 ---
 
 ## Job 台账
-- 0050 v39 干净IC ✓; 0051 v41 失败(f-string反斜杠); 0052 v41修复 时点审计 ✓; 0053 v42 冗余/组合 ✓; 0054 v43 T-1滞后 ✓; 0055 v44 去相关组合 ✓; 0056 v45 封单深挖 ✓; 0057 v46 抢筹深挖 ✓。
+- 0050 v39 干净IC ✓; 0051 v41 失败(f-string反斜杠); 0052 v41修复 时点审计 ✓; 0053 v42 冗余/组合 ✓; 0054 v43 T-1滞后 ✓; 0055 v44 去相关组合 ✓; 0056 v45 封单深挖 ✓; 0057 v46 抢筹深挖 ✓; 0058 v48 量比深挖 ✓。
 - v47 自算开盘gap方案 已废弃(用户否决, 改用 auction_change_pct)。
-- **下一个 job id = 0058**。
+- **下一个 job id = 0059**。

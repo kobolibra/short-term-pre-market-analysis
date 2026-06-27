@@ -1,0 +1,7 @@
+{
+  "id": "0058_vratio_deepdive_v48_20260627",
+  "script": "scripts/v48_vratio_deepdive.py",
+  "args": [],
+  "timeout": 900,
+  "note": "表3 jingjia liangbi/baoliang vratio deep-dive: coverage(yesterday_auction_turnover/seal_amount/volume_ratio_multiple), field IC, today/yesterday turnover ratio IC, pairwise redundancy, overlap_with_qiangchou + vratio-only excess"
+}

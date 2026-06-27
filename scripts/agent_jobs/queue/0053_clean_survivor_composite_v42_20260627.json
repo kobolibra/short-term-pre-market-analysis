@@ -1,0 +1,7 @@
+{
+  "id": "0053_clean_survivor_composite_v42_20260627",
+  "script": "scripts/v42_clean_survivor_composite.py",
+  "args": [],
+  "timeout": 900,
+  "note": "On the clean premarket survivors from 0050(v39): (1) pairwise Spearman correlation among the 7 auction factors to see how many are truly independent; (2) equal-weight z composite IC vs single best factor (QC auction_turnover ~0.16). Premarket <=09:30 snapshots only. Output reports/_audit/clean_survivor_composite_v42.{json,md}."
+}

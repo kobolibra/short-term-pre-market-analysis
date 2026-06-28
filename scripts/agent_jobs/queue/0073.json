@@ -1,0 +1,7 @@
+{
+  "id": "0073",
+  "script": "scripts/0073_hotday_fields_and_timing_v63_20260628.py",
+  "args": [],
+  "timeout": 120,
+  "note": "rank.hot_stock_day full fields + capture timing across all dates for 4 hot/surge tables"
+}

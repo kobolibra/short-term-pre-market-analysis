@@ -15,8 +15,8 @@
 
 ## 泄漏教训(必须牢记)
 - pool.*/cashflow.* 抓于 ~10:01 盘中; review.*/home.ztpool 抓于 ~17:20 盘后。只能 T-1 滞后用。
-- rank.rocket/hot_stock_day 每天重抓40+次(含盘后), 旧脚本取 files[-1] -> 泄漏。干净盘前 IC≈0(已验证)。
-- 真盘前(~09:25-09:29): auction.jjyd.*(net_amount/qiangchou/vratio/weimai)、home.kaipan.plate.summary、auction.jjlive.fengdan、home.qxlive.top_metrics。
+- rank.rocket/hot_stock_day 每天重抓40+次(含盘后), 旧脚本取 files[-1] -> 泄漏。**干净盘前(09:25)名次线性 IC≈0(已验证); 但 edge 在两榜交叉, 见表⑦。**
+- 真盘前(~09:25-09:29): auction.jjyd.*(net_amount/qiangchou/vratio/weimai)、home.kaipan.plate.summary、auction.jjlive.fengdan、home.qxlive.top_metrics、rank.hot_stock_day、rank.rocket。
 
 ## 干净盘前 IC 排行(job 0050, <=09:30)
 | 表/字段 | IC | ICIR |
@@ -57,22 +57,41 @@
 ## 表⑥ 开盘啦板块表 home.kaipan.plate.summary — ✅ 完成 ❌ 选股无正价值
 - in_top1 IC -0.066/ICIR-1.171; 分桶 in_top1 -1.273 vs no_match +0.938; 板块字段全丢弃; 唯一潜在:in_top1轻度减分(待join修复)
 
-## 表⑦ 盘前雷达 rank.rocket + rank.hot_stock_day — ✅ 完成(0066+0068) ❌ 无可靠edge
-字段: rank/code/name/value(+75w格式解析失败)/raw_rate(原始分, 100%)。每日~90-100行。
+## 表⑦ 盘前热度榜/飙升榜 rank.hot_stock_day + rank.rocket — ✅ 完成(0066+0068+0070+0073+0074) ⚠ 命名已更正; edge 在“交叉”非“名次”
 
-### 线性 IC(0066, n=17, 去日均值)
-rocket rank 0.015/0.163; raw_rate -0.015/-0.164; hot_stock rank -0.023; hot_stock raw_rate 0.023 — 全部≈0。
+> ⚠ 命名更正(0073 官方 dataset_label 铁证, 推翻早先把它们当 pool.* 的错误):
+> - `rank.hot_stock_day` = **热度榜（日）** (dataset_kind hotlist_day, source hotlist.json 字段 hot_stock_day, 100行) — 性质=**绝对热度 LEVEL**(value 千万级元)
+> - `rank.rocket` = **飙升榜** (dataset_kind rocket, source hotlist.json 字段 skyrocket_hour, 100行) — 性质=**小时热度增量 DELTA/动量**(value 带符号万级)
+> - 二者均为**真盘前 09:25** 抓取(09:25xx 直方图证实, 非泄漏)。
+> - 另: `pool.hot`=热门(getFxPoolData,30行)、`pool.surge`=冲涨(getCzPoolData,9行) 是**盘中 10:02** 的不同榜, 勿与本表混淆(只能 T-1 滞后用)。
 
-### 非线性严格复核(0068) — 推翻“top10有价值”假设
-- **top10 去均值**: mean_dm=+1.794 但 std=6.759, ICIR仅0.265, **win_rate仅41.2%**, **binary IC=-0.017(负!)**。
-- **致命**: +1.794 几乎全由2异常日(06-24 +25.258, 06-26 +12.418); 其余15天多为负。肥尾/彩票型, 非稳定edge。
-- 阈值扫描 top3/5/10/20: 全低ICIR+~41-47%胜率, outlier驱动。
-- r11-30陷阱区: -0.837, win35.3%, t≈-1.85(边际)。 qiangchou重叠n=3无效。 weimai交互反直觉噪声。
-- **定论**: ❌ rocket 无可靠独立edge。仅“避开r11-30”可作弱负filter(待更多样本)。
-- 💡 元教训: 线性IC判无价值 -> raw bucket判有价值 -> 严格检验才见真相(肥尾不可交易)。raw分档均值被异常日灌大是陷阱。
+字段: rank/code/name/value/raw_rate (value=万格式化的 raw_rate)。热度榜 value 千万级元; 飙升榜 value 带符号万级。每日 ~90-100 行。
 
-### rank.hot_stock_day
-- 三档完全平坦(1.011/1.251/1.130), 维持无价值。
+### 名次/原始分 线性IC(0066, n=17, 去日均值) — 全≈0
+rocket rank 0.015/0.163; raw_rate -0.015/-0.164; hot_stock rank -0.023; raw_rate 0.023。
+0074 per-day spearman(rank,excess) 再确认: 飙升 +0.015, 热度 -0.023 → ❌ 两表名次本身无单调预测力。
+
+### 飙升榜 非线性严格复核(0068) — 推翻“top10有价值”
+- top10 去均值 mean_dm +1.794 但 std 6.759, ICIR 0.265, win 41.2%, binary IC -0.017; +1.794 几乎全由 2 异常日(06-24/06-26)。肥尾/彩票, 非稳定独立 edge。
+
+### regime 重检(0070, 17d) — 正相关, 情绪HOT日才work
+- 热度榜: top3 +0.290/top10 -0.129(平); regime top3 HOT +0.784/cold -1.448; corr(QX,top10_dm)=+0.447; ×抢筹 IN +1.672 vs NOT -0.184。
+- 飙升榜: top3 +1.621/top5 +4.507/top10 +1.794 但 win 41-47%(肥尾); corr +0.450; ×抢筹 IN +6.577 vs NOT +1.708。
+- 自我纠正: 早先“冷日 hypothesis”被证伪; 正 corr → 情绪 HOT 日才有效。
+
+### level×delta 交叉(0074, 17d, 当日去均值) — ★ edge 真正所在
+- A 飙升top10 ∩ 热度top10(霸榜龙头): perday -0.685, ICIR -0.30, win 35% → ❌ **回避**(拥挤龙头已透支/均值回归)
+- B 飙升top10 且 NOT 热度top20(新晋边际资金): perday +4.146, ICIR 0.32, win 44% → ⚠ **进攻性彩票仓**(均值最高但胜率<50%肥尾, 需仓控, 最好×抢筹)
+- C 热度top10 且 NOT 飙升top10(滞涨主线大票): perday +0.693, ICIR 0.385, win 71% → ✅ **最优风险调整/稳健底仓**
+- 飙升top10×抢筹: IN +6.885(n=3) vs NOT +1.664(与0070一致, 但 n 小)
+- 热度绝对水平: top1-10 +0.103 vs r41-100 +0.231 → 榜首大票不优于榜尾, 印证 热度=市值/关注度代理, 无选股 alpha。
+
+### 定论(逐字段)
+- rank/raw_rate(名次/原始分): ❌ 不作选股排序(IC≈0)。只保留“是否上榜”布尔 + 两榜交叉关系。
+- 热度榜(LEVEL): ❌ 无选股 alpha; ✅ 用作 方向/主线确认 + 大票压舱权重。
+- 飙升榜(DELTA): ✅ 唯一含边际增量信息; 但肥尾, 须配仓控/止损。
+- 组合规则: 看 C(稳健底仓) + 小仓搏 B(进攻彩票, ×抢筹优先) + 躲 A(拥挤龙头)。
+- 💡 元教训: 线性IC判无价值→raw bucket判有价值→严格检验见真相(肥尾不可交易); 且单表名次常无用, 价值在 level+Δ 跨表交叉。
 
 ## 表⑧ 情绪指标盘 home.qxlive.top_metrics — ✅ 完成(0069) ✅ 有价值(首个市场级择时!)
 长格式表, 每行一个市场级指标, 09:28抓取, 11个metric_key, n=11有效日。**首个提供市场级择时信息的表**(其余都是个股横截面选股)。
@@ -111,9 +130,14 @@ rocket rank 0.015/0.163; raw_rate -0.015/-0.164; hot_stock rank -0.023; hot_stoc
 | 0067 | v57 | ✗ | 表⑧ qxlive: spearman None崩溃 |
 | 0068 | v58 | ✓ | rocket非线性复核: top10肥尾不可交易 |
 | 0069 | v59 | ✓ | 表⑧ qxlive修复: 首个市场级逆向择时信号 |
+| 0070 | regime | ✓ | 表⑦ 热度/飙升 regime: 正corr, 情绪HOT日work, ×抢筹增强 |
+| 0071 | probe | ✗ | pool schema探针: 盘前过滤排除10:02 pool.* (无文件) |
+| 0072 | dump | ✓ | 全字段dump: 揭示 pool.hot/surge 字段 + 10:02 时点(stdout前端截断) |
+| 0073 | v63 | ✓ | 官方dataset_label定名+时点直方图: 热度榜=hot_stock_day, 飙升榜=rocket(均09:25盘前); pool.*=热门/冲涨(10:02盘中) |
+| 0074 | v64 | ✓ | level×delta交叉: A霸榜龙头-(回避)/B新晋边际+(彩票)/C滞涨大票+(稳健) |
 
-**下一个 job id = 0070**
+**下一个 job id = 0075**
 
 ## 盘前表进度
-①封单✓ ②抢筹✓ ③量比✓ ④委买✓ ⑤净额✓ ⑥开盘啦板块✓ ⑦雷达✓ ⑧情绪指标✓ — **盘前表全部过完**
+①封单✓ ②抢筹✓ ③量比✓ ④委买✓ ⑤净额✓ ⑥开盘啦板块✓ ⑦热度榜/飙升榜✓ ⑧情绪指标✓ — **盘前表全部过完**
 下阶段: T-1滞后表汇总 -> 独立因子清单定稿 -> 重构 compute_edge

@@ -1,0 +1,7 @@
+{
+  "id": "0070",
+  "script": "scripts/0070_hot_surge_regime_v60_20260628.py",
+  "args": [],
+  "timeout": 180,
+  "note": "enumerate all dataset ids (confirm surge) + hot/surge/rocket sentiment-regime conditional analysis + value w-suffix parse"
+}

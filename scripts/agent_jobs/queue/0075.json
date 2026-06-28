@@ -1,0 +1,7 @@
+{
+  "id": "0075",
+  "script": "scripts/0075_premktfactor_firstprinciples_v65_20260628.py",
+  "args": [],
+  "timeout": 1200,
+  "note": "first-principles validation v65: (1) turnover orthogonalized residual IC vs auction-amount + collinearity; (2) gap nonlinearity/turning-point bin curve + regime split; (3) sentiment-regime direction (does core alpha select better on cold days? is hot-aggressive gate backwards?); (4) small-cap effect robustness after winsorization and outlier-day removal."
+}

@@ -1,441 +1,484 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Job 0075 - 第一性原理四问验证 v65
+# 0075_premktfactor_firstprinciples_v65_20260628.py
+# First-principles validation of 4 disputed premarket-factor premises.
+#   Q1: is 竞价换手率 redundant vs 竞价成交额? (orthogonalized residual IC)
+#   Q2: is gap non-linear? (binned demeaned-excess curve + turning point) + regime
+#   Q3: sentiment-regime DIRECTION -- does core alpha work better on COLD days?
+#        (production gate is currently MORE aggressive when hot -- is it backwards?)
+#   Q4: small-cap effect robustness (winsorize excess / drop highest-dispersion days)
+#
+# Pure stdlib + v10_optimize. Data: captures/<date>/auction.jjyd.qiangchou/<=093000.json
+# Fields: auction_turnover_wan(amt), turnover_rate_pct(turn), latest_change_pct(gap).
+# QX regime: home.qxlive.top_metrics metric_key=='QX' raw_value, split by median.
+import os, sys, json, glob, math, statistics, importlib
 
-针对 4 个质疑做实证（不预设结论，只看数据）：
-  Q1 换手率是否只是成交额的归一化？两者正交后还剩多少独立 IC？
-  Q2 gap(竞价涨幅) 对 excess 是线性还是非单调(驼峰/拐点)？分 regime 变吗？
-  Q3 情绪 regime 方向：核心 alpha 到底是热市还是冷市更能选出赢家？(现行 gate 是热市更激进)
-  Q4 小盘效应：去掉异常日/缩尾后，“小盘惩罚”是真实的还是肥尾伪象？
+HERE = os.path.dirname(os.path.abspath(__file__))
+if HERE not in sys.path:
+    sys.path.insert(0, HERE)
 
-excess = (close - open) / preclose * 100。只用 <=09:30 的竞价快照，无泄露。
-输出： reports/_audit/firstprinciples_v65.{json,md}
-用法： python3 scripts/0075_premktfactor_firstprinciples_v65_20260628.py
-"""
-import json, os, sys, math, traceback
-from collections import defaultdict
-from datetime import datetime
-from pathlib import Path
+v10 = importlib.import_module("v10_optimize")
+Daily = v10.Daily
+spearman = v10.spearman
+mean_icir = v10.mean_icir
+rankdata = v10.rankdata
+code_of = getattr(v10, "code_of", None)
+DEFAULT_PROJECT_ROOT = getattr(v10, "DEFAULT_PROJECT_ROOT", None)
 
-WS = Path(os.environ.get("WORKSPACE", "/home/investmentofficehku/.openclaw/workspace"))
-PROJECT_ROOT = WS / "projects" / "duanxianxia"
-sys.path.insert(0, str(WS / "scripts"))
-from v10_optimize import Daily, spearman, mean_icir, rankdata
+PROJECT_ROOT = DEFAULT_PROJECT_ROOT or os.path.dirname(HERE)
+CAPTURES = os.path.join(PROJECT_ROOT, "captures")
+QIANGCHOU = "auction.jjyd.qiangchou"
+QXDS = "home.qxlive.top_metrics"
+MIN_N = 12
+PREMARKET_MAX = "093000"
 
-PREOPEN = "093000"
-CAP = PROJECT_ROOT / "captures"
-QIANG = "auction.jjyd.qiangchou"
-QXLIVE = "home.qxlive.top_metrics"
-F_AMT = "auction_turnover_wan"
-F_TURN = "turnover_rate_pct"
-F_GAP = "latest_change_pct"
+D = Daily(PROJECT_ROOT)
 
-
-def pnum(s):
-    if s is None:
+# ---------------- helpers ----------------
+def _num(x):
+    if x is None or isinstance(x, bool):
         return None
-    if isinstance(s, (int, float)):
-        return float(s)
-    t = str(s).replace(",", "").replace("%", "").replace("+", "").strip()
-    if t in ("", "--", "-", "null", "None"):
+    if isinstance(x, (int, float)):
+        return None if x != x else float(x)
+    s = str(x).strip().replace(",", "")
+    if not s or s.lower() in ("-", "--", "none", "nan", "null"):
         return None
     m = 1.0
-    if t.endswith("\u4ebf"):
-        m = 1e4; t = t[:-1]
-    elif t.endswith("\u4e07"):
-        m = 1.0; t = t[:-1]
-    elif t.lower().endswith("w"):
-        m = 1.0; t = t[:-1]
+    for suf, mul in (("亿", 1e4), ("万", 1.0), ("w", 1.0), ("W", 1.0)):
+        if s.endswith(suf):
+            s = s[:-len(suf)]; m = mul; break
+    s = s.replace("%", "")
     try:
-        return float(t) * m
+        return float(s) * m
     except Exception:
         return None
 
+def _extract_rows(obj):
+    if isinstance(obj, list):
+        return [r for r in obj if isinstance(r, dict)]
+    if isinstance(obj, dict):
+        for k in ("data", "rows", "list", "items", "result", "stocks", "records"):
+            v = obj.get(k)
+            if isinstance(v, list):
+                return [r for r in v if isinstance(r, dict)]
+            if isinstance(v, dict):
+                for kk in ("data", "rows", "list", "items"):
+                    vv = v.get(kk)
+                    if isinstance(vv, list):
+                        return [r for r in vv if isinstance(r, dict)]
+        vals = list(obj.values())
+        if vals and all(isinstance(x, dict) for x in vals):
+            return vals
+    return []
 
-def _norm(c):
-    s = str(c).split(".")[0]
-    return s[-6:].zfill(6)
+def latest_premarket_file(d, dsid):
+    ddir = os.path.join(CAPTURES, d, dsid)
+    if not os.path.isdir(ddir):
+        return None
+    best = None; bestkey = None
+    for p in glob.glob(os.path.join(ddir, "*.json")):
+        stem = os.path.splitext(os.path.basename(p))[0]
+        if stem <= PREMARKET_MAX:
+            if bestkey is None or stem > bestkey:
+                bestkey = stem; best = p
+    return best
 
-
-def code_of(r):
-    for k in ("code", "\u4ee3\u7801", "symbol"):
-        if r.get(k) not in (None, ""):
-            return _norm(r.get(k))
-    return None
-
-
-def premarket_rows(dd, dsid):
-    p = dd / dsid
-    if not p.exists():
-        return []
-    files = sorted(f for f in p.iterdir() if f.suffix == ".json" and f.stem <= PREOPEN)
-    if not files:
+def load_rows(d, dsid):
+    p = latest_premarket_file(d, dsid)
+    if not p:
         return []
     try:
-        d = json.loads(files[-1].read_text(encoding="utf-8"))
+        with open(p, "r", encoding="utf-8") as f:
+            obj = json.load(f)
     except Exception:
         return []
-    if isinstance(d, list):
-        return [r for r in d if isinstance(r, dict)]
-    rows = d.get("rows") or d.get("data") or d.get("list") or []
-    return [r for r in rows if isinstance(r, dict)]
+    return _extract_rows(obj)
 
+def row_code(r):
+    for k in ("code", "stock_code", "symbol", "ts_code", "secucode", "stockcode"):
+        v = r.get(k)
+        if v:
+            return str(v).strip()
+    return None
 
-def mean(xs):
-    xs = [x for x in xs if x is not None]
-    return sum(xs) / len(xs) if xs else None
+def norm_code(c):
+    if code_of:
+        try:
+            x = code_of(c)
+            if x:
+                return x
+        except Exception:
+            pass
+    return c
 
+def safe_excess(c, d):
+    try:
+        return D.excess(c, d)
+    except Exception:
+        return None
 
-def pstd(xs):
-    xs = [x for x in xs if x is not None]
-    if len(xs) < 2:
-        return 0.0
-    m = sum(xs) / len(xs)
-    return (sum((x - m) ** 2 for x in xs) / len(xs)) ** 0.5
+def ss(a, b):
+    try:
+        if len(a) < 3:
+            return None
+        v = spearman(a, b)
+        if v is None or v != v:
+            return None
+        return float(v)
+    except Exception:
+        return None
 
+def pearson(a, b):
+    n = len(a)
+    if n < 3:
+        return None
+    ma = statistics.fmean(a); mb = statistics.fmean(b)
+    sa = sum((x - ma) ** 2 for x in a); sb = sum((y - mb) ** 2 for y in b)
+    if sa <= 0 or sb <= 0:
+        return None
+    cov = sum((a[i] - ma) * (b[i] - mb) for i in range(n))
+    return cov / math.sqrt(sa * sb)
 
 def pctrank(vals):
     n = len(vals)
+    if n == 0:
+        return []
     if n == 1:
         return [0.5]
     r = rankdata(vals)
     return [(x - 1.0) / (n - 1.0) for x in r]
 
-
-def zlist(vals):
+def zmap(vals):
     n = len(vals)
     if n == 0:
         return []
-    m = sum(vals) / n
-    sd = (sum((v - m) ** 2 for v in vals) / n) ** 0.5
-    if sd == 0:
+    m = statistics.fmean(vals)
+    sd = statistics.pstdev(vals) if n > 1 else 0.0
+    if sd <= 0:
         return [0.0] * n
-    return [(v - m) / sd for v in vals]
-
+    return [(x - m) / sd for x in vals]
 
 def ols_resid(x, y):
     n = len(x)
-    mx = sum(x) / n
-    my = sum(y) / n
+    if n < 2:
+        return [0.0] * n
+    mx = statistics.fmean(x); my = statistics.fmean(y)
     vx = sum((xi - mx) ** 2 for xi in x)
-    if vx == 0:
+    if vx <= 0:
         return [yi - my for yi in y]
     b = sum((x[i] - mx) * (y[i] - my) for i in range(n)) / vx
     a = my - b * mx
     return [y[i] - (a + b * x[i]) for i in range(n)]
 
+def winsor(vals, lo=2.0, hi=98.0):
+    if not vals:
+        return vals
+    s = sorted(vals); n = len(s)
+    def q(p):
+        idx = p / 100.0 * (n - 1)
+        i = int(idx); f = idx - i
+        if i + 1 < n:
+            return s[i] * (1 - f) + s[i + 1] * f
+        return s[i]
+    a = q(lo); b = q(hi)
+    return [min(max(v, a), b) for v in vals]
 
-def winsor_map(exmap, lo=0.02, hi=0.98):
-    vals = sorted(exmap.values())
-    n = len(vals)
-    if n < 5:
-        return dict(exmap)
-    loq = vals[max(0, int(lo * n))]
-    hiq = vals[min(n - 1, int(hi * n))]
-    return {c: min(max(v, loq), hiq) for c, v in exmap.items()}
+def agg(daily_vals):
+    vals = [v for v in daily_vals if v is not None and v == v]
+    if not vals:
+        return (None, None, 0)
+    try:
+        out = mean_icir(vals)
+        if isinstance(out, (list, tuple)) and len(out) >= 2:
+            return (out[0], out[1], len(vals))
+    except Exception:
+        pass
+    m = statistics.fmean(vals)
+    sd = statistics.pstdev(vals) if len(vals) > 1 else 0.0
+    return (m, (m / sd if sd > 0 else None), len(vals))
 
+def fmt(x, nd=4):
+    return "None" if x is None else ("%.*f" % (nd, x))
 
-# ---------------- load all days ----------------
-daily = Daily(PROJECT_ROOT)
-date_dirs = sorted(p for p in CAP.iterdir() if p.is_dir()) if CAP.is_dir() else []
+def pa(t):
+    if not t:
+        return "n/a"
+    m, ic, n = t
+    return "mean=%s ICIR=%s n=%d" % (fmt(m), fmt(ic, 3), n)
 
-days = []  # {date, recs:[{code,amt,turn,gap,ex}], qx}
-for dd in date_dirs:
-    rows = premarket_rows(dd, QIANG)
-    if not rows:
-        continue
+def m0(t):
+    return t[0] if t else None
+
+# ---------------- assemble per-day data ----------------
+dates = []
+if os.path.isdir(CAPTURES):
+    for d in sorted(os.listdir(CAPTURES)):
+        if os.path.isdir(os.path.join(CAPTURES, d, QIANGCHOU)):
+            dates.append(d)
+
+per_day = {}
+qx_by_date = {}
+total_rows = 0
+for d in dates:
     recs = []
-    seen = set()
-    for r in rows:
-        c = code_of(r)
-        if not c or c in seen:
+    for r in load_rows(d, QIANGCHOU):
+        c = row_code(r)
+        if not c:
             continue
-        ex = daily.excess(c, dd.name)
-        if ex is None:
+        amt = _num(r.get("auction_turnover_wan"))
+        turn = _num(r.get("turnover_rate_pct"))
+        gap = _num(r.get("latest_change_pct"))
+        if amt is None or turn is None or gap is None:
             continue
-        seen.add(c)
-        recs.append({
-            "code": c,
-            "amt": pnum(r.get(F_AMT)),
-            "turn": pnum(r.get(F_TURN)),
-            "gap": pnum(r.get(F_GAP)),
-            "ex": ex,
-        })
-    if len(recs) < 12:
-        continue
+        ex = safe_excess(norm_code(c), d)
+        if ex is None or ex != ex:
+            continue
+        recs.append({"code": c, "amt": amt, "turn": turn, "gap": gap, "ex": float(ex)})
+    if len(recs) >= MIN_N:
+        per_day[d] = recs
+        total_rows += len(recs)
     qx = None
-    for r in premarket_rows(dd, QXLIVE):
-        if r.get("metric_key") == "QX":
-            qx = pnum(r.get("raw_value")) or pnum(r.get("value"))
+    for rr in load_rows(d, QXDS):
+        if str(rr.get("metric_key", "")).upper() == "QX":
+            qx = _num(rr.get("raw_value", rr.get("value")))
             break
-    days.append({"date": dd.name, "recs": recs, "qx": qx})
+    if qx is not None:
+        qx_by_date[d] = qx
 
-qx_vals = sorted(d["qx"] for d in days if d["qx"] is not None)
-qx_med = qx_vals[len(qx_vals) // 2] if qx_vals else None
-N_DAYS = len(days)
-report = {"generated_at": datetime.now().isoformat(timespec="seconds"),
-          "job": "firstprinciples_v65", "n_days": N_DAYS, "qx_median": qx_med}
-print("=" * 64)
-print("Job 0075 first-principles v65 | days={} qx_med={}".format(N_DAYS, qx_med))
-print("=" * 64)
-
-
-# ================= Q1: turnover vs amount orthogonalization =================
-ic_amt, ic_turn, ic_turn_resid, ic_amt_resid, ic_comp, corr_at = [], [], [], [], [], []
+days = sorted(per_day.keys())
+DAY = {}
 for d in days:
-    rs = [r for r in d["recs"] if r["amt"] is not None and r["turn"] is not None]
-    if len(rs) < 12:
-        continue
-    amt = [r["amt"] for r in rs]
-    turn = [r["turn"] for r in rs]
-    ex = [r["ex"] for r in rs]
-    ar = pctrank(amt)
-    tr = pctrank(turn)
-    ic_amt.append(spearman(amt, ex))
-    ic_turn.append(spearman(turn, ex))
-    corr_at.append(spearman(amt, turn))
-    rt = ols_resid(ar, tr)  # turn rank residual after removing amt rank
-    ra = ols_resid(tr, ar)  # amt rank residual after removing turn rank
-    ic_turn_resid.append(spearman(rt, ex))
-    ic_amt_resid.append(spearman(ra, ex))
-    za = zlist(ar); zt = zlist(tr)
-    comp = [za[i] + zt[i] for i in range(len(rs))]
-    ic_comp.append(spearman(comp, ex))
+    recs = per_day[d]
+    amt = [r["amt"] for r in recs]; turn = [r["turn"] for r in recs]
+    gap = [r["gap"] for r in recs]; ex = [r["ex"] for r in recs]
+    DAY[d] = {"amt": amt, "turn": turn, "gap": gap, "ex": ex,
+              "ar": pctrank(amt), "tr": pctrank(turn), "gr": pctrank(gap),
+              "n": len(recs)}
 
+# regime split by QX median
+qx_days = [d for d in days if d in qx_by_date]
+hot_days = set(); cold_days = set()
+if len(qx_days) >= 4:
+    med = statistics.median([qx_by_date[d] for d in qx_days])
+    for d in qx_days:
+        (hot_days if qx_by_date[d] > med else cold_days).add(d)
 
-def summ(lst):
-    m, icir, n = mean_icir([x for x in lst if x is not None])
-    return {"mean_ic": m, "icir": icir, "n_days": n}
+# ---------------- Q1 turnover redundancy ----------------
+def Q1():
+    ic_amt = []; ic_turn = []; ic_tres = []; ic_ares = []; ic_comp = []; corr_at = []
+    for d in days:
+        x = DAY[d]; ex = x["ex"]; ar = x["ar"]; tr = x["tr"]
+        ic_amt.append(ss(x["amt"], ex))
+        ic_turn.append(ss(x["turn"], ex))
+        corr_at.append(ss(x["amt"], x["turn"]))
+        ic_tres.append(ss(ols_resid(ar, tr), ex))   # turn after removing amt
+        ic_ares.append(ss(ols_resid(tr, ar), ex))   # amt after removing turn
+        za = zmap(ar); zt = zmap(tr)
+        ic_comp.append(ss([za[i] + zt[i] for i in range(len(ar))], ex))
+    return {"ic_amt": agg(ic_amt), "ic_turn": agg(ic_turn),
+            "ic_turn_resid": agg(ic_tres), "ic_amt_resid": agg(ic_ares),
+            "ic_comp": agg(ic_comp), "corr_amt_turn": agg(corr_at)}
 
+# ---------------- Q2 gap non-linearity ----------------
+def Q2():
+    NB = 5
+    ic_gap = []
+    bin_ex = {i: [] for i in range(NB)}
+    for d in days:
+        x = DAY[d]; ex = x["ex"]; gr = x["gr"]; n = x["n"]
+        ic_gap.append(ss(x["gap"], ex))
+        mex = statistics.fmean(ex)
+        for i in range(n):
+            b = min(int(gr[i] * NB), NB - 1)
+            bin_ex[b].append(ex[i] - mex)
+    bins = [(statistics.fmean(bin_ex[i]) if bin_ex[i] else None) for i in range(NB)]
+    hump = mono = None
+    if all(b is not None for b in bins):
+        hump = bins[2] - (bins[0] + bins[4]) / 2.0
+        mono = bins[4] - bins[0]
+    ic_gap_hot = agg([ss(DAY[d]["gap"], DAY[d]["ex"]) for d in hot_days])
+    ic_gap_cold = agg([ss(DAY[d]["gap"], DAY[d]["ex"]) for d in cold_days])
+    return {"ic_gap": agg(ic_gap), "bins": bins, "hump": hump, "mono": mono,
+            "bin_counts": [len(bin_ex[i]) for i in range(NB)],
+            "ic_gap_hot": ic_gap_hot, "ic_gap_cold": ic_gap_cold}
 
-q1 = {
-    "ic_amount": summ(ic_amt),
-    "ic_turnrate": summ(ic_turn),
-    "corr_amount_turnrate": summ(corr_at),
-    "ic_turnrate_resid_after_amount": summ(ic_turn_resid),
-    "ic_amount_resid_after_turnrate": summ(ic_amt_resid),
-    "ic_composite_amt_plus_turn": summ(ic_comp),
-}
-report["Q1_orthogonalization"] = q1
-print("\n[Q1] \u6362手率 vs 成交额 正交分解")
-for k, v in q1.items():
-    print("  {:34s} ic={} icir={} n={}".format(k, v["mean_ic"], v["icir"], v["n_days"]))
+# ---------------- Q3 sentiment-regime direction ----------------
+def core_vec(x):
+    za = zmap(x["ar"]); zt = zmap(x["tr"]); zg = zmap(x["gr"])
+    return [za[i] + zt[i] + zg[i] for i in range(x["n"])]
 
+def Q3():
+    rows = []
+    for d in days:
+        x = DAY[d]; ex = x["ex"]; n = x["n"]; core = core_vec(x)
+        ic = ss(core, ex); mex = statistics.fmean(ex)
+        order = sorted(range(n), key=lambda i: core[i], reverse=True)
+        def topmean(k, demean):
+            k = min(k, n); sel = order[:k]
+            v = [ex[i] - (mex if demean else 0.0) for i in sel]
+            return statistics.fmean(v) if v else None
+        rows.append({"d": d, "ic": ic, "breadth": mex, "qx": qx_by_date.get(d),
+                     "t5_raw": topmean(5, False), "t5_dm": topmean(5, True),
+                     "t10_raw": topmean(10, False), "t10_dm": topmean(10, True)})
+    def split(metric, dset):
+        return agg([r[metric] for r in rows if r["d"] in dset])
+    qrows = [r for r in rows if r["qx"] is not None]
+    def corr(metric):
+        pairs = [(r["qx"], r[metric]) for r in qrows if r[metric] is not None]
+        if len(pairs) < 3:
+            return None
+        return pearson([p[0] for p in pairs], [p[1] for p in pairs])
+    return {"ic_all": agg([r["ic"] for r in rows]),
+            "ic_hot": split("ic", hot_days), "ic_cold": split("ic", cold_days),
+            "t5dm_hot": split("t5_dm", hot_days), "t5dm_cold": split("t5_dm", cold_days),
+            "t5raw_hot": split("t5_raw", hot_days), "t5raw_cold": split("t5_raw", cold_days),
+            "t10dm_hot": split("t10_dm", hot_days), "t10dm_cold": split("t10_dm", cold_days),
+            "breadth_hot": split("breadth", hot_days), "breadth_cold": split("breadth", cold_days),
+            "corr_qx_ic": corr("ic"), "corr_qx_t5raw": corr("t5_raw"),
+            "corr_qx_t5dm": corr("t5_dm"), "n_qx_days": len(qrows)}
 
-# ================= Q2: gap nonlinearity =================
-NB = 5
-bin_dm = [[] for _ in range(NB)]
-bin_day = [[] for _ in range(NB)]
-ic_gap_all, ic_gap_hot, ic_gap_cold = [], [], []
-hump_list, mono_list = [], []
-for d in days:
-    rs = [r for r in d["recs"] if r["gap"] is not None]
-    if len(rs) < 15:
-        continue
-    gap = [r["gap"] for r in rs]
-    ex = [r["ex"] for r in rs]
-    dm = mean(ex)
-    ic = spearman(gap, ex)
-    ic_gap_all.append(ic)
-    if d["qx"] is not None and qx_med is not None:
-        (ic_gap_hot if d["qx"] >= qx_med else ic_gap_cold).append(ic)
-    gr = pctrank(gap)
-    daymean = [None] * NB
-    bd = [[] for _ in range(NB)]
-    for i in range(len(rs)):
-        b = min(NB - 1, int(gr[i] * NB))
-        bin_dm[b].append(ex[i] - dm)
-        bd[b].append(ex[i] - dm)
-    for b in range(NB):
-        if bd[b]:
-            daymean[b] = mean(bd[b])
-            bin_day[b].append(daymean[b])
-    if all(x is not None for x in daymean):
-        mono_list.append(daymean[NB - 1] - daymean[0])
-        hump_list.append(daymean[NB // 2] - (daymean[0] + daymean[NB - 1]) / 2.0)
+# ---------------- Q4 small-cap robustness ----------------
+def Q4():
+    CAP_100E = 1e6  # 100亿 in 万
+    ic_cap = []; small_full = []; mid_full = []; large_full = []
+    small_abs = []; big_abs = []; small_winsor = []
+    day_disp = []; day_small = {}
+    for d in days:
+        x = DAY[d]; ex = x["ex"]; n = x["n"]
+        cap = [x["amt"][i] / (x["turn"][i] / 100.0) if x["turn"][i] > 0 else None for i in range(n)]
+        idx = [i for i in range(n) if cap[i] is not None]
+        if len(idx) < 6:
+            continue
+        capv = [cap[i] for i in idx]; exv = [ex[i] for i in idx]
+        ic_cap.append(ss(capv, exv))
+        mex = statistics.fmean(exv)
+        order = sorted(range(len(idx)), key=lambda j: capv[j])
+        t = len(order) // 3
+        smiset = order[:t]; lgiset = order[-t:] if t > 0 else []
+        midset = order[t:len(order) - t]
+        sval = statistics.fmean([exv[j] - mex for j in smiset]) if smiset else None
+        small_full.append(sval)
+        mid_full.append(statistics.fmean([exv[j] - mex for j in midset]) if midset else None)
+        large_full.append(statistics.fmean([exv[j] - mex for j in lgiset]) if lgiset else None)
+        day_small[d] = sval
+        sa = [exv[j] - mex for j in range(len(idx)) if capv[j] < CAP_100E]
+        ba = [exv[j] - mex for j in range(len(idx)) if capv[j] >= CAP_100E]
+        if sa:
+            small_abs.append(statistics.fmean(sa))
+        if ba:
+            big_abs.append(statistics.fmean(ba))
+        exw = winsor(exv); mexw = statistics.fmean(exw)
+        small_winsor.append(statistics.fmean([exw[j] - mexw for j in smiset]) if smiset else None)
+        day_disp.append((d, statistics.pstdev(exv) if len(exv) > 1 else 0.0))
+    drop = set(d for d, _ in sorted(day_disp, key=lambda z: z[1], reverse=True)[:2])
+    small_exout = [day_small[d] for d in day_small if d not in drop and day_small[d] is not None]
+    return {"ic_cap": agg(ic_cap), "small_demean_full": agg(small_full),
+            "mid_demean_full": agg(mid_full), "large_demean_full": agg(large_full),
+            "small_lt100e": agg(small_abs), "big_ge100e": agg(big_abs),
+            "small_demean_winsor": agg(small_winsor),
+            "small_demean_exoutlier": agg(small_exout),
+            "dropped_days": sorted(list(drop))}
 
-bins_out = []
-for b in range(NB):
-    m, icir, n = mean_icir(bin_day[b])
-    bins_out.append({"bin": b, "pooled_mean_demeaned": round(mean(bin_dm[b]), 4) if bin_dm[b] else None,
-                     "perday_mean": m, "perday_icir": icir, "n_obs": len(bin_dm[b])})
-q2 = {
-    "ic_gap_all": summ(ic_gap_all),
-    "ic_gap_hot_regime": summ(ic_gap_hot),
-    "ic_gap_cold_regime": summ(ic_gap_cold),
-    "bin_curve_low_to_high": bins_out,
-    "monotonic_top_minus_bottom": summ(mono_list),
-    "hump_mid_minus_ends": summ(hump_list),
-}
-report["Q2_gap_nonlinearity"] = q2
-print("\n[Q2] gap 非线性 (分 5 档, demeaned excess)")
-print("  ic_all={} ic_hot={} ic_cold={}".format(
-    q2["ic_gap_all"]["mean_ic"], q2["ic_gap_hot_regime"]["mean_ic"], q2["ic_gap_cold_regime"]["mean_ic"]))
-for b in bins_out:
-    print("  bin{} pooled_dm={} perday={} icir={} n={}".format(
-        b["bin"], b["pooled_mean_demeaned"], b["perday_mean"], b["perday_icir"], b["n_obs"]))
-print("  monotonic(top-bot)={} hump(mid-ends)={}".format(
-    q2["monotonic_top_minus_bottom"]["mean_ic"], q2["hump_mid_minus_ends"]["mean_ic"]))
+# ---------------- run ----------------
+P = []
+def line(s=""):
+    P.append(s)
 
+line("=" * 72)
+line("FIRST-PRINCIPLES FACTOR VALIDATION (v65 / job 0075)")
+line("=" * 72)
+line("coverage: %d usable days, %d stock-days (MIN_N=%d)" % (len(days), total_rows, MIN_N))
+if days:
+    line("date range: %s .. %s" % (days[0], days[-1]))
+line("regime: hot(QX>med)=%d days  cold=%d days  qx_days=%d" % (len(hot_days), len(cold_days), len(qx_days)))
 
-# ================= Q3: sentiment regime direction =================
-core_ic_hot, core_ic_cold = [], []
-top5_raw_hot, top5_raw_cold = [], []
-top5_dm_hot, top5_dm_cold = [], []
-breadth_hot, breadth_cold = [], []
-pairs_qx_top5raw, pairs_qx_coreic = [], []
-for d in days:
-    rs = [r for r in d["recs"] if r["amt"] is not None and r["turn"] is not None and r["gap"] is not None]
-    if len(rs) < 15 or d["qx"] is None or qx_med is None:
-        continue
-    ex = [r["ex"] for r in rs]
-    dm = mean(ex)
-    za = zlist(pctrank([r["amt"] for r in rs]))
-    zt = zlist(pctrank([r["turn"] for r in rs]))
-    zg = zlist(pctrank([r["gap"] for r in rs]))
-    core = [za[i] + zt[i] + zg[i] for i in range(len(rs))]
-    ic = spearman(core, ex)
-    order = sorted(range(len(rs)), key=lambda i: core[i], reverse=True)[:5]
-    t5raw = mean([ex[i] for i in order])
-    t5dm = mean([ex[i] - dm for i in order])
-    hot = d["qx"] >= qx_med
-    (core_ic_hot if hot else core_ic_cold).append(ic)
-    (top5_raw_hot if hot else top5_raw_cold).append(t5raw)
-    (top5_dm_hot if hot else top5_dm_cold).append(t5dm)
-    (breadth_hot if hot else breadth_cold).append(dm)
-    pairs_qx_top5raw.append((d["qx"], t5raw))
-    if ic is not None:
-        pairs_qx_coreic.append((d["qx"], ic))
+if not days:
+    line("\nNO USABLE DATA -- aborting.")
+    print("\n".join(P))
+    sys.exit(0)
 
+q1 = Q1(); q2 = Q2(); q3 = Q3(); q4 = Q4()
 
-def corr_pairs(pairs):
-    if len(pairs) < 6:
-        return None
-    xs, ys = zip(*pairs)
-    return spearman(list(xs), list(ys))
+line("\n--- Q1  竞价换手率 redundancy vs 竞价成交额 ---")
+line("ic_amt (raw)          : %s" % pa(q1["ic_amt"]))
+line("ic_turn (raw)         : %s" % pa(q1["ic_turn"]))
+line("ic_turn_resid|amt     : %s   <- turn AFTER removing amt" % pa(q1["ic_turn_resid"]))
+line("ic_amt_resid|turn     : %s   <- amt AFTER removing turn" % pa(q1["ic_amt_resid"]))
+line("ic_comp z(amt)+z(turn): %s" % pa(q1["ic_comp"]))
+line("corr(amt,turn) daily  : %s" % pa(q1["corr_amt_turn"]))
 
+line("\n--- Q2  gap non-linearity (pooled demeaned excess by gap quintile) ---")
+line("ic_gap (linear)       : %s" % pa(q2["ic_gap"]))
+bins = q2["bins"]; bc = q2["bin_counts"]
+for i in range(len(bins)):
+    line("  gap bin %d (low->high): demean_excess=%s  n=%d" % (i, fmt(bins[i]), bc[i]))
+line("hump = b2-(b0+b4)/2   : %s  (>0 => inverted-U, mid gap best)" % fmt(q2["hump"]))
+line("mono = b4-b0          : %s  (>0 => monotone increasing)" % fmt(q2["mono"]))
+line("ic_gap hot regime     : %s" % pa(q2["ic_gap_hot"]))
+line("ic_gap cold regime    : %s" % pa(q2["ic_gap_cold"]))
 
-q3 = {
-    "core_ic_hot": summ(core_ic_hot), "core_ic_cold": summ(core_ic_cold),
-    "top5_raw_excess_hot": round(mean(top5_raw_hot), 4) if top5_raw_hot else None,
-    "top5_raw_excess_cold": round(mean(top5_raw_cold), 4) if top5_raw_cold else None,
-    "top5_demeaned_hot": round(mean(top5_dm_hot), 4) if top5_dm_hot else None,
-    "top5_demeaned_cold": round(mean(top5_dm_cold), 4) if top5_dm_cold else None,
-    "breadth_mean_excess_hot": round(mean(breadth_hot), 4) if breadth_hot else None,
-    "breadth_mean_excess_cold": round(mean(breadth_cold), 4) if breadth_cold else None,
-    "corr_qx_top5raw": corr_pairs(pairs_qx_top5raw),
-    "corr_qx_coreic": corr_pairs(pairs_qx_coreic),
-    "n_hot": len(top5_raw_hot), "n_cold": len(top5_raw_cold),
-}
-report["Q3_regime_direction"] = q3
-print("\n[Q3] 情绪 regime 方向 (核心 alpha comp_SD top5)")
-print("  core_ic hot={} cold={}".format(q3["core_ic_hot"]["mean_ic"], q3["core_ic_cold"]["mean_ic"]))
-print("  top5_raw_excess hot={} cold={}".format(q3["top5_raw_excess_hot"], q3["top5_raw_excess_cold"]))
-print("  top5_demeaned   hot={} cold={}".format(q3["top5_demeaned_hot"], q3["top5_demeaned_cold"]))
-print("  breadth(day mean ex) hot={} cold={}".format(q3["breadth_mean_excess_hot"], q3["breadth_mean_excess_cold"]))
-print("  corr(QX,top5raw)={} corr(QX,coreIC)={}  [neg=>cold better]".format(
-    q3["corr_qx_top5raw"], q3["corr_qx_coreic"]))
+line("\n--- Q3  sentiment-regime DIRECTION (core = z(amt)+z(turn)+z(gap)) ---")
+line("ic_all                : %s" % pa(q3["ic_all"]))
+line("ic hot / cold         : %s  ||  %s" % (pa(q3["ic_hot"]), pa(q3["ic_cold"])))
+line("top5 demean hot/cold  : %s  ||  %s" % (pa(q3["t5dm_hot"]), pa(q3["t5dm_cold"])))
+line("top5 raw    hot/cold  : %s  ||  %s" % (pa(q3["t5raw_hot"]), pa(q3["t5raw_cold"])))
+line("top10 demean hot/cold : %s  ||  %s" % (pa(q3["t10dm_hot"]), pa(q3["t10dm_cold"])))
+line("breadth     hot/cold  : %s  ||  %s" % (pa(q3["breadth_hot"]), pa(q3["breadth_cold"])))
+line("corr(QX, daily_IC)    : %s  (n_qx=%d)" % (fmt(q3["corr_qx_ic"]), q3["n_qx_days"]))
+line("corr(QX, top5_raw)    : %s" % fmt(q3["corr_qx_t5raw"]))
+line("corr(QX, top5_demean) : %s" % fmt(q3["corr_qx_t5dm"]))
 
+line("\n--- Q4  small-cap effect robustness (cap_proxy = amt/(turn/100), 万) ---")
+line("ic_cap (cap vs excess): %s  (>0 => big-cap better)" % pa(q4["ic_cap"]))
+line("small tercile demean  : %s" % pa(q4["small_demean_full"]))
+line("mid   tercile demean  : %s" % pa(q4["mid_demean_full"]))
+line("large tercile demean  : %s" % pa(q4["large_demean_full"]))
+line("abs <100亿 demean     : %s" % pa(q4["small_lt100e"]))
+line("abs >=100亿 demean    : %s" % pa(q4["big_ge100e"]))
+line("small demean WINSOR   : %s  (excess p2/p98)" % pa(q4["small_demean_winsor"]))
+line("small demean EX-OUTLIER: %s  (drop top-2 dispersion days: %s)" % (pa(q4["small_demean_exoutlier"]), ",".join(q4["dropped_days"])))
 
-# ================= Q4: small-cap robustness =================
-SMALL_WAN = 1e6  # 100亿 = 1,000,000 万
-recs_q4 = []  # (date, cap_wan, ex, dm_raw, dm_w, tercile, abs_small)
-day_disp = {}
-ic_cap, ic_cap_w = [], []
-for d in days:
-    rs = [r for r in d["recs"] if r["amt"] is not None and r["turn"] and r["turn"] > 0]
-    if len(rs) < 15:
-        continue
-    for r in rs:
-        r["cap"] = r["amt"] / (r["turn"] / 100.0)
-    exmap = {r["code"]: r["ex"] for r in rs}
-    wmap = winsor_map(exmap)
-    dm = mean([r["ex"] for r in rs])
-    dmw = mean([wmap[r["code"]] for r in rs])
-    day_disp[d["date"]] = pstd([r["ex"] for r in rs])
-    caps = [r["cap"] for r in rs]
-    cr = pctrank(caps)
-    ic_cap.append(spearman(caps, [r["ex"] for r in rs]))
-    ic_cap_w.append(spearman(caps, [wmap[r["code"]] for r in rs]))
-    for i, r in enumerate(rs):
-        terc = 0 if cr[i] < 1.0 / 3 else (1 if cr[i] < 2.0 / 3 else 2)
-        recs_q4.append((d["date"], r["cap"], r["ex"], r["ex"] - dm, wmap[r["code"]] - dmw,
-                        terc, r["cap"] < SMALL_WAN))
+# ---------------- verdicts ----------------
+ta = m0(q1["ic_turn"]); tr = m0(q1["ic_turn_resid"]); cat = m0(q1["corr_amt_turn"])
+q1_redundant = (ta is not None and tr is not None and cat is not None and abs(cat) >= 0.5 and abs(tr) < 0.4 * abs(ta))
 
-outlier_dates = set(sorted(day_disp, key=lambda k: day_disp[k], reverse=True)[:2])
+q2_nonlinear = (q2["hump"] is not None and q2["mono"] is not None and abs(q2["hump"]) > 0.05 and abs(q2["hump"]) >= 0.3 * (abs(q2["mono"]) + 1e-9))
 
+ch = m0(q3["t5dm_cold"]); hh = m0(q3["t5dm_hot"]); cq = q3["corr_qx_t5dm"]; ciq = q3["corr_qx_ic"]
+q3_backwards = (ch is not None and hh is not None and ch > hh and ((cq is not None and cq < 0) or (ciq is not None and ciq < 0)))
 
-def bucket_mean(pred, field, exclude=None):
-    vals = [rec[field] for rec in recs_q4 if pred(rec) and (exclude is None or rec[0] not in exclude)]
-    return (round(mean(vals), 4) if vals else None, len(vals))
+sf = m0(q4["small_demean_full"]); sw = m0(q4["small_demean_winsor"]); se = m0(q4["small_demean_exoutlier"])
+q4_artifact = False
+if sf is not None and abs(sf) > 1e-9:
+    shrink_w = (sw is not None and abs(sw) < 0.5 * abs(sf))
+    shrink_e = (se is not None and abs(se) < 0.5 * abs(sf))
+    q4_artifact = shrink_w or shrink_e
 
-# field index: 3=dm_raw, 4=dm_w
-small_raw, n_sr = bucket_mean(lambda r: r[5] == 0, 3)
-mid_raw, _ = bucket_mean(lambda r: r[5] == 1, 3)
-large_raw, _ = bucket_mean(lambda r: r[5] == 2, 3)
-small_w, _ = bucket_mean(lambda r: r[5] == 0, 4)
-small_exout, n_seo = bucket_mean(lambda r: r[5] == 0, 3, exclude=outlier_dates)
-abs_small_raw, n_as = bucket_mean(lambda r: r[6], 3)
-abs_small_w, _ = bucket_mean(lambda r: r[6], 4)
-abs_small_exout, _ = bucket_mean(lambda r: r[6], 3, exclude=outlier_dates)
+line("\n" + "=" * 72)
+line("FINAL VERDICTS")
+line("=" * 72)
+line("Q1 turnover redundant vs amt : %s" % ("YES (residual IC collapses & corr high) -> use ONE or orthogonalize" if q1_redundant else "NO / partial -- turnover keeps independent residual IC"))
+line("Q2 gap non-linear            : %s" % ("YES -- hump present, linear IC understates; use binned/turning-point" if q2_nonlinear else "mostly monotone -- linear treatment acceptable"))
+line("Q3 regime gate BACKWARDS     : %s" % ("YES -- alpha is STRONGER on COLD days; current 'more aggressive when hot' gate is inverted" if q3_backwards else "NO -- hot days not worse; current gate not contradicted"))
+line("Q4 small-cap effect artifact : %s" % ("YES -- small-cap signal halves under winsor/outlier-removal (supports NOT hard-rejecting small caps)" if q4_artifact else "NO -- small-cap signal survives robustness checks"))
 
-q4 = {
-    "ic_cap_raw": summ(ic_cap), "ic_cap_winsor": summ(ic_cap_w),
-    "tercile_demeaned_raw": {"small": small_raw, "mid": mid_raw, "large": large_raw, "n_small": n_sr},
-    "small_tercile_demeaned": {"raw": small_raw, "winsor": small_w, "ex_outlier_days": small_exout, "n": n_sr},
-    "abs_small_lt_100yi_demeaned": {"raw": abs_small_raw, "winsor": abs_small_w,
-                                     "ex_outlier_days": abs_small_exout, "n": n_as},
-    "outlier_days_excluded": sorted(outlier_dates),
-}
-report["Q4_smallcap_robustness"] = q4
-print("\n[Q4] 小盘效应稳健性 (cap代理=成交额/换手率, demeaned excess; neg=小盘差)")
-print("  ic_cap raw={} winsor={}  [neg ic => 小市值 excess 更高]".format(
-    q4["ic_cap_raw"]["mean_ic"], q4["ic_cap_winsor"]["mean_ic"]))
-print("  tercile demeaned raw: small={} mid={} large={}".format(small_raw, mid_raw, large_raw))
-print("  small tercile: raw={} winsor={} ex_outlier={} (n={})".format(small_raw, small_w, small_exout, n_sr))
-print("  abs<100\u4ebf : raw={} winsor={} ex_outlier={} (n={})".format(
-    abs_small_raw, abs_small_w, abs_small_exout, n_as))
-print("  outlier days excluded: {}".format(sorted(outlier_dates)))
+print("\n".join(P))
 
-
-# ---------------- write report ----------------
-audit = PROJECT_ROOT / "reports" / "_audit"
-audit.mkdir(parents=True, exist_ok=True)
-(audit / "firstprinciples_v65.json").write_text(
-    json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
-L = ["# 第一性原理四问验证 v65", "", "- 生成: " + report["generated_at"],
-     "- days={} qx_med={}".format(N_DAYS, qx_med), "",
-     "## Q1 换手率 vs 成交额", "", "| 指标 | ic | icir | n |", "|---|---|---|---|"]
-for k, v in q1.items():
-    L.append("| {} | {} | {} | {} |".format(k, v["mean_ic"], v["icir"], v["n_days"]))
-L += ["", "## Q2 gap 非线性 (bin low->high)", "", "| bin | pooled_dm | perday | icir | n |", "|---|---|---|---|---|"]
-for b in bins_out:
-    L.append("| {} | {} | {} | {} | {} |".format(b["bin"], b["pooled_mean_demeaned"], b["perday_mean"], b["perday_icir"], b["n_obs"]))
-L += ["", "ic_gap all/hot/cold = {} / {} / {}".format(
-    q2["ic_gap_all"]["mean_ic"], q2["ic_gap_hot_regime"]["mean_ic"], q2["ic_gap_cold_regime"]["mean_ic"]),
-    "monotonic={} hump={}".format(q2["monotonic_top_minus_bottom"]["mean_ic"], q2["hump_mid_minus_ends"]["mean_ic"])]
-L += ["", "## Q3 情绪 regime", "",
-      "core_ic hot/cold = {} / {}".format(q3["core_ic_hot"]["mean_ic"], q3["core_ic_cold"]["mean_ic"]),
-      "top5_raw hot/cold = {} / {}".format(q3["top5_raw_excess_hot"], q3["top5_raw_excess_cold"]),
-      "top5_demeaned hot/cold = {} / {}".format(q3["top5_demeaned_hot"], q3["top5_demeaned_cold"]),
-      "breadth hot/cold = {} / {}".format(q3["breadth_mean_excess_hot"], q3["breadth_mean_excess_cold"]),
-      "corr(QX,top5raw)={} corr(QX,coreIC)={}".format(q3["corr_qx_top5raw"], q3["corr_qx_coreic"])]
-L += ["", "## Q4 小盘稳健性", "",
-      "ic_cap raw/winsor = {} / {}".format(q4["ic_cap_raw"]["mean_ic"], q4["ic_cap_winsor"]["mean_ic"]),
-      "small tercile raw/winsor/ex_outlier = {} / {} / {}".format(small_raw, small_w, small_exout),
-      "abs<100\u4ebf raw/winsor/ex_outlier = {} / {} / {}".format(abs_small_raw, abs_small_w, abs_small_exout),
-      "outlier days = {}".format(sorted(outlier_dates))]
-(audit / "firstprinciples_v65.md").write_text("\n".join(L), encoding="utf-8")
-
-print("\n" + "=" * 64)
-print("FINAL VERDICTS (数据结论摘要)")
-print("=" * 64)
-print("Q1 换手率独立信息: corr(amt,turn)={} ; 去掉amt后 turn 残余IC={} ; 去掉turn后 amt 残余IC={} ; 合成IC={} vs 单amt={}".format(
-    q1["corr_amount_turnrate"]["mean_ic"], q1["ic_turnrate_resid_after_amount"]["mean_ic"],
-    q1["ic_amount_resid_after_turnrate"]["mean_ic"], q1["ic_composite_amt_plus_turn"]["mean_ic"], q1["ic_amount"]["mean_ic"]))
-print("Q2 gap: ic_all={} monotonic={} hump={} (hump>0 且 |mono| 小 => 驼峰/拐点, 不能当线性正因子)".format(
-    q2["ic_gap_all"]["mean_ic"], q2["monotonic_top_minus_bottom"]["mean_ic"], q2["hump_mid_minus_ends"]["mean_ic"]))
-print("Q3 regime: corr(QX,top5raw)={} (neg=>冷市选股更赚, 现行热市激进 gate 可能反了)".format(q3["corr_qx_top5raw"]))
-print("Q4 小盘: small tercile raw={} -> winsor={} -> ex_outlier={} (若去异常/缩尾后接近0 => 小盘惩罚是肥尾伪象)".format(
-    small_raw, small_w, small_exout))
-print("\n[DONE]")
+# ---------------- persist report ----------------
+report = {"coverage": {"days": len(days), "stock_days": total_rows,
+                       "range": [days[0], days[-1]] if days else [],
+                       "hot_days": len(hot_days), "cold_days": len(cold_days)},
+          "Q1": q1, "Q2": q2, "Q3": q3, "Q4": q4,
+          "verdicts": {"q1_turnover_redundant": q1_redundant,
+                       "q2_gap_nonlinear": q2_nonlinear,
+                       "q3_regime_gate_backwards": q3_backwards,
+                       "q4_smallcap_artifact": q4_artifact}}
+outdir = os.path.join(PROJECT_ROOT, "reports", "_audit")
+try:
+    os.makedirs(outdir, exist_ok=True)
+    with open(os.path.join(outdir, "firstprinciples_v65.json"), "w", encoding="utf-8") as f:
+        json.dump(report, f, ensure_ascii=False, indent=2, default=str)
+    with open(os.path.join(outdir, "firstprinciples_v65.md"), "w", encoding="utf-8") as f:
+        f.write("# First-principles factor validation (v65 / job 0075)\n\n")
+        f.write("```\n" + "\n".join(P) + "\n```\n")
+except Exception as e:
+    print("WARN: could not write report: %r" % e)

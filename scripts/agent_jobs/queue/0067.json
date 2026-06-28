@@ -1,0 +1,7 @@
+{
+  "id": "0067",
+  "script": "scripts/0067_qxlive_topmetrics_v57_20260628.py",
+  "args": [],
+  "timeout": 120,
+  "note": "表⑧ home.qxlive.top_metrics 市场级指标; 字段探测 + 择时测试(市场指标 vs 当日平均excess)"
+}

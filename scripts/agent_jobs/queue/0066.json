@@ -1,0 +1,7 @@
+{
+  "id": "0066",
+  "script": "scripts/0066_rocket_hotstock_v56_20260628.py",
+  "args": [],
+  "timeout": 120,
+  "note": "表⑦ rank.rocket + rank.hot_stock_day 盘前雷达混收 v56; 修复泄漏(只取<=093000文件); 动态字段探测; 干净盘前 IC<0.065待复核"
+}

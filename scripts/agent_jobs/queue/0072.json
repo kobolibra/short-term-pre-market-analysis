@@ -1,0 +1,7 @@
+{
+  "id": "0072",
+  "script": "scripts/0072_rank_pool_full_field_dump_v62_20260628.py",
+  "args": [],
+  "timeout": 120,
+  "note": "dump every field + all capture timestamps of rank.hot_stock_day/rank.rocket/pool.hot/pool.surge for recent days"
+}

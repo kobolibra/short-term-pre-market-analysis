@@ -1,0 +1,7 @@
+{
+  "id": "0071",
+  "script": "scripts/0071_pool_surge_hot_schema_probe_v61_20260628.py",
+  "args": [],
+  "timeout": 180,
+  "note": "dump pool.surge/pool.hot raw schema + flexible code/value parse + QX regime + qiangchou overlap"
+}

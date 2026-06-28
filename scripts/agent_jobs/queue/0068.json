@@ -1,0 +1,7 @@
+{
+  "id": "0068",
+  "script": "scripts/0068_rocket_nonlinear_v58_20260628.py",
+  "args": [],
+  "timeout": 180,
+  "note": "rocket 非线性混收 v58: per-date去均值 top10 binary IC + r11-30陷阱区确认 + qiangchou重叠 + weimai主力交互"
+}

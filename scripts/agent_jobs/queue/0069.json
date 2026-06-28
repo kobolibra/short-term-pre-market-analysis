@@ -1,0 +1,7 @@
+{
+  "id": "0069",
+  "script": "scripts/0069_qxlive_topmetrics_v59_20260628.py",
+  "args": [],
+  "timeout": 120,
+  "note": "表⑧ home.qxlive.top_metrics 修复版: 长格式按metric_key透视(QX情绪/ZT涨停家数...) + spearman None防护 + 择时IC"
+}

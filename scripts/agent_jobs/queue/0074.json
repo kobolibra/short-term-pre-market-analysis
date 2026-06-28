@@ -1,0 +1,7 @@
+{
+  "id": "0074",
+  "script": "scripts/0074_redu_biaosheng_level_vs_delta_v64_20260628.py",
+  "args": [],
+  "timeout": 180,
+  "note": "level(热度榜) vs delta(飙升榜) interaction groups A/B/C + rank-excess spearman + qiangchou + hot level deciles, premarket only"
+}

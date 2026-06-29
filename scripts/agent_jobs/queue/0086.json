@@ -1,0 +1,7 @@
+{
+  "id": "0086",
+  "script": "scripts/0086_fieldfix_verify_dryrun_20260629.py",
+  "args": [],
+  "timeout": 300,
+  "note": "verify upstream structure (hotlist keys, hot/surge raw items, qt.gtimg brace bug) + dry-run fetcher field-fix string matches; NO writes/push"
+}

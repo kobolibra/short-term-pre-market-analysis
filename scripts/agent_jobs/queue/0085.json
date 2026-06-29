@@ -1,0 +1,7 @@
+{
+  "id": "0085",
+  "script": "scripts/0085_qxlive_pb_series_recover_20260629.py",
+  "args": [],
+  "timeout": 180,
+  "note": "Can we recover 9:25 PB from existing QX-live capture? Dump PB *_series arrays + meta + fetched_at; list all qxlive captures' time_point to see if any premarket/9:25 snapshot exists."
+}

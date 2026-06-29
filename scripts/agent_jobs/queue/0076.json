@@ -1,0 +1,7 @@
+{
+  "id": "0076",
+  "script": "scripts/0076_field_census_20260629.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Authoritative SERVER field census: list every dataset dir present in latest captures; dump headers + raw payload + market-cap-like fields per table (settle where 流通市值 actually exists); dump limit_up_count/limit_down_count for last 8 trading days from net_amount to verify 封板率/炸板/连板 decomposition."
+}

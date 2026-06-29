@@ -449,7 +449,7 @@ class DuanxianxiaFetcher:
             kind='home_ztpool',
             rows=rows,
             meta={
-                'source': f'{page_url} + /vendor/stockdata/jinjidata.json',
+                'source': f'{page_url}/vendor/stockdata/jinjidata.json',
                 'field': 'jinjidata.html',
                 'count': len(rows),
                 'date': trade_date,
@@ -530,7 +530,7 @@ class DuanxianxiaFetcher:
 
     def fetch_hotlist_day(self) -> FetchResult:
         data = self._get_json(f"{X_BASE}/vendor/stockdata/hotlist.json")
-        items = data.get("hot_stock_day", []) or []
+        items = data.get("hot_stock_hour", []) or data.get("hot_stock_day", []) or []
         rows = [
             {
                 "rank": idx + 1,
@@ -546,7 +546,7 @@ class DuanxianxiaFetcher:
             rows=rows,
             meta={
                 "source": f"{X_BASE}/vendor/stockdata/hotlist.json",
-                "field": "hot_stock_day",
+                "field": "hot_stock_hour",
                 "count": len(rows),
             },
         )
@@ -560,11 +560,8 @@ class DuanxianxiaFetcher:
             amount = self._format_amount(item[8] if len(item) > 8 else None, digits=2)
             float_cap = self._format_amount(item[9] if len(item) > 9 else None, digits=0)
             turnover_ratio = ""
-            if len(item) > 9 and item[9]:
-                try:
-                    turnover_ratio = f"{(float(item[8]) / float(item[9]) * 100):.2f}%"
-                except Exception:
-                    turnover_ratio = ""
+            if len(item) > 10 and item[10] is not None and str(item[10]).strip() != "":
+                turnover_ratio = f"{item[10]}%"
 
             rows.append(
                 {
@@ -575,6 +572,7 @@ class DuanxianxiaFetcher:
                     "turnover_ratio": turnover_ratio,
                     "amount": amount,
                     "float_market_cap": float_cap,
+                    "board_state": item[7] if len(item) > 7 and item[7] is not None else "",
                     "concept": "+".join([x for x in [concept_1, concept_2] if x]),
                     "concept_1": concept_1,
                     "concept_2": concept_2,

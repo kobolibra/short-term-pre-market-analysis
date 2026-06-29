@@ -1,0 +1,7 @@
+{
+  "id": "0080",
+  "script": "scripts/0080_field_caliber_dump.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Dump newest captures (headers + named rows + raw) for under-verified datasets: qxlive plate_summary/top_metrics, ztpool, ltgd, cashflow, review_daily, kaipan/plate -- verify field semantics before the rebuild."
+}

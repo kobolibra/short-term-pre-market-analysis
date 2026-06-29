@@ -1,0 +1,7 @@
+{
+  "id": "0083",
+  "script": "scripts/0083_fengdan_auction_seal_breadth_20260629.py",
+  "args": [],
+  "timeout": 180,
+  "note": "Dump fengdan section_t15/t20/t25_total + seal_total + yizi_count + amount_925 sealed/open counts to define premarket-auction limitUpSealRate."
+}

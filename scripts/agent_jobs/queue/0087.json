@@ -3,5 +3,5 @@
   "script": "scripts/0087_fieldfix_apply_hot_boardstate_20260629.py",
   "args": [],
   "timeout": 300,
-  "note": "Apply non-destructive fix: fetch_hot capture board-state item[7] + raw. Assertion-anchored (count==1) + py_compile check; commits to feature branch fix/hot-board-state-raw (NOT main) for PR review; reverts working tree."
+  "note": "Apply hot-pool fieldfix: add 板态(item[7]) + raw to fetch_hot row dict; push to feature branch fix/hot-board-state-raw (NOT main); report unified diff."
 }

@@ -1,0 +1,7 @@
+{
+  "id": "0089",
+  "script": "scripts/0089_unit_probe_20260629.py",
+  "args": [],
+  "timeout": 300,
+  "note": "READ-ONLY unit probe: print raw[] + current derived fields + magnitude hints for sample rows of weimai/vratio/qiangchou/net_amount/surge/hot to pin true units before canonical rename. No writes, no push."
+}

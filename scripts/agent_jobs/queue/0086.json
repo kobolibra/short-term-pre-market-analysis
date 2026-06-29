@@ -2,6 +2,6 @@
   "id": "0086",
   "script": "scripts/0086_fieldfix_verify_dryrun_20260629.py",
   "args": [],
-  "timeout": 300,
-  "note": "verify upstream structure (hotlist keys, hot/surge raw items, qt.gtimg brace bug) + dry-run fetcher field-fix string matches; NO writes/push"
+  "timeout": 420,
+  "note": "READ-ONLY field-fix verification: confirm hotlist.json real list keys, hot/surge item indices (esp dropped item[7] board state), qt.gtimg realtime URL brace bug; static needle counts in duanxianxia_fetcher.py. No tracked-file writes, no git."
 }

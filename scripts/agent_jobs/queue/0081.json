@@ -1,0 +1,7 @@
+{
+  "id": "0081",
+  "script": "scripts/0081_ztpool_positional_probe_20260629.py",
+  "args": [],
+  "timeout": 300,
+  "note": "ztpool deep-dive: can it be a positional array? grep refs + fetcher parse code + real capture (raw array? column order) + upstream endpoint probe (JSON array vs HTML)."
+}

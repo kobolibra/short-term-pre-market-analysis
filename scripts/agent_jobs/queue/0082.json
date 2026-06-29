@@ -1,0 +1,7 @@
+{
+  "id": "0082",
+  "script": "scripts/0082_fengdan_amount_semantics_20260629.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Verify fengdan amount_915/920/925 = auction turnover vs limit-price bid/seal amount (cross-check vs weimai), plus fupan 开板 (prevOpenNum) and limit-up breadth source."
+}

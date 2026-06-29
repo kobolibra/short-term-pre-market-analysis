@@ -513,6 +513,8 @@ class DuanxianxiaFetcher:
                     "成交": amount,
                     "流通": float_cap,
                     "概念": "+".join([x for x in [concept_1, concept_2] if x]),
+                    "板态": item[7] if len(item) > 7 and item[7] is not None else "",
+                    "raw": item,
                 }
             )
         return FetchResult(

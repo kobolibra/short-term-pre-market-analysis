@@ -9,7 +9,6 @@
 raw[] / delimited token stream            <- GROUND TRUTH
   -> fetcher parse  -> capture rows{}      (named; currently mislabeled)   [transform 1]
     -> loader time-slice -> flat feature tables                            [transform 2]
-       (*_all_candidates_flat.csv ~1MB each, feature_matrix_v21.csv ~3MB)
       -> v7/v9 scoring
 ```
 Mislabels live in BOTH transform layers (capture rows AND flat feature tables).
@@ -26,12 +25,12 @@ Mislabels live in BOTH transform layers (capture rows AND flat feature tables).
 - Factor / scoring layer: rebuild on correct calibers + other-agent framework (see below).
 
 ## Historical migration (NO in-place rewrite)
-- For every capture that has raw: re-derive canonical rows from raw using the corrected parse map. History is fully recoverable from raw.
+- For every capture that has raw: re-derive canonical rows from raw using the corrected parse map. History recoverable from raw.
 - Datasets WITHOUT raw (legacy pool.hot): tag provenance = legacy_unrecoverable; store raw going forward.
 - Regenerate flat feature tables from the canonical layer (do NOT sed historical JSON).
 
 ## Canonical schema layer (new module)
-- One registry: dataset_id -> { source, raw_kind (array | tokens | json | html), parse_spec, fields: [ { canonical, caliber, unit, raw_ref } ] }.
+- One registry: dataset_id -> { source, raw_kind, parse_spec, fields: [ { canonical, caliber, unit, raw_ref } ] }.
 - Validators: any market-cap field MUST declare caliber (FF / FLOAT / TOTAL); build fails otherwise.
 - Cross-table caliber join anchored on review.fupan.plate (exposes FF + FLOAT + TOTAL).
 
@@ -48,16 +47,16 @@ Per-stock factors:
 - stockMainlineFit (concept vs kaipan top 板块强度)
 
 Market / theme features:
-- prevDayLimitUpSealRate  (EOD T-1; num/hist) -- count-based, OK
-- auctionSealAmount       (today 9:25 T0; fengdan section_t25_total/seal_total) -- 委买/封单资金强度 (per 0083; fengdan section_* are MONEY not counts)
-- auctionLimitUpSealRate (count-based)  -- PENDING source (not in fengdan; candidate QX-live PB@9:25). Do NOT substitute prevDay.
-- sentimentSignal (review QX 情绪)
+- prevDayLimitUpSealRate  (EOD T-1; num/hist) -- count-based, premarket-safe. OK
+- auctionSealAmount       (today 9:25 T0; fengdan section_t25_total/seal_total) -- 委买/封单资金强度 (per 0083). OK
+- marketSealRate (QX-live PB 今日封板率, count-based)  -- LIVE intraday; our capture is 10:04 (LOOKAHEAD for premarket). Premarket use REQUIRES a 9:25 capture OR 9:25 chart-point extraction; do NOT use the 10:04 snapshot. PENDING 0085.
+- sentimentSignal (QX-live 情绪指标 QX)
 - themeConsistency  = count(H)/count(Q)  (题材内高开一致性)
 - themeConcentration = themeBidAmount / sum(all themeBidAmount)
 
 Keep edge_core structure; re-fit coefficients on corrected inputs.
 
 ## Open items
-- auctionLimitUpSealRate (count-based) source -> not in fengdan (0083); confirm QX-live PB@9:25 or adopt auctionSealAmount.
+- Premarket-safe today seal RATE (QX-live PB @9:25): 0085 to confirm chart-series recoverability vs need a 9:25 capture.
 - minBidAmount / auctionChgMin thresholds (our tuning).
-- limitBuyAmountAfter920: amount_920 vs amount_925 choice.
+- limitBuyAmountAfter920: amount_920 vs amount_925.

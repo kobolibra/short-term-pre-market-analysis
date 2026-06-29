@@ -1,0 +1,7 @@
+{
+  "id": "0077",
+  "script": "scripts/0077_encrypted_field_audit_20260629.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Dump newest captures (row0 + raw + market_cap scan) for auction.jjyd.net_amount / auction.jjyd.weimai / auction.jjlive.fengdan to verify market-cap caliber (流通/自由流通/总) and field labels."
+}

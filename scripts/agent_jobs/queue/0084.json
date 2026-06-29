@@ -1,0 +1,7 @@
+{
+  "id": "0084",
+  "script": "scripts/0084_auction_sealrate_source_20260629.py",
+  "args": [],
+  "timeout": 180,
+  "note": "Locate count-based premarket-auction 封板率 source: qxlive top_metrics PB + review_daily getChartByQingxu series time points (is there a 9:25 auction sample?)."
+}

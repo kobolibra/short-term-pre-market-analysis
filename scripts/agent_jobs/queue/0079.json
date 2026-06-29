@@ -1,0 +1,7 @@
+{
+  "id": "0079",
+  "script": "scripts/0079_rename_blast_radius_audit_20260629.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Grep whole repo for rename-affected identifiers + probe for transformed/persisted table layer beyond raw captures."
+}

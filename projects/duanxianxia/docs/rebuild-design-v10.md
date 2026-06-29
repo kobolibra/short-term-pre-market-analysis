@@ -2,7 +2,7 @@
 
 > Companion to canonical-field-dictionary.md and v10-field-alignment-decisions.md.
 > Decides what to keep, what to rebuild, how to migrate history without corrupting it,
-> and the final factor layer. Updated 2026-06-29.
+> and the final factor layer. Updated 2026-06-29. Field semantics FINAL.
 
 ## Data lineage (4 layers)
 ```
@@ -49,14 +49,13 @@ Per-stock factors:
 Market / theme features:
 - prevDayLimitUpSealRate  (EOD T-1; num/hist) -- count-based, premarket-safe. OK
 - auctionSealAmount       (today 9:25 T0; fengdan section_t25_total/seal_total) -- 委买/封单资金强度 (per 0083). OK
-- marketSealRate (QX-live PB 今日封板率, count-based)  -- LIVE intraday; our capture is 10:04 (LOOKAHEAD for premarket). Premarket use REQUIRES a 9:25 capture OR 9:25 chart-point extraction; do NOT use the 10:04 snapshot. PENDING 0085.
+- marketSealRate          (QX-live PB 今日封板率, count-based; captured ~9:25 premarket) -- premarket-safe. OK. (Pin fetch to auction window; ignore occasional post-open stamp.)
 - sentimentSignal (QX-live 情绪指标 QX)
 - themeConsistency  = count(H)/count(Q)  (题材内高开一致性)
 - themeConcentration = themeBidAmount / sum(all themeBidAmount)
 
 Keep edge_core structure; re-fit coefficients on corrected inputs.
 
-## Open items
-- Premarket-safe today seal RATE (QX-live PB @9:25): 0085 to confirm chart-series recoverability vs need a 9:25 capture.
+## Open items (minor tuning only)
 - minBidAmount / auctionChgMin thresholds (our tuning).
-- limitBuyAmountAfter920: amount_920 vs amount_925.
+- Pin QX-live fetch to ~9:25 auction window.

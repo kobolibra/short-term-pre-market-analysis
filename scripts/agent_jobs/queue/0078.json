@@ -1,0 +1,7 @@
+{
+  "id": "0078",
+  "script": "scripts/0078_netamount_weimai_audit_20260629.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Re-dump net_amount + weimai row0+raw+headers+scan (<=25 rows each); 0077 stdout tail truncated the net_amount block."
+}

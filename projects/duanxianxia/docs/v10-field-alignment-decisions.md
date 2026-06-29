@@ -25,7 +25,7 @@
 | themes | concept / 题材 / 子标签列表 | OK |
 
 ### limitBuyAmountAfter920 (RESOLVED, job 0082)
-- = fengdan **amount_920** (9:20 不可撤单阶段后的涨停价委买/封单额). Proven NOT 成交额 by non-monotonic 9:15->9:20 drop (成交额 不可能下降; 委买额 9:20 前可撤单 -> 会跌).
+- = fengdan **amount_920** (9:20 不可撤单阶段后的涨停价委买/封单额). Proven NOT 成交额 by non-monotonic 9:15->9:20 drop (成交额 不可能下降; 委买额 9:20 前可撤单 -> 会跌). Reconfirmed at aggregate level by 0083 (section_t15=150.4亿 > t20=39.1亿).
 - amount_925 = 9:25 final seal amount; value `-` = not sealed at 9:25 (竞价开板).
 - Parse 亿/万 display strings to 元 at canonical layer.
 
@@ -36,14 +36,21 @@ sealedLimitUp = num         # 收盘仍封住数
 touchedLimitUp = hist = num + open   # 曾触及 = 封住 + 炸板/开板 (verified identity: 64+42=106)
 prevDayLimitUpSealRate = sealedLimitUp / touchedLimitUp
 ```
-- Market-level; premarket uses the PREVIOUS trading day value.
+- Market-level; premarket uses the PREVIOUS trading day value. Source: market-day limit-up breadth (num/hist/open).
 
-### 3b. auctionLimitUpSealRate (today 9:25, T0)
-- Premarket-auction seal breadth at 9:25 (集合竞价结束).
-- numerator = 9:25 竞价封住数 (fengdan section_t25_total / 一字+竞价封板); denominator = 竞价曾冲板数 (fengdan 封单池行数 / section_seal_total).
-- Available at 9:25, inside loader T0 window (<=09:29): legitimate same-day feature, NOT lookahead; explains only post-9:25.
-- COMPLEMENTARY to prevDay (yesterday regime vs today opening strength). Keep as SEPARATE named features; never substitute one for the other.
-- PENDING job 0083: confirm whether section_t25_total is cumulative vs time-point, and denominator completeness (does fengdan pool include 竞价曾冲板但 9:25 未封).
+### 3b. Premarket-auction seal feature (today 9:25, T0) -- REVISED per job 0083
+**0083 finding (2026-06-29 fengdan): the section aggregates are MONEY amounts (委买/封单额), NOT seal counts:**
+```
+section_t15_total  = 150.4亿   # 9:15 涨停价委买额总量
+section_t20_total  = 39.1亿    # 9:20 (可撤单后回落)
+section_t25_total  = 54.4亿    # 9:25 final  (= section_seal_total)
+section_seal_total = 54.4亿
+section_yizi_count = 5          # the ONLY count (一字/竞价封住数)
+```
+- Same non-monotonic 9:15 > 9:20 drop -> reconfirms 委买 (cancellable before 9:20).
+- fengdan 110-row pool is a MIXED watchlist (5 首板 sealed + 昨X板 tracked + 71 blank), NOT a clean "竞价曾冲板" set. amount_925 non-null = 5 (= yizi_count) = sealed@9:25; 105 are `-`.
+- **=> fengdan yields `auctionSealAmount` (竞价封单资金强度 = section_t25_total / section_seal_total, or raw 总量), NOT a clean count-based seal RATE.** This is a legitimate T0 (<=09:29) same-day strength feature, complementary to prevDay; never substitute for prevDay.
+- **OPEN: a count-based 盘前竞价封板率 (sealedCount / touchedCount) denominator is NOT in fengdan.** Candidate true source = QX-live "今日封板率" (PB) sampled at 9:25 (live-updating metric) -- TO VERIFY whether PB updates during the auction. Decision pending (see section 6).
 
 ## 4. Theme metrics: THREE distinct fields (per other agent; do not mix)
 ### 4a. themeConsistency  (= other agent consistency: 题材内部高开一致性)
@@ -75,6 +82,7 @@ fromPrevSealedLimitUpWithOpen = (prev-day 状态 == 成) AND (fupan 开板 > 0)
 ```
 
 ## 6. Remaining open
-- auctionLimitUpSealRate exact numerator/denominator -> job 0083 (numeric confirmation imminent).
+- **auctionLimitUpSealRate (count-based) source** -- not in fengdan (0083). Need to confirm QX-live 今日封板率 (PB) has a 9:25 auction sample, OR adopt `auctionSealAmount` (money-strength) instead. AWAITING user/other-agent decision.
 - minBidAmount / auctionChgMin thresholds -> OUR tuning choice (not other-agent default).
+- limitBuyAmountAfter920: confirm amount_920 vs amount_925 (920 = first non-cancellable snapshot; 925 = final seal).
 - Everything else is FINAL.

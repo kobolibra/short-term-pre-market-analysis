@@ -48,8 +48,9 @@ Per-stock factors:
 - stockMainlineFit (concept vs kaipan top 板块强度)
 
 Market / theme features:
-- prevDayLimitUpSealRate  (EOD T-1; num/hist)
-- auctionLimitUpSealRate  (today 9:25 T0; fengdan auction breadth) -- SEPARATE feature, never substitute prevDay
+- prevDayLimitUpSealRate  (EOD T-1; num/hist) -- count-based, OK
+- auctionSealAmount       (today 9:25 T0; fengdan section_t25_total/seal_total) -- 委买/封单资金强度 (per 0083; fengdan section_* are MONEY not counts)
+- auctionLimitUpSealRate (count-based)  -- PENDING source (not in fengdan; candidate QX-live PB@9:25). Do NOT substitute prevDay.
 - sentimentSignal (review QX 情绪)
 - themeConsistency  = count(H)/count(Q)  (题材内高开一致性)
 - themeConcentration = themeBidAmount / sum(all themeBidAmount)
@@ -57,6 +58,6 @@ Market / theme features:
 Keep edge_core structure; re-fit coefficients on corrected inputs.
 
 ## Open items
-- auctionLimitUpSealRate exact numerator/denominator -> job 0083.
+- auctionLimitUpSealRate (count-based) source -> not in fengdan (0083); confirm QX-live PB@9:25 or adopt auctionSealAmount.
 - minBidAmount / auctionChgMin thresholds (our tuning).
-- limitBuyAmountAfter920: confirm amount_920 vs amount_925 choice for the 9:20-after caliber (920 = first non-cancellable snapshot; 925 = final).
+- limitBuyAmountAfter920: amount_920 vs amount_925 choice.

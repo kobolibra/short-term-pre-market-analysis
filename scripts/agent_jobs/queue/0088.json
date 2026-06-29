@@ -1,0 +1,7 @@
+{
+  "id": "0088",
+  "script": "scripts/0088_fieldfix_canonical_safe_bugs_20260629.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Apply SAFE canonical bug fixes to fetcher (no renames): hotlist_hour key, surge site-turnover + board_state, ztpool source_url. Push to feature branch fix/canonical-safe-bugs (NOT main); report unified diff."
+}

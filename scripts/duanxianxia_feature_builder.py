@@ -388,6 +388,7 @@ def _self_test() -> bool:
     assert a["_field_sources"]["free_float_mktcap"] == "weimai"
     # bidAmount from vratio raw[6]=1779万 -> 1.779e7 元
     assert a["bidAmount"] == 17_790_000, a["bidAmount"]
+    # _field_sources uses canonical field name "auction_turnover" (not output key "bidAmount")
     assert a["_field_sources"]["auction_turnover"] == "vratio"
     # bidStrength = bidAmount / FF * 1e4
     assert abs(a["bidStrength"] - 17_790_000 / 46177984662 * 1e4) < 1e-9, a["bidStrength"]

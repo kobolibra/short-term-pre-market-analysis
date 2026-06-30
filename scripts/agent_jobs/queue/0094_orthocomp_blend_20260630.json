@@ -1,0 +1,7 @@
+{
+  "id": "0094_orthocomp_blend_20260630",
+  "script": "scripts/duanxianxia_0094_orthocomp_blend_probe_20260630.py",
+  "args": [],
+  "timeout": 1200,
+  "note": "Task 0094 \u6b63\u4ea4\u590d\u5408 comp_SD(auction_turnover_wan+turnover_rate_pct+latest_change_pct) \u5728\u5019\u9009\u6c60\u5185\u4e0e baseline edge \u6df7\u5408\u7684\u589e\u91cf\u9a8c\u8bc1; lam \u7f51\u683c 0/0.2/0.3/0.4/0.5/1.0; \u53ea\u8bfb, \u51b3\u5b9a\u662f\u5426\u628a\u6b63\u4ea4\u4fe1\u53f7\u63a5\u5165\u751f\u4ea7 edge\u3002"
+}

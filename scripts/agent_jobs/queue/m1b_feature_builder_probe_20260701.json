@@ -1,0 +1,7 @@
+{
+  "id": "m1b_feature_builder_probe_20260701",
+  "script": "scripts/duanxianxia_feature_builder_probe_20260630.py",
+  "args": [],
+  "timeout": 300,
+  "note": "M1 gate re-run after fix: _field_sources key was 'auction_turnover' not 'bidAmount'. Verifies feature_builder imports cleanly (self_test passes), then runs on real captures to check coverage/raw[]/time-isolation/mislabel-guard/FF-caliber/merged features."
+}

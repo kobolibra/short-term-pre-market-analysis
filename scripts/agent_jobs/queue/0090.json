@@ -1,0 +1,7 @@
+{
+  "id": "0090",
+  "script": "scripts/duanxianxia_canonical.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Task 0090: install + verify transform-1 canonical layer. Running the module executes _self_test() on import against job 0089 real samples (多氟多/002407 cross-table anchor + mislabel/caliber guards); rc=0 = all assertions pass. READ-ONLY, no writes, no push."
+}

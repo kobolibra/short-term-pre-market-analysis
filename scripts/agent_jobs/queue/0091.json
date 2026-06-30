@@ -1,0 +1,7 @@
+{
+  "id": "0091",
+  "script": "scripts/duanxianxia_seal_amount_probe_20260630.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Task 0091 gate: confirm weimai raw[17] seal_amount unit. Imports duanxianxia_canonical (runs its _self_test) then asserts canonical seal_amount == raw[17]*1e4 (万->元) on REAL 2026-06-30 decrypted live rows (多氟多/水晶光电/盛达资源/*ST东智/*ST瑞茂). rc=0 = the 0090 '元' bug is fixed and raw[17] is 万 (matches field-rename-map §4). READ-ONLY. 0091 backlog (separate jobs): route ALL parsing through the canonical layer; fix fetcher hot_stock_day->hot_stock_hour; pool.hot/pool.surge raw + board_state capture; commit a daily capture to agent-results; regen feature CSVs from canonical."
+}

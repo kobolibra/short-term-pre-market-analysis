@@ -1,0 +1,7 @@
+{
+  "id": "0096_orthocomp_prodpath_20260630",
+  "script": "scripts/duanxianxia_0096_orthocomp_prodpath_probe_20260630.py",
+  "args": [],
+  "timeout": 1800,
+  "note": "0095 后续: 生产路径验证。import compute_auction_strengths 跑真实 captures(cutoff 092900,earliest_before)取 auction_turnover_pct/latest_change_pct 复现已接入 assemble_v9 的 BC@lam0.4 混合, 测 IC/ICIR+me@{10,20,30} vs baseline 并检查与 0095 raw 的字段映射相关性; 不达标则将 edge_orthocomp_lambda 默认置 0 禁用。只读。"
+}

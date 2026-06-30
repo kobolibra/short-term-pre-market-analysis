@@ -65,6 +65,92 @@ def _auction_amount_pct_map(decisions: List[Dict[str, Any]]) -> Dict[str, float]
     return pct_map
 
 
+def _blend_num(v: Any) -> Optional[float]:
+    try:
+        if v in (None, "", "-", "None"):
+            return None
+        return float(str(v).replace("%", "").replace(",", "").strip())
+    except Exception:
+        return None
+
+
+def _blend_zscores(vals_by_code: Dict[str, Optional[float]]) -> Dict[str, float]:
+    codes = [c for c, v in vals_by_code.items() if v is not None]
+    xs = [vals_by_code[c] for c in codes]
+    if len(xs) < 3:
+        return {}
+    m = sum(xs) / len(xs)
+    var = sum((x - m) ** 2 for x in xs) / len(xs)
+    sd = var ** 0.5
+    if sd <= 0:
+        return {}
+    return {c: (vals_by_code[c] - m) / sd for c in codes}
+
+
+def _apply_orthocomp_blend(rows: List[Dict[str, Any]], p: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """v11: cross-sectional orthogonal composite (BC) blended into edge_score.
+
+    Validated OOS by Task 0094/0095 (full candidate pool mean_excess@10 0.78->1.14,
+    IC 0.091->0.098, ICIR 0.586->0.649, days_beat me10 10/17): add a composite z of
+    turnover (auction_turnover_pct) + gap (latest_change_pct) orthogonal to the existing
+    amt_pct, blended with lambda=0.4, improving top-10 selection precision. A (auction
+    turnover amount) overlaps amt_pct so it is excluded.
+
+    Over the day's full candidate set, z-score edge_score and comp_BC cross-sectionally,
+    blend linearly, then re-standardize back to edge_score's own mean/sd (keeps the
+    action-gate absolute thresholds intact, only changes ordering). Codes missing
+    turnover/gap get neutral comp 0; too few candidates or no cross-sectional variance
+    returns rows unchanged (defensive, reversible). lambda<=0 disables.
+    """
+    lam = float(p.get("edge_orthocomp_lambda", 0.4))
+    if lam <= 0.0 or len(rows or []) < int(p.get("edge_orthocomp_min_rows", 5)):
+        return rows
+    edge_by: Dict[str, float] = {}
+    turn_by: Dict[str, Optional[float]] = {}
+    gap_by: Dict[str, Optional[float]] = {}
+    for r in rows:
+        code = str(r.get("code") or "").strip()
+        if not code:
+            continue
+        try:
+            edge_by[code] = float(r.get("edge_score") or 0.0)
+        except Exception:
+            edge_by[code] = 0.0
+        ad = r.get("auction_detail") or {}
+        turn_by[code] = _blend_num(ad.get("auction_turnover_pct"))
+        gap_by[code] = _blend_num(ad.get("latest_change_pct"))
+    z_edge = _blend_zscores(edge_by)
+    if not z_edge:
+        return rows
+    z_turn = _blend_zscores(turn_by)
+    z_gap = _blend_zscores(gap_by)
+    if not z_turn and not z_gap:
+        return rows
+    comp: Dict[str, float] = {}
+    for code in edge_by:
+        parts = [z for z in (z_turn.get(code), z_gap.get(code)) if z is not None]
+        comp[code] = (sum(parts) / len(parts)) if parts else 0.0
+    blended = {c: (1.0 - lam) * z_edge.get(c, 0.0) + lam * comp.get(c, 0.0) for c in edge_by}
+    bz = _blend_zscores(blended)
+    if not bz:
+        return rows
+    es = list(edge_by.values())
+    em = sum(es) / len(es)
+    evar = sum((x - em) ** 2 for x in es) / len(es)
+    esd = evar ** 0.5
+    for r in rows:
+        code = str(r.get("code") or "").strip()
+        if code in bz:
+            new_edge = max(0.0, min(100.0, em + bz[code] * esd))
+            comps = dict(r.get("edge_components") or {})
+            comps["edge_score_pre_orthocomp"] = r.get("edge_score")
+            comps["orthocomp_z"] = round(comp.get(code, 0.0), 3)
+            comps["orthocomp_lambda"] = lam
+            r["edge_components"] = comps
+            r["edge_score"] = round(new_edge, 2)
+    return rows
+
+
 def assemble_v9(
     bundle: Any,                         # PremarketDataBundle (含 auction_weimai / T0 等全量字段)
     decisions: List[Dict[str, Any]],     # 现有 v7 引擎产出的候选
@@ -137,4 +223,7 @@ def assemble_v9(
         row.update(edge)
         enriched.append(row)
 
+    # v11: orthocomp(BC=turnover_pct+gap) cross-sectional blend into edge_score
+    # (Task 0094/0095 OOS validated, lambda=0.4; defensive/reversible via params)
+    enriched = _apply_orthocomp_blend(enriched, p)
     return v9out.shape_v9_output(enriched, market_env=market_env, meta=meta)

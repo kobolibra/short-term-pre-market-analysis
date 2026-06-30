@@ -1,0 +1,7 @@
+{
+  "id": "m1b_auction_source_probe_20260630",
+  "script": "scripts/duanxianxia_m1b_auction_source_probe_20260630.py",
+  "args": [],
+  "timeout": 600,
+  "note": "M1b-3 gate: run the TRUE production premarket scoring entrypoint build_v72_decisions on the latest live captures and assert meta.auction_source=='canonical_feature_builder' (the canonical raw[] rebuilt vratio/qiangchou/net_amount/weimai source rows actually fed compute_auction_strengths; fengdan stays legacy). Reports canonical-source-row coverage, canonical vs independently-recomputed legacy auction_strength Spearman rank correlation + top-15 side-by-side, to confirm no ranking regression vs the legacy named-field path. rc=0 = canonical-first is live and correct. READ-ONLY, no writes, no push."
+}

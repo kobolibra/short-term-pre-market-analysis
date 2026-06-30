@@ -7,7 +7,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo
 
 SCRIPTS_DIR = Path(__file__).parent.resolve()
@@ -28,12 +28,65 @@ from duanxianxia_v7_2_output import shape_v7_2_output, write_v7_2_outputs
 from duanxianxia_v7_2_setup_engine import classify_candidates_v72
 from duanxianxia_v7_2_theme_strength import compute_theme_strengths
 
+# v11 canonical-first layer (single source of truth for raw auction fields).
+# Defensive imports: if either module is unavailable we silently fall back to
+# the legacy named-field rows, so the production pipeline never breaks.
+try:
+    import duanxianxia_feature_builder as v9feat
+except Exception:  # pragma: no cover - import-time guard
+    v9feat = None  # type: ignore
+try:
+    import duanxianxia_canonical_decision_adapter as v9adapter
+except Exception:  # pragma: no cover
+    v9adapter = None  # type: ignore
+
 TZ_SHANGHAI = ZoneInfo("Asia/Shanghai")
 DEFAULT_PROJECT_ROOT = Path("/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia")
 CONFIG_REL = Path("config/premarket_v7_2_setups.yaml")
 
 
 IGNORED_QXLIVE_KEYS = {"HSLN", "PB", "PBBX"}
+
+# Canonical auction dataset ids consumed by the feature builder.
+DS_AUCTION_VRATIO = "auction.jjyd.vratio"
+DS_AUCTION_QIANGCHOU = "auction.jjyd.qiangchou"
+DS_AUCTION_NETAMOUNT = "auction.jjyd.net_amount"
+DS_AUCTION_WEIMAI = "auction.jjyd.weimai"
+
+
+def _canonical_auction_source_rows(
+    rows_by_dataset: Dict[str, List[Dict[str, Any]]],
+) -> Tuple[Optional[Dict[str, Any]], bool]:
+    """Rebuild the per-source auction rows fed to compute_auction_strengths from
+    the canonical feature layer (raw[] -> canonical -> features -> source rows).
+
+    Returns (source_rows, used_canonical). source_rows carries vratio_rows /
+    qiangchou_rows / netamount_rows / weimai_rows in the exact shape
+    compute_auction_strengths expects. Returns (None, False) on any failure or
+    when no canonical features are produced (e.g. captures lacking raw[]), so the
+    caller falls back to the legacy named-field rows with zero risk.
+
+    NOTE: the canonical layer covers vratio/qiangchou/net_amount/weimai only;
+    auction.jjlive.fengdan is NOT canonicalized, so the caller keeps passing the
+    legacy fengdan rows through untouched. The canonical qiangchou source carries
+    the primary 9:20-9:25 grab signal; the last-second sub-group nuance remains a
+    tracked refinement for the factor-refit task.
+    """
+    if v9feat is None or v9adapter is None:
+        return None, False
+    if not hasattr(v9feat, "build_from_datasets") or not hasattr(v9adapter, "build_source_rows_from_features"):
+        return None, False
+    try:
+        table = v9feat.build_from_datasets(rows_by_dataset or {})
+        features = (table or {}).get("features") or []
+        if not features:
+            return None, False
+        src = v9adapter.build_source_rows_from_features(features)
+        if not isinstance(src, dict) or not src.get("vratio_rows"):
+            return None, False
+        return src, True
+    except Exception:
+        return None, False
 
 
 def load_v7_2_config(project_root: Path) -> Dict[str, Any]:
@@ -121,7 +174,33 @@ def build_v72_decisions(
         bundle.warnings.append("v7.2 regime fallback: missing T0 home.qxlive.top_metrics")
 
     candidate_latest_pct = _build_candidate_latest_pct(candidates)
-    auction_strengths = compute_auction_strengths(codes, v71.auction_vratio, v71.auction_qiangchou, v71.auction_netamount, v71.auction_fengdan, params, weimai_rows=weimai_rows)
+
+    # v11 canonical-first: feed the auction strength engine with source rows
+    # rebuilt from canonical raw[] fields (mislabel-proof), keeping the exact
+    # same engine. fengdan stays on legacy rows (not canonicalized). Any failure
+    # transparently falls back to the legacy named-field rows.
+    rows_by_dataset = {
+        DS_AUCTION_VRATIO: list(getattr(v71, "auction_vratio", []) or []),
+        DS_AUCTION_QIANGCHOU: list(getattr(v71, "auction_qiangchou", []) or []),
+        DS_AUCTION_NETAMOUNT: list(getattr(v71, "auction_netamount", []) or []),
+        DS_AUCTION_WEIMAI: list(weimai_rows),
+    }
+    canon_src, used_canonical = _canonical_auction_source_rows(rows_by_dataset)
+    if used_canonical and canon_src is not None:
+        auction_strengths = compute_auction_strengths(
+            codes,
+            canon_src.get("vratio_rows") or [],
+            canon_src.get("qiangchou_rows") or [],
+            canon_src.get("netamount_rows") or [],
+            v71.auction_fengdan,
+            params,
+            weimai_rows=canon_src.get("weimai_rows") or [],
+        )
+        auction_source = "canonical_feature_builder"
+    else:
+        auction_strengths = compute_auction_strengths(codes, v71.auction_vratio, v71.auction_qiangchou, v71.auction_netamount, v71.auction_fengdan, params, weimai_rows=weimai_rows)
+        auction_source = "legacy_named_fields"
+
     hotness_scores = compute_hotness_scores(bundle.rocket_rows, bundle.hot_stock_day_rows, codes, params, candidate_latest_pct=candidate_latest_pct)
     theme_strengths = compute_theme_strengths(candidates, bundle.kaipan_plate_t0_rows, labels.get("theme_history") or {}, labels.get("industry_t1") or {}, params)
     decisions = classify_candidates_v72(candidates, labels, auction_strengths, theme_strengths, hotness_scores, config, max_candidates=None)
@@ -132,6 +211,7 @@ def build_v72_decisions(
         "date_t2": bundle.date_t2,
         "generated_at": datetime.now(TZ_SHANGHAI).isoformat(timespec="seconds"),
         "candidate_count": len(candidates),
+        "auction_source": auction_source,
         "bundle_summary": bundle.to_summary_dict(),
         "regime": labels.get("regime"),
         "warnings": bundle.warnings,
@@ -142,9 +222,10 @@ def build_v72_decisions(
         },
         "notes": [
             "v7.2 conservative mode: T0 auction + exact plate-tag strength + hotness dominate.",
+            "auction_source=canonical_feature_builder means vratio/qiangchou/net_amount/weimai strengths were rebuilt from canonical raw[] fields (mislabel-proof); fengdan stays on legacy rows. legacy_named_fields means the canonical layer was unavailable and the engine fell back to the fetcher's named rows.",
             "T0 qxlive HSLN/PB/PBBX are ignored for premarket regime.",
-            "T0 plate 主力流入 and 涨停数量 are ignored; only 板块强度 is used.",
-            "T0 auction.jjyd.weimai (涨停委买) is wired in: it seeds candidates and feeds auction strength / AUCTION_LIMIT_UP tagging.",
+            "T0 plate \u4e3b\u529b\u6d41\u5165 and \u6da8\u505c\u6570\u91cf are ignored; only \u677f\u5757\u5f3a\u5ea6 is used.",
+            "T0 auction.jjyd.weimai (\u6da8\u505c\u59d4\u4e70) is wired in: it seeds candidates and feeds auction strength / AUCTION_LIMIT_UP tagging.",
             "T-1 review tables are not used as premarket scoring factors when use_t1_review_context=false.",
             "Action-pool output separates auction follow, theme catch-up, low-open reversal, board watch, confirmation, and avoid; do not read top_candidates as one homogeneous flat rank.",
         ],

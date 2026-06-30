@@ -1,0 +1,7 @@
+{
+  "id": "0095_orthocomp_attrib_20260630",
+  "script": "scripts/duanxianxia_0095_orthocomp_attrib_probe_20260630.py",
+  "args": [],
+  "timeout": 1200,
+  "note": "0094 后续: 归因 comp_SD 正交贡献(full_ABC/BC_orthogonal/A_only)并用全候选池 mean_excess@{10,20,30}+IC/ICIR 非退化口径确认; 只读, 决定是否及以何种去重叠方式接入生产 edge。"
+}

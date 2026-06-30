@@ -388,14 +388,14 @@ def _self_test() -> bool:
     assert a["_field_sources"]["free_float_mktcap"] == "weimai"
     # bidAmount from vratio raw[6]=1779万 -> 1.779e7 元
     assert a["bidAmount"] == 17_790_000, a["bidAmount"]
-    assert a["_field_sources"]["bidAmount"] == "vratio"
+    assert a["_field_sources"]["auction_turnover"] == "vratio"
     # bidStrength = bidAmount / FF * 1e4
     assert abs(a["bidStrength"] - 17_790_000 / 46177984662 * 1e4) < 1e-9, a["bidStrength"]
     # volumeRatio only from vratio raw[11]
     assert a["volumeRatio"] == 6.1, a["volumeRatio"]
     # mainNetInflow preferred from net_amount raw[4]=14442万 -> 1.4442e8 元
     assert a["mainNetInflow"] == 144_420_000, a["mainNetInflow"]
-    assert a["_field_sources"]["mainNetInflow"] == "net_amount"
+    assert a["_field_sources"]["main_net_inflow"] == "net_amount"
     # weimai-only primitives
     assert a["mainNetInflowFull"] == 144416464, a["mainNetInflowFull"]
     assert a["superLargeOrder"] == 203217386, a["superLargeOrder"]

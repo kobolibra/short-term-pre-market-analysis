@@ -1,0 +1,7 @@
+{
+  "id": "0093_factor_refit_20260630",
+  "script": "scripts/duanxianxia_0093_factor_refit_probe_20260630.py",
+  "args": [],
+  "timeout": 1200,
+  "note": "Task 0093 因子权重重拟合验证: walk-forward OOS IC/ICIR/capture 比较 baseline(V10AMT_W) vs S2-S5 证据驱动重配方案 + S1 自适应; 只在现有 7 个 CORE_FIELDS 上重配, 不加新字段; 输出推荐方案."
+}

@@ -12,7 +12,7 @@ pool.hot, the legacy named-string row) into a canonical dict with:
 Unit decisions are LOCKED by job 0089 (unit probe, 2026-06-29), cross-validated
 across tables on the shared sample 多氟多/002407:
   - vratio/qiangchou/net_amount raw[2]/[6] free_float_mktcap : 亿  -> x1e8 -> 元
-  - weimai raw[12]/[13]/[14]/[15]/[17] & raw[4]/[6]/[8]/[9]  : already 元 (NO x1e4)
+  - weimai raw[12]/[13]/[14]/[15] & raw[4]/[6]/[8]/[9]  : already 元 (NO x1e4)
   - net_amount raw[4]/[5] (main_net_inflow / auction_turnover): 万  -> x1e4 -> 元
   - vratio raw[3]/[6]/[10] (seal / auction_turnover)          : 万  -> x1e4 -> 元
   - pool.surge item[8]/[9] (turnover / float_mktcap, FLOAT)   : already 元
@@ -163,7 +163,8 @@ REGISTRY = {
         ],
     },
     # --- auction.jjyd.weimai (涨停委买, AES) raw[18] ------------------------ #
-    # 0089 LOCK: every monetary field is ALREADY in 元 (no x1e4 / x1e8).
+    # 0089 LOCK: every monetary field is ALREADY in 元 (no x1e4 / x1e8),
+    # EXCEPT raw[17] seal_amount which is 万 (see field-rename-map §4 / job 0091).
     "auction.jjyd.weimai": {
         "raw_kind": "positional",
         "parse_spec": "list[18]",
@@ -185,7 +186,7 @@ REGISTRY = {
             _f("super_large_order", "yuan", 14),              # 0089: 元 (spearman -0.919 w/ [13])
             _f("large_order", "yuan", 15),                    # 0089: 元
             _f("board_label", "text", 16),
-            _f("seal_amount", "yuan", 17),                    # 0089: 元 (old name _wan is a misnomer)
+            _f("seal_amount", "wan", 17),                    # 0091 FIX: 万->x1e4->元 (封单额; matches field-rename-map §4; only on sealed boards)
         ],
     },
     # --- pool.surge (冲涨池) item[11]; raw stored ------------------------- #
@@ -296,7 +297,7 @@ def _self_test():
     assert cq["auction_turnover"] == 1_890_000, cq["auction_turnover"]
     assert "volume_ratio" not in cq, "qiangchou must expose grab_strength, not volume_ratio"
 
-    # 4) weimai: every monetary field already in 元 (NO x1e4 / x1e8)
+    # 4) weimai: monetary fields already in 元 EXCEPT raw[17] seal_amount (万 -> x1e4)
     w = ["002407", "多氟多", 45.66, 10, 2339609266, "none",
          144416464, 0.56, 258717139, 1016893860, 258717139,
          "氢氟酸、电解液",
@@ -307,9 +308,9 @@ def _self_test():
     assert cw["super_large_order"] == 203217386, cw["super_large_order"]
     assert cw["large_order"] == -58800922, cw["large_order"]
     assert cw["auction_turnover"] == 2339609266, cw["auction_turnover"]
-    assert cw["seal_amount"] == 208089, cw["seal_amount"]
-    # guard: seal_amount must NOT be treated as 万 (would be 2.08e9)
-    assert cw["seal_amount"] != 208089 * 10000, "weimai seal_amount wrongly converted from 万"
+    assert cw["seal_amount"] == 208089 * 10000, cw["seal_amount"]
+    # guard: seal_amount must NOT be left as 元 (live 6-30 magnitudes prove it is 万)
+    assert cw["seal_amount"] != 208089, "weimai seal_amount wrongly left as 元"
     assert field_caliber("auction.jjyd.weimai", "free_float_mktcap") == "FF"
 
     # 5) net_amount: main_net_inflow/auction_turnover are 万; FF is 亿

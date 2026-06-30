@@ -18,7 +18,17 @@ This adapter bridges the two worlds:
      attributes that only exist in the heavier intraday bundle (T1/T2 snapshots,
      cashflow history, fupan, ltgd, ztpool) are left as empty lists so the v9
      sub-models degrade gracefully instead of crashing.
-  3. It uses the existing premarket `top_candidates` as `decisions`.
+  3. DECISIONS ARE NOW CANONICAL-FIRST (v11 M1b). Instead of trusting the legacy
+     `top_candidates` (which carried v7-era auction scores derived from the
+     fetcher's mislabel-prone NAMED fields), it rebuilds the candidate set from
+     the canonical feature layer:
+         duanxianxia_feature_builder.build_from_datasets(rows_by_dataset)
+           -> duanxianxia_canonical_decision_adapter.build_auction_decisions(...)
+     which reuses the existing v7.2 auction engine VERBATIM (zero IC drift) on
+     canonical raw fields. The legacy `top_candidates` path remains ONLY as a
+     last-resort fallback when the canonical layer is unavailable or yields no
+     features (e.g. missing raw[] in captures), preserving the never-raises
+     contract.
   4. It calls `assemble_v9` and returns the shaped v9 block.
 
 Everything is defensive: `build_v9_block` never raises — on any error it returns a
@@ -56,6 +66,16 @@ try:
     import duanxianxia_v9_output as v9out
 except Exception:  # pragma: no cover
     v9out = None  # type: ignore
+
+try:  # canonical feature layer (v11 M1) — single source of truth for raw fields
+    import duanxianxia_feature_builder as v9feat
+except Exception:  # pragma: no cover
+    v9feat = None  # type: ignore
+
+try:  # canonical->decision adapter (v11 M1b) — zero-IC-drift v7.2 engine reuse
+    import duanxianxia_canonical_decision_adapter as v9adapter
+except Exception:  # pragma: no cover
+    v9adapter = None  # type: ignore
 
 
 # Dataset ids that appear in a premarket report's items. These mirror the ids
@@ -155,11 +175,58 @@ def build_bundle_from_rows(rows_by_dataset: Dict[str, List[Dict[str, Any]]]) -> 
     )
 
 
-def _decisions_from_analysis(premarket_analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Use the existing premarket candidates as v9 decisions.
+def _canonical_decisions_from_report(
+    rows_by_dataset: Dict[str, List[Dict[str, Any]]],
+    *,
+    params: Optional[Dict[str, Any]] = None,
+    cutoff: Optional[str] = None,
+) -> List[Dict[str, Any]]:
+    """v11 M1b candidate source: rebuild decisions (carrying auction_detail) from
+    the canonical feature layer + the zero-IC-drift v7.2 engine adapter.
 
-    assemble_v9 only requires a stable `code` per decision; we pass the candidate
-    dicts through (normalizing code) so any extra fields remain available.
+    The report's captures already isolated the T0 window, so we feed their rows
+    straight into build_from_datasets (no second time-isolation pass). Returns []
+    when the canonical layer / adapter is unavailable or produced no features, so
+    the caller can fall back to the legacy top_candidates path.
+    """
+    if v9feat is None or v9adapter is None:
+        return []
+    if not hasattr(v9feat, "build_from_datasets") or not hasattr(v9adapter, "build_auction_decisions"):
+        return []
+    try:
+        kwargs: Dict[str, Any] = {}
+        if cutoff:
+            kwargs["cutoff"] = cutoff
+        table = v9feat.build_from_datasets(rows_by_dataset or {}, **kwargs)
+        features = (table or {}).get("features") or []
+        if not features:
+            return []
+        decisions = v9adapter.build_auction_decisions(features, params=params)
+        if not decisions:
+            return []
+        # enrich with provenance so the full-fidelity output keeps source_hits.
+        by_code: Dict[str, Dict[str, Any]] = {}
+        for f in features:
+            c = _norm_code(f.get("code"))
+            if c:
+                by_code[c] = f
+        for d in decisions:
+            feat = by_code.get(_norm_code(d.get("code"))) or {}
+            if d.get("source_hits") is None:
+                d["source_hits"] = feat.get("source_hits") or []
+            d.setdefault("source_family_count", feat.get("source_hit_count"))
+        return decisions
+    except Exception:
+        return []
+
+
+def _decisions_from_analysis(premarket_analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """LEGACY FALLBACK: use the existing premarket candidates as v9 decisions.
+
+    Retained only for the case where the canonical feature layer cannot produce
+    decisions (missing modules or no canonical features). assemble_v9 only
+    requires a stable `code` per decision; we pass the candidate dicts through
+    (normalizing code) so any extra fields remain available.
     """
     analysis = premarket_analysis or {}
     candidates = (
@@ -171,7 +238,7 @@ def _decisions_from_analysis(premarket_analysis: Dict[str, Any]) -> List[Dict[st
     for cand in candidates:
         if not isinstance(cand, dict):
             continue
-        code = _norm_code(cand.get("code") or cand.get("代码"))
+        code = _norm_code(cand.get("code") or cand.get("\u4ee3\u7801"))
         if not code:
             continue
         d = dict(cand)
@@ -215,19 +282,26 @@ def build_v9_block(
 ) -> Dict[str, Any]:
     """Top-level, fully defensive entry point. Never raises.
 
-    Reads T0 capture rows from `report`, derives decisions from
-    `premarket_analysis` (its top_candidates), runs the v9 assembly, and returns
-    the shaped v9 block. On any failure returns a disabled stub so the caller can
-    safely attach the result to the existing report.
+    Reads T0 capture rows from `report`, rebuilds decisions canonical-first
+    (feature_builder + v7.2 adapter), falling back to the legacy top_candidates
+    only when canonical decisions are unavailable, runs the v9 assembly, and
+    returns the shaped v9 block. On any failure returns a disabled stub so the
+    caller can safely attach the result to the existing report.
     """
     try:
         analysis = premarket_analysis or (report or {}).get("analysis") or {}
         if isinstance(analysis, dict) and analysis.get("enabled") is False:
             return _disabled_block("premarket_analysis_disabled")
         rows_by_dataset = _rows_by_dataset_from_report(report or {})
-        decisions = _decisions_from_analysis(analysis)
+        # v11 M1b: canonical feature layer is the source of truth for candidates.
+        decisions = _canonical_decisions_from_report(rows_by_dataset, params=params)
+        decision_source = "canonical_feature_builder"
+        if not decisions:
+            decisions = _decisions_from_analysis(analysis)
+            decision_source = "legacy_top_candidates"
         meta = {
             "source": "premarket_report_adapter",
+            "decision_source": decision_source,
             "base_version": (analysis or {}).get("version"),
             "generated_at": (report or {}).get("generated_at"),
         }
@@ -271,20 +345,20 @@ def _self_test() -> None:
     """Filesystem-free smoke test of the adapter core."""
     rows_by_dataset = {
         DS_HOME_KAIPAN: [
-            {"code": "002297", "name": "博光股份", "plate": "机器人", "change_pct": "5.2"},
-            {"code": "000001", "name": "平安银行", "plate": "银行", "change_pct": "1.1"},
+            {"code": "002297", "name": "\u535a\u5149\u80a1\u4efd", "plate": "\u673a\u5668\u4eba", "change_pct": "5.2"},
+            {"code": "000001", "name": "\u5e73\u5b89\u94f6\u884c", "plate": "\u94f6\u884c", "change_pct": "1.1"},
         ],
         DS_HOME_QXLIVE_TOP: [
-            {"metric": "上涨家数", "value": "3200"},
-            {"metric": "下跌家数", "value": "1500"},
+            {"metric": "\u4e0a\u6da8\u5bb6\u6570", "value": "3200"},
+            {"metric": "\u4e0b\u8dcc\u5bb6\u6570", "value": "1500"},
         ],
         DS_AUCTION_WEIMAI: [
             {"code": "002297", "rank": 1, "weimai_amount_wan": "8000"},
         ],
     }
     decisions = [
-        {"code": "002297", "name": "博光股份", "score": 88.0},
-        {"code": "000001", "name": "平安银行", "score": 55.0},
+        {"code": "002297", "name": "\u535a\u5149\u80a1\u4efd", "score": 88.0},
+        {"code": "000001", "name": "\u5e73\u5b89\u94f6\u884c", "score": 55.0},
     ]
 
     bundle = build_bundle_from_rows(rows_by_dataset)
@@ -302,13 +376,45 @@ def _self_test() -> None:
     ):
         assert getattr(bundle, attr) == [], attr
 
-    # decisions derivation from a premarket-analysis-like dict
+    # legacy decisions derivation from a premarket-analysis-like dict
     derived = _decisions_from_analysis({"top_candidates": decisions})
     assert [d["code"] for d in derived] == ["002297", "000001"], derived
 
-    # empty candidates -> disabled stub (never raises)
+    # canonical-first path: when feature_builder + adapter are present, rebuild
+    # decisions (carrying auction_detail) from raw[] auction captures.
+    if v9feat is not None and v9adapter is not None:
+        vw = ["002407", "\u591a\u6c1f\u591a", 462, 32740, "none", "10.0",
+              "1779", "\u6c22\u6c1f\u9178", "10.0", "1779", "15", 6.1, 0.52]
+        nw = ["002407", "\u591a\u6c1f\u591a", 10, 10, 14442, 25872, 461.8,
+              "\u6c22\u6c1f\u9178", 0.56]
+        ww = ["002407", "\u591a\u6c1f\u591a", 45.66, 10, 2339609266, "none",
+              144416464, 0.56, 258717139, 1016893860, 258717139,
+              "\u6c22\u6c1f\u9178", 46177984662, 144416464, 203217386,
+              -58800922, "\u9996\u677f", 208089]
+        canon_rows = {
+            "auction.jjyd.vratio": [{"code": "002407", "raw": vw}],
+            "auction.jjyd.net_amount": [{"code": "002407", "raw": nw}],
+            "auction.jjyd.weimai": [{"code": "002407", "raw": ww}],
+        }
+        cdec = _canonical_decisions_from_report(canon_rows, params=None)
+        assert cdec, "canonical decisions empty"
+        d0 = cdec[0]
+        assert d0["code"] == "002407", d0
+        assert isinstance(d0.get("auction_detail"), dict) and d0["auction_detail"], d0
+        assert "auction_strength" in d0["auction_detail"], d0["auction_detail"].keys()
+        assert d0.get("source_hits"), d0
+        # empty/raw-less rows -> no canonical features -> [] (fallback path)
+        assert _canonical_decisions_from_report({"auction.jjyd.vratio": [{"code": "x"}]}) == []
+        print("v9_from_report canonical-first _self_test passed")
+    else:
+        print("v9_from_report _self_test: canonical layer absent; legacy path verified")
+
+    # empty candidates -> disabled stub (never raises). When assemble_v9 is
+    # absent (isolated unit env) the stub reason differs but enabled is False.
     stub = build_v9_block_from_rows(rows_by_dataset, [], meta=None, params=None)
-    assert stub.get("enabled") is False and stub.get("reason") == "no_candidates", stub
+    assert stub.get("enabled") is False, stub
+    if v9asm is not None and hasattr(v9asm, "assemble_v9"):
+        assert stub.get("reason") == "no_candidates", stub
 
     # full path: only assert it runs and returns a dict when assemble is present.
     if v9asm is not None and hasattr(v9asm, "assemble_v9"):

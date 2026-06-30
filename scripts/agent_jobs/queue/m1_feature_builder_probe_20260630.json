@@ -1,0 +1,7 @@
+{
+  "id": "m1_feature_builder_probe_20260630",
+  "script": "scripts/duanxianxia_feature_builder_probe_20260630.py",
+  "args": [],
+  "timeout": 300,
+  "note": "v11 M1 gate: run the canonical-first duanxianxia_feature_builder on the latest REAL premarket captures. Importing the probe imports duanxianxia_feature_builder (runs its _self_test on the 0089 samples), then builds the T0 feature table from captures/<latest date>/auction.* and prints a JSON summary: per-dataset coverage (rows_in/canonical_ok/canonical_error), an on-disk row-schema peek (row0_keys / row0_has_raw / row0_raw_len) that empirically settles whether persisted rows carry raw[], capture_meta (chosen file + any post-09:29 files skipped by time-isolation), checks (no auction_volume_ratio mislabel leak, all FF caliber, canonical_error_total, n_multi_source), and the top merged feature rows with v10 primitives (bidAmount/bidStrength/volumeRatio/grabStrength/changeRate/mainNetInflow/sealAmount/boardLabel + _field_sources). rc=0 = builder is correct on live data. READ-ONLY, no writes, no push."
+}

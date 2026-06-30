@@ -9,7 +9,7 @@
 >
 > 读完以上即可无缝衔接。0089 探针结论已落地（见下），其余文档按需查阅。
 
-最后更新：2026-06-30（v11 彻底重构定调 + canonical/routing 已上线）
+最后更新：2026-06-30（v11 M1：feature_builder 已上线 + 真实captures校验门已入队）
 
 ---
 
@@ -26,10 +26,11 @@ raw[] 位置数组（ground truth）
 
 **当前阶段**：transform-1 修正已落地——`duanxianxia_canonical.py`（口径单一事实源）+ `duanxianxia_canonical_routing.py`（kind→dataset 路由入口）均已上线并验证；seal_amount 单位（万→元）已实证确认并修复。
 **v11 决策**：转入 **canonical-first 彻底重构**（详见 `docs/rebuild-plan-v11.md`）——冻结旧解析产物，一切从 raw 经 canonical 重新派生；不再对 105KB/145KB 巨型脚本做整体重写或 sed 改标签，让旧解析产物对下游不再产生影响。
-**下一步（M1）**：新建 feature builder（L3 特征/加载层重构），读持久化 captures → `canonicalize_rows()` → 时间隔离特征表。
+**当前进度（M1 进行中）**：`scripts/duanxianxia_feature_builder.py` 已上线——canonical-first 的 L3 特征层，读 captures → `canonicalize_row()` → 时间隔离 T0 特征表 + v10 因子原语，import 期自检已通过真实 0089 样本（commit aaae147b）。真实 captures 校验门 `m1_feature_builder_probe_20260630` 已入队，等下一个 cron tick 跑出结果到 agent-results。
+**下一步**：cron 跑出 `m1_feature_builder_probe` 结果后，依结果中的 `row0_has_raw`/coverage 确认落盘行带 raw[]，再把 feature_builder 接为唯一消费入口、退休 v7 的错配 `_merge_candidates`/`_dataset_rows`（读 named 行的错配标签）。
 
 **Repo**: `kobolibra/short-term-pre-market-analysis`  
-**main HEAD**: `e1ad579c0c7bbfd2ef461b82799428425e49917f`  
+**main HEAD**: `27eb041cee5798d6187f74bf3b6e95be5a9fb652`  
 **agent-results 分支**: `a9af5a4b732e3f4196c82d513d7a9e81e341d7fd`  
 **服务器项目根**: `/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia`  
 **fetcher 现行版本 SHA**: `d61c7be5`（`scripts/duanxianxia_fetcher.py`）
@@ -465,13 +466,15 @@ url = f"{https://qt.gtimg.cn/q={symbols}}"  # 疑似 f-string 写法错误
 - **Task 0090**：新建 `scripts/duanxianxia_canonical.py`（registry + `raw_to_canonical()` + import 期 `_self_test()` + caliber validator）。已上线（blob faa1ab9b）。
 - **seal_amount 单位修复**：实证 raw[17]=万→×1e4→元，canonical 自检 #4 断言 208089×10000；探针 0091 已入队。
 - **canonical routing 入口**：新建 `scripts/duanxianxia_canonical_routing.py`（KIND_TO_DATASET / canonicalize_rows()），已上线（blob ad3cd6a7）并对真实 0089 行验证通过。
+- **M1 feature builder**：新建 `scripts/duanxianxia_feature_builder.py`（canonical-first L3：读 captures→`canonicalize_row()`→时间隔离 T0 特征表 + v10 因子原语 bidAmount/bidStrength/volumeRatio/grabStrength/changeRate/mainNetInflow/sealAmount/boardLabel；4 个竞价源按字段优先级 merge；import 期自检过真实 0089 样本）。已上线（commit aaae147b）。
 
 ### ⏳ 待 cron 跑（server gate）
 - **0091**：seal_amount 单位探针校验 → agent-results。
 - **0092**：routing 模块 vs live canonical 字节级一致性校验 → agent-results。
+- **m1_feature_builder_probe_20260630**：在真实 captures 上跑 feature_builder，报 coverage / 落盘行 raw[] schema（row0_has_raw/row0_raw_len）/ mislabel-leak 守卫 / FF caliber / 时间隔离跳过的盘后文件 / top 合并特征样本 → agent-results。**这是 M1 收尾的关键证据**。
 
-### M1 — L3 特征/加载层重构（下一步，核心）
-新建 `duanxianxia_feature_builder.py`：读持久化 captures → `canonicalize_rows()` → 输出扁平、时间隔离（T0≤9:29 / T-1,T-2≤9:33）的特征表，发 canonical 名称 + v10 因子原语（bidStrength / volumeRatio=raw[11] / changeRate / limitBuyAmountAfter920 等）。**不读旧 transform-2 的错配标签**；硬编码真实样本自检。先读 captures 落盘格式（在 batch / premarket_v7* 内）再动手。
+### M1 — L3 特征/加载层重构（进行中）
+feature builder 已上线（见上）。时间隔离 T0≤9:29 已内置（带 confident 时间戳且晚于 09:29 的 capture 文件被排除，正面解决偶发 10:04 重抓污染）。**剩余收尾**：待 `m1_feature_builder_probe` 校验通过、确认落盘行带 raw[] 后，把 feature_builder 接为唯一消费入口，退休 v6/v7 的 `_merge_candidates`/`_dataset_rows`（读 named 行错配标签的那层）。pool.hot 因无 raw 仍走 named-string 路径。
 
 ### M2 — 采集完整性补丁（patch-script，非整体重写）
 weimai 封单展示落地；pool.hot 存 raw[]+item[7]板态；pool.surge turnover 取 site item[10]；hotlist 改读 `hot_stock_hour`。先审计现状（多数已修），仅对确未修项打小补丁。
@@ -510,7 +513,7 @@ T-1 lagged 表，搁置。
 
 | 文件 | SHA | 作用 |
 |---|---|---|
-| `rebuild-plan-v11.md` | 本次 push | **v11 彻底重构权威执行口径** |
+| `rebuild-plan-v11.md` | de07890e | **v11 彻底重构权威执行口径** |
 | `HANDOFF.md` | 本次 push | 本文件，全量交接 |
 | `canonical-field-dictionary.md` | eff62b07 | 字段口径 source of truth（注意 §A5 OPEN 标记已 RESOLVED）|
 | `v10-field-alignment-decisions.md` | 672644348 | 因子对应 FINAL |

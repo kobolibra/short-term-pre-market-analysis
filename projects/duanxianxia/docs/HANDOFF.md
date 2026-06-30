@@ -2,14 +2,14 @@
 
 > **新对话开场必读顺序**：
 > 1. 本文件（`docs/HANDOFF.md`）← 先读这个
-> 2. `docs/canonical-field-dictionary.md` ← 字段 source of truth
-> 3. `docs/v10-field-alignment-decisions.md` ← 因子对着 FINAL
-> 4. `docs/rebuild-design-v10.md` ← KEEP vs REBUILD + 迁移规则
-> 5. agent-results 分支：`reports/_audit/agent_jobs/0089_unit_probe_20260629.result.json` ← **必读！读完再开始 Task 0090**
+> 2. `docs/rebuild-plan-v11.md` ← **★ 最新决策：canonical-first 彻底重构，权威执行口径（覆盖 v10 的"逐步打补丁"做法）**
+> 3. `docs/canonical-field-dictionary.md` ← 字段 source of truth
+> 4. `docs/v10-field-alignment-decisions.md` ← 因子对着 FINAL
+> 5. `docs/rebuild-design-v10.md` ← KEEP vs REBUILD + 迁移规则
 >
-> 读完以上 5 份就能完整无缝衔接。其余文档按需查阅。
+> 读完以上即可无缝衔接。0089 探针结论已落地（见下），其余文档按需查阅。
 
-最后更新：2026-06-29（对话结束全量更新）
+最后更新：2026-06-30（v11 彻底重构定调 + canonical/routing 已上线）
 
 ---
 
@@ -24,11 +24,12 @@ raw[] 位置数组（ground truth）
             └─> v10 edge_core 评分 -> 飞书 webhook 推送
 ```
 
-**当前阶段**：正在做 transform 1 的修正（canonical 层），Jobs 0001–0089 已完成。  
-**下一步**：Task 0090 — 新建 `scripts/duanxianxia_canonical.py`。
+**当前阶段**：transform-1 修正已落地——`duanxianxia_canonical.py`（口径单一事实源）+ `duanxianxia_canonical_routing.py`（kind→dataset 路由入口）均已上线并验证；seal_amount 单位（万→元）已实证确认并修复。
+**v11 决策**：转入 **canonical-first 彻底重构**（详见 `docs/rebuild-plan-v11.md`）——冻结旧解析产物，一切从 raw 经 canonical 重新派生；不再对 105KB/145KB 巨型脚本做整体重写或 sed 改标签，让旧解析产物对下游不再产生影响。
+**下一步（M1）**：新建 feature builder（L3 特征/加载层重构），读持久化 captures → `canonicalize_rows()` → 时间隔离特征表。
 
 **Repo**: `kobolibra/short-term-pre-market-analysis`  
-**main HEAD**: `4f94ac55816c2f2b727d653be0abb3c25cd89569`  
+**main HEAD**: `e1ad579c0c7bbfd2ef461b82799428425e49917f`  
 **agent-results 分支**: `a9af5a4b732e3f4196c82d513d7a9e81e341d7fd`  
 **服务器项目根**: `/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia`  
 **fetcher 现行版本 SHA**: `d61c7be5`（`scripts/duanxianxia_fetcher.py`）
@@ -37,7 +38,7 @@ raw[] 位置数组（ground truth）
 
 有一个 **other-agent**（对接方因子框架），它消费我们的数据并使用特定字段名（bidAmount、bidStrength、volumeRatio 等）。v10 rebuild 的目标之一是把我们的数据口径与对接方对齐。所有字段语义 FINAL，对接方已被告知 circMcap = FF。
 
-### 1.2 KEEP vs REBUILD（rebuild-design-v10.md 精华）
+### 1.2 KEEP vs REBUILD（rebuild-design-v10.md 精华；v11 进一步收紧，见 rebuild-plan-v11.md）
 
 **保留不动（KEEP）——这些是经过验证的建设：**
 - 抓取+解密+落盘流水线（endpoints、AES、raw 保留、persistEveryFetch）
@@ -46,7 +47,7 @@ raw[] 位置数组（ground truth）
 - 已验证因子学习结果：v10 edge_core 权重、REGIME_ACTION_GATE 阈值、逐因子 IC
 
 **重建（REBUILD）——这些有错误：**
-- Parse / schema 层：全部由 canonical-field-dictionary.md 驱动，发 canonical 名称 + caliber 标签
+- Parse / schema 层：全部由 canonical-field-dictionary.md 驱动，发 canonical 名称 + caliber 标签（已由 canonical.py + canonical_routing.py 落地）
 - Factor / scoring 层：在正确 caliber + 对接方框架上重建
 
 ---
@@ -195,7 +196,7 @@ iv  = 'fixediv_16valued'
 [14]super_large_order           ← 单位待 0089；与[13] spearman=−0.919 冗余
 [15]large_order                 ← 单位待 0089
 [16]board_label          连板标签  ← IC 显示昨3连板最优（见六）
-[17]seal_amount_wan       万→元？  ← 单位待 0089 确认
+[17]seal_amount_wan       万→元    ← 0089 已实证：万→×1e4→元（封板个股）
 ```
 
 ### 4.5 fengdan（jjlive，AES）
@@ -417,20 +418,20 @@ auctionSealAmount = section_t25_total / section_seal_total
 | 0086 | firstprinciples v65：gap非线性，冷场景 IC=0.273；小市值超额 |
 | 0087 | PR#28 squash→main (638dacf6) |
 | 0088 | PR#29 squash→main (f20acdf)；fetcher SHA=d61c7be5 |
-| 0089 | 探针脚本推 main (56aad925)；锁定 4 个未决单位 |
+| 0089 | 探针脚本推 main (56aad925)；锁定 4 个未决单位，结论见 §8.1 |
 
 ---
 
 ## 八、待验证 / 未落实项
 
-### 8.1 ⚠️ 读 0089 探针结果（最高优先级）
+### 8.1 ✅ 0089 探针结果（已落地，仅存档）
+
+> **已解决**：raw[17] seal_amount = **万 → ×1e4 → 元**（封板个股），已在 `duanxianxia_canonical.py` 实证修复并写入 registry + 自检。其余单位见下表，均已并入 canonical。新会话**无需**再"先读 0089 才能动手"，下表保留作存档参考。
 
 **路径**（agent-results 分支）：
 ```
 projects/duanxianxia/reports/_audit/agent_jobs/0089_unit_probe_20260629.result.json
 ```
-
-锁定以下未决单位，读完后才能写 canonical.py：
 
 | 字段 | 表 | 当前疑问 |
 |---|---|---|
@@ -456,55 +457,35 @@ url = f"{https://qt.gtimg.cn/q={symbols}}"  # 疑似 f-string 写法错误
 
 ---
 
-## 九、任务路线图
+## 九、任务路线图（v11，详见 docs/rebuild-plan-v11.md）
 
-### Task 0090 ← 立即开始（必须先读完 0089 result）
+> 总纲：四层架构 L1 采集 / L2 口径(canonical) / L3 特征(feature builder) / L4 因子(edge_core)。L1、L2 已就位，重心转入 L3、L4 的彻底重建。
 
-**新建 `scripts/duanxianxia_canonical.py`**
+### ✅ 已完成
+- **Task 0090**：新建 `scripts/duanxianxia_canonical.py`（registry + `raw_to_canonical()` + import 期 `_self_test()` + caliber validator）。已上线（blob faa1ab9b）。
+- **seal_amount 单位修复**：实证 raw[17]=万→×1e4→元，canonical 自检 #4 断言 208089×10000；探针 0091 已入队。
+- **canonical routing 入口**：新建 `scripts/duanxianxia_canonical_routing.py`（KIND_TO_DATASET / canonicalize_rows()），已上线（blob ad3cd6a7）并对真实 0089 行验证通过。
 
-```python
-def raw_to_canonical(dataset_id: str, raw_row: list) -> dict:
-    """raw[] → canonical dict（含单位转换 + 字段重命名）"""
+### ⏳ 待 cron 跑（server gate）
+- **0091**：seal_amount 单位探针校验 → agent-results。
+- **0092**：routing 模块 vs live canonical 字节级一致性校验 → agent-results。
 
-def _self_test():
-    """硬编码真实样本断言，必须通过才允许 import"""
-    # 多氟多 vratio raw[2]=462 → free_float_mktcap=46_200_000_000 元
-    # vratio raw[11]=6.1 → volume_ratio=6.1 (不做单位转换)
-    # 把 raw[2] 当量比 or raw[11] 当市值 → AssertionError
-```
+### M1 — L3 特征/加载层重构（下一步，核心）
+新建 `duanxianxia_feature_builder.py`：读持久化 captures → `canonicalize_rows()` → 输出扁平、时间隔离（T0≤9:29 / T-1,T-2≤9:33）的特征表，发 canonical 名称 + v10 因子原语（bidStrength / volumeRatio=raw[11] / changeRate / limitBuyAmountAfter920 等）。**不读旧 transform-2 的错配标签**；硬编码真实样本自检。先读 captures 落盘格式（在 batch / premarket_v7* 内）再动手。
 
-必须包含：
-1. Registry：`dataset_id → {raw_kind, parse_spec, fields: [{canonical, caliber, unit, raw_ref}]}`
-2. `raw_to_canonical()`——单位转换全在这里
-3. `_self_test()`——硬编码断言，防止 mislabel 复发
-4. Caliber validator——market_cap 类缺 caliber tag → build 报错
+### M2 — 采集完整性补丁（patch-script，非整体重写）
+weimai 封单展示落地；pool.hot 存 raw[]+item[7]板态；pool.surge turnover 取 site item[10]；hotlist 改读 `hot_stock_hour`。先审计现状（多数已修），仅对确未修项打小补丁。
 
-### Task 0091
+### M3 — 历史回溯重导 + 重生成 CSV（server job）
+有 raw 的 capture 从 raw 经 canonical 重派生；pool.hot 无 raw → tag `legacy_unrecoverable`；重生 `_all_candidates_flat.csv` / `feature_matrix_v21.csv`。**禁止原地 sed 改历史**。
 
-- parse 结果统一走 `canonical.raw_to_canonical()`
-- 消费方防御键前置 canonical 名，保留旧 fallback 兼容
-- `pool.hot`：存 raw[]，存 item[7] 板态
-- fix `pool.surge`：turnover 取 item[10]，stop recompute
-- fix `rank.hot_stock_day`：改读 `hot_stock_hour`
+### Task 0093 — L4 因子重拟合
+接线新因子（origin / themeConsistency / themeConcentration / auctionSealAmount / marketSealRate / prevDayLimitUpSealRate / stockMainlineFit）；定 minBidAmount / auctionChgMin；在 canonical 输入上**重拟合 edge_core 系数**。
 
-### Task 0092
-
-- 有 raw 的 capture → 从 raw 重派生 canonical（DO NOT 原地 sed）
-- `pool.hot` 无 raw → tag `legacy_unrecoverable`
-- 重生 `_all_candidates_flat.csv`, `feature_matrix_v21.csv`
-
-### Task 0093
-
-- 新因子接线：origin / themeConsistency / themeConcentration / auctionSealAmount / marketSealRate / prevDayLimitUpSealRate / stockMainlineFit
-- 确定 minBidAmount / auctionChgMin 阈值
-- 接入 edge_core，用校正后 canonical 输入**重拟合系数**
-
-### Task 0094
-
-**Pin QX-live 抓取时间**：确保 `home.qxlive.top_metrics` 固定在 ~9:25 竞价窗口内抓取，避免偶发的 10:04 时间戳污染 premarket 特征。
+### Task 0094 — 上线校验
+Pin QX-live 抓取到 ~9:25 竞价窗口，避免偶发 10:04 时间戳污染 premarket 特征；跑 v11 DoD 验收。
 
 ### Task 0095（Deferred）
-
 T-1 lagged 表，搁置。
 
 ---
@@ -529,6 +510,7 @@ T-1 lagged 表，搁置。
 
 | 文件 | SHA | 作用 |
 |---|---|---|
+| `rebuild-plan-v11.md` | 本次 push | **v11 彻底重构权威执行口径** |
 | `HANDOFF.md` | 本次 push | 本文件，全量交接 |
 | `canonical-field-dictionary.md` | eff62b07 | 字段口径 source of truth（注意 §A5 OPEN 标记已 RESOLVED）|
 | `v10-field-alignment-decisions.md` | 672644348 | 因子对应 FINAL |
@@ -540,7 +522,7 @@ T-1 lagged 表，搁置。
 
 | 文件 | 内容 | 要点 |
 |---|---|---|
-| `0089_unit_probe_20260629.result.json` | **待读！4 个未决单位** | **新对话必须先读** |
+| `0089_unit_probe_20260629.result.json` | 4 个未决单位（已落地，见 §8.1）| 存档 |
 | `vratio_deepdive_v48.json` | vratio IC | `auction_volume_ratio` 字段名 = mislabel，其 IC=0.058 是 FF市值的 IC |
 | `qiangchou_deepdive_v46.json` | qiangchou IC | 同上 |
 | `weimai_deepdive_v50.json` | weimai IC | main_net_inflow_full=0.103最高；board_label昨3连板最优 |
@@ -556,3 +538,4 @@ T-1 lagged 表，搁置。
 | 看到 raw[2]=17/499/1983 断言"是量比" | 这些就是各股 FF 市值（亿） | 数值判断必须交叉核对 live API + 已知 FF，不能凭感觉 |
 | `field_census.mcap_fields_by_name=[]` 证明"该表无市值" | census 按字段名搜索，mislabel 则搜不到 | census 结论 ≠ 值域结论，要结合 live 比对验证 |
 | 推翻 field-rename-map.md 的正确结论 | rename-map 一直是正确的 | canonical-dict + rename-map 权威性高于单次名称普查，不要轻易推翻 |
+| 巨型脚本整体重写 | 单文件 API 会静默转写漂移，py_compile 抓不到改动的字面量 | 用小补丁或在 raw 下游建新模块，别整体重写 105KB/145KB |

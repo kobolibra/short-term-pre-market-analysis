@@ -1,0 +1,7 @@
+{
+  "id": "0092",
+  "script": "scripts/duanxianxia_canonical_routing.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Task 0092: verify the Task 0091 canonical routing entry-point against the LIVE canonical on the worker. Running the module imports duanxianxia_canonical (runs its _self_test) then executes duanxianxia_canonical_routing._self_test(): asserts dataset_id_for_kind maps every fetcher kind (auction_vratio/qiangchou/net_amount/weimai, surge, hot); canonicalize_rows() canonicalises positional rows from their stored raw[] (weimai seal_amount==raw[17]*1e4 万->元, FF from raw[12]; vratio FF from raw[2]亿 with the legacy auction_volume_ratio label IGNORED) and pool.hot from named cn-strings ('182亿'->FF 1.82e10); a row missing raw[] yields an explicit _canonical_error marker (no silent drop); an unknown kind raises. rc=0 = the single canonical entry point is wired and correct. READ-ONLY, no writes, no push."
+}

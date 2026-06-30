@@ -1,0 +1,7 @@
+{
+  "id": "m1_feature_builder_probe_20260630r2",
+  "script": "scripts/duanxianxia_feature_builder_probe_20260630.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Re-validate feature_builder import + _self_test after commit af5ddd01 fixed _field_sources canonical-key lookups (auction_turnover/main_net_inflow). Prior probe rc=1 (KeyError bidAmount). Read-only."
+}

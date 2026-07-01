@@ -1,0 +1,7 @@
+{
+  "id": "0103_batch_premarket_recon_20260701",
+  "script": "scripts/duanxianxia_0103_batch_premarket_recon_20260701.py",
+  "args": [],
+  "timeout": 120,
+  "note": "0103 READ-ONLY recon: grep batch.py for premarket argparse switches, 9:25 time-gate, and webhook push sites, to safely run a premarket backfill now bypassing the 9:25 gate."
+}

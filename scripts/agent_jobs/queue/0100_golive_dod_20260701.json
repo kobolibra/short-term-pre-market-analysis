@@ -1,0 +1,7 @@
+{
+  "id": "0100_golive_dod_20260701",
+  "script": "scripts/duanxianxia_0100_golive_dod_probe_20260701.py",
+  "args": [],
+  "timeout": 180,
+  "note": "Task 0100 (M5 上线校验): 机械核对 v11 DoD 5 条 + QX-live 9:25 pin (新 duanxianxia_qxlive_loader, 复用 feature_builder 时间隔离). READ-ONLY, rc=0 iff 全通过否则 rc=2."
+}

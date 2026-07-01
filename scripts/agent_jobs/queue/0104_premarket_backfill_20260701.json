@@ -1,0 +1,7 @@
+{
+  "id": "0104_premarket_backfill_20260701",
+  "script": "scripts/duanxianxia_0104_premarket_backfill_20260701.py",
+  "args": [],
+  "timeout": 600,
+  "note": "0104: premarket backfill NOW with REAL push. No hard 9:25 gate in batch.py. v9 pipeline end-to-end: capture + selection + Feishu bitable + webhook. Prints compact summary."
+}

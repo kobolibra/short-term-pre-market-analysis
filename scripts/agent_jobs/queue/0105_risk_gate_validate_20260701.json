@@ -1,0 +1,7 @@
+{
+  "id": "0105_risk_gate_validate_20260701",
+  "script": "scripts/duanxianxia_0105_risk_gate_validate_20260701.py",
+  "args": [],
+  "timeout": 900,
+  "note": "0105: validate high-position/连板/前一日炸败 risk gate (v9_edge, commit d308390d) on 2026-07-01 REAL data. Re-runs v9 engine --no-write --json (NO webhook/bitable push), runs v9_edge self-test, dumps 002674 full row (edge_score/action/risk_flag/risk_detail/context_detail) to prove veto/flag. Read-only wrt production output."
+}

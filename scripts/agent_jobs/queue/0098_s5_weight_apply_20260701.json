@@ -1,0 +1,7 @@
+{
+  "id": "0098_s5_weight_apply_20260701",
+  "script": "scripts/duanxianxia_0098_s5_weight_apply_20260701.py",
+  "args": [],
+  "timeout": 120,
+  "note": "Task 0098: 将 0093 推荐的 S5_amt_liq_core 权重写入生产文件 duanxianxia_v9_edge.py (edge_core default params) 和 v10_optimize.py (V10AMT_W); 自验证后输出 JSON 摘要 rc=0."
+}

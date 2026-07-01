@@ -1,0 +1,7 @@
+{
+  "id": "0099_s5_persist_git_20260701",
+  "script": "scripts/duanxianxia_0099_s5_persist_git_20260701.py",
+  "args": [],
+  "timeout": 120,
+  "note": "Task 0099: 幂等重写 S5_amt_liq_core 权重到 duanxianxia_v9_edge.py/v10_optimize.py, 自验证后 git commit+push 到 main, 让 git 成为 source of truth (0098 只改了服务器工作副本, 下次 pull 会覆盖回 baseline)。"
+}

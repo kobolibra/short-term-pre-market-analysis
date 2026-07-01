@@ -1,0 +1,7 @@
+{
+  "id": "0102_install_capture_cron_20260701",
+  "script": "scripts/duanxianxia_0102_install_capture_cron_20260701.py",
+  "args": [],
+  "timeout": 120,
+  "note": "0102 FIX: (re)install missing duanxianxia capture crons premarket 25 9 / intraday 1 10 / postmarket 20 17 into live crontab. Idempotent + additive; preserves analysis (agent_job_runner) and IPO crons. Root cause of no premarket download."
+}

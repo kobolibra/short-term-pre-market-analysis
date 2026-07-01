@@ -20,10 +20,17 @@ v10 改动(基于 11 天真实数据的字段 IC 反推,口径=excess_ret=收盘
   money 回退 bug 修复:不再在 money_intent_score 缺失时回退到 net_amount_rank
   (后者是秩,方向相反、量纲不同)。
 
+v11.1 改动(Task 0105, P0 修复): 新增"高位/连板/前一日炸败"风险闸门。
+  计划依据 HANDOFF §零0.6 / §5.2(prevStreak,brokenLimitUp) / §5.3(origin.fromPrevBrokenLimitUp)
+  / §6.2(board_label 昨3连板最优) / §十二("打分剔除的诊断字段≠可不用于风控;风险层须独立于打分")。
+  只消费 context 层(duanxianxia_v9_context)已算字段,加法式、全参数化、可回退。
+  修复 002674 类 7连板见顶妖股被打 score 100、risks=[] 直接买入的 P0 缺陷。
+
 产出 edge_score(0-100) / edge_components / alpha_type / risk_flag / risk_detail。
 """
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, List, Optional
 
 
@@ -50,6 +57,17 @@ def _low_cost_score(pct: Optional[float], lo: float = -1.5, hi: float = 4.0, cen
     if pct > hi:
         return _clamp(55.0 - (pct - hi) * 9.0)
     return _clamp(55.0 - (lo - pct) * 7.0)
+
+
+def _board_streak(label: Any) -> int:
+    """从连板标签(如 '7板' / '2进3' / '首板')解析连板高度; 无则 0。"""
+    s = str(label or "").strip()
+    if not s:
+        return 0
+    if "首板" in s:
+        return 1
+    m = re.search(r"(\d+)", s)
+    return int(m.group(1)) if m else 0
 
 
 def compute_edge_v9(
@@ -120,6 +138,32 @@ def compute_edge_v9(
     if env_flags:
         risk_detail["market_env_flags"] = env_flags
 
+    # --- v11.1 / Task 0105: 高位 / 连板 / 前一日炸败 风险闸门(P0 修复) ---
+    # 仅消费 context 层(duanxianxia_v9_context)已算字段; 加法式、全参数化、可回退。
+    # 计划依据: HANDOFF §零0.6, §5.2(prevStreak/brokenLimitUp), §5.3(origin.fromPrevBrokenLimitUp),
+    #           §6.2(board_label 昨3连板最优), §十二(风险层须独立于打分)。
+    zt_raw = c.get("ztpool_raw") or {}
+    prev_status = str(zt_raw.get("\u72b6\u6001") or zt_raw.get("status") or c.get("t1_prev_status") or "").strip()
+    board_streak = _board_streak(c.get("t1_zt_board_label"))
+    # 1) 高位连板: 板数 >= 阈值(默认 3, 对齐 §6.2 昨3连板), 板数越高扣越多(封顶)
+    high_board_thr = int(p.get("edge_high_board_streak", 3))
+    if board_streak >= high_board_thr:
+        risk_detail["high_board_position"] = c.get("t1_zt_board_label") or ("%d\u677f" % board_streak)
+        risk_penalty += min(
+            float(p.get("edge_high_board_penalty_cap", 45.0)),
+            float(p.get("edge_high_board_penalty_per", 12.0)) * (board_streak - high_board_thr + 1),
+        )
+    # 2) 前一日炸板/败(origin.fromPrevBrokenLimitUp, §5.3): 高位破位, 重扣
+    if prev_status in {"\u70b8", "\u8d25"}:
+        risk_detail["prev_broken_limit_up"] = prev_status
+        risk_penalty += float(p.get("edge_prev_broken_penalty", 28.0))
+    # 3) 硬否决: 极端高位(板数 >= veto 或 前一日破位) -> 惩罚顶格, 确保跌出买入闸门
+    #    (buy_floor 42~50 / WATCH_FLOOR 35, 见 duanxianxia_v9_output REGIME_ACTION_GATE)。
+    veto_streak = int(p.get("edge_veto_board_streak", 5))
+    if board_streak >= veto_streak or prev_status in {"\u70b8", "\u8d25"}:
+        risk_detail["hard_veto"] = True
+        risk_penalty = max(risk_penalty, float(p.get("edge_hard_veto_penalty", 60.0)))
+
     # --- v10 IC 加权 edge 核心(取代旧 0.50/0.22/0.28 合成) ---
     edge_core = (
         float(p.get("edge_w_amt", 0.3232)) * auction_amount_pct
@@ -163,6 +207,8 @@ def compute_edge_v9(
                 "market_env_score": round(env_score, 2),
                 "cashflow_continuity_score": round(continuity, 2),
                 "longtou_score": round(longtou_score, 2),
+                "board_streak": board_streak,
+                "prev_status": prev_status,
             },
         },
         "risk_flag": bool(risk_detail),
@@ -186,6 +232,23 @@ def _self_test() -> None:
     assert out["alpha_type"] in {"AUCTION_ORDERFLOW", "THEME_BACKGROUND", "ORDERBOOK_WEIMAI"}
     assert out["risk_flag"] is False
     print("v9_edge _self_test passed")
+
+    # Task 0105: 高位/连板/前一日炸败 妖股(002674 类)必须被闸门否决/降级
+    d2 = {
+        "code": "002674", "auction_strength": 60,
+        "auction_detail": {"latest_change_pct": -6.5, "money_intent_score": 50,
+                           "liquidity_score": 90, "auction_amount_pct": 99},
+        "weimai_detail": {"weimai_strength": 40},
+        "context_detail": {"t1_zt_board_label": "7\u677f", "t1_in_ztpool": True,
+                           "ztpool_raw": {"\u72b6\u6001": "\u8d25"},
+                           "market_longtou_height": 7},
+    }
+    out2 = compute_edge_v9(d2, {"market_env_score": 50, "risk_flags": []}, {})
+    assert out2["risk_flag"] is True, out2
+    assert "high_board_position" in out2["risk_detail"], out2
+    assert out2["risk_detail"].get("hard_veto") is True, out2
+    assert out2["edge_score"] <= 45, out2
+    print("v9_edge high-position risk gate _self_test passed")
 
 
 if __name__ == "__main__":

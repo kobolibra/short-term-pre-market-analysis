@@ -7,7 +7,7 @@
 > 4. `docs/v10-field-alignment-decisions.md` ← 因子对着 FINAL
 > 5. `docs/rebuild-design-v10.md` ← KEEP vs REBUILD + 迁移规则
 
-最后更新：2026-07-01（v11 M1–M4 全部完成；M3 backfill 21日/5910行 rc=0；0093 walk-forward 推荐 S5_amt_liq_core；0098 已把 S5 上线服务器；0099 入队把 S5 持久化到 git main）
+最后更新：2026-07-01（v11 M1–M4 全部完成；M3 backfill 21日/5910行 rc=0；0093 walk-forward 推荐 S5_amt_liq_core；0098 S5 上线服务器；0099 rc=0 已把 S5 持久化到 git main，commit 6186957；仅剩 Task 0094 上线校验）
 
 ---
 
@@ -25,7 +25,7 @@ raw[] 位置数组（ground truth）
 
 **当前阶段**：canonical-first 四层架构 L1采集/L2口径/L3特征/L4因子已全部打通并验证。
 **v11 决策**：canonical-first 彻底重构——冻结旧解析产物，一切从 raw 经 canonical 重新派生；不对 105KB/145KB 巨型脚本做整体重写或 sed 改标签。
-**下一步**：0099 把 S5 权重持久化到 git main（入队待 cron）；Task 0094 上线校验（pin QX-live 到 9:25 竞价窗口 + v11 DoD 验收）。
+**下一步**：Task 0094 上线校验（pin QX-live 到 9:25 竞价窗口 + v11 DoD 验收）。S5 权重已由 0099 持久化到 git main（0098 服务器工作副本 + 0099 git 双落地完成）。
 
 ### 1.0 v11 进度总览（2026-07-01）
 
@@ -38,12 +38,12 @@ raw[] 位置数组（ground truth）
 | M4 canonical 接入生产 | ✅ | m1b_auction_source_probe rc=0：auction_source=canonical_feature_builder，Spearman 0.8009，347 候选 |
 | L4 因子重拟合(0093) | ✅ | walk-forward rc=0，推荐 S5_amt_liq_core（OOS IC 0.129 vs 0.1278，beats 8/12）|
 | S5 上线(0098) | ✅ | 服务器工作副本 v9_edge/v10_optimize 已改，self_test passed，rc=0 |
-| S5 持久化 git(0099) | ⏳ | 入队待 cron：幂等 patch + git commit/push 到 main |
+| S5 持久化 git(0099) | ✅ | 0099 rc=0：幂等 patch + git commit 6186957 push 到 main；v9 self_test passed |
 | Task 0094 上线校验 | ⬜ | 待办 |
 
 **Repo**: `kobolibra/short-term-pre-market-analysis`  
-**main HEAD**: `a81101f`（0099 script+queue 提交；0099 job 跑完会再 +1 commit）  
-**agent-results 分支**: 含 0093/0097/0098 result  
+**main HEAD**: `6186957`（0099 job 已 push S5 到 main）  
+**agent-results 分支**: 含 0093/0097/0098/0099 result  
 **服务器项目根**: `/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia`  
 **fetcher 现行版本 SHA**: `d61c7be5`（`scripts/duanxianxia_fetcher.py`）
 
@@ -278,7 +278,7 @@ canonical 字段：日期/分组序号/分组名/组内序号/晋级率文本/�
 
 ### 5.1 edge_core 公式
 
-**v11 生产权重（S5_amt_liq_core，Task 0093 walk-forward 重拟合 → 0098 上线）：**
+**v11 生产权重（S5_amt_liq_core，Task 0093 walk-forward 重拟合 → 0098 上线 → 0099 落 git）：**
 
 ```
 0.3232 × auction_amount_pct
@@ -295,7 +295,7 @@ canonical 字段：日期/分组序号/分组名/组内序号/晋级率文本/�
 
 **旧 baseline（S0，已被 S5 取代，仅存档）**：0.23 / 0.19 / 0.18 / 0.14 / 0.14 / 0.08 / 0.05。
 
-**权重落地位置**：`duanxianxia_v9_edge.py` compute_edge_v9 的 `p.get("edge_w_*", default)` 默认值；`v10_optimize.py` 的 `V10AMT_W`。0098 已改服务器工作副本；**0099 把它们持久化进 git main（否则下次 pull 会覆盖回 baseline）**。
+**权重落地位置**：`duanxianxia_v9_edge.py` compute_edge_v9 的 `p.get("edge_w_*", default)` 默认值；`v10_optimize.py` 的 `V10AMT_W`。0098 已改服务器工作副本；**0099 rc=0 已把它们持久化进 git main（commit 6186957），git 与运行时一致，下次 pull 不再回退 baseline**。
 
 ### 5.2 逐因子 canonical 对应（FINAL）
 
@@ -419,7 +419,7 @@ auctionSealAmount = section_t25_total / section_seal_total
 | M4 | m1b_auction_source_probe rc=0：auction_source=canonical_feature_builder，Spearman 0.8009，347 候选 |
 | 0093 | L4 walk-forward 重拟合 rc=0：推荐 S5_amt_liq_core（OOS IC 0.129 vs 0.1278，beats 8/12）|
 | 0098 | S5 权重写入服务器工作副本 rc=0（v9_edge self_test passed；V10AMT_W 已更新）|
-| 0099 | 入队：把 S5 持久化到 git main（幂等 patch + git commit/push）|
+| 0099 | rc=0：把 S5 持久化到 git main（幂等 patch + git commit 6186957 push；v9 self_test passed）|
 
 ---
 
@@ -453,9 +453,7 @@ auctionSealAmount = section_t25_total / section_seal_total
 - **M4 canonical 接入生产**：m1b_auction_source_probe rc=0，auction_source=canonical_feature_builder，Spearman 0.8009。
 - **Task 0093 L4 重拟合**：walk-forward rc=0，推荐 S5_amt_liq_core（见 §5.1）。
 - **Task 0098 S5 上线**：服务器工作副本已改，self_test passed。
-
-### ⏳ 待 cron 跑（server gate）
-- **0099**：幂等把 S5 写进 v9_edge/v10_optimize 并 git commit/push 到 main（让 git 成为持久 source of truth）→ agent-results。
+- **Task 0099 S5 持久化 git**：rc=0，幂等 patch v9_edge/v10_optimize + git commit 6186957 push 到 main，git 成为持久 source of truth。
 
 ### ⬜ 待办
 - **Task 0094 上线校验**：pin QX-live 抓取到 ~9:25 竞价窗口，避免偶发 10:04 时间戳污染 premarket 特征；跑 v11 DoD 验收。
@@ -510,6 +508,7 @@ auctionSealAmount = section_t25_total / section_seal_total
 | `0093_factor_refit_20260630.result.json` | rc=0，推荐 S5_amt_liq_core |
 | `0097_m3_backfill_20260701.result.json` | rc=0，21 日 5910 行 |
 | `0098_s5_weight_apply_20260701.result.json` | rc=0，S5 上线服务器 |
+| `0099_s5_persist_git_20260701.result.json` | rc=0，S5 持久化 git main（commit 6186957）|
 | `m1b_feature_builder_probe_20260701.result.json` | rc=0，288 features |
 | `m1b_auction_source_probe_20260630.result.json` | rc=0，Spearman 0.8009 |
 | `weimai_deepdive_v50.json` | main_net_inflow_full=0.103；board_label 昨3连板最优 |

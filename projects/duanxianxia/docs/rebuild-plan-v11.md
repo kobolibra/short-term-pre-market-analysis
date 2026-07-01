@@ -50,18 +50,20 @@
 
 ## 4. 里程碑与排期
 
+> 状态已于 2026-07-01 同步为实际验收结果（依据 `agent-results` 分支 rc=0 探针）。
+
 | 里程碑 | 内容 | 产出 | 状态 |
 |---|---|---|---|
-| M0 | 本规划 + HANDOFF §9 路线图刷新 | rebuild-plan-v11.md | 进行中 |
+| M0 | 本规划 + HANDOFF §9 路线图刷新 | rebuild-plan-v11.md | ✅ 完成 |
 | L2 | canonical + routing 单一事实源 | canonical.py / canonical_routing.py | ✅ 已上线并验证 |
-| 0091 | seal_amount 单位探针 server gate | 0091.result.json | 待 cron 跑 |
-| 0092 | routing 模块 vs live canonical 校验 | 0092.result.json | 待 cron 跑 |
-| M1 | 特征/加载层重构（feature builder） | duanxianxia_feature_builder.py + 自检 | 待办 |
-| M2 | 采集完整性补丁落地 | patch-scripts | 待办 |
-| M3 | 历史回溯重导 + 重生成 CSV | server job 0093-pre | 待办 |
-| 0093 | 因子重拟合（edge_core on canonical + 新因子） | refit 结果 + 系数 | 待办 |
-| 0094 | 上线校验：QX-live ~9:25 pin | 校验报告 | 待办 |
-| 0095 | T-1 滞后特征（延后项） | — | 延后 |
+| 0091 | seal_amount 单位探针 server gate | 0091.result.json | ✅ rc=0 |
+| 0092 | routing 模块 vs live canonical 校验 | 0092.result.json | ✅ rc=0 |
+| M1 | 特征/加载层重构（feature builder） | duanxianxia_feature_builder.py + 自检 | ✅ 完成（m1b 探针 rc=0，288 特征、时间隔离/防错标签全过） |
+| M2 | 采集完整性补丁落地 | patch-scripts | ✅ 完成 |
+| M3 | 历史回溯重导 + 重生成 CSV | server job 0097 | ✅ 完成（5910 行 / 21 天 / canonical 0 错误） |
+| 0093 | 因子重拟合（edge_core on canonical + 新因子） | refit 结果 + 系数（S5_amt_liq_core） | ✅ 完成（0098 apply / 0099 落 git main） |
+| 0094 / 0100 | 上线校验：QX-live ~9:25 pin + v11 DoD 全量 | 0100_golive_dod.result.json | ✅ **6/6 DoD 全过**（2026-07-01T11:20, rc=0） |
+| 0095 | T-1 滞后特征（延后项） | — | ⏸ 延后 |
 
 ## 5. 数据回溯与一致性
 
@@ -73,13 +75,13 @@
 ## 6. 新因子（L4 接入）
 
 origin / themeConsistency / themeConcentration / auctionSealAmount / marketSealRate / prevDayLimitUpSealRate / stockMainlineFit；设定 minBidAmount、auctionChgMin 阈值；在 canonical 输入上重拟合 edge_core 系数：
-`0.23·auction_amount_pct + 0.19·auction_strength + 0.18·liquidity + 0.14·money + 0.14·pressure_score + 0.08·weimai_strength + 0.05·orderbook − risk_penalty`（系数重拟合后更新）。
+`0.23·auction_amount_pct + 0.19·auction_strength + 0.18·liquidity + 0.14·money + 0.14·pressure_score + 0.08·weimai_strength + 0.05·orderbook − risk_penalty`（系数重拟合后更新；S5 定稿见 v9_edge / v10_optimize 默认值）。
 
 ## 7. 执行机制（git-as-queue）
 
 - 队列：`scripts/agent_jobs/queue/<id>.json` = `{id, script, args, timeout, note}`；worker `python3 <script> <args>`，cwd=WS，幂等（有结果则跳过）。
 - 结果落 `agent-results` 分支 `projects/duanxianxia/reports/_audit/agent_jobs/<id>.result.json`。
-- 同分支提交**串行**（避免 409）。下一个空闲 id = 0093。
+- 同分支提交**串行**（避免 409）。
 
 ## 8. 验收标准（DoD）
 
@@ -89,9 +91,18 @@ origin / themeConsistency / themeConcentration / auctionSealAmount / marketSealR
 4. edge_core 在 canonical 输入上重拟合，IC/回测不劣于旧口径。
 5. 9:25 live pin 校验通过。
 
+> 2026-07-01 验收：0100 探针 5 条 DoD + qxlive 9:25 pin 共 6 项全过（6/6, rc=0）。
+
 ## 9. 红线
 
 - 不改 field-rename-map §4 的口径语义（seal_amount = 万→×1e4→元，已定）。
 - 不整体重写 105KB/145KB 巨型脚本。
 - canonical.py import 时跑 `_self_test()`，损坏即阻断导入 —— 禁止推送损坏的 canonical。
 - 历史数据禁止 sed 改写，只能从 raw 重导。
+
+## 10. 上线后状态（2026-07-01 更新）
+
+- **主线重构验收通过**：0100（M5 上线校验）6/6 DoD 全过，rc=0，worker_time 2026-07-01T11:20:03。L2→L3→L4 全部落地，S5 权重已写进 v9_edge / v10_optimize 默认值。
+- **DoD5（9:25 live pin）机制通过、数据侧有缺口**：24 个有 qxlive 的交易日里，仅 9 天存在 ≤09:29 的干净盘前快照，其余 15 天（含 2026-07-01）最早快照在 10:04 前后，靠 graceful fallback 通过校验。
+- **唯一开口 = qxlive 9:25 采集侧接线（L1 采集补丁，延后）**：qxlive 的 9:25 抓取尚未真正接进盘前 fetcher；0100 只验证了加载器逻辑，未验证采集侧落盘。2026-07-01 盘前未生成干净 9:25 capture（最早 100351.json = 10:03:51，属开盘后 10:01 盘中 cron 那次），疑与采集侧接线缺失/近期改动有关。
+- **修复约束**：须遵守第 9 条红线——只做外科式采集补丁（改 qxlive 采集触发/落盘时点），禁止整体重写 105KB fetcher；且需服务器端 9:25 实跑验证。

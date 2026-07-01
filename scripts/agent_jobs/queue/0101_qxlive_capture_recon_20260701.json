@@ -1,0 +1,7 @@
+{
+  "id": "0101_qxlive_capture_recon_20260701",
+  "script": "scripts/duanxianxia_0101_qxlive_capture_recon_20260701.py",
+  "args": [],
+  "timeout": 180,
+  "note": "0101 READ-ONLY recon: dump fetcher qxlive capture code + scan 2026-07-01 captures + runner.log 09:25 + crontab, to unblock qxlive 9:25 premarket wiring (rebuild-plan-v11 s10)."
+}

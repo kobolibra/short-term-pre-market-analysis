@@ -1,0 +1,7 @@
+{
+  "id": "0097_m3_backfill_20260701",
+  "script": "scripts/duanxianxia_m3_backfill_20260701.py",
+  "args": [],
+  "note": "M3 historical backfill: walk all captures/ dated dirs, apply canonical-first feature_builder (FB.build_feature_table), regenerate _all_candidates_flat_v11.csv. Requires M1 complete (feature_builder rc=0 verified by m1_probe_r2 at 17:40 2026-06-30). Writes two files: _all_candidates_flat_v11.csv + reports/_audit/m3_backfill_20260701.json. pool.hot has no raw[] so produces zero rows (legacy_unrecoverable; no action needed). rc=0 = pass.",
+  "timeout": 600
+}

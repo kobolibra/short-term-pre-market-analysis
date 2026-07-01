@@ -1,27 +1,28 @@
 # duanxianxia v10 重构 · 全量交接文档
 
 > **新对话开场必读顺序**：
-> 0. **`docs/HANDOFF.md` §零「最新状态」← ★★ 先读这一节（0099 之后的最新增量：v9 生产引擎上线 + P0 打分缺陷）**
+> 0. **`docs/HANDOFF.md` §零「最新状态」← ★★ 先读这一节（0099 之后的最新增量：v9 生产引擎上线 + P0 打分缺陷 + 0105 风险闸门已上线待验证）**
 > 1. 本文件其余章节（§一~§十二，v10/v11 canonical 重构历史底座，仍有效）
 > 2. `docs/rebuild-plan-v11.md` ← canonical-first 彻底重构，权威执行口径
 > 3. `docs/canonical-field-dictionary.md` ← 字段 source of truth
 > 4. `docs/v10-field-alignment-decisions.md` ← 因子对着 FINAL
 > 5. `docs/rebuild-design-v10.md` ← KEEP vs REBUILD + 迁移规则
 
-最后更新：2026-07-01 18:xx（★ 新增 §零：**v9 生产决策引擎已 monkey-patch 上线**；盘前「抓数据→v9分析选股→webhook推送」全链路跑通，0104 实盘 webhook HTTP 200；**发现 P0 打分缺陷**：7连板妖股 002674 被打成 score 100 首选买入，根因已定位；下一步 Task 0105 加高位/连板风险闸门 + 修 qxlive T0。v11 底座：M1–M4 完成，0099 已把 S5 权重持久化到 git main commit 6186957；Task 0094 上线校验仍待办）
+最后更新：2026-07-01 18:xx（★ **Task 0105 第1步已上线**：v9 edge 加了高位/连板/前一日炸败风险闸门，commit `d308390d`（加法式、全参数化、可回退）；服务器验证 job 已入队 commit `e22bc556`（worker 下个 */10 周期重跑 7/1 真实数据、无推送，验证 002674 被否决/降级），结果落 agent-results ~10min。qxlive T0 抓取时序(0105 第2步)待验证结果确认 002674 的 T-1 context 是否有值后再定。此前状态：v9 生产决策引擎已 monkey-patch 上线，盘前「抓数据→v9分析选股→webhook推送」全链路跑通，0104 实盘 webhook HTTP 200；发现 P0 打分缺陷 002674 被打 score 100 买入。v11 底座：M1–M4 完成，0099 已把 S5 权重持久化到 git main commit 6186957；Task 0094 上线校验仍待办）
 
 ---
 
 ## 零、最新状态（2026-07-01 晚，★ 新对话先读这一节）
 
-> 本节是 0099 之后的最新增量。§一~§十二 是 v10/v11 canonical 重构的历史底座（仍有效）；本节记录「v9 生产决策引擎上线 + 盘前全链路打通 + 发现 P0 打分缺陷」。所有事实已核对代码/运行结果。
+> 本节是 0099 之后的最新增量。§一~§十二 是 v10/v11 canonical 重构的历史底座（仍有效）；本节记录「v9 生产决策引擎上线 + 盘前全链路打通 + 发现 P0 打分缺陷 + 0105 风险闸门上线」。所有事实已核对代码/运行结果。
 
 ### 0.1 一句话现状
-盘前「抓数据 → v9 分析选股 → webhook 推送」全链路已跑通（0104 实盘 webhook HTTP 200 成功）。但 7/1 实盘暴露**打分模型 P0 结构性缺陷**：把 7 连板见顶妖股 002674 打成 score 100 首选买入。根因已定位到代码。下一步 **0105：加高位/连板风险闸门 + 修 qxlive T0**。
+盘前「抓数据 → v9 分析选股 → webhook 推送」全链路已跑通（0104 实盘 webhook HTTP 200 成功）。7/1 实盘暴露**打分模型 P0 结构性缺陷**：把 7 连板见顶妖股 002674 打成 score 100 首选买入。**0105 第1步已修复上线**：v9 edge 新增高位/连板/前一日炸败风险闸门（commit `d308390d`，加法式可回退），并入队服务器验证 job（commit `e22bc556`），worker 将在下个 */10 周期重跑 7/1 真实数据（无推送）验证 002674 被否决/降级，结果落 agent-results。**待验证结果确认**：若 002674 的 T-1 连板/涨停池 context 有值 → 闸门直接生效；若 context 为空（qxlive/T-1 采集缺口）→ 残余根因转到 0105 第2步 + Task 0094 采集接线。
 
 ### 0.2 生产引擎已切到 v9（重要）
 - `scripts/duanxianxia_premarket_v7_runner.py` 运行时 monkey-patch：`duanxianxia_batch.build_premarket_analysis = build_premarket_analysis_v9`（`ACTIVE_ENGINE`）。
 - 文件名仍叫 `_v7_runner` 只为不动 crontab / cron_runner。**回退**：把 `ACTIVE_ENGINE` 改回 `build_premarket_analysis_v7_3` 一行 + 服务器 pull。
+- ⚠️ **溯源**：ACTIVE_ENGINE 切到 v9 是 **2026-06-01 PR#26（commit a34a4ece「v9 全量数据决策引擎上线」）+ PR#27（e3d04572 加 BUY/WATCH/DROP 动作层）**，不在 v11 计划内，其自身 commit msg 标注「v9 买入闸门为新增，未经回测，需纸面验证后再实盘」——该纸面验证在 0104 实盘推送前从未满足。
 - 与 §五 的 S5 edge 权重是同一套 `duanxianxia_v9_edge.py`；v9 引擎在其上加了六层装配 + 动作层。
 
 ### 0.3 v9 引擎原理逻辑（已逐文件核对代码）
@@ -34,36 +35,37 @@
 4. alpha 类型贴标签：AUCTION_ORDERFLOW / LOW_OPEN_REVERSAL / ORDERBOOK_WEIMAI / THEME_BACKGROUND。规则：竞价 pct<0 且 main_factor≥40 → 贴「低开反包」。
 5. 动作层 BUY/WATCH/DROP：`REGIME_ACTION_GATE` regime 自适应「分位数+绝对下限+数量上限」。normal=前5%且edge≥45最多4只；hot=前8%且edge≥42最多5只；cold=前1.5%且edge≥50最多1只。风险行(risk_flag)买入需额外 +8 edge 余量(RISK_EXTRA_MARGIN)。
 
-**当前 risk_penalty 只有 5 项**（`duanxianxia_v9_edge.py`）：竞价高开≥7%(−14)、流动性≤35(−12)、假封单/消耗封单(−16)、假强度 FAKE_STRENGTH(−18)、市场级接力恶化 relay_deteriorating(−8)。市场环境层另有 many_limit_down 等**市场级**旗标。
+**risk_penalty 项**（`duanxianxia_v9_edge.py`）：竞价高开≥7%(−14)、流动性≤35(−12)、假封单/消耗封单(−16)、假强度 FAKE_STRENGTH(−18)、市场级接力恶化 relay_deteriorating(−8)；**0105 新增：高位连板 high_board_position(板≥3，per12/cap45)、前一日炸/败 prev_broken_limit_up(−28)、硬否决 hard_veto(板≥5 或 炸/败 → penalty≥60)**。市场环境层另有 many_limit_down 等**市场级**旗标。
 
-### 0.4 🔴 P0 缺陷：002674 妖股被打成 score 100 买入（根因定位）
+### 0.4 🔴 P0 缺陷：002674 妖股被打成 score 100 买入（根因定位）→ 0105 第1步已修
 - 事件：0104 补跑（7/1 17:31）选出 **002674 兴业科技 score 100 rank1 risks=[]**，reasons=[低开反包, 竞价-6.5%, 资金连续:unknown]。该股是 **7 连板妖股**，6/30 见顶跌停（公司回应+龙虎榜），7/1 继续跌停。
 - 根因（代码级）：
-  1. **风险层没有任何「高位/连板/前一日跌停/涨幅过大」规则**。002674 是低开，high_open_cost(≥7%高开)不触发；反而因 pct<0 被贴「低开反包」买点 → risks=[] 完全符合代码，不是漏输出，是没这条防线。
+  1. **风险层原本没有任何「高位/连板/前一日跌停/涨幅过大」规则**。002674 是低开，high_open_cost(≥7%高开)不触发；反而因 pct<0 被贴「低开反包」买点 → risks=[] 完全符合代码，不是漏输出，是没这条防线。
   2. context 层其实算了连板标签/涨停池/龙头高度，但 edge 公式里被 v10 剔除、一分不扣 → 系统「看见了妖股」却在打分时丢弃该信息。
   3. many_limit_down 是市场级，不管个股自己连续跌停。
   4. qxlive T0 缺失 → 资金连续性=unknown=45 分（仍是正分，不扣）。
-- 净效应：7 连板见顶妖股 → 低开反包标签 + 竞价成交额百分位极高(放天量) + 流动性满分 → edge 顶到 100、风险扣分 0 → 直接 BUY。
+- **0105 修复（commit d308390d，§零 0.6）**：把 context 已算的 `t1_zt_board_label`(连板数)、`ztpool_raw.状态`(炸/败) 接进 risk_penalty + risk_flag + hard_veto，让此类被否决/降级。仅当 T-1 context 有值时闸门才触发（见 0.1 待验证项）。
 
 ### 0.5 🟠 P1：其他待修
-- **qxlive top_metrics T0 抓取时序**：WARN `No home.qxlive.top_metrics capture at 2026-07-01 <= 093300; refusing after-cutoff fallback`。导致 market_env / 资金连续性走中性/unknown。0102 装了抓取 cron，但 T0(≤09:33)落地时点仍需验证。
+- **qxlive top_metrics T0 抓取时序**：WARN `No home.qxlive.top_metrics capture at 2026-07-01 <= 093300; refusing after-cutoff fallback`。导致 market_env / 资金连续性走中性/unknown，也可能导致 002674 的 T-1 涨停池/连板 context 为空（若如此，0105 闸门无数据可判 → 需 0105 第2步/Task 0094 补采集）。0102 装了抓取 cron，但 T0(≤09:33)落地时点仍需验证。
 - **飞书多维表未同步**：0104 结果 `bitable_sync enabled=false, reason="Meta file not found: .../memory/feishu_bitable/duanxianxia_review.json"`。meta 在运行时 `memory/`(不在 git)，服务器缺失。**待用户确认**：多维表是否已存在(给 app_token+table_id)还是新建。目前只有 webhook 成功。
 
-### 0.6 后续计划 — Task 0105（等用户点头即开工）
+### 0.6 Task 0105（进行中：第1步闸门已上线 + 验证已入队；第2步 qxlive T0 待验证结果后定）
 红线：全部加法式修改；不重写 105KB fetcher / 145KB batch；不做 §四 字段改名口径变更；0095(T-1 lagged)仍搁置。
 0105 三件事：
-1. **加高位/连板/前一日跌停风险闸门**（在 `duanxianxia_v9_edge.py`）：把 context 已算的连板标签/龙头高度/前一日状态接进 risk_penalty 与 risk_flag，让 002674 类被否决或降级。
-2. **修 qxlive T0 抓取时序**（≤09:33 前落地），让资金连续性不再 unknown。
-3. 重跑验证 002674 类被 veto/flag，webhook 推送复核。
+1. **✅ 加高位/连板/前一日炸败风险闸门**（`duanxianxia_v9_edge.py`，commit `d308390d`）：`_board_streak` 从 `t1_zt_board_label` 解析连板数；`prev_status` 从 `ztpool_raw.状态` 取炸/败；规则=高位连板(板≥`edge_high_board_streak`默认3，penalty per12/cap45)+前一日炸败(−`edge_prev_broken_penalty`默认28)+硬否决(板≥`edge_veto_board_streak`默认5 或 炸/败 → `risk_penalty`≥`edge_hard_veto_penalty`默认60、`hard_veto=True`)。全部 `p.get()` 参数化、加法式、可回退；写进 `edge_components.sub`；`_self_test` 已加 002674 型断言(risk_flag=True/hard_veto=True/edge≤45)。
+2. **⬜ 修 qxlive T0 抓取时序**（≤09:33 前落地），让资金连续性/涨停池 context 不再 unknown。**先看 0105 验证结果**：若 002674 的 board_streak=0 且 prev_status=""，说明 T-1 context 被采集缺口清空 → 此步升为关键路径（并入 Task 0094）。属采集侧/cron，需服务器侧排查，不臆改。
+3. **🟡 重跑验证**：验证脚本 `scripts/duanxianxia_0105_risk_gate_validate_20260701.py`（已在 repo）+ 队列 `scripts/agent_jobs/queue/0105_risk_gate_validate_20260701.json`（commit `e22bc556`）。worker */10 自动重跑 7/1 真实数据 `--json --no-write`（**无 webhook/多维表推送**）+ v9_edge self_test，dump 002674 完整行(edge_score/action/risk_flag/risk_detail/context_detail)，verdict=VETOED_OR_DOWNGRADED/STILL_BUY/NOT_IN_BUY_BUT_NO_GATE_DATA/TARGET_NOT_IN_POOL。结果落 `reports/_audit/agent_jobs/0105_risk_gate_validate_20260701.result.json`（agent-results，~10min）。**验证确认前不做真实实盘推送**。
 
 ### 0.7 关键坐标（0100+ 增量）
-- **main HEAD 链**：`45ab786a`(0102) → `e7538fdd`(0103) → `b0cbd17e`(0104)。**下一空闲 job id = 0105**。（注：§一 1.0 里的 6186957 是 0099 时点，已被 0102–0104 推进。）
-- **agent-results tip**：`02fa83d1`（7/1 17:50:11 SH）。
-- **0104 结果**：`projects/duanxianxia/reports/_audit/agent_jobs/0104_premarket_backfill_20260701.result.json`；报告 `projects/duanxianxia/reports/2026-07-01/premarket/173143.json`。
+- **main HEAD 链**：`45ab786a`(0102) → `e7538fdd`(0103) → `b0cbd17e`(0104) → `b14426b`(HANDOFF §零 重写) → `d308390d`(**0105 风险闸门**) → `e22bc556`(**0105 验证 job 入队 + 本次 HANDOFF 更新**)。**下一空闲 job id = 0106**。（注：§一 1.0 里的 6186957 是 0099 时点，已被 0102+ 推进。）
+- **agent-results tip**：`02fa83d1`（7/1 17:50:11 SH，0105 结果尚未产出）。
+- **0104 结果**：`projects/duanxianxia/reports/_audit/agent_jobs/0104_premarket_backfill_20260701.result.json`；报告 `projects/duanxianxia/reports/2026-07-01/premarket/173143.json`（**服务器 only，未入 git**）。
+- **0105 结果（待产出）**：`projects/duanxianxia/reports/_audit/agent_jobs/0105_risk_gate_validate_20260701.result.json`。
 - **GitHub MCP 连接**：用 `mcpServer_github3`（旧 github/github2 token 过期作废）。server URL `https://api.githubcopilot.com/mcp/`（Bearer/PAT）。
 - 🔒 用户曾在聊天粘贴明文 Fine-grained PAT，建议尽快 revoke + 轮换。
-- **关键路径**：`REPORT_ROOT=/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports`；`RUNNER=…/scripts/duanxianxia_premarket_v7_runner.py`；缺失 bitable meta=`…/memory/feishu_bitable/duanxianxia_review.json`。
-- **v9 模块族**（scripts/，@b0cbd17e）：`duanxianxia_premarket_v9_runner.py` / `_v9_edge.py` / `_v9_assemble.py` / `_v9_context.py` / `_v9_market_env.py` / `_v9_theme_strength.py` / `_v9_weimai.py` / `_v9_output.py` / `_v9_from_report.py`。
+- **关键路径**：`REPORT_ROOT=/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports`；`RUNNER=…/scripts/duanxianxia_premarket_v7_runner.py`；`V9_RUNNER=…/scripts/duanxianxia_premarket_v9_runner.py`；缺失 bitable meta=`…/memory/feishu_bitable/duanxianxia_review.json`。
+- **v9 模块族**（scripts/）：`duanxianxia_premarket_v9_runner.py` / `_v9_edge.py`(含 0105 闸门) / `_v9_assemble.py` / `_v9_context.py` / `_v9_market_env.py` / `_v9_theme_strength.py` / `_v9_weimai.py` / `_v9_output.py` / `_v9_from_report.py`。
 
 ---
 
@@ -95,11 +97,12 @@ raw[] 位置数组（ground truth）
 | L4 因子重拟合(0093) | ✅ | walk-forward rc=0，推荐 S5_amt_liq_core（OOS IC 0.129 vs 0.1278，beats 8/12）|
 | S5 上线(0098) | ✅ | 服务器工作副本 v9_edge/v10_optimize 已改，self_test passed，rc=0 |
 | S5 持久化 git(0099) | ✅ | 0099 rc=0：幂等 patch + git commit 6186957 push 到 main；v9 self_test passed |
+| 0105 风险闸门 | 🟡 | commit d308390d 已上线（加法式可回退）；服务器验证 job 已入队(e22bc556)，待 agent-results 结果 |
 | Task 0094 上线校验 | ⬜ | 待办 |
 
 **Repo**: `kobolibra/short-term-pre-market-analysis`  
-**main HEAD**: `b0cbd17e`（0104；0099 时点为 6186957，见 §零 0.7）  
-**agent-results 分支**: 含 0093/0097/0098/0099/0104 result  
+**main HEAD**: `e22bc556`（0105 验证入队 + HANDOFF 更新；见 §零 0.7）  
+**agent-results 分支**: 含 0093/0097/0098/0099/0104 result（0105 待产出）  
 **服务器项目根**: `/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia`  
 **fetcher 现行版本 SHA**: `d61c7be5`（`scripts/duanxianxia_fetcher.py`）
 
@@ -320,7 +323,7 @@ col3 个股: 市场 / code / name /（状态: 成/炸/败）/[涨幅]/ 题材
 ```
 
 canonical 字段：日期/分组序号/分组名/组内序号/晋级率文本/晋级数/样本数/晋级率/市场/代码/名称/**状态**/涨幅/题材  
-`状态`：成=封住 / 炸=炸板 / 败=未涨停。`source_url` 拼接 bug 已修。
+`状态`：成=封住 / 炸=炸板 / 败=未涨停。source_url 拼接 bug 已修。0105 风险闸门读 `ztpool_raw.状态` 判前一日炸/败。
 
 ### 4.9 其他表字段备忘
 
@@ -353,7 +356,7 @@ canonical 字段：日期/分组序号/分组名/组内序号/晋级率文本/�
 
 **权重落地位置**：`duanxianxia_v9_edge.py` compute_edge_v9 的 `p.get("edge_w_*", default)` 默认值；`v10_optimize.py` 的 `V10AMT_W`。0098 已改服务器工作副本；**0099 rc=0 已把它们持久化进 git main（commit 6186957），git 与运行时一致，下次 pull 不再回退 baseline**。
 
-> ⚠️ 见 §零 0.4：edge 公式**只减 risk_penalty 的 5 项**，缺高位/连板/前一日跌停闸门 → 002674 类妖股会被打满分。0105 要补。
+> ✅ 见 §零 0.4：0105（commit d308390d）已在 risk_penalty 补高位/连板/前一日炸败闸门 + hard_veto，002674 类不再被打满分（待服务器验证确认，见 §零 0.6）。
 
 ### 5.2 逐因子 canonical 对应（FINAL）
 
@@ -364,9 +367,9 @@ canonical 字段：日期/分组序号/分组名/组内序号/晋级率文本/�
 | volumeRatio | vratio raw[11]（volume_ratio）| **不是 raw[2]！** 倍 |
 | changeRate | auction_change_pct（竞价涨幅）| % |
 | limitBuyAmountAfter920 | fengdan amount_920 | 9:20 不可撤委买，元；amount_925="-"=未封 |
-| prevStreak | fupan 连板 / ztpool 阶梯 | |
+| prevStreak | fupan 连板 / ztpool 阶梯 | 0105 闸门用 t1_zt_board_label 连板数 |
 | prevOpenNum | fupan 开板数 | |
-| brokenLimitUp | ztpool 状态=炸 | |
+| brokenLimitUp | ztpool 状态=炸 | 0105 闸门 prev_broken 判据 |
 | origin | 派生布尔（见 5.3）| |
 | stockMainlineFit | concept vs kaipan top 板块强度 | |
 | sentimentSignal | QX-live metric_key=QX | |
@@ -454,7 +457,7 @@ auctionSealAmount = section_t25_total / section_seal_total
 
 ---
 
-## 七、已完成工作（Jobs 0001–0104）
+## 七、已完成工作（Jobs 0001–0105）
 
 | Jobs | 内容 |
 |---|---|
@@ -482,6 +485,7 @@ auctionSealAmount = section_t25_total / section_seal_total
 | 0102 | cron 安装（premarket 9:25 / intraday 10:01 / postmarket 17:20 + worker + IPO），commit `45ab786a`，执行 15:00:07 rc=0 |
 | 0103 | batch.py 侦查（commit `e7538fdd`）；已被直接读码取代 |
 | 0104 | 盘前补抓+v9 选股+推送全链路，commit `b0cbd17e`：rc=0，analysis_version=premarket_v9，**webhook HTTP 200 成功**；bitable_sync=false(meta 缺失)；candidate_count=1，top=002674 score100 risks=[] ← 暴露 P0（见 §零 0.4）|
+| 0105 | 🟡 v9_edge 加高位/连板/前一日炸败风险闸门 + hard_veto，commit `d308390d`（加法式、全参数化、可回退，self_test 加 002674 断言）；验证 job 入队 commit `e22bc556`（worker */10 重跑 7/1 真实数据 --no-write 无推送，dump 002674 verdict）；结果待落 agent-results（见 §零 0.6）|
 
 ---
 
@@ -501,10 +505,10 @@ auctionSealAmount = section_t25_total / section_seal_total
 
 无历史 raw → 打标 `legacy_unrecoverable`。M2 起存 raw[]。
 
-### 8.4 🔴 P0/P1 待修（见 §零 0.4/0.5，0105 处理）
+### 8.4 🟡 P0/P1 状态（见 §零 0.4/0.5/0.6）
 
-- P0：v9 edge 缺高位/连板/前一日跌停风险闸门（002674 妖股被打 score 100 买入）。
-- P1：qxlive T0 抓取时序；飞书多维表 meta 缺失（待用户给 app_token+table_id 或确认新建）。
+- P0（002674 妖股被打 score 100）：**0105 第1步已上线**（commit d308390d 加高位/连板/炸败闸门），待服务器验证 job（e22bc556）产出结果确认 002674 被否决/降级。
+- P1：qxlive T0 抓取时序（0105 第2步，待验证结果后定是否升关键路径）；飞书多维表 meta 缺失（待用户给 app_token+table_id 或确认新建）。
 
 ---
 
@@ -521,11 +525,17 @@ auctionSealAmount = section_t25_total / section_seal_total
 - **Task 0093 L4 重拟合**：walk-forward rc=0，推荐 S5_amt_liq_core（见 §5.1）。
 - **Task 0098 S5 上线**：服务器工作副本已改，self_test passed。
 - **Task 0099 S5 持久化 git**：rc=0，幂等 patch v9_edge/v10_optimize + git commit 6186957 push 到 main，git 成为持久 source of truth。
-- **v9 生产引擎上线（0.2）**：v7_runner monkey-patch build_premarket_analysis_v9。
+- **v9 生产引擎上线（0.2）**：v7_runner monkey-patch build_premarket_analysis_v9（2026-06-01 PR#26/#27，off-plan，见 §零 0.2）。
 - **0102 cron 安装 / 0104 盘前全链路 + webhook 200**（见 §七）。
 
+### 🟡 进行中
+- **Task 0105（P0，最高优先）第1步已上线**：v9 edge 高位/连板/前一日炸败风险闸门 + hard_veto，commit `d308390d`；服务器验证 job 入队 commit `e22bc556`（重跑 7/1 真实数据 --no-write 无推送）。**下一步（本会话交接给下个会话）**：等 agent-results 出 `0105_risk_gate_validate_20260701.result.json` → 读 verdict：
+  - VETOED_OR_DOWNGRADED → 闸门生效，P0 关闭；
+  - STILL_BUY / NOT_IN_BUY_BUT_NO_GATE_DATA（board_streak=0 且 prev_status=""）→ 说明 002674 的 T-1 context 被采集缺口清空，转 0105 第2步（qxlive T0 采集接线，并入 Task 0094）。
+  - **验证确认前不做真实实盘推送**。
+
 ### ⬜ 待办
-- **🔴 Task 0105（P0，最高优先，等用户点头）**：v9 edge 加高位/连板/前一日跌停风险闸门 + 修 qxlive T0 抓取时序 + 重跑验证 002674 类被 veto/flag（见 §零 0.6）。
+- **Task 0105 第2步**：修 qxlive T0 抓取时序（≤09:33 落地），让资金连续性/涨停池 context 不再 unknown（采集侧/cron，需服务器排查，勿臆改）。
 - **Task 0094 上线校验**：pin QX-live 抓取到 ~9:25 竞价窗口，避免偶发 10:04 时间戳污染 premarket 特征；跑 v11 DoD 验收。
 - **飞书多维表 meta**：待用户确认 app_token+table_id 或新建，写 `memory/feishu_bitable/duanxianxia_review.json`。
 - **Task 0095（Deferred）**：T-1 lagged 表，搁置。
@@ -543,7 +553,7 @@ auctionSealAmount = section_t25_total / section_seal_total
 | 5 | fetcher ztpool | `source_url` 拼接 | fix | ✅ |
 | 6 | fetcher fengdan | qt.gtimg URL 疑 bug | 运行时确认正确，非 bug | ✅ 存档 |
 | 7 | canonical-dict §A5 | "OPEN: Confirm 委买 vs 成交" | 已 RESOLVED（0082），下次更新删除 | ⬜ |
-| 8 | v9_edge risk_penalty | 缺高位/连板/前一日跌停闸门 → 妖股打满分（002674）| 0105 补 risk 规则 | ⬜ P0 |
+| 8 | v9_edge risk_penalty | 缺高位/连板/前一日炸败闸门 → 妖股打满分（002674）| 0105 加 risk 规则 + hard_veto（commit d308390d）| 🟡 已上线待服务器验证 |
 
 ---
 
@@ -567,9 +577,10 @@ auctionSealAmount = section_t25_total / section_seal_total
 | `duanxianxia_premarket_v7_runner.py` | 生产入口，monkey-patch ACTIVE_ENGINE=v9（§零 0.2）|
 | `duanxianxia_premarket_v9_runner.py` | v9 引擎编排入口 |
 | `duanxianxia_v9_assemble.py` | v9 六层候选装配 |
-| `duanxianxia_v9_edge.py` | L4 edge_core（S5 权重，0098/0099）+ risk_penalty（缺高位/连板闸门，0105 补）|
+| `duanxianxia_v9_edge.py` | L4 edge_core（S5 权重，0098/0099）+ risk_penalty（含 0105 高位/连板/炸败闸门 + hard_veto）|
 | `duanxianxia_v9_context.py` / `_v9_market_env.py` / `_v9_theme_strength.py` / `_v9_weimai.py` | v9 各层特征 |
 | `duanxianxia_v9_output.py` | v9 动作层 shape_v9_output（REGIME_ACTION_GATE, BUY/WATCH/DROP）|
+| `duanxianxia_0105_risk_gate_validate_20260701.py` | 0105 验证脚本：重跑 v9 --no-write 无推送 + self_test，dump 002674 verdict |
 | `duanxianxia_canonical.py` | L2 registry + raw_to_canonical + 自检 |
 | `duanxianxia_canonical_routing.py` | L2 kind→dataset 路由 |
 | `duanxianxia_feature_builder.py` | L3 canonical-first 特征层 |
@@ -585,6 +596,7 @@ auctionSealAmount = section_t25_total / section_seal_total
 | `0098_s5_weight_apply_20260701.result.json` | rc=0，S5 上线服务器 |
 | `0099_s5_persist_git_20260701.result.json` | rc=0，S5 持久化 git main（commit 6186957）|
 | `0104_premarket_backfill_20260701.result.json` | rc=0，v9 全链路+webhook 200；top=002674 score100 risks=[]（P0）|
+| `0105_risk_gate_validate_20260701.result.json` | ⏳ 待产出：002674 verdict（VETOED_OR_DOWNGRADED / STILL_BUY / NO_GATE_DATA）|
 | `m1b_feature_builder_probe_20260701.result.json` | rc=0，288 features |
 | `m1b_auction_source_probe_20260630.result.json` | rc=0，Spearman 0.8009 |
 | `weimai_deepdive_v50.json` | main_net_inflow_full=0.103；board_label 昨3连板最优 |
@@ -603,5 +615,6 @@ auctionSealAmount = section_t25_total / section_seal_total
 | HEREDOC `python3 - <<PY` | 转义/引号易坏 | 用 writeFile + `python3 file.py` |
 | 0098 只改服务器工作副本 | git main 仍 baseline，下次 pull 覆盖 S5 | 改生产权重必须同时落 git（0099 git commit/push），否则运行时与 git 漂移 |
 | 引用 6/30 收盘数据但当天已是 7/1 | 工具抓 7/1 实时失败，误用缓存旧数据 | 日期基准必须以当前 SH 日期为准，跨日务必核对 |
-| 002674(score100,risks=[]) 次日跌停仍当好票 | v9 缺高位/连板风险闸门；诊断信息被 edge 剔除 | 「打分剔除的诊断字段」≠「可以不用于风控」；风险层要独立于打分 |
+| 002674(score100,risks=[]) 次日跌停仍当好票 | v9 缺高位/连板风险闸门；诊断信息被 edge 剔除 | 「打分剔除的诊断字段」≠「可以不用于风控」；风险层要独立于打分（0105 已修）|
 | 想把交接写成 Notion 页面 | 项目衔接靠 repo 内 `docs/HANDOFF.md` | 交接文档放项目里、按既有格式更新，不要另起炉灶 |
+| 已定位 P0 + 已写好 0105 计划，却把它挂起"等用户点头"、写脏乱增量、还擅自加 §零 之外的动作 | 交接 §零 0.6/§5.2/§5.3/§6.2/§十二 早已把 0105 方案写死；且 0105 验证脚本其实早建好，只差队列 json 从未入队 | 交接里已写死的既定计划应直接严格执行，不擅作主张、不无谓挂起；执行前先核对"计划是否已存在/半成品是否已在 repo"，避免重复造轮子 |

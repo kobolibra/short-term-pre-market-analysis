@@ -122,13 +122,13 @@ def compute_edge_v9(
 
     # --- v10 IC 加权 edge 核心(取代旧 0.50/0.22/0.28 合成) ---
     edge_core = (
-        float(p.get("edge_w_amt", 0.23)) * auction_amount_pct
-        + float(p.get("edge_w_auction", 0.19)) * auction_strength
-        + float(p.get("edge_w_liquidity", 0.18)) * liquidity
-        + float(p.get("edge_w_money", 0.14)) * money
-        + float(p.get("edge_w_pressure", 0.14)) * pressure_score
-        + float(p.get("edge_w_weimai", 0.08)) * weimai_strength
-        + float(p.get("edge_w_orderbook", 0.05)) * orderbook
+        float(p.get("edge_w_amt", 0.3232)) * auction_amount_pct
+        + float(p.get("edge_w_auction", 0.0909)) * auction_strength
+        + float(p.get("edge_w_liquidity", 0.2424)) * liquidity
+        + float(p.get("edge_w_money", 0.1616)) * money
+        + float(p.get("edge_w_pressure", 0.1414)) * pressure_score
+        + float(p.get("edge_w_weimai", 0.0303)) * weimai_strength
+        + float(p.get("edge_w_orderbook", 0.0202)) * orderbook
     )
     edge_score = _clamp(edge_core - risk_penalty)
 

@@ -34,7 +34,7 @@ except Exception:
 
 CORE_FIELDS = ["amt_pct", "auction_strength", "liquidity", "money", "pressure_score", "weimai_strength", "orderbook"]
 RANK_FIELDS = {"net_amount_rank", "qiangchou_920_925_rank", "qiangchou_last_second_rank"}
-V10AMT_W = {"amt_pct": 0.23, "auction_strength": 0.19, "liquidity": 0.18, "money": 0.14, "pressure_score": 0.14, "weimai_strength": 0.08, "orderbook": 0.05}
+V10AMT_W = {"amt_pct": 0.3232, "auction_strength": 0.0909, "liquidity": 0.2424, "money": 0.1616, "pressure_score": 0.1414, "weimai_strength": 0.0303, "orderbook": 0.0202}
 
 
 def fnum(x, d=None):

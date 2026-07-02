@@ -1,6 +1,6 @@
 {
   "id": "0110_multihorizon_composite_backtest_20260702",
-  "script": "duanxianxia_0110_multihorizon_composite_backtest_20260702.py",
+  "script": "scripts/duanxianxia_0110_multihorizon_composite_backtest_20260702.py",
   "args": [],
   "timeout": 1800,
   "note": "P0a 只读回测: 收益轴 R0/R1/R2 × 打法 × (竞价成交额 vs 复合)排序 + 字段覆盖率自检 + theme_sync代理。不触发webhook/多维表/生产写入。"

@@ -1,0 +1,7 @@
+{
+  "id": "0106_context_gap_diag_20260701",
+  "script": "scripts/duanxianxia_0106_context_gap_diag_20260701.py",
+  "args": [],
+  "timeout": 300,
+  "note": "READ-ONLY. Confirm why 002674 T-1 (6/30) context is all-null in the 0105 STILL_BUY result: enumerate captures/<date>/<dataset>, scan home.ztpool for 002674, and dump load_premarket_bundle('2026-07-01').to_summary_dict() (resolved date_t1/date_t2 + per-dataset T-1 counts + warnings). No webhook / no bitable / no writes."
+}

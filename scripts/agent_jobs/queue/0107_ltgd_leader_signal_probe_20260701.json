@@ -1,0 +1,7 @@
+{
+  "id": "0107_ltgd_leader_signal_probe_20260701",
+  "script": "scripts/duanxianxia_0107_ltgd_leader_signal_probe_20260701.py",
+  "args": [],
+  "timeout": 300,
+  "note": "READ-ONLY. 0106 proved 002674 is absent from the 6/30 limit-up pool (it limit-DOWNED) so all ztpool-derived T-1 context is null and the 0105 gate can't fire. This probe dumps 002674's row+schema from review.ltgd.range / review.fupan.plate / cashflow today+3day for 6/30 & 6/29, plus its full home.ztpool board history, to pin which dataset still carries its high-board leader signal for the minimal gate fix. No writes/webhook/bitable."
+}

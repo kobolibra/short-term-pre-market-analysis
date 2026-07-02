@@ -1,0 +1,7 @@
+{
+  "id": "0111_multihorizon_composite_backtest_retry_20260702",
+  "script": "scripts/duanxianxia_0110_multihorizon_composite_backtest_20260702.py",
+  "args": [],
+  "timeout": 1800,
+  "note": "0111 = 0110 重试(worker 按 id 去重, 0110 旧结果为修前路径拒绝失败)。P0a 只读回测: 收益轴 R0/R1/R2 × 打法 × (竞价成交额 vs 复合)排序 + 字段覆盖率自检 + theme_sync代理。同一脚本 scripts/duanxianxia_0110_multihorizon_composite_backtest_20260702.py, 只读, 不触发 webhook/多维表/生产写入。"
+}

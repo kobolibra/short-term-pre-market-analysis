@@ -1,0 +1,7 @@
+{
+  "id": "0109_regime_playstyle_backtest_20260702",
+  "script": "scripts/duanxianxia_0109_regime_playstyle_backtest_20260702.py",
+  "args": ["--regen"],
+  "timeout": 1800,
+  "note": "0109: 只读回测——情绪周期(regime, 取 v9 meta.action_gate.regime 标签) × 打法(S1首板/S2低位连板接力/S3低吸/S4高标龙头) 的 Top3/Top5 超额+胜率+跌停率矩阵; 打法内按 auction_amount_wan 排序; baseline=当前 v9 BUY 行。仅读 reports/*_analysis_v9.json + dailyline, 缺失交易日从 captures 补生成 v9 分析文件(--regen, 同 v10_optimize), 产出 reports/_audit/regime_playstyle_backtest.{json,md}。不 import batch, 无 webhook/多维表推送。为多打法按情绪周期自适应路由提供数据依据。"
+}

@@ -26,6 +26,10 @@ v11.1 改动(Task 0105, P0 修复): 新增"高位/连板/前一日炸败"风险�
   只消费 context 层(duanxianxia_v9_context)已算字段,加法式、全参数化、可回退。
   修复 002674 类 7连板见顶妖股被打 score 100、risks=[] 直接买入的 P0 缺陷。
 
+v11.2 改动(Task 0108): 新增"高位龙头褪色"闸门(leader_fade)。依 review.ltgd.range
+  个股级 t1_ltgd_leader/rank/range_gain_pct(不依赖当日涨停池),修复 0105 对跌停掉出
+  涨停池妖股(002674, verdict=STILL_BUY)的盲区。加法式、全参数化、可回退。
+
 产出 edge_score(0-100) / edge_components / alpha_type / risk_flag / risk_detail。
 """
 from __future__ import annotations
@@ -164,6 +168,25 @@ def compute_edge_v9(
         risk_detail["hard_veto"] = True
         risk_penalty = max(risk_penalty, float(p.get("edge_hard_veto_penalty", 60.0)))
 
+    # --- v11.2 / Task 0108: 高位龙头褪色 (leader fade) 闸门 ---
+    # 不依赖当日涨停池: review.ltgd.range 在梯队 + 区间涨幅>=阈值 + 当日未涨停(掉出涨停池)
+    # -> 近端高位龙头见顶/破位(002674 6/30 跌停掉出涨停池场景)。补 0105 涨停源派生的盲区。
+    # 依据 HANDOFF §零0.6b / §5.2(leaderFade) / §十二(风控须有不依赖当日涨停的来源)。
+    ltgd_leader = bool(c.get("t1_ltgd_leader"))
+    ltgd_gain = _f(c.get("t1_ltgd_range_gain_pct"), None)
+    in_ztpool = bool(c.get("t1_in_ztpool"))
+    leader_fade_gain_thr = float(p.get("edge_leader_fade_gain_pct", 30.0))
+    if ltgd_leader and (ltgd_gain is not None and ltgd_gain >= leader_fade_gain_thr) and not in_ztpool:
+        risk_detail["leader_fade"] = {
+            "ltgd_rank": c.get("t1_ltgd_rank"),
+            "range_gain_pct": ltgd_gain,
+            "in_ztpool": in_ztpool,
+        }
+        risk_penalty += float(p.get("edge_leader_fade_penalty", 30.0))
+        if bool(p.get("edge_leader_fade_hard_veto", True)):
+            risk_detail["hard_veto"] = True
+            risk_penalty = max(risk_penalty, float(p.get("edge_hard_veto_penalty", 60.0)))
+
     # --- v10 IC 加权 edge 核心(取代旧 0.50/0.22/0.28 合成) ---
     edge_core = (
         float(p.get("edge_w_amt", 0.3232)) * auction_amount_pct
@@ -209,6 +232,9 @@ def compute_edge_v9(
                 "longtou_score": round(longtou_score, 2),
                 "board_streak": board_streak,
                 "prev_status": prev_status,
+                "ltgd_leader": ltgd_leader,
+                "ltgd_range_gain_pct": ltgd_gain,
+                "t1_in_ztpool": in_ztpool,
             },
         },
         "risk_flag": bool(risk_detail),
@@ -249,6 +275,25 @@ def _self_test() -> None:
     assert out2["risk_detail"].get("hard_veto") is True, out2
     assert out2["edge_score"] <= 45, out2
     print("v9_edge high-position risk gate _self_test passed")
+
+    # Task 0108: 高位龙头褪色 — 002674 跌停掉出涨停池(涨停源 context 全空),
+    # 但仍在 review.ltgd.range 梯队(区间涨幅45%) -> 必须被 leader_fade 闸门否决/降级。
+    d3 = {
+        "code": "002674", "auction_strength": 60,
+        "auction_detail": {"latest_change_pct": -6.5, "money_intent_score": 50,
+                           "liquidity_score": 90, "auction_amount_pct": 99},
+        "weimai_detail": {"weimai_strength": 40},
+        "context_detail": {"t1_zt_board_label": "", "t1_in_ztpool": False,
+                           "ztpool_raw": None,
+                           "t1_ltgd_leader": True, "t1_ltgd_rank": 17,
+                           "t1_ltgd_range_gain_pct": 45.0},
+    }
+    out3 = compute_edge_v9(d3, {"market_env_score": 50, "risk_flags": []}, {})
+    assert out3["risk_flag"] is True, out3
+    assert "leader_fade" in out3["risk_detail"], out3
+    assert out3["risk_detail"].get("hard_veto") is True, out3
+    assert out3["edge_score"] <= 45, out3
+    print("v9_edge leader-fade (0108) risk gate _self_test passed")
 
 
 if __name__ == "__main__":

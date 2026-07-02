@@ -85,8 +85,11 @@ def compute_stock_context(
     cf_10 = _index_by_code(cashflow_10day)
     fupan = _index_by_code(fupan_t1)
     ztpool = _index_by_code(ztpool_t1)
+    ltgd = _index_by_code(ltgd_5day_t1)   # Task 0108: 个股级龙头梯队查表(review.ltgd.range)
 
     # 龙头高度:取最高连板高度作为市场背景(所有候选共享)
+    # ⚠️ 0107 实证 review.ltgd.range 无 高度/height 字段,此项对该表恒为 None;
+    #    保留不动(市场级口径),个股级信号见下方 t1_ltgd_* (Task 0108 新增,独立字段)。
     longtou_height = None
     for r in ltgd_5day_t1 or []:
         h = _to_float(r.get("高度") or r.get("连板高度") or r.get("height"))
@@ -114,6 +117,20 @@ def compute_stock_context(
         zt_row = ztpool.get(code) or {}
         zt_board = str(zt_row.get("连板标签") or zt_row.get("board_label") or "").strip()
 
+        # --- Task 0108: 个股级龙头梯队(review.ltgd.range)派生 ---
+        # 不依赖当日涨停池(跌停股会掉出涨停池),补 0105 闸门盲区。
+        # schema(0107 实证): 代码/名称/周期/排名/区间涨幅/日期区间/板块/板块顺序/概念/概念键
+        ltgd_row = ltgd.get(code) or {}
+        t1_ltgd_leader = bool(ltgd_row)
+        t1_ltgd_rank = None
+        t1_ltgd_range_gain_pct = None
+        if ltgd_row:
+            _rk = _to_float(ltgd_row.get("排名") or ltgd_row.get("rank"))
+            t1_ltgd_rank = int(_rk) if _rk is not None else None
+            t1_ltgd_range_gain_pct = _to_float(
+                ltgd_row.get("区间涨幅") or ltgd_row.get("range_gain_pct") or ltgd_row.get("range_gain")
+            )
+
         out[code] = {
             "cashflow_net_today_wan": n_today,
             "cashflow_net_3day_wan": n_3,
@@ -126,21 +143,28 @@ def compute_stock_context(
             "t1_in_ztpool": bool(zt_row),
             "t1_zt_board_label": zt_board,
             "market_longtou_height": longtou_height,   # 市场级背景,所有候选一致
+            "t1_ltgd_leader": t1_ltgd_leader,            # Task 0108: 在5日龙头梯队
+            "t1_ltgd_rank": t1_ltgd_rank,                # 梯队排名
+            "t1_ltgd_range_gain_pct": t1_ltgd_range_gain_pct,  # 区间涨幅%(解析"45%"->45.0)
             "cashflow_raw_today": cf_today.get(code),  # 原样留底
             "ztpool_raw": zt_row or None,
+            "ltgd_raw": ltgd_row or None,                # Task 0108: 龙头梯队原样留底
         }
     return out
 
 
 def _self_test() -> None:
     ctx = compute_stock_context(
-        ["600000", "000001"],
+        ["600000", "000001", "002674"],
         cashflow_today=[{"code": "600000", "主力净流入": "5000万"}],
         cashflow_3day=[{"code": "600000", "主力净流入": "1.2亿"}],
         cashflow_5day=[{"code": "600000", "主力净流入": "2亿"}],
         cashflow_10day=[{"code": "600000", "主力净流入": "-1亿"}],
         fupan_t1=[{"code": "600000", "题材": "算力"}],
-        ltgd_5day_t1=[{"高度": "6"}],
+        ltgd_5day_t1=[
+            {"高度": "6"},
+            {"代码": "002674", "名称": "兴业科技", "排名": 17, "区间涨幅": "45%"},
+        ],
         ztpool_t1=[{"code": "600000", "连板标签": "2板"}],
         params={},
     )
@@ -149,6 +173,12 @@ def _self_test() -> None:
     assert ctx["600000"]["t1_in_ztpool"] is True
     assert ctx["600000"]["market_longtou_height"] == 6.0
     assert ctx["000001"]["cashflow_continuity"] == "unknown"
+    # Task 0108: 002674 在龙头梯队(区间涨幅45%)但跌停掉出当日涨停池
+    assert ctx["002674"]["t1_ltgd_leader"] is True
+    assert ctx["002674"]["t1_ltgd_rank"] == 17
+    assert ctx["002674"]["t1_ltgd_range_gain_pct"] == 45.0
+    assert ctx["002674"]["t1_in_ztpool"] is False
+    assert ctx["002674"]["market_longtou_height"] == 6.0  # 市场级不受个股级新增影响
     print("v9_context _self_test passed")
 
 

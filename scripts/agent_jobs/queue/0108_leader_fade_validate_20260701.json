@@ -1,0 +1,7 @@
+{
+  "id": "0108_leader_fade_validate_20260701",
+  "script": "scripts/duanxianxia_0108_leader_fade_validate_20260701.py",
+  "args": [],
+  "timeout": 900,
+  "note": "0108: validate 高位龙头褪色(leader_fade) gate. review.ltgd.range 个股级(在梯队+区间涨幅>=30%+未在当日涨停池) 接进 0105 闸门。重跑 v9 --date 2026-07-01 --json --no-write (NO webhook/bitable), 跑 v9_edge self-test, dump 002674 全行+context_detail(t1_ltgd_*), 证明 002674 由 STILL_BUY 转 VETOED_OR_DOWNGRADED。Read-only wrt production output."
+}

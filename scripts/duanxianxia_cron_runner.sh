@@ -37,7 +37,12 @@ if [[ "$GROUP" == "premarket" ]]; then
   # but monkey-patch the legacy premarket analyzer to the current v7.3 one.
   python3 scripts/duanxianxia_premarket_v7_runner.py "$GROUP"
 else
-  python3 scripts/duanxianxia_batch.py "$GROUP"
+  # Route non-premarket capture groups through the retry wrapper so transient
+  # network failures (Playwright networkidle 60s timeouts, hotlist SSL EOF, etc.)
+  # get table-level exponential-backoff retries. The wrapper monkey-patches
+  # DuanxianxiaFetcher.fetch_* in-process, then forwards argv to batch main
+  # unchanged, so behavior is identical on success.
+  python3 scripts/duanxianxia_fetch_retry.py "$GROUP"
 fi
 
 # v7 intraday validator: after intraday_cashflow capture, validate premarket

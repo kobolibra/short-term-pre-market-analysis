@@ -36,7 +36,10 @@ PY
 
 run_capture() {
   echo "[duanxianxia] postmarket_cashflow capture_only"
-  python3 scripts/duanxianxia_batch.py postmarket_cashflow --capture-only --webhook-url '' --json > "$TMP_FETCH_JSON"
+  # Route the capture through the retry wrapper (table-level backoff on transient
+  # network failures). Wrapper forwards argv to batch main unchanged and preserves
+  # the --json stdout used below to resolve report_path.
+  python3 scripts/duanxianxia_fetch_retry.py postmarket_cashflow --capture-only --webhook-url '' --json > "$TMP_FETCH_JSON"
   REPORT_PATH="$(python3 - <<'PY' "$TMP_FETCH_JSON"
 import json, sys
 with open(sys.argv[1], encoding='utf-8') as f:

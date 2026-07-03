@@ -1,0 +1,7 @@
+{
+  "id": "0113",
+  "script": "scripts/duanxianxia_master_indicators.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Task 0113 master indicator index + stock-centric panel assembler: field->table routing index for every indicator; union of codes across stock-level tables; alias-tolerant dedup with dangerous-collision isolation (volume_ratio vs grab_strength; FF/FLOAT/TOTAL); explicit missing (None + __src provenance) + per-indicator coverage + cross-source conflict counts. Read-only, additive."
+}

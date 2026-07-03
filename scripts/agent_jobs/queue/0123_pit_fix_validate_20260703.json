@@ -1,0 +1,7 @@
+{
+  "id": "0123",
+  "script": "scripts/duanxianxia_pit_fix_validate_0123.py",
+  "args": [],
+  "timeout": 180,
+  "note": "Task 0123: validate 0120 off-by-one fix -- premarket overnight fupan/ltgd content_date must equal T-1(prior), compare OLD(folder prior last=T-2) vs NEW(resolved by internal date); dump streak/board_label provenance for check codes"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "0120",
+  "script": "scripts/duanxianxia_overnight_timing_diag_0120.py",
+  "args": [],
+  "timeout": 180,
+  "note": "Task 0120: prove the real landing-time and content-session-date of overnight/EOD tables (fupan/cashflow/ltgd/daily/ztpool) vs their capture date folder; dump 002979 raw rows + dailyline limit-up sequence to settle 'yesterday close state vs today auction state'"
+}

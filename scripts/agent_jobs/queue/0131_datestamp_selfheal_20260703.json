@@ -1,0 +1,7 @@
+{
+  "id": "0131",
+  "script": "scripts/duanxianxia_capture_datestamp_selfheal.py",
+  "args": ["--all", "--apply"],
+  "timeout": 300,
+  "note": "one-time: relocate all overnight-misplaced captures to correct content-trade-date folders (fix existing 6 review-table files @01:20)"
+}

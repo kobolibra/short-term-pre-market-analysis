@@ -48,6 +48,8 @@ publish_results() {
   echo "--- daily refresh enqueue ---"
   /usr/bin/python3 scripts/agent_daily_refresh.py
   /usr/bin/python3 scripts/agent_job_worker.py
+  echo "--- capture datestamp self-heal ---"
+  /usr/bin/python3 scripts/duanxianxia_capture_datestamp_selfheal.py --recent 6 --apply
   echo "--- publish results ---"
   publish_results
   echo "=== done $(date -Is) ==="

@@ -9,12 +9,17 @@ duanxianxia_pit_panel.py -- Task 0114 (additive, read-only).
   - 今日 live 表(竞价族/盘前qxlive等): 只取 as_of 前的今日快照。
   - 盘中/盘后/EOD 表(pool.*/ztpool/fupan/cashflow/ltgd/daily): 今日盘前尚不存在,
     只能取 T-1 最终态, 打 __lag=t1_eod 标签; 绝不当作今日同时点字段。
-  - 同一 dataset 一天多快照: 按文件名 HHMMSS 选对那一张 (盘前取≤cutoff的最新;
-    T-1 取当日最后一张)。绝不取 files[-1] 冒充。
-  - 每个值都带 __src(来源表) / __batch(来源日期+HHMMSS) / __lag(today_live|t1_eod)。
+  - 同一 dataset 一天多快照: 按文件名 HHMMSS 选对那一张。
+  - 每个值都带 __src / __batch / __lag。
+
+[0120 FIX] 隔夜落盘的复盘类表(fupan/ltgd/daily) 在凌晨 ~01:20 抓取,
+  其文件实际落在“下一个交易日文件夹”里, 内容日期 = 文件夹日期 - 1。
+  旧逻辑按文件夹 D-1 取 → 实际拿到 D-2 (错 1 天)。
+  现改为按内部日期字段(日期/date) 解析真正内容日期, 无内部日期(ltgd)
+  则取“target 的下一文件夹”的隔夜快照 (=target 内容)。
 
 字段<->表索引、别名归一、危险重名隔离继承自 duanxianxia_master_indicators。
-真源 = fixed-table-contract.md 的时段分组 (盘前/盘中/盘后)。只读; 不写 git。
+真源 = fixed-table-contract.md 的时段分组。只读; 不写 git。
 用法: python3 scripts/duanxianxia_pit_panel.py [captures_dir] [--asof premarket] [--cutoff 09:29]
 """
 from __future__ import annotations
@@ -33,11 +38,6 @@ from duanxianxia_master_indicators import (  # noqa: E402
     _norm_code, _rows_of, _row_code, _first_key,
 )
 
-# ---------------------------------------------------------------------------
-# AVAILABILITY -- 每张表“数据何时可得” (slot) 与 horizon
-#   slot: 数据最早可用的时段; horizon: live / eod / eod_window
-#   依据 fixed-table-contract.md 的盘前/盘中/盘后分组
-# ---------------------------------------------------------------------------
 SLOT_ORDER = {"premarket": 1, "intraday": 2, "postmarket": 3}
 AVAILABILITY = {
     "auction.jjyd.vratio":       ("premarket", "live"),
@@ -61,16 +61,18 @@ AVAILABILITY = {
     "review.daily.top_metrics":  ("postmarket", "eod"),
 }
 
+# [0120 FIX] 隔夜复盘类: 文件夹日期 = 内容日期 + 1 (凌晨 01:20 落盘)
+OVERNIGHT = {"review.fupan.plate", "review.ltgd.range", "review.daily.top_metrics"}
+DATE_FIELDS = ("日期", "date")
+
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 def _self_test():
-    # 每张 dataset 都要有 availability, 且 slot 合法
     for ds in DATASETS:
         assert ds in AVAILABILITY, f"missing availability: {ds}"
         slot, hz = AVAILABILITY[ds]
         assert slot in SLOT_ORDER and hz in ("live", "eod", "eod_window")
-    # 盘前决策时, 竞价族必须是 today_live, 盘中池必须不是
     assert _use_today("auction.jjyd.vratio", "premarket")
     assert not _use_today("pool.hot", "premarket")
     assert not _use_today("review.fupan.plate", "premarket")
@@ -119,10 +121,58 @@ def _pick_snapshot(dd, max_secs):
     return cands[-1][1], (cands[-1][0] if cands[-1][0] >= 0 else None)
 
 
+def _all_folders(root):
+    return sorted(p.name for p in root.iterdir()
+                  if p.is_dir() and DATE_RE.match(p.name)) if root.is_dir() else []
+
+
 def _prior_trading_day(root, date):
-    dates = sorted(p.name for p in root.iterdir()
-                   if p.is_dir() and DATE_RE.match(p.name) and p.name < date)
+    dates = [d for d in _all_folders(root) if d < date]
     return dates[-1] if dates else None
+
+
+def _content_date_of(payload):
+    """[0120 FIX] 从 payload 顶层或首行提取内部内容日期。"""
+    if isinstance(payload, dict):
+        for k in DATE_FIELDS:
+            v = payload.get(k)
+            if isinstance(v, str) and DATE_RE.match(v):
+                return v
+    for row in _rows_of(payload):
+        if isinstance(row, dict):
+            for k in DATE_FIELDS:
+                v = row.get(k)
+                if isinstance(v, str) and DATE_RE.match(v):
+                    return v
+        break
+    return None
+
+
+def _resolve_overnight(root, ds, target_date, folders):
+    """[0120 FIX] 返回 (chosen_file, batch_label, content_date), 使内容日期==target_date。
+    隔夜 01:20 快照落在 target 的下一交易日文件夹; target 本日文件夹可能有 17:20 同日快照。"""
+    nextf = None
+    for f in folders:
+        if f > target_date:
+            nextf = f
+            break
+    fallback = None
+    for f in [x for x in (nextf, target_date) if x]:
+        dd = root / f / ds
+        if not dd.is_dir():
+            continue
+        snaps = sorted(dd.glob("*.json"), key=lambda p: p.stem)
+        for chosen in reversed(snaps):
+            try:
+                payload = json.loads(chosen.read_text(encoding="utf-8"))
+            except Exception:  # noqa: BLE001
+                continue
+            cdate = _content_date_of(payload)
+            if cdate == target_date:
+                return chosen, f"{f} {chosen.stem}", cdate
+            if cdate is None and fallback is None and f == nextf:
+                fallback = (chosen, f"{f} {chosen.stem}", None)
+    return fallback if fallback else (None, None, None)
 
 
 def _load_layer():
@@ -157,10 +207,11 @@ def build_pit_panel(captures_root, date, as_of_slot="premarket", cutoff="09:29")
     root = Path(captures_root)
     reg, canonicalize_row, imp = _load_layer()
     cutoff_secs = _cutoff_secs(cutoff)
+    folders = _all_folders(root)
     prior = _prior_trading_day(root, date)
 
-    loaded = {}       # ds -> {by_code, batch, lag, secs}
-    plan = {}         # ds -> 诊断(为什么用/不用, 取自哪天)
+    loaded = {}
+    plan = {}
     for ds, meta in DATASETS.items():
         if meta["scope"] != STOCK:
             plan[ds] = {"used": False, "reason": "context_table(non-stock)"}
@@ -177,6 +228,20 @@ def build_pit_panel(captures_root, date, as_of_slot="premarket", cutoff="09:29")
             plan[ds] = {"used": False, "lag": lag, "src_date": src_date,
                         "reason": "unmapped_canonical" if not meta["canonical"] else "not_in_registry"}
             continue
+        if ds in OVERNIGHT:
+            # [0120 FIX] 隔夜表: 按内容日期解析, 不直接信文件夹
+            target = src_date  # premarket -> prior(T-1); postmarket -> date(今日,通常尚未落盘)
+            chosen, batch, cdate = _resolve_overnight(root, ds, target, folders)
+            if chosen is None:
+                plan[ds] = {"used": False, "lag": lag, "src_date": target,
+                            "reason": "no_overnight_snapshot_for_content_date"}
+                continue
+            by_code, errs = _load_map(chosen.parent, ds, chosen, canonicalize_row)
+            loaded[ds] = {"by_code": by_code, "batch": batch, "lag": lag, "secs": None}
+            plan[ds] = {"used": True, "lag": lag, "src_date": target, "content_date": cdate,
+                        "batch": batch, "codes": len(by_code), "canonical_err": errs,
+                        "note": "overnight: folder=content+1 (0120 fix)"}
+            continue
         dd = root / src_date / ds
         chosen, secs = _pick_snapshot(dd, max_secs)
         if chosen is None:
@@ -187,7 +252,6 @@ def build_pit_panel(captures_root, date, as_of_slot="premarket", cutoff="09:29")
         plan[ds] = {"used": True, "lag": lag, "src_date": src_date,
                     "batch": f"{src_date} {chosen.stem}", "codes": len(by_code), "canonical_err": errs}
 
-    # 候选宇宙 = 仅今日 live 股级表的代码并集 (盘前决策不能用 T-1 的股集)
     universe = set()
     for ds, info in loaded.items():
         if info["lag"] == "today_live":
@@ -260,8 +324,7 @@ if __name__ == "__main__":
     root = Path(cap) if cap else (WS / "projects" / "duanxianxia" / "captures")
     if not root.is_absolute():
         root = WS / root
-    dates = sorted(p.name for p in root.iterdir()
-                   if p.is_dir() and DATE_RE.match(p.name)) if root.is_dir() else []
+    dates = _all_folders(root)
 
     out = {"task": "0114_pit_panel", "captures_root": str(root),
            "as_of_slot": as_of, "cutoff": cutoff, "per_date": {}}

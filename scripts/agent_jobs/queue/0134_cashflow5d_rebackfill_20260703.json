@@ -1,0 +1,10 @@
+{
+  "id": "0134",
+  "script": "scripts/duanxianxia_fetch_retry.py",
+  "args": [
+    "--backfill",
+    "cashflow_5d"
+  ],
+  "timeout": 600,
+  "note": "Re-backfill cashflow.stock.5day which still failed in job 0132 (Timeout at both 15000ms and 60000ms; upstream 9fzt 5day tab unresponsive at ~22:00). Retry+backoff and the 60s Playwright wait-timeout floor are now in place; try again at a fresh time point."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "0135",
+  "script": "scripts/duanxianxia_dailyline_content_probe.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Read-only: read today's dailyline report (already-have/newly-added counts, success/fail) and sample ~10 stock CSV tails (latest bar date + row count) to prove whether 2026-07-03 daily bar actually landed."
+}

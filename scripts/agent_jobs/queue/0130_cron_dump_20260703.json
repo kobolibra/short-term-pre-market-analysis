@@ -1,0 +1,7 @@
+{
+  "id": "0130",
+  "script": "scripts/duanxianxia_cron_dump_0130.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Diagnostic: dump live crontab + systemd timers + /etc/cron* + candidate scripts to identify the ~01:20 nightly job that re-fetches the 3 review tables into next-day folders."
+}

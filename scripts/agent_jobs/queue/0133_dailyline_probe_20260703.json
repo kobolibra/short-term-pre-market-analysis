@@ -1,0 +1,7 @@
+{
+  "id": "0133",
+  "script": "scripts/duanxianxia_dailyline_probe.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Read-only probe: locate dailyline output path via batch source grep and list most-recent dailyline/project files (size+mtime) to check whether 日线 capture has run on recent trading days."
+}

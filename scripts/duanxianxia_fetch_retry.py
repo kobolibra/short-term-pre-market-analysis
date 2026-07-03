@@ -13,6 +13,13 @@ errors with exponential backoff, then either
   (a) forward argv to duanxianxia_batch.main()   [production capture entry], or
   (b) --backfill <kind...>  re-fetch specific datasets and persist  [one-off].
 
+Also applies an additive Playwright wait-timeout floor: the cashflow.10day
+tab-switch in _fetch_cashflow_rank hardcodes wait_for_function/wait_for_selector
+timeout=15000, which trips on a slow tab render. install_pw_timeout_floor()
+raises any explicit sub-60s wait timeout up to 60000ms (only ever increases,
+never lowers) so it lines up with the 60s goto budget -- without editing the
+105KB fetcher.
+
 This mirrors the existing monkey-patch pattern in
 duanxianxia_premarket_v7_runner.py (import batch, patch a symbol, call main),
 and keeps the 142KB batch / 105KB fetcher untouched (too large to edit safely).
@@ -44,6 +51,7 @@ import duanxianxia_fetcher as fx  # noqa: E402
 
 MAX_ATTEMPTS = 3
 BACKOFF_BASE = 4.0  # seconds; waits ~4s then ~12s between attempts
+PW_TIMEOUT_FLOOR_MS = 60000  # align short explicit Playwright waits (e.g. cashflow.10day 15000ms) up to 60s
 
 
 def _retryable_exceptions() -> tuple:
@@ -109,6 +117,46 @@ def install_retry() -> int:
     return patched
 
 
+def install_pw_timeout_floor() -> int:
+    """Raise short explicit Playwright wait timeouts up to PW_TIMEOUT_FLOOR_MS.
+
+    Additive & safe: only ever *increases* a supplied timeout, never lowers one,
+    and leaves waits with no explicit timeout on their library default. Targets
+    the hardcoded timeout=15000 in _fetch_cashflow_rank's tab-switch
+    wait_for_function/wait_for_selector (cashflow.10day) without editing the
+    105KB fetcher. Never let a patching error break the capture run.
+    """
+    patched = 0
+    try:
+        from playwright.sync_api import Page  # type: ignore
+    except Exception as exc:  # noqa: BLE001
+        sys.stderr.write(f"[fetch_retry] pw timeout floor skipped (no playwright): {exc}\n")
+        return 0
+
+    def _make(orig_method):
+        @functools.wraps(orig_method)
+        def wrapper(*args, **kwargs):
+            tmo = kwargs.get("timeout")
+            if isinstance(tmo, (int, float)) and tmo < PW_TIMEOUT_FLOOR_MS:
+                kwargs["timeout"] = PW_TIMEOUT_FLOOR_MS
+            return orig_method(*args, **kwargs)
+
+        return wrapper
+
+    for meth_name in ("wait_for_function", "wait_for_selector", "wait_for_load_state"):
+        try:
+            orig = getattr(Page, meth_name, None)
+            if orig is None or getattr(orig, "_tmo_floored", False):
+                continue
+            wrapped = _make(orig)
+            wrapped._tmo_floored = True  # type: ignore[attr-defined]
+            setattr(Page, meth_name, wrapped)
+            patched += 1
+        except Exception as exc:  # noqa: BLE001
+            sys.stderr.write(f"[fetch_retry] pw timeout floor on {meth_name} skipped: {exc}\n")
+    return patched
+
+
 def _run_backfill(kinds: list) -> int:
     fetcher = fx.DuanxianxiaFetcher()
     out = {"task": "capture_retry_backfill", "filled": [], "failed": []}
@@ -154,6 +202,7 @@ def _forward_to_batch() -> int:
 
 def main() -> int:
     install_retry()
+    install_pw_timeout_floor()
     argv = sys.argv[1:]
     if argv and argv[0] == "--backfill":
         kinds = argv[1:]

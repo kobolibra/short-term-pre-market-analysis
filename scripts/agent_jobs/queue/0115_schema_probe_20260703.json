@@ -1,0 +1,7 @@
+{
+  "id": "0115",
+  "script": "scripts/duanxianxia_schema_probe.py",
+  "args": [],
+  "timeout": 120,
+  "note": "Task 0115 schema probe: dump authoritative raw structure (headers, row shape, nested raw[], sample rows) for every dataset not yet in canonical REGISTRY, including ztpool/fupan/ltgd that are absent from committed captures. Read-only. Feeds the full canonical registration in 0116."
+}

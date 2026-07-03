@@ -19,6 +19,11 @@ Because callers read canonical names only, the fetcher's historical mislabels
 (e.g. vratio/qiangchou raw[2] \"auction_volume_ratio\", which is really FF market
 cap) no longer leak downstream.
 
+Task 0126 C-fix: canonicalize_row now preserves a row-level 'group' tag
+(grab/qiangchou for the qiangchou table) onto the canonical dict, so
+master.build_master_panel can split the qiangchou table into the grp_grab /
+grp_qiangchou virtual tables instead of overwriting one caliber with the other.
+
 Importing this module runs _self_test() on real sample rows; any routing/unit
 regression raises AssertionError and blocks import.
 """
@@ -65,12 +70,19 @@ def _row_source(spec, row):
 
 def canonicalize_row(dataset_id, row):
     """One fetcher row -> canonical dict, or an explicit _canonical_error marker
-    when a positional row is missing its raw[] (never a silent drop)."""
+    when a positional row is missing its raw[] (never a silent drop).
+
+    Task 0126 C-fix: if the source row dict carries a 'group' tag (the qiangchou
+    table returns list.grab + list.qiangchou in one payload), preserve it on the
+    canonical dict so downstream can separate the two calibers by group."""
     spec = REGISTRY[dataset_id]
     src = _row_source(spec, row)
     if src is None:
         return {"_canonical_error": "missing raw[]", "dataset_id": dataset_id}
-    return raw_to_canonical(dataset_id, src)
+    out = raw_to_canonical(dataset_id, src)
+    if isinstance(out, dict) and isinstance(row, dict) and row.get("group") is not None:
+        out.setdefault("group", row.get("group"))
+    return out
 
 
 def canonicalize_rows(kind, rows):
@@ -107,6 +119,15 @@ def _self_test():
     # --- positional row missing raw[] -> explicit error marker (never silent drop)
     err = canonicalize_rows("auction_vratio", [{"code": "x"}])[0]
     assert err.get("_canonical_error") == "missing raw[]", err
+
+    # --- Task 0126 C-fix: qiangchou row 'group' tag preserved onto canonical dict
+    #     (grab/qiangchou never dropped; rows without group get no spurious key)
+    qg = canonicalize_row("auction.jjyd.qiangchou", {"group": "grab", "raw": v})
+    qq = canonicalize_row("auction.jjyd.qiangchou", {"group": "qiangchou", "raw": v})
+    assert qg.get("group") == "grab", qg
+    assert qq.get("group") == "qiangchou", qq
+    ng = canonicalize_row("auction.jjyd.qiangchou", {"raw": v})
+    assert ng.get("group") is None, ng
 
     # --- named_dict via KIND_TO_DATASET (verified dataset_kind cashflow_today)
     cf = canonicalize_rows("cashflow_today", [

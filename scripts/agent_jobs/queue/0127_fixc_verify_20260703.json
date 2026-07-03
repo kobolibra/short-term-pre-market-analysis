@@ -1,0 +1,1 @@
+{"id": "0127", "script": "scripts/duanxianxia_fixc_verify_0127.py", "args": [], "timeout": 900, "note": "Fix C verify: canonicalize_row preserves group; qiangchou grab/qiangchou separated with shared-code differing grab_strength; master grab_strength(grp_grab) vs grab_strength_qiangchou(grp_qiangchou) no overwrite; plus B auction_change_pct coverage on vratio+qiangchou."}

@@ -1,0 +1,7 @@
+{
+  "id": "0116",
+  "script": "scripts/duanxianxia_canonical_selftest.py",
+  "args": [],
+  "timeout": 120,
+  "note": "Task 0116: register all 10 stock-scope tables into canonical via named_dict raw_kind (rank.rocket, rank.hot_stock_day, cashflow.stock.{today,3day,5day,10day}, auction.jjlive.fengdan, home.ztpool, review.ltgd.range, review.fupan.plate). Import-time _self_test() on both duanxianxia_canonical and duanxianxia_canonical_routing must pass (real captured rows, caliber-tagged mktcaps, cn_amount->yuan). Runner prints REGISTRY summary and asserts all 10 present."
+}

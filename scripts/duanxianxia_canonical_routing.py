@@ -5,7 +5,7 @@ duanxianxia_canonical_routing.py  --  Task 0091 entry point (Task 0116 extended)
 
 Route ALL fetcher parsing through the canonical layer. Consumers pass a fetcher
 FetchResult `kind` plus its `rows` and get back canonical dicts (correct names,
-caliber-tagged market caps, money in 元) via duanxianxia_canonical.
+caliber-tagged market caps, money in \u5143) via duanxianxia_canonical.
 
   * positional datasets  -> canonicalised from each row's stored raw[] array
   * pool.hot             -> canonicalised from its legacy named-string keys
@@ -16,7 +16,7 @@ caliber-tagged market caps, money in 元) via duanxianxia_canonical.
                              canonicalize_rows_by_id(dataset_id, rows).
 
 Because callers read canonical names only, the fetcher's historical mislabels
-(e.g. vratio/qiangchou raw[2] "auction_volume_ratio", which is really FF market
+(e.g. vratio/qiangchou raw[2] \"auction_volume_ratio\", which is really FF market
 cap) no longer leak downstream.
 
 Importing this module runs _self_test() on real sample rows; any routing/unit
@@ -89,7 +89,7 @@ def canonicalize_rows_by_id(dataset_id, rows):
 
 
 def _self_test():
-    # weimai: real 002407 sealed row; raw[17]=208089 (万), raw[12]=FF 元
+    # --- positional: weimai real 002407 sealed row; raw[17]=208089(\u4e07), raw[12]=FF \u5143
     w = ["002407", "\u591a\u6c1f\u591a", 45.66, 10, 2339609266, "none", 144416464,
          0.56, 258717139, 1016893860, 258717139, "\u6c22\u6c1f\u9178", 46177984662,
          144416464, 203217386, -58800922, "\u9996\u677f", 208089]
@@ -97,6 +97,68 @@ def _self_test():
     assert cw["seal_amount"] == 208089 * 10000, cw["seal_amount"]
     assert cw["free_float_mktcap"] == 46177984662, cw["free_float_mktcap"]
 
-    # vratio: legacy mislabel auction_volume_ratio IGNORED; FF from raw[2]=462亿
+    # --- positional: vratio -- legacy mislabel ignored; FF from raw[2]=462\u4ebf, raw[11]=volume_ratio
     v = ["002407", "\u591a\u6c1f\u591a", 462, 3120, 10.0, 8.0, 5000,
-         "\u6c22\u6c1f
+         "\u6c22\u6c1f\u9178", None, None, 4800, 6.1, 0.52]
+    cv = canonicalize_rows("auction_vratio", [{"raw": v}])[0]
+    assert cv["free_float_mktcap"] == 46_200_000_000, cv["free_float_mktcap"]
+    assert cv["volume_ratio"] == 6.1, cv["volume_ratio"]
+
+    # --- positional row missing raw[] -> explicit error marker (never silent drop)
+    err = canonicalize_rows("auction_vratio", [{"code": "x"}])[0]
+    assert err.get("_canonical_error") == "missing raw[]", err
+
+    # --- named_dict via KIND_TO_DATASET (verified dataset_kind cashflow_today)
+    cf = canonicalize_rows("cashflow_today", [
+        {"\u4ee3\u7801": "603986", "\u540d\u79f0": "\u5146\u6613\u521b\u65b0",
+         "\u6700\u65b0\u4ef7": "487.90", "\u6da8\u8dcc\u5e45": "4.47%",
+         "\u4e3b\u529b\u51c0\u6d41\u5165": "7.76\u4ebf",
+         "\u7279\u5927\u5355\u51c0\u6d41\u5165": "8.33\u4ebf",
+         "\u5927\u5355\u51c0\u6d41\u5165": "-5720\u4e07",
+         "\u4e2d\u5355\u51c0\u6d41\u5165": "-7.76\u4ebf",
+         "\u5c0f\u5355\u51c0\u6d41\u5165": "-43.3\u4e07"}])[0]
+    assert cf["code"] == "603986", cf
+    assert cf["main_net"] == 776_000_000, cf["main_net"]
+
+    # --- named_dict via canonicalize_rows_by_id (fupan GOLDEN mktcap anchor)
+    fp = canonicalize_rows_by_id("review.fupan.plate", [
+        {"\u4ee3\u7801": "605488", "\u540d\u79f0": "\u798f\u83b1\u65b0\u6750",
+         "\u80a1\u4ef7": "34.32", "\u6da8\u5e45": "10.00%",
+         "\u6da8\u505c\u7c7b\u578b": "\u56de\u5c01\u677f", "\u677f\u6570": "2\u59292\u677f",
+         "\u8fde\u677f": "2", "\u5f00\u677f": "3", "\u5c01\u5355\u989d": "5697\u4e07",
+         "\u6210\u4ea4\u989d": "7\u4ebf", "\u6362\u624b\u7387": "7.6%",
+         "\u5b9e\u9645\u6d41\u901a": "42.4\u4ebf", "\u6d41\u901a\u5e02\u503c": "95\u4ebf",
+         "\u603b\u5e02\u503c": "104\u4ebf", "\u9898\u6750\u540d\u79f0": "\u673a\u5668\u4eba",
+         "\u9996\u6b21\u5c01\u677f": "10:09:26", "\u6700\u540e\u5c01\u677f": "13:26:39",
+         "\u5f02\u52a8\u539f\u56e0": "x"}])[0]
+    assert fp["code"] == "605488", fp
+    assert fp["free_float_mktcap"] == 4_240_000_000, fp["free_float_mktcap"]
+    assert fp["float_mktcap"] == 9_500_000_000, fp["float_mktcap"]
+    assert fp["total_mktcap"] == 10_400_000_000, fp["total_mktcap"]
+
+    # --- unknown fetcher kind must raise (never silently mis-route)
+    try:
+        dataset_id_for_kind("__no_such_kind__")
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("dataset_id_for_kind should reject unknown kinds")
+
+    # --- unknown dataset_id in by-id path must raise
+    try:
+        canonicalize_rows_by_id("__no_such_dataset__", [{}])
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("canonicalize_rows_by_id should reject unknown dataset_id")
+
+    return True
+
+
+# Block import on any routing / unit regression.
+_self_test()
+
+
+if __name__ == "__main__":
+    print("duanxianxia_canonical_routing self-test: PASS")
+    print("kinds:", ", ".join(KIND_TO_DATASET))

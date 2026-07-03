@@ -1,0 +1,7 @@
+{
+  "id": "0125",
+  "script": "scripts/duanxianxia_overnight_crontab_and_apct_probe_0125.py",
+  "args": [],
+  "timeout": 600,
+  "note": "A) live crontab (find ~01:20 trigger) + list overnight fupan/daily/ltgd snapshots. B) locate 竞价涨幅: probe auction_change_pct / _text / latest_change_pct / raw for today vs 06-01 vratio+qiangchou."
+}

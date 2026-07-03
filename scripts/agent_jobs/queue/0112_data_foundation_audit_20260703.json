@@ -1,0 +1,7 @@
+{
+  "id": "0112",
+  "script": "scripts/duanxianxia_data_audit.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Task 0112 data-foundation audit: (1) captures completeness/accuracy across dates x datasets; (2) canonical field coverage + which captured datasets have no canonical mapping; (3) feature_builder wide-table coverage + which tables are not folded in. Read-only, additive."
+}

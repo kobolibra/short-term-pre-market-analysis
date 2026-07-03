@@ -1,0 +1,7 @@
+{
+  "id": "0122",
+  "script": "scripts/duanxianxia_auction_vr_qc_validation_0122.py",
+  "args": [],
+  "timeout": 180,
+  "note": "Task 0122: cover 竞价爆量(vratio volume_ratio) + 竞价抢筹(qiangchou grab_strength) with today real top lists + provenance; cross-table FF consistency across 4 auction tables; volume_ratio/grab_strength for 002979/002396"
+}

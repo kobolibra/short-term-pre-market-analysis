@@ -1,0 +1,7 @@
+{
+  "id": "0126",
+  "script": "scripts/duanxianxia_fixb_verify_0126.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Verify Fix B: import canonical/routing/master (self-tests) + re-derive today vratio/qiangchou auction_change_pct coverage through routing (expect ~100% via raw[8] fallback)."
+}

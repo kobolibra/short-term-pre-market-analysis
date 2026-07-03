@@ -25,6 +25,12 @@ panel needs: rank.rocket, rank.hot_stock_day, cashflow.stock.{today,3day,5day,
 Every mapping below is verified against real captured rows (0115 schema probe +
 committed captures) -- no positional/index guessing.
 
+Task 0126 (2026-07-03) adds a generic per-field `fallback_ref`: when the primary
+raw_ref converts to None, the listed fallback ref(s) are tried in order. Used for
+auction_change_pct on vratio/qiangchou, where the site intermittently returns the
+numeric raw[4]="none" while the text raw[8] (auction_change_pct_text) holds the
+real value (observed 2026-07-03 09:25 premarket snapshot, all rows).
+
 Importing this module runs _self_test(); a wrong unit / swapped index / a
 market-cap field without a caliber tag raises AssertionError and blocks import.
 """
@@ -110,11 +116,15 @@ def _convert(val, unit):
 # --------------------------------------------------------------------------- #
 # Registry  dataset_id -> {raw_kind, parse_spec, fields:[{canonical,caliber,unit,raw_ref}]}
 #   raw_ref = positional index (positional rows) or source key (named_* rows)
+#   fallback_ref (optional) = ref or list of refs tried in order when the primary
+#                             raw_ref converts to None (Task 0126)
 # --------------------------------------------------------------------------- #
-def _f(canonical, unit, raw_ref, caliber=None):
+def _f(canonical, unit, raw_ref, caliber=None, fallback_ref=None):
     d = {"canonical": canonical, "unit": unit, "raw_ref": raw_ref}
     if caliber:
         d["caliber"] = caliber
+    if fallback_ref is not None:
+        d["fallback_ref"] = fallback_ref
     return d
 
 
@@ -128,7 +138,7 @@ REGISTRY = {
             _f("name", "text", 1),
             _f("free_float_mktcap", "yi", 2, caliber="FF"),   # was MISLABEL auction_volume_ratio
             _f("seal_amount", "wan", 3),
-            _f("auction_change_pct", "pct", 4),
+            _f("auction_change_pct", "pct", 4, fallback_ref=8),   # 0126: raw[8]=auction_change_pct_text; site sometimes returns numeric raw[4]="none"
             _f("latest_change_pct", "pct", 5),
             _f("auction_turnover", "wan", 6),                 # = bidAmount
             _f("concept", "text", 7),
@@ -148,7 +158,7 @@ REGISTRY = {
             _f("name", "text", 1),
             _f("free_float_mktcap", "yi", 2, caliber="FF"),   # same MISLABEL fix as vratio
             _f("seal_amount", "wan", 3),
-            _f("auction_change_pct", "pct", 4),
+            _f("auction_change_pct", "pct", 4, fallback_ref=8),   # 0126: fallback to text raw[8] when raw[4]="none"
             _f("latest_change_pct", "pct", 5),
             _f("auction_turnover", "wan", 6),
             _f("concept", "text", 7),
@@ -311,7 +321,7 @@ REGISTRY.update({
         "fields": [
             _f("code", "text", "\u4ee3\u7801"),
             _f("name", "text", "\u540d\u79f0"),
-            _f("zt_status", "text", "\u72b6\u6001"),          # 成/炸/败
+            _f("zt_status", "text", "\u72b6\u6001"),          # 成/炋/败
             _f("zt_status_style", "text", "\u72b6\u6001\u6837\u5f0f"),
             _f("latest_change_pct", "cn_pct", "\u6da8\u5e45"),
             _f("concept", "text", "\u9898\u6750"),
@@ -372,19 +382,31 @@ REGISTRY.update({
 # --------------------------------------------------------------------------- #
 def raw_to_canonical(dataset_id: str, raw_row):
     """raw[] (or named dict for named_* kinds) -> canonical dict.
-    ALL unit conversion lives here."""
+    ALL unit conversion lives here. Honors optional per-field fallback_ref
+    (Task 0126): when the primary raw_ref converts to None, the fallback ref(s)
+    are tried in order."""
     if dataset_id not in REGISTRY:
         raise KeyError(f"unknown dataset_id: {dataset_id!r}")
     spec = REGISTRY[dataset_id]
     named = spec["raw_kind"] in NAMED_KINDS
+
+    def _get(ref):
+        if named:
+            return raw_row.get(ref) if isinstance(raw_row, dict) else None
+        return raw_row[ref] if isinstance(raw_row, (list, tuple)) and isinstance(ref, int) and ref < len(raw_row) else None
+
     out = {}
     for fld in spec["fields"]:
-        ref = fld["raw_ref"]
-        if named:
-            val = raw_row.get(ref) if isinstance(raw_row, dict) else None
-        else:
-            val = raw_row[ref] if isinstance(raw_row, (list, tuple)) and isinstance(ref, int) and ref < len(raw_row) else None
-        out[fld["canonical"]] = _convert(val, fld["unit"])
+        conv = _convert(_get(fld["raw_ref"]), fld["unit"])
+        if conv is None and fld.get("fallback_ref") is not None:
+            fbs = fld["fallback_ref"]
+            if not isinstance(fbs, (list, tuple)):
+                fbs = [fbs]
+            for fb in fbs:
+                conv = _convert(_get(fb), fld["unit"])
+                if conv is not None:
+                    break
+        out[fld["canonical"]] = conv
     return out
 
 
@@ -431,6 +453,10 @@ def _self_test():
     assert cv["free_float_mktcap"] == 46_200_000_000, cv["free_float_mktcap"]
     assert cv["volume_ratio"] == 6.1, cv["volume_ratio"]
     assert cv["auction_turnover"] == 17_790_000, cv["auction_turnover"]   # 1779万
+    # 0126: numeric auction_change_pct raw[4]="none" -> fallback to text raw[8]="10.0"
+    assert cv["auction_change_pct"] == 10.0, cv["auction_change_pct"]
+    _vp = list(v); _vp[4] = 8.88
+    assert raw_to_canonical("auction.jjyd.vratio", _vp)["auction_change_pct"] == 8.88, "primary must win over fallback"
     # mislabel guards: raw[2] must NOT be the volume ratio, raw[11] must NOT be the mktcap
     assert cv["volume_ratio"] != v[2], "raw[2] wrongly used as volume_ratio"
     assert cv["free_float_mktcap"] != round(float(v[11]) * 1e8), "raw[11] wrongly used as mktcap"
@@ -443,6 +469,8 @@ def _self_test():
     assert cq["free_float_mktcap"] == 2_200_000_000, cq["free_float_mktcap"]
     assert cq["grab_strength"] == 11.93, cq["grab_strength"]
     assert cq["auction_turnover"] == 1_890_000, cq["auction_turnover"]
+    # 0126: qiangchou auction_change_pct fallback raw[4]="none" -> text raw[8]="1.01"
+    assert cq["auction_change_pct"] == 1.01, cq["auction_change_pct"]
     assert "volume_ratio" not in cq, "qiangchou must expose grab_strength, not volume_ratio"
 
     # 4) weimai: monetary fields already in 元 EXCEPT raw[17] seal_amount (万 -> x1e4)

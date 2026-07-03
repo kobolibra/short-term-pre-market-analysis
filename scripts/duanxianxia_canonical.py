@@ -18,6 +18,13 @@ across tables on the shared sample 多氟多/002407:
   - pool.surge item[8]/[9] (turnover / float_mktcap, FLOAT)   : already 元
   - pool.hot   item[9] free_float_mktcap '182亿'              : parse -> x1e8 -> 元
 
+Task 0116 (2026-07-03) adds a `named_dict` raw_kind (rows are dicts keyed by
+their own source keys) and registers all 10 stock-scope tables that the stock
+panel needs: rank.rocket, rank.hot_stock_day, cashflow.stock.{today,3day,5day,
+10day}, auction.jjlive.fengdan, home.ztpool, review.ltgd.range, review.fupan.plate.
+Every mapping below is verified against real captured rows (0115 schema probe +
+committed captures) -- no positional/index guessing.
+
 Importing this module runs _self_test(); a wrong unit / swapped index / a
 market-cap field without a caliber tag raises AssertionError and blocks import.
 """
@@ -31,7 +38,11 @@ UNIT_FACTOR = {"yuan": 1.0, "wan": 1e4, "yi": 1e8}   # money -> 元
 MONEY_UNITS = set(UNIT_FACTOR)
 PASSTHROUGH_UNITS = {"pct", "ratio", "price", "count"}
 MCAP_CANON = {"free_float_mktcap": "FF", "float_mktcap": "FLOAT", "total_mktcap": "TOTAL"}
-_NULLS = {"", "none", "null", "-", "—", "nan"}
+_NULLS = {"", "none", "null", "-", "\u2014", "nan"}
+
+# raw_kind values whose rows are dicts read by source key (not positional raw[]).
+# named_strings: legacy pool.hot cn-key strings; named_dict: Task 0116 tables.
+NAMED_KINDS = {"named_strings", "named_dict"}
 
 
 def _to_num(v):
@@ -58,11 +69,11 @@ def parse_cn_amount(s):
     if t.lower() in _NULLS:
         return None
     mult = 1.0
-    if t.endswith("亿"):        # 亿
+    if t.endswith("\u4ebf"):        # 亿
         mult, t = 1e8, t[:-1]
-    elif t.endswith("万"):      # 万
+    elif t.endswith("\u4e07"):      # 万
         mult, t = 1e4, t[:-1]
-    elif t.endswith("元"):      # 元
+    elif t.endswith("\u5143"):      # 元
         t = t[:-1]
     try:
         return round(float(t) * mult)
@@ -88,7 +99,7 @@ def _convert(val, unit):
         return None if n is None else round(n * UNIT_FACTOR[unit])
     if unit in PASSTHROUGH_UNITS:
         return _to_num(val)
-    # named-string parsers (pool.hot)
+    # named-string parsers (pool.hot + named_dict cn amounts/pcts)
     if unit == "cn_amount":
         return parse_cn_amount(val)
     if unit == "cn_pct":
@@ -98,7 +109,7 @@ def _convert(val, unit):
 
 # --------------------------------------------------------------------------- #
 # Registry  dataset_id -> {raw_kind, parse_spec, fields:[{canonical,caliber,unit,raw_ref}]}
-#   raw_ref = positional index (positional rows) or chinese source key (named_strings)
+#   raw_ref = positional index (positional rows) or source key (named_* rows)
 # --------------------------------------------------------------------------- #
 def _f(canonical, unit, raw_ref, caliber=None):
     d = {"canonical": canonical, "unit": unit, "raw_ref": raw_ref}
@@ -209,27 +220,163 @@ REGISTRY = {
         "raw_kind": "named_strings",
         "parse_spec": "dict(cn_keys)",
         "fields": [
-            _f("change_pct", "cn_pct", "涨幅"),                  # 涨幅
-            _f("main_net", "cn_amount", "主力"),                # 主力
-            _f("real_turnover_rate", "cn_pct", "实际换手"),  # 实际换手
-            _f("turnover_amount", "cn_amount", "成交"),         # 成交
-            _f("free_float_mktcap", "cn_amount", "流通", caliber="FF"),  # 流通 (MISLABEL: is FF)
-            _f("concept", "text", "概念"),                      # 概念
+            _f("change_pct", "cn_pct", "\u6da8\u5e45"),                  # 涨幅
+            _f("main_net", "cn_amount", "\u4e3b\u529b"),                # 主力
+            _f("real_turnover_rate", "cn_pct", "\u5b9e\u9645\u6362\u624b"),  # 实际换手
+            _f("turnover_amount", "cn_amount", "\u6210\u4ea4"),         # 成交
+            _f("free_float_mktcap", "cn_amount", "\u6d41\u901a", caliber="FF"),  # 流通 (MISLABEL: is FF)
+            _f("concept", "text", "\u6982\u5ff5"),                      # 概念
         ],
     },
 }
 
 
 # --------------------------------------------------------------------------- #
+# Task 0116 additions -- named_dict stock-scope tables (probe-verified)        #
+#   All rows are dicts keyed by their own source keys. Money -> cn_amount->元,  #
+#   percentages -> cn_pct, ranks/counts -> count, prices -> price, else text.  #
+# --------------------------------------------------------------------------- #
+_CASHFLOW_FIELDS = [
+    _f("code", "text", "\u4ee3\u7801"),
+    _f("name", "text", "\u540d\u79f0"),
+    _f("price", "price", "\u6700\u65b0\u4ef7"),
+    _f("latest_change_pct", "cn_pct", "\u6da8\u8dcc\u5e45"),
+    _f("main_net", "cn_amount", "\u4e3b\u529b\u51c0\u6d41\u5165"),
+    _f("xl_net", "cn_amount", "\u7279\u5927\u5355\u51c0\u6d41\u5165"),
+    _f("big_net", "cn_amount", "\u5927\u5355\u51c0\u6d41\u5165"),
+    _f("mid_net", "cn_amount", "\u4e2d\u5355\u51c0\u6d41\u5165"),
+    _f("small_net", "cn_amount", "\u5c0f\u5355\u51c0\u6d41\u5165"),
+]
+for _cf_dsid in ("cashflow.stock.today", "cashflow.stock.3day",
+                 "cashflow.stock.5day", "cashflow.stock.10day"):
+    REGISTRY[_cf_dsid] = {
+        "raw_kind": "named_dict",
+        "parse_spec": "dict(cn_keys)",
+        "fields": [dict(_fld) for _fld in _CASHFLOW_FIELDS],
+    }
+
+REGISTRY.update({
+    # --- rank.rocket (人气飙升榜, premarket-live) --------------------------- #
+    # rows: {rank, code, name, value:"+71w"(display), raw_rate:"707944"(热度原值)}
+    "rank.rocket": {
+        "raw_kind": "named_dict",
+        "parse_spec": "dict(en_keys)",
+        "fields": [
+            _f("code", "text", "code"),
+            _f("name", "text", "name"),
+            _f("hot_rank", "count", "rank"),
+            _f("hot_value", "count", "raw_rate"),        # 热度原值 (popularity, NOT money)
+            _f("hot_delta_disp", "text", "value"),        # "+71w" display string
+        ],
+    },
+    # --- rank.hot_stock_day (个股当日人气榜, premarket-live) ---------------- #
+    "rank.hot_stock_day": {
+        "raw_kind": "named_dict",
+        "parse_spec": "dict(en_keys)",
+        "fields": [
+            _f("code", "text", "code"),
+            _f("name", "text", "name"),
+            _f("hot_rank", "count", "rank"),
+            _f("hot_value", "count", "raw_rate"),
+            _f("hot_delta_disp", "text", "value"),
+        ],
+    },
+    # --- auction.jjlive.fengdan (竞价封单, premarket-live) ------------------ #
+    # amount_915/920/925 are 委买/封单额 (commit bid), NOT traded turnover -> caliber
+    # commit_bid so they never get merged with 成交额 fields. section_* are market ctx.
+    "auction.jjlive.fengdan": {
+        "raw_kind": "named_dict",
+        "parse_spec": "dict(en_keys+section)",
+        "fields": [
+            _f("code", "text", "code"),
+            _f("name", "text", "name"),
+            _f("rank", "count", "rank"),
+            _f("board_label", "text", "board_label"),
+            _f("seal_bid_915", "cn_amount", "amount_915", caliber="commit_bid"),
+            _f("seal_bid_920", "cn_amount", "amount_920", caliber="commit_bid"),
+            _f("seal_bid_925", "cn_amount", "amount_925", caliber="commit_bid"),
+            _f("latest_change_pct", "cn_pct", "latest_change_pct"),
+            _f("concept", "text", "tag_1"),
+            _f("section_yizi_count", "count", "section_yizi_count"),
+            _f("section_seal_total", "cn_amount", "section_seal_total"),
+            _f("section_t15_total", "cn_amount", "section_t15_total"),
+            _f("section_t20_total", "cn_amount", "section_t20_total"),
+            _f("section_t25_total", "cn_amount", "section_t25_total"),
+        ],
+    },
+    # --- home.ztpool (涨停股票池/晋级, intraday-eod) --------------------- #
+    "home.ztpool": {
+        "raw_kind": "named_dict",
+        "parse_spec": "dict(cn_keys)",
+        "fields": [
+            _f("code", "text", "\u4ee3\u7801"),
+            _f("name", "text", "\u540d\u79f0"),
+            _f("zt_status", "text", "\u72b6\u6001"),          # 成/炸/败
+            _f("zt_status_style", "text", "\u72b6\u6001\u6837\u5f0f"),
+            _f("latest_change_pct", "cn_pct", "\u6da8\u5e45"),
+            _f("concept", "text", "\u9898\u6750"),
+            _f("ladder_group", "text", "\u5206\u7ec4\u540d\u79f0"),  # 3进4/2进3/1进2/首板
+            _f("promo_rate", "cn_pct", "\u664b\u7ea7\u7387"),      # group-level rate carried per row
+            _f("promo_num", "count", "\u664b\u7ea7\u6570"),
+            _f("sample_num", "count", "\u6837\u672c\u6570"),
+            _f("market", "text", "\u5e02\u573a"),
+            _f("date", "text", "\u65e5\u671f"),
+        ],
+    },
+    # --- review.ltgd.range (龙头高度区间涨幅, multi-window; pivot on range_period) #
+    "review.ltgd.range": {
+        "raw_kind": "named_dict",
+        "parse_spec": "dict(cn_keys)",
+        "fields": [
+            _f("code", "text", "\u4ee3\u7801"),
+            _f("name", "text", "\u540d\u79f0"),
+            _f("range_period", "text", "\u5468\u671f"),        # 5日/10日/20日/50日 (pivot key)
+            _f("range_return", "cn_pct", "\u533a\u95f4\u6da8\u5e45"),
+            _f("range_rank", "count", "\u6392\u540d"),
+            _f("board", "text", "\u677f\u5757"),
+            _f("concept", "text", "\u6982\u5ff5"),
+            _f("date_range", "text", "\u65e5\u671f\u533a\u95f4"),
+        ],
+    },
+    # --- review.fupan.plate (\u6da8\u505c\u590d\u76d8, postmarket-eod) -- GOLDEN mktcap anchor -- #
+    # only table carrying all three calibers: 实际流通=FF, 流通市值=FLOAT, 总市值=TOTAL
+    "review.fupan.plate": {
+        "raw_kind": "named_dict",
+        "parse_spec": "dict(cn_keys)",
+        "fields": [
+            _f("code", "text", "\u4ee3\u7801"),
+            _f("name", "text", "\u540d\u79f0"),
+            _f("price", "price", "\u80a1\u4ef7"),
+            _f("latest_change_pct", "cn_pct", "\u6da8\u5e45"),
+            _f("zt_type", "text", "\u6da8\u505c\u7c7b\u578b"),
+            _f("board_count_text", "text", "\u677f\u6570"),     # "2天2板"
+            _f("streak", "count", "\u8fde\u677f"),
+            _f("first_seal_time", "text", "\u9996\u6b21\u5c01\u677f"),
+            _f("last_seal_time", "text", "\u6700\u540e\u5c01\u677f"),
+            _f("open_num", "count", "\u5f00\u677f"),            # prev-open count
+            _f("seal_amount", "cn_amount", "\u5c01\u5355\u989d", caliber="commit_bid"),
+            _f("turnover_amount", "cn_amount", "\u6210\u4ea4\u989d"),
+            _f("turnover_rate", "cn_pct", "\u6362\u624b\u7387"),
+            _f("free_float_mktcap", "cn_amount", "\u5b9e\u9645\u6d41\u901a", caliber="FF"),   # GOLDEN FF anchor
+            _f("float_mktcap", "cn_amount", "\u6d41\u901a\u5e02\u503c", caliber="FLOAT"),
+            _f("total_mktcap", "cn_amount", "\u603b\u5e02\u503c", caliber="TOTAL"),
+            _f("concept", "text", "\u9898\u6750\u540d\u79f0"),
+            _f("change_reason", "text", "\u5f02\u52a8\u539f\u56e0"),
+        ],
+    },
+})
+
+
+# --------------------------------------------------------------------------- #
 # Core transform
 # --------------------------------------------------------------------------- #
 def raw_to_canonical(dataset_id: str, raw_row):
-    """raw[] (or named-string dict for pool.hot) -> canonical dict.
+    """raw[] (or named dict for named_* kinds) -> canonical dict.
     ALL unit conversion lives here."""
     if dataset_id not in REGISTRY:
         raise KeyError(f"unknown dataset_id: {dataset_id!r}")
     spec = REGISTRY[dataset_id]
-    named = spec["raw_kind"] == "named_strings"
+    named = spec["raw_kind"] in NAMED_KINDS
     out = {}
     for fld in spec["fields"]:
         ref = fld["raw_ref"]
@@ -271,14 +418,15 @@ def validate_caliber(registry=REGISTRY):
 
 # --------------------------------------------------------------------------- #
 # Self-test -- hardcoded REAL samples from job 0089 unit probe (2026-06-29)
+# and Task 0116 real captured rows (0115 probe + committed captures)
 # --------------------------------------------------------------------------- #
 def _self_test():
     # 1) caliber validator must pass on the shipped registry
     validate_caliber()
 
     # 2) vratio: raw[2]=FF mktcap (亿), raw[11]=volume_ratio (倍, no conversion)
-    v = ["002407", "多氟多", 462, 32740, "none", "10.0",
-         "1779", "氢氟酸", "10.0", "1779", "15", 6.1, 0.52]
+    v = ["002407", "\u591a\u6c1f\u591a", 462, 32740, "none", "10.0",
+         "1779", "\u6c22\u6c1f\u9178", "10.0", "1779", "15", 6.1, 0.52]
     cv = raw_to_canonical("auction.jjyd.vratio", v)
     assert cv["free_float_mktcap"] == 46_200_000_000, cv["free_float_mktcap"]
     assert cv["volume_ratio"] == 6.1, cv["volume_ratio"]
@@ -289,8 +437,8 @@ def _self_test():
     assert field_caliber("auction.jjyd.vratio", "free_float_mktcap") == "FF"
 
     # 3) qiangchou: raw[11]=grab_strength (not volume_ratio); raw[2]=FF
-    q = ["300279", "和晶科技", 22, None, "none", "1.01",
-         "189", "机器人", "1.01", "189", None, "11.93", 0.09]
+    q = ["300279", "\u548c\u6676\u79d1\u6280", 22, None, "none", "1.01",
+         "189", "\u673a\u5668\u4eba", "1.01", "189", None, "11.93", 0.09]
     cq = raw_to_canonical("auction.jjyd.qiangchou", q)
     assert cq["free_float_mktcap"] == 2_200_000_000, cq["free_float_mktcap"]
     assert cq["grab_strength"] == 11.93, cq["grab_strength"]
@@ -298,10 +446,10 @@ def _self_test():
     assert "volume_ratio" not in cq, "qiangchou must expose grab_strength, not volume_ratio"
 
     # 4) weimai: monetary fields already in 元 EXCEPT raw[17] seal_amount (万 -> x1e4)
-    w = ["002407", "多氟多", 45.66, 10, 2339609266, "none",
+    w = ["002407", "\u591a\u6c1f\u591a", 45.66, 10, 2339609266, "none",
          144416464, 0.56, 258717139, 1016893860, 258717139,
-         "氢氟酸、电解液",
-         46177984662, 144416464, 203217386, -58800922, "首板", 208089]
+         "\u6c22\u6c1f\u9178\u3001\u7535\u89e3\u6db2",
+         46177984662, 144416464, 203217386, -58800922, "\u9996\u677f", 208089]
     cw = raw_to_canonical("auction.jjyd.weimai", w)
     assert cw["free_float_mktcap"] == 46177984662, cw["free_float_mktcap"]
     assert cw["main_net_inflow_full"] == 144416464, cw["main_net_inflow_full"]
@@ -314,8 +462,8 @@ def _self_test():
     assert field_caliber("auction.jjyd.weimai", "free_float_mktcap") == "FF"
 
     # 5) net_amount: main_net_inflow/auction_turnover are 万; FF is 亿
-    n = ["002407", "多氟多", 10, 10, 14442, 25872, 461.8,
-         "氢氟酸|电解液", 0.56]
+    n = ["002407", "\u591a\u6c1f\u591a", 10, 10, 14442, 25872, 461.8,
+         "\u6c22\u6c1f\u9178|\u7535\u89e3\u6db2", 0.56]
     cn = raw_to_canonical("auction.jjyd.net_amount", n)
     assert cn["free_float_mktcap"] == 46_180_000_000, cn["free_float_mktcap"]
     assert cn["main_net_inflow"] == 144_420_000, cn["main_net_inflow"]
@@ -325,8 +473,8 @@ def _self_test():
     assert abs(cn["main_net_inflow"] - cw["main_net_inflow"]) / cw["main_net_inflow"] < 5e-3
 
     # 6) pool.surge: item[8]/[9] already 元; item[9]=FLOAT; turnover_rate=site item[10]
-    s = ["688233", "神工股份", 17.88, "", "", "",
-         "芯片+存储", "", 1622951900, 32511365000, 4.99]
+    s = ["688233", "\u795e\u5de5\u80a1\u4efd", 17.88, "", "", "",
+         "\u82af\u7247+\u5b58\u50a8", "", 1622951900, 32511365000, 4.99]
     cs = raw_to_canonical("pool.surge", s)
     assert cs["float_mktcap"] == 32511365000, cs["float_mktcap"]
     assert cs["turnover_amount"] == 1622951900, cs["turnover_amount"]
@@ -334,16 +482,16 @@ def _self_test():
     assert field_caliber("pool.surge", "float_mktcap") == "FLOAT"
 
     # 7) pool.hot: no raw -> parse legacy strings; '182亿' -> 1.82e10 元
-    h = {"涨幅": "10.51%", "主力": "+9046万",
-         "实际换手": "11.4%", "成交": "20.5亿",
-         "流通": "182亿", "概念": "洁净室+光刻胶"}
+    h = {"\u6da8\u5e45": "10.51%", "\u4e3b\u529b": "+9046\u4e07",
+         "\u5b9e\u9645\u6362\u624b": "11.4%", "\u6210\u4ea4": "20.5\u4ebf",
+         "\u6d41\u901a": "182\u4ebf", "\u6982\u5ff5": "\u6d01\u51c0\u5ba4+\u5149\u523b\u80f6"}
     ch = raw_to_canonical("pool.hot", h)
     assert ch["free_float_mktcap"] == 18_200_000_000, ch["free_float_mktcap"]
     assert ch["turnover_amount"] == 2_050_000_000, ch["turnover_amount"]
     assert ch["main_net"] == 90_460_000, ch["main_net"]
     assert ch["change_pct"] == 10.51, ch["change_pct"]
     assert field_caliber("pool.hot", "free_float_mktcap") == "FF"
-    assert parse_cn_amount("+7.0亿") == 700_000_000
+    assert parse_cn_amount("+7.0\u4ebf") == 700_000_000
 
     # 8) caliber validator must REJECT a market-cap field that drops its tag
     broken = {"x": {"raw_kind": "positional", "parse_spec": "list",
@@ -354,6 +502,114 @@ def _self_test():
         pass
     else:
         raise AssertionError("validator failed to reject uncalibrated market-cap field")
+
+    # ===================== Task 0116 named_dict tables ===================== #
+    # 9) rank.rocket: raw_rate is 热度原值 (count); value is display string
+    rk = raw_to_canonical("rank.rocket",
+        {"rank": "1", "code": "002674", "name": "\u5174\u4e1a\u79d1\u6280",
+         "value": "+71w", "raw_rate": "707944"})
+    assert rk["code"] == "002674", rk
+    assert rk["hot_value"] == 707944.0, rk["hot_value"]
+    assert rk["hot_rank"] == 1.0, rk["hot_rank"]
+    assert rk["hot_delta_disp"] == "+71w", rk
+    assert REGISTRY["rank.hot_stock_day"]["raw_kind"] == "named_dict"
+
+    # 10) cashflow.stock.today: REAL rank-1 row 兆易创新/603986 (2026-06-01)
+    cf = raw_to_canonical("cashflow.stock.today",
+        {"\u6392\u540d": 1, "\u540d\u79f0": "\u5146\u6613\u521b\u65b0",
+         "\u4ee3\u7801": "603986", "\u80a1\u5708": "\u8fdb\u5165",
+         "\u6700\u65b0\u4ef7": "487.90", "\u6da8\u8dcc\u5e45": "4.47%",
+         "\u4e3b\u529b\u51c0\u6d41\u5165": "7.76\u4ebf",
+         "\u7279\u5927\u5355\u51c0\u6d41\u5165": "8.33\u4ebf",
+         "\u5927\u5355\u51c0\u6d41\u5165": "-5720\u4e07",
+         "\u4e2d\u5355\u51c0\u6d41\u5165": "-7.76\u4ebf",
+         "\u5c0f\u5355\u51c0\u6d41\u5165": "-43.3\u4e07"})
+    assert cf["code"] == "603986", cf
+    assert cf["price"] == 487.90, cf["price"]
+    assert cf["latest_change_pct"] == 4.47, cf["latest_change_pct"]
+    assert cf["main_net"] == 776_000_000, cf["main_net"]
+    assert cf["big_net"] == -57_200_000, cf["big_net"]
+    assert cf["small_net"] == -433_000, cf["small_net"]
+    # all four cashflow horizons share the identical spec
+    for _d in ("cashflow.stock.today", "cashflow.stock.3day",
+               "cashflow.stock.5day", "cashflow.stock.10day"):
+        assert _d in REGISTRY, _d
+        assert [f["canonical"] for f in REGISTRY[_d]["fields"]] == \
+               [f["canonical"] for f in REGISTRY["cashflow.stock.today"]["fields"]]
+
+    # 11) auction.jjlive.fengdan: REAL rank-1 row 春秋电子/603890 (2026-06-01)
+    fd = raw_to_canonical("auction.jjlive.fengdan",
+        {"rank": 1, "code": "603890", "name": "\u6625\u79cb\u7535\u5b50",
+         "tag_1": "AI PC", "board_label": "2\u677f",
+         "amount_915": "63.9\u4ebf", "amount_920": "19.7\u4ebf",
+         "amount_925": "20.6\u4ebf", "latest_change_pct": "10.00%",
+         "section_yizi_count": 5, "section_seal_total": "37.1\u4ebf",
+         "section_t15_total": "180.8\u4ebf", "section_t20_total": "33\u4ebf",
+         "section_t25_total": "37.1\u4ebf"})
+    assert fd["code"] == "603890", fd
+    assert fd["seal_bid_915"] == 6_390_000_000, fd["seal_bid_915"]
+    assert fd["latest_change_pct"] == 10.0, fd["latest_change_pct"]
+    assert fd["concept"] == "AI PC", fd["concept"]
+    assert fd["section_seal_total"] == 3_710_000_000, fd["section_seal_total"]
+    assert field_caliber("auction.jjlive.fengdan", "seal_bid_915") == "commit_bid"
+
+    # 12) home.ztpool: REAL row 浙江东日/600113 (2026-07-01 jinjidata)
+    zt = raw_to_canonical("home.ztpool",
+        {"\u65e5\u671f": "2026-07-01", "\u5206\u7ec4\u5e8f\u53f7": "2",
+         "\u5206\u7ec4\u540d\u79f0": "2\u8fdb3", "\u7ec4\u5185\u5e8f\u53f7": "1",
+         "\u664b\u7ea7\u7387\u6587\u672c": "3/18=17%", "\u664b\u7ea7\u6570": "3",
+         "\u6837\u672c\u6570": "18", "\u664b\u7ea7\u7387": "17%",
+         "\u5e02\u573a": "\u6caa", "\u4ee3\u7801": "600113",
+         "\u540d\u79f0": "\u6d59\u6c5f\u4e1c\u65e5", "\u72b6\u6001": "\u6210",
+         "\u72b6\u6001\u6837\u5f0f": "success", "\u6da8\u5e45": "10.01%",
+         "\u9898\u6750": "\u96f6\u552e"})
+    assert zt["code"] == "600113", zt
+    assert zt["zt_status"] == "\u6210", zt["zt_status"]
+    assert zt["latest_change_pct"] == 10.01, zt["latest_change_pct"]
+    assert zt["ladder_group"] == "2\u8fdb3", zt["ladder_group"]
+    assert zt["promo_rate"] == 17.0, zt["promo_rate"]
+    assert zt["promo_num"] == 3.0 and zt["sample_num"] == 18.0, zt
+
+    # 13) review.ltgd.range: REAL row 国华退/000004 5日 (2026-07-02)
+    lt = raw_to_canonical("review.ltgd.range",
+        {"\u5468\u671f": "5\u65e5", "\u677f\u5757": "\u4e3b\u677f",
+         "\u677f\u5757\u987a\u5e8f": "0", "\u6392\u540d": "8",
+         "\u4ee3\u7801": "000004", "\u540d\u79f0": "\u56fd\u534e\u9000",
+         "\u533a\u95f4\u6da8\u5e45": "46%", "\u6982\u5ff5": "\u7834\u51c0\u80a1\u6982\u5ff5",
+         "\u6982\u5ff5\u952e": "\u7834\u51c0\u80a1\u6982\u5ff5",
+         "\u65e5\u671f\u533a\u95f4": "2026-06-25 - 2026-07-02"})
+    assert lt["code"] == "000004", lt
+    assert lt["range_period"] == "5\u65e5", lt["range_period"]
+    assert lt["range_return"] == 46.0, lt["range_return"]
+    assert lt["range_rank"] == 8.0, lt["range_rank"]
+
+    # 14) review.fupan.plate: REAL row 福莱新材/605488 (2026-07-02) -- GOLDEN anchor
+    fp = raw_to_canonical("review.fupan.plate",
+        {"\u65e5\u671f": "2026-07-02", "\u9898\u6750\u540d\u79f0": "\u673a\u5668\u4eba",
+         "\u540d\u79f0": "\u798f\u83b1\u65b0\u6750", "\u4ee3\u7801": "605488",
+         "\u80a1\u4ef7": "34.32", "\u6da8\u5e45": "10.00%",
+         "\u6da8\u505c\u7c7b\u578b": "\u56de\u5c01\u677f", "\u677f\u6570": "2\u59292\u677f",
+         "\u8fde\u677f": "2", "\u9996\u6b21\u5c01\u677f": "10:09:26",
+         "\u6700\u540e\u5c01\u677f": "13:26:39", "\u5f00\u677f": "3",
+         "\u5c01\u5355\u989d": "5697\u4e07", "\u6210\u4ea4\u989d": "7\u4ebf",
+         "\u6362\u624b\u7387": "7.6%", "\u5b9e\u9645\u6d41\u901a": "42.4\u4ebf",
+         "\u6d41\u901a\u5e02\u503c": "95\u4ebf", "\u603b\u5e02\u503c": "104\u4ebf",
+         "\u5f02\u52a8\u539f\u56e0": "\u7535\u5b50\u76ae\u80a4+\u4f9b\u8d27\u4f18\u5fc5\u9009+\u4eba\u5f62\u673a\u5668\u4eba"})
+    assert fp["code"] == "605488", fp
+    assert fp["price"] == 34.32, fp["price"]
+    assert fp["streak"] == 2.0, fp["streak"]
+    assert fp["open_num"] == 3.0, fp["open_num"]
+    assert fp["seal_amount"] == 56_970_000, fp["seal_amount"]
+    assert fp["turnover_amount"] == 700_000_000, fp["turnover_amount"]
+    assert fp["turnover_rate"] == 7.6, fp["turnover_rate"]
+    assert fp["free_float_mktcap"] == 4_240_000_000, fp["free_float_mktcap"]
+    assert fp["float_mktcap"] == 9_500_000_000, fp["float_mktcap"]
+    assert fp["total_mktcap"] == 10_400_000_000, fp["total_mktcap"]
+    assert field_caliber("review.fupan.plate", "free_float_mktcap") == "FF"
+    assert field_caliber("review.fupan.plate", "float_mktcap") == "FLOAT"
+    assert field_caliber("review.fupan.plate", "total_mktcap") == "TOTAL"
+    # three distinct market-cap calibers coexist and stay ordered FF<=FLOAT<=TOTAL
+    assert fp["free_float_mktcap"] <= fp["float_mktcap"] <= fp["total_mktcap"], fp
 
     return True
 

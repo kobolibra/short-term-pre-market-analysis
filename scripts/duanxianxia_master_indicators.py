@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-duanxianxia_master_indicators.py -- Task 0113 (additive, read-only); Task 0117 extended.
+duanxianxia_master_indicators.py -- Task 0113 (additive, read-only); Task 0117 extended; Task 0126 C-fix.
 
 任何选股框架都是“每只股票 x 多维度指标”的综合判断。但我们下载的十几张表：
 角度不同、含股不同、字段不同。本模块把“指标 <-> 表”的关系固化为单一真源，
@@ -11,6 +11,14 @@ duanxianxia_master_indicators.py -- Task 0113 (additive, read-only); Task 0117 e
   (3) 别名去重: 同一语义字段在不同表名字不同 -> 候选 key 列表归一; 危险重名隔离
       (量比=vratio.raw[11]; 抢筹=qiangchou.raw[11]; FF/FLOAT/TOTAL 三口径不合并)。
   (4) 缺失语义: 某票在某表当天缺席 -> 显式 None + 记录命中来源; 绝不用 0 冒充。
+
+Task 0126 C-fix (抢筹混口径): getQiangchouData 同时返回 list.grab(广口径, ~54行)
+与 list.qiangchou(窄口径, ~5行), 每行带 group 标签。同一 code 两组 grab_strength
+不同(如 920190: grab6.64 vs qiangchou15.85)。旧 build_master_panel 用 by_code[code]=c
+按 code 覆盖, 后入的 qiangchou 组会覆盖 grab 组 -> 混口径。现将抢筹表拆成两张
+虚拟股级表(auction.jjyd.qiangchou.grp_grab / .grp_qiangchou), 各自独立按 code 索引,
+并暴露 grab_strength(grab 组) 与 grab_strength_qiangchou(qiangchou 组) 两个指标,
+绝不按 code 合并。canonical_routing 已把 group 标签保留到 canonical dict 上。
 
 真源 = canonical-field-dictionary.md / field-rename-map.md / fixed-table-contract.md
      + duanxianxia_canonical.REGISTRY (Task 0116 将 10 张股级表全部登记)。
@@ -35,19 +43,30 @@ if str(HERE) not in sys.path:
 
 # ---------------------------------------------------------------------------
 # DATASET SCOPE TABLE -- 每张表的联接角色 (股级 vs 市场上下文) 与主键
+#   source_dataset/group_filter (Task 0126): 虚拟拆组表, 从一张真实 REGISTRY 表
+#   读取, 只保留 row['group']==group_filter 的行 (抢筹 grab/qiangchou 分离)。
 # ---------------------------------------------------------------------------
 STOCK = "stock"       # 以个股为行, 可按 code 并入宽表
 CONTEXT = "context"   # 非个股 (板块/大盘/梯队), 作为行级上下文
 DATASETS = {
     "auction.jjyd.vratio":       {"scope": STOCK, "canonical": True,  "note": "竞价爆量; 竞价异动股(~155/天)"},
-    "auction.jjyd.qiangchou":    {"scope": STOCK, "canonical": True,  "note": "竞价抢筹; raw[11]=抢筹幅度(非量比)"},
+    "auction.jjyd.qiangchou":    {"scope": STOCK, "canonical": True,  "note": "竞价抢筹; raw[11]=抢筹幅度(非量比); 含 grab/qiangchou 两组, grab_strength 走虚拟拆组表"},
+    # ---- Task 0126 C-fix: 抢筹表两组拆为虚拟表, 避免同 code 被后组覆盖混口径 ----
+    #   源 getQiangchouData 返回 list.grab(广口径,~54行) + list.qiangchou(窄口径,~5行);
+    #   同一 code 两组 grab_strength 不同(920190: grab6.64 vs qiangchou15.85), 必须分开。
+    "auction.jjyd.qiangchou.grp_grab": {"scope": STOCK, "canonical": True,
+        "source_dataset": "auction.jjyd.qiangchou", "group_filter": "grab",
+        "note": "竞价抢筹 grab 组(广口径); grab_strength 独立, 不与 qiangchou 组按 code 合并"},
+    "auction.jjyd.qiangchou.grp_qiangchou": {"scope": STOCK, "canonical": True,
+        "source_dataset": "auction.jjyd.qiangchou", "group_filter": "qiangchou",
+        "note": "竞价抢筹 qiangchou 组(窄口径, 抢筹幅度更高); grab_strength 独立"},
     "auction.jjyd.net_amount":   {"scope": STOCK, "canonical": True,  "note": "竞价净额; raw[6]=FF"},
     "auction.jjyd.weimai":       {"scope": STOCK, "canonical": True,  "note": "委买/打板; raw[12]=FF, raw[17]=封单额万"},
     "pool.hot":                  {"scope": STOCK, "canonical": True,  "note": "盘中热门池; item9=FF(旧标流通)"},
     "pool.surge":                {"scope": STOCK, "canonical": True,  "note": "盘中冲涨池; item9=FLOAT(唯一真流通)"},
     # ---- Task 0116 新登记 canonical (named_dict) ----
     "auction.jjlive.fengdan":    {"scope": STOCK, "canonical": True,  "note": "竞价封单阶梯; 915/920/925=委买/封单额(commit_bid, 非成交)"},
-    "home.ztpool":               {"scope": STOCK, "canonical": True,  "note": "涨停晋级梯队; 状态 成/炸/败 -> zt_status; intraday-eod"},
+    "home.ztpool":               {"scope": STOCK, "canonical": True,  "note": "涨停晋级梯队; 状态 成/炋/败 -> zt_status; intraday-eod"},
     "review.fupan.plate":        {"scope": STOCK, "canonical": True,  "note": "涨停复盘; FF/FLOAT/TOTAL 三口径黄金锥点表; 开板=open_num; postmarket-eod"},
     "review.ltgd.range":         {"scope": STOCK, "canonical": True,  "note": "龙头高度区间涨幅; 5/10/20/50日 按 range_period 透视"},
     "cashflow.stock.today":      {"scope": STOCK, "canonical": True,  "note": "资金流向当日 n=50; 亿/万->元; postmarket-eod"},
@@ -106,10 +125,16 @@ INDICATORS = {
         "dedup_note": "仅 vratio.raw[11]; 绝不取 qiangchou.raw[11](=抢筹)",
     },
     "grab_strength": {
-        "desc": "抢筹幅度", "caliber": None, "unit": "x",
-        "keys": ["grab_strength", "grabStrength"],
-        "sources": [("auction.jjyd.qiangchou", "raw[11] 抢筹幅度")],
-        "dedup_note": "仅 qiangchou.raw[11]; 与 volume_ratio 互斥",
+        "desc": "抢筹幅度(grab 组)", "caliber": None, "unit": "x",
+        "keys": ["grab_strength"],
+        "sources": [("auction.jjyd.qiangchou.grp_grab", "grab 组 raw[11] 抢筹幅度")],
+        "dedup_note": "C-fix 拆组: 仅 grab 组; qiangchou 组见 grab_strength_qiangchou; 两组同 code 幅度不同, 绝不合并; 也绝不取 vratio.raw[11](=量比)",
+    },
+    "grab_strength_qiangchou": {
+        "desc": "抢筹幅度(qiangchou 组)", "caliber": None, "unit": "x",
+        "keys": ["grab_strength"],
+        "sources": [("auction.jjyd.qiangchou.grp_qiangchou", "qiangchou 组 raw[11] 抢筹幅度")],
+        "dedup_note": "C-fix 拆组: 仅 qiangchou 组; 与 grab 组(grab_strength) 口径不同, 绝不按 code 合并",
     },
     "turnover_rate": {
         "desc": "换手率", "caliber": None, "unit": "%",
@@ -122,8 +147,9 @@ INDICATORS = {
     "auction_change_pct": {
         "desc": "竞价涨幅", "caliber": None, "unit": "%",
         "keys": ["auction_change_pct"],
-        "sources": [("auction.jjyd.vratio", "raw[4]"),
-                    ("auction.jjyd.net_amount", "raw[2]")],
+        "sources": [("auction.jjyd.vratio", "raw[4] (fallback raw[8] text)"),
+                    ("auction.jjyd.net_amount", "raw[2]"),
+                    ("auction.jjyd.qiangchou", "raw[4] (fallback raw[8] text)")],
     },
     "latest_change_pct": {
         "desc": "最新涨幅", "caliber": None, "unit": "%",
@@ -205,7 +231,7 @@ INDICATORS = {
     },
     # -- 涨停晋级梯队 (intraday-eod) --
     "seal_status": {
-        "desc": "封板状态 成/炸/败", "caliber": None, "unit": "text",
+        "desc": "封板状态 成/炋/败", "caliber": None, "unit": "text",
         "keys": ["zt_status"],
         "sources": [("home.ztpool", "状态 -> zt_status")],
     },
@@ -291,7 +317,10 @@ def field_to_tables_index():
 def _self_test():
     # 危险重名隔离
     assert tables_for("volume_ratio") == ["auction.jjyd.vratio"], tables_for("volume_ratio")
-    assert tables_for("grab_strength") == ["auction.jjyd.qiangchou"], tables_for("grab_strength")
+    # C-fix: grab_strength 拆为两个组指标, 各自来自虚拟拆组表, 绝不共享来源
+    assert tables_for("grab_strength") == ["auction.jjyd.qiangchou.grp_grab"], tables_for("grab_strength")
+    assert tables_for("grab_strength_qiangchou") == ["auction.jjyd.qiangchou.grp_qiangchou"], tables_for("grab_strength_qiangchou")
+    assert not (set(tables_for("grab_strength")) & set(tables_for("grab_strength_qiangchou")))
     assert not (set(tables_for("volume_ratio")) & set(tables_for("grab_strength")))
     # 三口径市值不得混用
     for a, b in (("free_float_mktcap", "float_mktcap"), ("free_float_mktcap", "total_mktcap")):
@@ -300,6 +329,11 @@ def _self_test():
     for ind, spec in INDICATORS.items():
         for ds, _prov in spec["sources"]:
             assert ds in DATASETS, f"{ind}: unknown dataset {ds}"
+    # C-fix: 虚拟拆组表必须声明 source_dataset(真实 REGISTRY 表) + STOCK scope
+    for _ds, _meta in DATASETS.items():
+        if _meta.get("group_filter") is not None:
+            assert "source_dataset" in _meta, f"{_ds} group_filter without source_dataset"
+            assert _meta["scope"] == STOCK, f"{_ds} group table must be STOCK"
     # Task 0117: 10 张新表已翻 canonical=True + scope=STOCK
     _newly = ["auction.jjlive.fengdan", "home.ztpool", "review.fupan.plate",
               "review.ltgd.range", "cashflow.stock.today", "cashflow.stock.3day",
@@ -391,16 +425,19 @@ def build_master_panel(date_dir, cutoff="09:29"):
     cutoff_secs = _cutsec(cutoff) if _cutsec else (9 * 3600 + 29 * 60)
 
     # 1) 加载每个可 canonical 的股级表 -> {code: canonical_dict}
+    #    Task 0126: source_dataset/group_filter 支持虚拟拆组表 (抢筹 grab/qiangchou 分离)
     per_table = {}          # ds -> {code: canonical}
     load_report = {}
     for ds, meta in DATASETS.items():
         if meta["scope"] != STOCK:
             continue
-        dd = date_dir / ds
-        if not (meta["canonical"] and ds in REGISTRY and canonicalize_row and dd.is_dir()):
+        src_ds = meta.get("source_dataset", ds)   # 虚拟拆组表读取一张真实数据集目录
+        gfilter = meta.get("group_filter")         # 仅保留 row['group']==gfilter 的行
+        dd = date_dir / src_ds
+        if not (meta["canonical"] and src_ds in REGISTRY and canonicalize_row and dd.is_dir()):
             load_report[ds] = {"loaded": False,
                                "reason": "unmapped" if not meta["canonical"] else
-                                         ("not_in_registry" if ds not in REGISTRY else
+                                         ("not_in_registry" if src_ds not in REGISTRY else
                                           ("no_dir" if not dd.is_dir() else "no_router"))}
             continue
         files = sorted(dd.glob("*.json"))
@@ -413,9 +450,14 @@ def build_master_panel(date_dir, cutoff="09:29"):
             payload = chosen[1] if chosen else None
         if payload is None:
             payload = json.loads(files[-1].read_text(encoding="utf-8"))
-        by_code, errs = {}, 0
+        by_code, errs, skipped = {}, 0, 0
         for row in _rows_of(payload):
-            c = canonicalize_row(ds, row)
+            if gfilter is not None:
+                g = row.get("group") if isinstance(row, dict) else None
+                if g != gfilter:
+                    skipped += 1
+                    continue
+            c = canonicalize_row(src_ds, row)
             if not isinstance(c, dict) or c.get("_canonical_error"):
                 errs += 1
                 continue
@@ -423,7 +465,11 @@ def build_master_panel(date_dir, cutoff="09:29"):
             if code:
                 by_code[code] = c
         per_table[ds] = by_code
-        load_report[ds] = {"loaded": True, "codes": len(by_code), "canonical_err": errs}
+        rep = {"loaded": True, "codes": len(by_code), "canonical_err": errs}
+        if gfilter is not None:
+            rep["group_filter"] = gfilter
+            rep["skipped_other_groups"] = skipped
+        load_report[ds] = rep
 
     # 2) 代码并集 (跨表同一性)
     all_codes = set()
@@ -528,6 +574,6 @@ if __name__ == "__main__":
         except Exception as e:  # noqa: BLE001
             out["per_date"][d] = {"error": f"{type(e).__name__}: {e}"}
 
-    print("=== DUANXIANXIA MASTER INDICATOR INDEX + PANEL (Task 0113/0117) ===")
+    print("=== DUANXIANXIA MASTER INDICATOR INDEX + PANEL (Task 0113/0117/0126) ===")
     print(f"datasets_indexed={len(DATASETS)} indicators={len(INDICATORS)} dates={len(dates)}")
     print(json.dumps(out, ensure_ascii=False, indent=1, default=str))

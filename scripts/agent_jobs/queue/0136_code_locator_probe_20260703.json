@@ -1,0 +1,7 @@
+{
+  "id": "0136",
+  "script": "scripts/duanxianxia_code_locator_probe.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Read-only: server-side grep for (A) ltgd/range_period multi-window overwrite in fetcher+batch, and (B) locate 0118 backtest / 0050-0055 IC / v9 weight scripts + dump matching queue files, to unblock fixing both items next cycle."
+}

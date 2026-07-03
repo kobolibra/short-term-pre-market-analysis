@@ -1,0 +1,7 @@
+{
+  "id": "0121",
+  "script": "scripts/duanxianxia_hardcase_validation_0121.py",
+  "args": [],
+  "timeout": 240,
+  "note": "Task 0121: auto-mine trickiest real stocks stressing uncertain areas -- fupan folder/content date shift, cashflow intraday-vs-final, board_label vs streak conflict, ltgd multiwindow overwrite, fengdan negative seal_bid; dump full provenance + dailyline for human verification"
+}

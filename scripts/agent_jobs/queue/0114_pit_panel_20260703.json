@@ -1,0 +1,7 @@
+{
+  "id": "0114",
+  "script": "scripts/duanxianxia_pit_panel.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Task 0114 point-in-time panel: fixes cross-batch/cross-day merge flaw. Binds each panel to an as-of decision point (default premarket 09:29). Today-live tables use today snapshot <=cutoff; intraday/EOD tables use T-1 final (tagged __lag=t1_eod); multi-snapshot resolved by HHMMSS (never files[-1]). Every value tagged __src/__batch/__lag. Universe = today-live stock codes only (no T-1 leak into universe). Read-only, additive."
+}

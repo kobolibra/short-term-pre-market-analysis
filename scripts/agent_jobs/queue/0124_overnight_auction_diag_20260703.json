@@ -1,0 +1,7 @@
+{
+  "id": "0124",
+  "script": "scripts/duanxianxia_overnight_and_auction_diag_0124.py",
+  "args": [],
+  "timeout": 900,
+  "note": "A) live crontab + fupan/ltgd/daily cadence vs internal content-date (off-by-one root cause). B) auction VR/QC: per-group auction_change_pct coverage + grab vs qiangchou kept SEPARATE + same-code cross-group mixing proof."
+}

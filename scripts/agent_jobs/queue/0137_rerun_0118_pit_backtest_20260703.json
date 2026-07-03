@@ -1,0 +1,7 @@
+{
+  "id": "0137",
+  "script": "scripts/duanxianxia_0118_pit_enriched_backtest.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Re-run of Task 0118 PIT-enriched multi-horizon backtest (worker dedups by id; 0118 already has a result, so re-queued as 0137) now that today's failed cashflow tables (3/5/10day, home.ztpool, rank.rocket) are backfilled and dailyline is confirmed complete. Keep v9 strategy layer (all_candidates/edge/action_type/board/matched_plate/ltgd); canonical PIT data layer (ff/turnover/volume_ratio/amt/bidstrength) joined by code; report pit_join hit-rate + field_coverage lift vs 0110."
+}

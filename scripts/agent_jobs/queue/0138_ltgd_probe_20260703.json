@@ -1,0 +1,7 @@
+{
+  "id": "0138",
+  "script": "scripts/duanxianxia_ltgd_probe.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Read-only focused ltgd grep (fetcher+batch) with context lines; small bounded output because 0136's combined JSON was tail-truncated and dropped the ltgd section. Pinpoints where range_period multi-window (5/10/20/50) collapses onto one field."
+}

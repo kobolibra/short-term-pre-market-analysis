@@ -1,0 +1,7 @@
+{
+  "id": "0118",
+  "script": "scripts/duanxianxia_0118_pit_enriched_backtest.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Task 0118: PIT-enriched multi-horizon backtest -- keep v9 strategy layer (all_candidates/edge/action_type/board/matched_plate/ltgd), replace data layer (ff/turnover/volume_ratio/amt/bidstrength) with canonical PIT panel joined by code; report pit_join hit-rate + field_coverage lift vs 0110"
+}

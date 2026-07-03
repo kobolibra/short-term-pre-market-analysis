@@ -1,0 +1,7 @@
+{
+  "id": "0117",
+  "script": "scripts/duanxianxia_fold_check_0117.py",
+  "args": [],
+  "timeout": 180,
+  "note": "Task 0117: verify 10 newly-canonical tables fold into the stock panel with nonzero coverage for new indicators"
+}

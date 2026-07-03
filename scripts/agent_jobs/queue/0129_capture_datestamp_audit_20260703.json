@@ -1,0 +1,7 @@
+{
+  "id": "0129",
+  "script": "scripts/duanxianxia_capture_datestamp_audit_0129.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Read-only audit: compare capture folder-date vs data content trade-date; report mismatches + fetched_at hour histogram + folder weekday to find the real overnight/misplacement cause."
+}

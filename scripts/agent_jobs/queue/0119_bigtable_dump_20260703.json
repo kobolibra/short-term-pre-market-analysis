@@ -1,0 +1,7 @@
+{
+  "id": "0119",
+  "script": "scripts/duanxianxia_bigtable_dump_0119.py",
+  "args": [],
+  "timeout": 180,
+  "note": "Task 0119: dump big-table headers (19 datasets + INDICATORS columns) and today's real sample rows (premarket + postmarket as-of) with per-field provenance for human verification"
+}

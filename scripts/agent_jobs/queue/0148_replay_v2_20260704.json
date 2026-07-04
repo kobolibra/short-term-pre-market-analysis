@@ -1,0 +1,7 @@
+{
+  "id": "0148",
+  "script": "scripts/duanxianxia_replay_current_code.py",
+  "args": ["60"],
+  "timeout": 300,
+  "note": "Task 0148: replay v2 full-history with auction_amount_pct recomputed from cross-section; CURRENT vs STORED by_regime"
+}

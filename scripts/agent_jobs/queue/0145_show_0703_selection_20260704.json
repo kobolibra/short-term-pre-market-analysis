@@ -1,0 +1,7 @@
+{
+  "id": "0145",
+  "script": "scripts/duanxianxia_show_selection.py",
+  "args": ["2026-07-03"],
+  "timeout": 120,
+  "note": "Task 0145: dump real 2026-07-03 premarket selection (regime/gate, action_stats, BUY/WATCH names + edge, top10) from on-disk analysis_v9.json."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "0152",
+  "script": "scripts/duanxianxia_edge_weight_sweep.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Task 0152: edge weight A/B sweep (baseline vs 4 IC-informed re-weightings) on full candidate universe; edge IC + decile monotonicity"
+}

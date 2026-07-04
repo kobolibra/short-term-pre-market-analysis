@@ -1,0 +1,7 @@
+{
+  "id": "0146",
+  "script": "scripts/duanxianxia_replay_current_code.py",
+  "args": ["10"],
+  "timeout": 300,
+  "note": "Task 0146: replay last 10 days with CURRENT edge+gate; win_rate/payoff vs STORED; ranking topK; faithfulness self-check"
+}

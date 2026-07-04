@@ -1,0 +1,7 @@
+{
+  "id": "0149",
+  "script": "scripts/duanxianxia_field_coverage_audit.py",
+  "args": [],
+  "timeout": 120,
+  "note": "Task 0149: per-day auction_amount_wan/pct coverage audit to localize missing-field leak (old files vs ongoing production)"
+}

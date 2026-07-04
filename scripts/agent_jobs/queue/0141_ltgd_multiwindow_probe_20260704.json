@@ -1,0 +1,7 @@
+{
+  "id": "0141",
+  "script": "scripts/duanxianxia_ltgd_multiwindow_probe.py",
+  "args": [],
+  "timeout": 120,
+  "note": "Item A evidence. 0139 proved the fetcher emits all 4 windows (5/10/20/50) with no range_expr. This probe reads a real review.ltgd.range capture and reports: raw 周期 distribution, per-code window coverage (does each code appear in 1 vs all 4 windows?), and proves the by_code last-wins collapse (rows lost, surviving range_period per code). Decides pivot design: dense range_return_5d/10d/20d/50d vs sparse best-window representation."
+}

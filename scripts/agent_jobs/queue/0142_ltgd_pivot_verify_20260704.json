@@ -1,0 +1,7 @@
+{
+  "id": "0142",
+  "script": "scripts/duanxianxia_ltgd_pivot_verify.py",
+  "args": [],
+  "timeout": 120,
+  "note": "Item A verify: pit_panel._load_map review.ltgd.range multi-window pivot fix. On the same latest capture (0141: raw 80 / 55 codes, old last-wins lost 25), assert merged==55 codes, total window fields==80 (rows_lost==0), base range_period==shortest available window per code. collapse_fixed must be true."
+}

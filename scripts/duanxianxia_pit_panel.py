@@ -18,6 +18,11 @@ duanxianxia_pit_panel.py -- Task 0114 (additive, read-only).
   现改为按内部日期字段(日期/date) 解析真正内容日期, 无内部日期(ltgd)
   则取“target 的下一文件夹”的隔夜快照 (=target 内容)。
 
+[Item A FIX] review.ltgd.range 为 5/10/20/50 四窗口 rank 表, 每 code 可命中多窗口。
+  旧 _load_map by_code[code]=c last-wins 会丢窗口(0141 实测: raw 80 行 / 55 codes,
+  丢 25 行, 幸存窗口随机)。现按 code 收集全部窗口行再 pivot 合并成一行,
+  保留 range_{return,rank}_{5,10,20,50}d; base 取最短可用窗口(确定性)。
+
 字段<->表索引、别名归一、危险重名隔离继承自 duanxianxia_master_indicators。
 真源 = fixed-table-contract.md 的时段分组。只读; 不写 git。
 用法: python3 scripts/duanxianxia_pit_panel.py [captures_dir] [--asof premarket] [--cutoff 09:29]
@@ -69,6 +74,11 @@ OVERNIGHT = {"review.fupan.plate", "review.ltgd.range", "review.daily.top_metric
 DATE_FIELDS = ("日期", "date")
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+# [Item A FIX] review.ltgd.range 多窗口 pivot 常量
+LTGD_DS = "review.ltgd.range"
+LTGD_PERIOD_SUFFIX = {"5日": "5d", "10日": "10d", "20日": "20d", "50日": "50d"}
+LTGD_WINDOW_ORDER = ("5d", "10d", "20d", "50d")
 
 
 def _self_test():
@@ -192,9 +202,67 @@ def _load_layer():
     return reg, canonicalize_row, imp
 
 
+def _period_suffix(period):
+    """[Item A] 周期文本 -> 窗口后缀: '5日'->'5d' ..."""
+    if period is None:
+        return None
+    s = str(period).strip()
+    if s in LTGD_PERIOD_SUFFIX:
+        return LTGD_PERIOD_SUFFIX[s]
+    m = re.match(r"(\d+)", s)
+    return (m.group(1) + "d") if m else None
+
+
+def _merge_ltgd(rows_by_code):
+    """[Item A] 把每 code 的多窗口 canonical 行 pivot 合并成一行, 杜绝 last-wins 丢窗口。
+    保留 range_{return,rank}_{5,10,20,50}d 稀疏字段; base range_period/return/rank
+    取最短可用窗口(短线相关, 确定性替代随机 last-wins)。"""
+    merged = {}
+    for code, rows in rows_by_code.items():
+        acc = {"code": code, "range_windows": [], "_ltgd_pivot": True}
+        for c in rows:
+            suf = _period_suffix(c.get("range_period"))
+            if suf is None:
+                continue
+            if c.get("name") and not acc.get("name"):
+                acc["name"] = c.get("name")
+            for base in ("board", "concept", "date_range"):
+                if c.get(base) and not acc.get(base):
+                    acc[base] = c.get(base)
+            if c.get("range_return") is not None:
+                acc["range_return_" + suf] = c.get("range_return")
+            if c.get("range_rank") is not None:
+                acc["range_rank_" + suf] = c.get("range_rank")
+            if suf not in acc["range_windows"]:
+                acc["range_windows"].append(suf)
+        acc["range_windows"] = [w for w in LTGD_WINDOW_ORDER if w in acc["range_windows"]]
+        acc["range_windows_n"] = len(acc["range_windows"])
+        prim = acc["range_windows"][0] if acc["range_windows"] else None
+        acc["range_primary_window"] = prim
+        if prim:
+            acc["range_period"] = prim.replace("d", "日")
+            acc["range_return"] = acc.get("range_return_" + prim)
+            acc["range_rank"] = acc.get("range_rank_" + prim)
+        merged[code] = acc
+    return merged
+
+
 def _load_map(dd, ds, chosen_file, canonicalize_row):
     payload = json.loads(chosen_file.read_text(encoding="utf-8"))
-    by_code, errs = {}, 0
+    errs = 0
+    if ds == LTGD_DS:
+        # [Item A] 多窗口 pivot: 先按 code 收集全部窗口行, 再合并, 杜绝 last-wins 丢窗口
+        rows_by_code = {}
+        for row in _rows_of(payload):
+            c = canonicalize_row(ds, row)
+            if not isinstance(c, dict) or c.get("_canonical_error"):
+                errs += 1
+                continue
+            code = _row_code(row) or _norm_code(c.get("code"))
+            if code:
+                rows_by_code.setdefault(code, []).append(c)
+        return _merge_ltgd(rows_by_code), errs
+    by_code = {}
     for row in _rows_of(payload):
         c = canonicalize_row(ds, row)
         if not isinstance(c, dict) or c.get("_canonical_error"):

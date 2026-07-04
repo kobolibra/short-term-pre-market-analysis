@@ -38,10 +38,17 @@ SETUP_BY_ALPHA = {
 
 # regime 自适应动作闸门:买入=按 edge 排名进入 top 分位 且 edge>=绝对下限 且 不超数量上限。
 # 用分位数取代固定阈值,使闸门随当日 edge 分布自适应;绝对下限仅作"弱势日清零"保护。
+# Task 0140 校准(依据 0118 PIT 回测 regime×style×rank 矩阵):
+#   - cold: S1首板 R0 top3 excess=8.24(全样本最强)-> max_buys 1->2, buy_top_frac .015->.020,
+#           捕捉已验证的 top 带(原只买 1 过度保守)。
+#   - cold_to_warming: composite-S1 R0 top3 excess=-17.37(爆雷)-> buy_floor 48->50, max_buys 3->2
+#           拆雷(生产即 composite 排序+~top3+首板 = 该雷配置);S3低吸 amt R0 5.67(win.93)为单头名,max_buys 2 仍可保。
+#   - warming: 0140 未直测,与 cold_to_warming 同 composite 风险画像 -> 仅 buy_floor 48->50 低成本保护,max_buys 保持 3。
+#   回退基线:cold {0.015,50,1} / cold_to_warming {0.030,48,3} / warming {0.030,48,3}。
 REGIME_ACTION_GATE: Dict[str, Dict[str, float]] = {
-    "cold":            {"buy_top_frac": 0.015, "buy_floor": 50.0, "max_buys": 1},
-    "cold_to_warming": {"buy_top_frac": 0.030, "buy_floor": 48.0, "max_buys": 3},
-    "warming":         {"buy_top_frac": 0.030, "buy_floor": 48.0, "max_buys": 3},
+    "cold":            {"buy_top_frac": 0.020, "buy_floor": 50.0, "max_buys": 2},
+    "cold_to_warming": {"buy_top_frac": 0.030, "buy_floor": 50.0, "max_buys": 2},
+    "warming":         {"buy_top_frac": 0.030, "buy_floor": 50.0, "max_buys": 3},
     "normal":          {"buy_top_frac": 0.050, "buy_floor": 45.0, "max_buys": 4},
     "hot":             {"buy_top_frac": 0.080, "buy_floor": 42.0, "max_buys": 5},
 }

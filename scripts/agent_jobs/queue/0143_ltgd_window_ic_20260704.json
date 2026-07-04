@@ -1,0 +1,7 @@
+{
+  "id": "0143",
+  "script": "scripts/duanxianxia_ltgd_window_ic.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Item B: IC/ICIR of fixed ltgd multi-window fields (range_return/rank 5/10/20/50d + base) via pit_panel._load_map dense pivot. Two leakage-safe variants: asof_preopen (folder==D stem<=093000) and lag_prev (folder<D, v44 style). Cross-correlate each vs A_turnover(0.163) to test independence before updating v9 weights. Output reports/_audit/ltgd_window_ic_0143.{json,md}."
+}

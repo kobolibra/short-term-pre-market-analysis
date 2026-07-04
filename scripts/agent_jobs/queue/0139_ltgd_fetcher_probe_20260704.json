@@ -1,0 +1,7 @@
+{
+  "id": "0139",
+  "script": "scripts/duanxianxia_ltgd_fetcher_probe.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Fetcher-only ltgd probe: dump full body of every def containing 'ltgd' (esp. fetch_review_ltgd_range) + bounded ltgd/range_period/window hit index. 0138's fetcher section was tail-truncated; this isolates the range_period multi-window (5/10/20/50) collapse site."
+}

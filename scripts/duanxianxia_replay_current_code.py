@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""duanxianxia_replay_current_code.py — Task 0146/0148.
+"""duanxianxia_replay_current_code.py — Task 0146/0148/0150.
 
 用【当前 HEAD 代码】(compute_edge_v9 + REGIME_ACTION_GATE/_assign_actions) 对最近 N 天
 历史盘前候选做整体 replay，量化【胜率】(win_rate) 与【赔率】(payoff)。
 
-0148 修正(关键保真):auction_amount_pct(edge 最大权重 0.323)在旧分析文件里未必持久化,
-  0147 实测覆盖率仅 49% → 一半候选回退中性 50, replay 失真。
-  本版改为【每天按 auction_amount_wan 横截面重算百分位】(与生产 assemble_v9 同口径),
-  auction_amount_wan 每行均已持久化 → 覆盖率拉到 100%, 消除污染。
-
-做法(feature 级 replay):
-  - 读每天 analysis_v9.json 的 all_candidates(每行含 full 明细)。
-  - 按当天 auction_amount_wan 横截面重算 auction_amount_pct 注入。
-  - 用当天真实特征 + 当前 compute_edge_v9 重算 edge/risk/alpha。
-  - 用当前 REGIME_ACTION_GATE 重标 BUY/WATCH/DROP。
-  - 用真实 excess=(收盘涨幅-竞价涨幅) 评估 CURRENT vs STORED vs topK, 含 by_regime。
+auction_amount_pct 取值优先级(0150):
+  1) 生产实际持久化的 auction_amount_pct(最忠实; 06-23 起 100% 覆盖)；
+  2) 缺失则按当天 auction_amount_wan 横截面重算(与 assemble_v9 同口径)；
+  3) 仍缺失则中性 50。
+faithfulness 报告 persisted/recomputed/default 占比, 便于判断哪些窗口可当定论。
 
 用法: python3 duanxianxia_replay_current_code.py [N=10]
 """
@@ -32,12 +26,7 @@ from duanxianxia_v9_edge import compute_edge_v9
 from duanxianxia_v9_output import _assign_actions, _regime_label
 
 
-def _wan(cand):
-    full = cand.get("full") or {}
-    ad = full.get("auction_detail") or {}
-    v = cand.get("auction_amount_wan")
-    if v is None:
-        v = ad.get("auction_amount_wan")
+def _num(v):
     try:
         if v in (None, "", "-"):
             return None
@@ -46,12 +35,29 @@ def _wan(cand):
         return None
 
 
+def _wan(cand):
+    full = cand.get("full") or {}
+    ad = full.get("auction_detail") or {}
+    v = cand.get("auction_amount_wan")
+    if v is None:
+        v = ad.get("auction_amount_wan")
+    return _num(v)
+
+
+def _persisted_pct(cand):
+    full = cand.get("full") or {}
+    ad = full.get("auction_detail") or {}
+    v = ad.get("auction_amount_pct")
+    if v is None:
+        v = (cand.get("auction_detail") or {}).get("auction_amount_pct")
+    return _num(v)
+
+
 def _decision_from_candidate(cand, amt_pct=None):
-    """从持久化候选(_compact,含 full)重建 compute_edge_v9 需要的 decision。"""
     full = cand.get("full") or {}
     ad = dict(full.get("auction_detail") or cand.get("auction_detail") or {})
     if amt_pct is not None:
-        ad["auction_amount_pct"] = amt_pct   # 横截面重算值覆盖
+        ad["auction_amount_pct"] = amt_pct
     dec = {
         "code": cand.get("code"),
         "name": cand.get("name"),
@@ -107,8 +113,7 @@ def main():
     day_dirs = day_dirs[-n_days:]
 
     days = []
-    amt_wan_present = 0
-    amt_wan_total = 0
+    src = {"persisted": 0, "recomputed": 0, "default": 0}
     for date, f in day_dirs:
         try:
             analysis = json.loads(f.read_text(encoding="utf-8"))
@@ -123,8 +128,6 @@ def main():
         valid = [c for c in cands if isinstance(c, dict) and c.get("code")]
         wan_vals = sorted(w for w in (_wan(c) for c in valid) if w is not None)
         n_wan = len(wan_vals)
-        amt_wan_present += n_wan
-        amt_wan_total += len(valid)
 
         def pctl(v):
             if v is None or n_wan == 0:
@@ -135,7 +138,15 @@ def main():
 
         rebuilt = []
         for cand in valid:
-            amt_pct = pctl(_wan(cand))
+            pp = _persisted_pct(cand)
+            if pp is not None:
+                amt_pct = pp; src["persisted"] += 1
+            else:
+                amt_pct = pctl(_wan(cand))
+                if amt_pct is not None:
+                    src["recomputed"] += 1
+                else:
+                    src["default"] += 1
             dec = _decision_from_candidate(cand, amt_pct)
             out = compute_edge_v9(dec, market_env, {})
             rebuilt.append({
@@ -186,9 +197,10 @@ def main():
             "top1": ranked[0].get("code") if ranked else None,
         })
 
+    total_src = sum(src.values()) or 1
     report = {
-        "job": "0148_replay_current_code",
-        "mode": "feature-level replay; auction_amount_pct recomputed from daily cross-section",
+        "job": "0150_replay_current_code",
+        "mode": "feature-level replay; auction_amount_pct = persisted first, else cross-section",
         "target": "excess = (close-open)/preclose*100",
         "n_days": len(days),
         "days": [d["date"] for d in days],
@@ -198,15 +210,16 @@ def main():
                    "by_regime": {k: _agg(v) for k, v in sorted(sto_regime.items())}},
         "ranking_quality": {"top1": _agg(top1), "top3": _agg(top3), "top5": _agg(top5)},
         "faithfulness": {
-            "auction_amount_wan_coverage": (round(amt_wan_present / amt_wan_total, 3) if amt_wan_total else None),
-            "auction_amount_pct": "recomputed from daily auction_amount_wan cross-section (production-equivalent)",
-            "raw_capture_days_available": 0,
+            "pct_source": src,
+            "persisted_frac": round(src["persisted"] / total_src, 3),
+            "recomputed_frac": round(src["recomputed"] / total_src, 3),
+            "default_frac": round(src["default"] / total_src, 3),
         },
         "per_day": per_day,
     }
     audit = root / "reports" / "_audit"
     audit.mkdir(parents=True, exist_ok=True)
-    (audit / "replay_current_code_0148.json").write_text(
+    (audit / "replay_current_code_0150.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
     summ = {

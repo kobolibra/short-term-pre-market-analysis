@@ -1,0 +1,7 @@
+{
+  "id": "0150",
+  "script": "scripts/duanxianxia_replay_current_code.py",
+  "args": ["8"],
+  "timeout": 300,
+  "note": "Task 0150: replay v3 on clean 8-day window (06-23~07-03, pct=100%); persisted pct first; definitive CURRENT vs STORED"
+}

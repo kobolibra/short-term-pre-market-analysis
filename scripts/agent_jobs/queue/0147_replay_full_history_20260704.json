@@ -1,0 +1,7 @@
+{
+  "id": "0147",
+  "script": "scripts/duanxianxia_replay_current_code.py",
+  "args": ["60"],
+  "timeout": 300,
+  "note": "Task 0147: full-history replay (N=60) to enlarge sample + capture non-cold regimes; same CURRENT vs STORED vs topK"
+}

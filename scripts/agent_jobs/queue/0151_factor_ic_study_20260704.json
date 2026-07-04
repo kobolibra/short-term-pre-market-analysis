@@ -1,0 +1,7 @@
+{
+  "id": "0151",
+  "script": "scripts/duanxianxia_factor_ic_study.py",
+  "args": [],
+  "timeout": 600,
+  "note": "Task 0151: full-universe daily cross-sectional factor IC study on existing candidate data (mine what we already have)"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "0144",
+  "script": "scripts/duanxianxia_gate_ab_backtest.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Task 0144: historical A/B backtest OLD vs NEW REGIME_ACTION_GATE on existing analysis_v9.json + real excess. Quantifies 835dd9c gate change on past data without waiting for Monday. Output reports/_audit/gate_ab_backtest_0144.json + stdout summary."
+}

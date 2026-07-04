@@ -42,6 +42,9 @@ SLOT_ORDER = {"premarket": 1, "intraday": 2, "postmarket": 3}
 AVAILABILITY = {
     "auction.jjyd.vratio":       ("premarket", "live"),
     "auction.jjyd.qiangchou":    ("premarket", "live"),
+    # Task 0126 C-fix: 抢筹两组拆分的虚拟表, 与父表同档(竞价 live)
+    "auction.jjyd.qiangchou.grp_grab":      ("premarket", "live"),
+    "auction.jjyd.qiangchou.grp_qiangchou": ("premarket", "live"),
     "auction.jjyd.net_amount":   ("premarket", "live"),
     "auction.jjyd.weimai":       ("premarket", "live"),
     "auction.jjlive.fengdan":    ("premarket", "live"),

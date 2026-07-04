@@ -1,0 +1,7 @@
+{
+  "id": "0140",
+  "script": "scripts/duanxianxia_0118_pit_enriched_backtest.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Re-run of Task 0118 PIT-enriched backtest. 0137 crashed at import: duanxianxia_pit_panel._self_test AssertionError 'missing availability: auction.jjyd.qiangchou.grp_grab'. Fixed pit_panel AVAILABILITY to register the two 0126 C-fix virtual split-group qiangchou tables (grp_grab/grp_qiangchou). Data fully backfilled + dailyline confirmed complete. Report pit_join hit-rate + field_coverage lift vs 0110."
+}

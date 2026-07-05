@@ -8,7 +8,7 @@
 
 ## 0. TL;DR (一分钟上手)
 
-- **仓库**: GitHub `kobolibra/short-term-pre-market-analysis`。两个分支: `main`(代码+任务队列), `agent-results`(服务器跑出的结果)。当前 `main` HEAD = `b18c965`。
+- **仓库**: GitHub `kobolibra/short-term-pre-market-analysis`。两个分支: `main`(代码+任务队列), `agent-results`(服务器跑出的结果)。当前 `main` HEAD = `f112fd0`。
 - **你(agent)不能直接 SSH 登服务器**。你和 GCP 服务器之间的唯一通道是 **GitHub**(用 GitHub MCP 工具读写)。读用 `mcpServer_github3`, 写用 `mcpServer_github7`。
 - **连服务器看原始数据的方式 = "git 队列 + 服务器上的 cron worker"**:
   1. 你把一个 Python 脚本 push 到 `main/scripts/*.py`;
@@ -17,7 +17,7 @@
   4. 你从 `agent-results` 分支读结果。
 - **你自己的 web 抓取工具抓不了某些站(如 9fzt)** ——只有服务器上的 urllib 脚本能读。凡是"读服务器数据/抓外部站/跑回测"都走排队作业。
 - **两条并行工作线**: (A) 盘前选股模型迭代; (B) IPO 日历自动推送。
-- **最新阶段(2026-07-05, jobs ~0148–0154)**: 用户明确纠偏「现有数据都没吃透, 别急着加新数据」→ 转入**现有候选池数据全维度榨干**, 以真实买入档盈亏做最终裁判。已系统性证明 **因子权重/线性空间已到相关性天花板**(0151–0153), 增量只能来自 **选股画像 + 风险层(买入档)**。当前正跑 **0154 买入级 A/B(结果待取)**。详见 §2.9 与 §7(原始数值附录)。**下一个 job id = 0155。**
+- **最新阶段(2026-07-05, jobs ~0148–0155)**: 用户明确纠偏「现有数据都没吃透, 别急着加新数据」→ 转入**现有候选池数据全维度榨干**, 以真实买入档盈亏做最终裁判。已系统性证明 **因子权重/线性空间已到相关性天花板**(0151–0153, 别再重跑, 数值在 §7)。**0154 买入级 A/B 已出结果: `risk_strict`(过闸门前剔除任何 risk_flag)全面胜出——overall 胜率 0.615→0.769、payoff 1.744→2.322(不塌)、avg_loss −3.69→−2.97;`profile`=no-op;`cap_auction` 有害。** 已按 §4.1 顺延排 **0155 风险剔除严格度参数敏感性 A/B(结果待取)**。详见 §2.9 与 §7。**下一个 job id = 0156。**
 
 ---
 
@@ -54,8 +54,8 @@
 1. 先把脚本 commit 到 `main/scripts/<name>.py`。
 2. **等脚本 commit 成功后**, 再 commit 队列文件 `main/scripts/agent_jobs/queue/<id>.json`。
 3. **切记: 对 main 的提交必须串行**(一个一个来)。并行双提交会 409 冲突。(用 `push_files` 可在单次提交里放多文件, 规避串行冲突。)
-4. 队列文件格式: `{ "id":"0155", "script":"scripts/xxx.py", "args":[], "timeout":900, "note":"人话描述" }`。`id` 必须唯一且与文件名主干一致。
-   - **已用到的最大 id: `0154`。下一个用 `0155`。**
+4. 队列文件格式: `{ "id":"0156", "script":"scripts/xxx.py", "args":[], "timeout":900, "note":"人话描述" }`。`id` 必须唯一且与文件名主干一致。
+   - **已用到的最大 id: `0155`。下一个用 `0156`。**
    - ⚠ 覆盖一个已存在的 queue/脚本路径要先读出其 `sha` 再传; 否则报 "File already exists"。
 5. 读结果: 从 `agent-results` 读 `projects/duanxianxia/reports/_audit/agent_jobs/<id>.result.json`(`ok`/`rc`/`stdout_tail`/`stderr_tail`/`duration_s`), 以及脚本写出的报告文件(同在 agent-results)。
    - ⚠ stdout_tail 是"尾部"截断; **把最关键的输出放在脚本最后打印**, 大 dump 易被从前端截掉(0072 踩过)。单行紧凑输出更稳(`chr(10).join`, 避免对可能为 None 的值用 `%f`)。
@@ -161,11 +161,11 @@ Python 3.10.12; numpy 2.2.6 / pandas 2.2.3 / torch 2.11.0+cpu / sympy 1.14.0。*
 - ⚪ T-1 滞后: 仅 review.fupan.plate 昨日成交额 IC 0.103 有价值。
 - ❌ 明确废弃: 各种榜的 rank/raw_rate/value、grab_strength、量比倍数、拆单字段、kaipan 板块全字段、HSLN/KQXY/PB 死字段、飙升 top10 肥尾彩票。
 
-### 2.9 现有数据全维度榨干 + 买入级 A/B (jobs ~0148–0154, 2026-07-05) — ★ 当前主线
+### 2.9 现有数据全维度榨干 + 买入级 A/B (jobs ~0148–0155, 2026-07-05) — ★ 当前主线
 
 > 用户本轮纠偏(原话意译): "现有的数据你都没利用好, 天天想着加数据, 现有的数据你还没搞明白呢!" → 方向从"加数据(龙虎榜/L2/北向)"转为**先把现有候选池数据全维度榨干**, 用真实买入档盈亏做最终裁判。
 
-**研究链**: IC 挖掘(0151) → 线性权重 A/B(0152) → 共线/去相关/交互/顶档诊断(0153) → 买入级 A/B(0154, 结果待取)。**核心逻辑: IC/横截面只是中间量, 最终裁判是买入档(实际就买 top1–2)的真实胜率/赔率/回撤。改线上公式必过 A/B(0144 教训: IC 涨 ≠ 钱涨)。**
+**研究链**: IC 挖掘(0151) → 线性权重 A/B(0152) → 共线/去相关/交互/顶档诊断(0153) → 买入级 A/B(0154, ✅risk_strict 胜出) → 风险剔除严格度 sweep(0155, 结果待取)。**核心逻辑: IC/横截面只是中间量, 最终裁判是买入档(实际就买 top1–2)的真实胜率/赔率/回撤。改线上公式必过 A/B(0144 教训: IC 涨 ≠ 钱涨)。**
 
 #### 战略结论(本轮最重要产出): 因子权重/线性空间已被榨干
 - 核心 5 因子高度共线(Spearman 0.54–0.83, 如 amt–auction .825 / auction–liq .814 / liq–money .833) → 线性重配无效。
@@ -181,18 +181,25 @@ Python 3.10.12; numpy 2.2.6 / pandas 2.2.3 / torch 2.11.0+cpu / sympy 1.14.0。*
 | 0151 全宇宙因子 IC | ✅ | 最强单因子: 竞价成交额万 0.0815、auction_strength 0.0749(cov1.0)、liquidity 0.0673; risk_penalty 方向正确(负相关) |
 | 0152 edge 权重 A/B(5 组) | ✅ | mean_ic 全距仅 0.004(噪声内); 集中化把顶档 spread 腰斩(1.47→0.86) → **不上线任何重配**, baseline 最优 |
 | 0153 共线/去相关/交互/顶档 | ✅ | 相关性天花板坐实; 交互全 ≤ 单因子; 顶档画像=高 liq(88.8)+高 money(87.9)+**中档 auction(41.4)**; 顶档 risk_flag 命中 59% |
-| **0154 买入级 A/B** | 🟡 **结果待取** | baseline vs risk_strict / profile / cap_auction 的真实买入档胜率/赔率/回撤(overall+cold+ctw)；变体定义见 §7.5 |
+| 0154 买入级 A/B | ✅ | **risk_strict 全面胜出**(overall win 0.615→0.769 / payoff 1.744→2.322 / avg_loss −3.69→−2.97, n 26→13);profile=no-op(赢家本就 liq/money 双高);cap_auction 有害(win→0.417, 高竞价强度行在买入档恰是赢家, 推翻横截面"中档竞价"画像)。原始数值见 §7.7 |
+| **0155 风险严格度 sweep** | 🟡 **结果待取** | risk_strict 后续参数敏感性: risk_penalty 阈值(≥10/20/30/45)+ 按类别(veto/lowliq/highboard/highopen)渐进剔除, 定位胜率提升的驱动源与最优严格度; 变体定义见 §7.8 |
 
 #### 0154 读法(已想好, 新对话直接用)
 - 若 `risk_strict` 或 `profile` 的 **win_rate↑ 且 payoff 不塌** → 找到可上线买入过滤器 → 参数敏感性 A/B → 经 `_assign_actions` 前置过滤或 `compute_edge_v9` 上线(**必过 A/B**, 保留"顶档只买 top1-2、不稀释"洞见)。
 - 若三个变体都不优于 baseline → 现有数据在买入层已近最优, 增量必须来自**真正正交的新数据**(此时才解禁"加数据"红线)。
 - **预防针**: cold 每天只买 top-1(`max_buys=1`), 20 天买入样本≈20, 过滤后更少 → 只作**方向性证据**, 按 n 加权, 禁止再过度乐观。
 
+#### 0154 实际读出 → 0155(已执行)
+- 结果: `risk_strict` win_rate↑(0.615→0.769)且 payoff 不塌(1.744→2.322, 回撤同步改善) → 命中"可上线买入过滤器"分支。`profile` 与 baseline 三档全同(在实际 BUY 集不 bind)→ 无独立增量。`cap_auction` 有害, 否决。
+- 代价: risk_strict 把买入样本减半(overall 13/cold 6/ctw 7, 且 ctw 仅 3 天)→ 只作方向性证据, **上线前须先做参数敏感性 A/B**。
+- 故排 **0155**: 不再一刀切剔除任何 risk_flag, 而是按 risk_penalty 阈值 + 单一风险类别渐进剔除, 判断(a)胜率提升是否单调、(b)温和阈值能否保样本、(c)哪类风险驱动改善(见 §7.8)。取到 0155 后按其结果决定最终上线的过滤器强度。
+
 #### 关键脚本(本轮)
 - `scripts/duanxianxia_factor_ic_study.py`(0151) 全宇宙 Spearman 因子 IC。
 - `scripts/duanxianxia_edge_weight_sweep.py`(0152) 5 组权重 IC + 分位单调性。
 - `scripts/duanxianxia_factor_decorrelation.py`(0153) 相关矩阵 + 边际/偏 IC + 交互 + 顶/底档画像 + risk_flag 率。
 - `scripts/duanxianxia_buy_level_ab.py`(0154) 买入级 A/B, 输出 `reports/_audit/buy_level_ab_0154.json`。
+- `scripts/duanxianxia_risk_strictness_sweep.py`(0155) 风险剔除严格度 sweep(复用 0154 helpers), 输出 `reports/_audit/risk_strictness_sweep_0155.json`。
 
 ---
 
@@ -219,8 +226,8 @@ Python 3.10.12; numpy 2.2.6 / pandas 2.2.3 / torch 2.11.0+cpu / sympy 1.14.0。*
 
 ### 4.1 盘前模型 (主线, 当前状态见 §2.9)
 **按此顺序推进:**
-1. **[立即]** 取 `0154.result.json`(on `agent-results`) → 按 §2.9 读法判断买入过滤器是否可上线。若缺失且 HEAD 冻结, 多为 publish 积压, 提示用户在 VM 跑 `agent_recover.sh --run`。
-2. **[然后]** 若某变体胜出: 参数敏感性 A/B(阈值/分位) → 验证后经 `_assign_actions` 前置过滤或 `compute_edge_v9` 上线(保留"顶档只买 top1-2、不稀释"洞见)。
+1. **[已完成]** 取 `0154.result.json`(on `agent-results`): `risk_strict` 胜出(win↑ 且 payoff 不塌, 见 §2.9/§7.7)。
+2. **[进行中]** 参数敏感性 A/B 已排 **0155**(风险剔除严格度 sweep, 见 §7.8)。取 `0155` 结果(agent-results 上 `risk_strictness_sweep_0155.json` + `0155.result.json`)后: 若 risk_strict 或某温和阈值稳健(win↑、payoff 不塌、样本损失可接受)→ 经 `_assign_actions` 前置过滤上线(剔除对应 risk 行, **必过 A/B**, 保留"顶档只买 top1-2、不稀释"洞见)。若结果缺失且 HEAD 冻结, 多为 publish 积压, 提示用户在 VM 跑 `agent_recover.sh --run`。
 3. **[继续榨现有数据]** regime 条件化(ctw 三天 ctw_ic≈0.20 >> cold, 虽 n=3, 提示"择态 > 择权重"); 顶档非单调 auction_strength 处理(压极值)。
 4. **[仅在上述榨干后]** 才考虑真正正交的新数据(龙虎榜席位/L2 逐笔/北向分钟流)。
 
@@ -253,7 +260,7 @@ Python 3.10.12; numpy 2.2.6 / pandas 2.2.3 / torch 2.11.0+cpu / sympy 1.14.0。*
 | 用途 | 路径 / 值 |
 |---|---|
 | 仓库 | `kobolibra/short-term-pre-market-analysis` |
-| 代码/队列分支 | `main` (当前 HEAD `b18c965`) |
+| 代码/队列分支 | `main` (当前 HEAD `f112fd0`) |
 | 结果分支 | `agent-results` |
 | **逐表字段评审台账** | 根目录 `FIELD_VALUE_REVIEW.md` (先读) |
 | 本交接文档 | 根目录 `HANDOFF.md` |
@@ -265,20 +272,20 @@ Python 3.10.12; numpy 2.2.6 / pandas 2.2.3 / torch 2.11.0+cpu / sympy 1.14.0。*
 | 每日 v9 分析 | `projects/duanxianxia/reports/<date>/premarket/*_analysis_v9.json` |
 | 日线 csv | `projects/duanxianxia/dailyline/stocks/<code>.csv` |
 | IPO 输出 | `projects/ipo_calendar/reports/_audit/` |
-| **下一个 job id** | **`0155`** |
+| **下一个 job id** | **`0156`** |
 | cron 入口 | `scripts/agent_job_runner.sh` |
 | 发布恢复(HEAD 冻结时) | `bash scripts/agent_recover.sh --run` (VM 上强制前台跑+推送) |
 | worker | `scripts/agent_job_worker.py` |
 | 生产 edge 公式 | `scripts/duanxianxia_v9_edge.py::compute_edge_v9` (7 权重可 params 覆盖) |
 | 决策闸门 | `scripts/duanxianxia_v9_output.py::_assign_actions` + `REGIME_ACTION_GATE` |
-| 当前主线脚本 | `scripts/duanxianxia_buy_level_ab.py` (0154 买入级 A/B) |
+| 当前主线脚本 | `scripts/duanxianxia_risk_strictness_sweep.py` (0155 风险严格度 sweep); 前序 `scripts/duanxianxia_buy_level_ab.py` (0154) |
 | MCP 连接键 | 读=`mcpServer_github3` / 写=`mcpServer_github7` |
 
 ---
 
 ## 7. 原始结果附录 (防重跑) + 关键 SHA / 回测口径
 
-> 这些是已完成研究的**完整原始数值**, 放这里就是为了新对话**不必重跑 0151–0153**。要重现口径见对应脚本。
+> 这些是已完成研究的**完整原始数值**, 放这里就是为了新对话**不必重跑 0151–0154**。要重现口径见对应脚本。
 
 ### 7.1 回测窗口与 regime
 - 窗口 = 20 个交易日(2026-05-21 ~ 07-03)。regime 构成: cold 17 天 + cold_to_warming(ctw) 3 天(无 warming/normal/hot 天)。
@@ -309,7 +316,7 @@ Python 3.10.12; numpy 2.2.6 / pandas 2.2.3 / torch 2.11.0+cpu / sympy 1.14.0。*
 - 顶档 risk_flag 命中率 = 0.59。
 - 解读: 赢家 = 高流动 + 高资金 + **中档竞价**; auction_strength 在极端处饱和/反转(解释 0152 集中化把顶档打崩)。
 
-### 7.5 0154 买入级 A/B — 变体精确定义(结果待取)
+### 7.5 0154 买入级 A/B — 变体精确定义(已完成, 结果见 §7.7)
 `scripts/duanxianxia_buy_level_ab.py`: 用当前代码(无污染)对每日候选重算 `compute_edge_v9` 的 edge/risk, 再套真实 `_assign_actions` 闸门, 比较 4 个选股变体在**实际 BUY 集**上的次日超额(`daily.excess`), 分 overall / cold / ctw 三档, 用 `_agg` 汇总(n / mean_excess / win_rate / avg_win / avg_loss / payoff):
 - `baseline` = 现行 REGIME_ACTION_GATE 的 BUY 集。
 - `risk_strict` = 先剔除 risk_flag 行再过闸门(针对顶档 59% 带险)。
@@ -321,6 +328,34 @@ Python 3.10.12; numpy 2.2.6 / pandas 2.2.3 / torch 2.11.0+cpu / sympy 1.14.0。*
 - `scripts/duanxianxia_v9_edge.py` = `87e2d8ff` — `compute_edge_v9`。风险闸门阈值: high_open_cost(≥7%, +14) / low_liquidity(≤35, +12) / fake_seal(+16) / FAKE_STRENGTH(+18) / relay(+8) / high_board(≥3板, 每板+12, cap 45) / prev_broken(+28) / hard_veto(≥5板 或 炸/败, ≥总惩60) / leader_fade(+30, hard_veto)。常量 RISK_EXTRA_MARGIN=8.0, WATCH_TOP_FRAC=0.25, WATCH_FLOOR=35.0。
 - `scripts/duanxianxia_v9_output.py` = `0c23b60e`(gate 定档提交 `d1362db`) — `_assign_actions` + `REGIME_ACTION_GATE`。
 - `scripts/v10_optimize.py` = `bfd1ac57` — `Daily`/`excess`/`DEFAULT_PROJECT_ROOT`。
-- 本轮研究脚本提交: 0151 `863196e` / 0152 `e2431ec` / 0153 `da18071` / 0154 `b18c965`。
-- `main` 提交链(近端): `e2431ec`(0152) → `da18071`(0153) → `b18c965`(0154, 当前 HEAD)。
-- `agent-results` 结果分支(每次 publish 重写历史, 只留 1 条): 0153 publish HEAD ≈ `a8fcb79`(06:10Z), 0152 publish ≈ `bd71b18`(00:40Z)。**读结果只认 `agent-results` 分支上的 `<id>.result.json`, 不要靠 HEAD 判断是否跑完。**
+- 本轮研究脚本提交: 0151 `863196e` / 0152 `e2431ec` / 0153 `da18071` / 0154 `b18c965` / 0155 `f112fd0`(script+queue)。
+- `main` 提交链(近端): `da18071`(0153) → `b18c965`(0154) → `f112fd0`(0155, 当前 HEAD)。
+- `agent-results` 结果分支(每次 publish 重写历史, 只留 1 条): 0154 publish HEAD ≈ `74c5771`; 0153 publish ≈ `a8fcb79`。**读结果只认 `agent-results` 分支上的 `<id>.result.json`, 不要靠 HEAD 判断是否跑完。**
+
+### 7.7 0154 买入级 A/B 结果(已完成, 防重跑)
+> worker_time 2026-07-05T14:40+08(VM 时钟), ok=true, rc=0, duration≈125s。n_days=20, regime_days={cold:17, cold_to_warming:3}。买入档次日 excess(去竞价超额):
+
+| variant | scope | n | mean_ex | win | avg_win | avg_loss | payoff |
+|---|---|---|---|---|---|---|---|
+| baseline | overall | 26 | 2.538 | 0.615 | 6.429 | −3.686 | 1.744 |
+| baseline | cold | 17 | 1.498 | 0.529 | 6.567 | −4.204 | 1.562 |
+| baseline | ctw | 9 | 4.503 | 0.778 | 6.251 | −1.614 | 3.874 |
+| **risk_strict** | overall | 13 | 4.625 | **0.769** | 6.904 | −2.973 | **2.322** |
+| risk_strict | cold | 6 | 3.643 | 0.667 | 7.424 | −3.919 | 1.894 |
+| risk_strict | ctw | 7 | 5.466 | 0.857 | 6.557 | −1.081 | 6.066 |
+| profile | overall | 26 | 2.538 | 0.615 | 6.429 | −3.686 | 1.744 |
+| profile | cold/ctw | == baseline 三档全同(no-op) |||||||
+| cap_auction | overall | 24 | 0.717 | 0.417 | 5.196 | −2.483 | 2.093 |
+| cap_auction | cold | 17 | 0.758 | 0.353 | 6.325 | −2.278 | 2.776 |
+| cap_auction | ctw | 7 | 0.616 | 0.571 | 3.503 | −3.233 | 1.083 |
+
+- **定论**: `risk_strict` 唯一全面胜出——win↑ 且 payoff 不塌(反升), avg_loss 收窄(回撤改善), 三档一致。代价: 买入样本减半(overall 26→13, cold 17→6, ctw 9→7, 且 ctw 仅 3 天)→ 只作**方向性证据**, 上线前须过参数敏感性 A/B(0155)。
+- `profile` 在实际 BUY 集不 bind(赢家本就 liq/money 双高, §7.4)→ 无独立增量, 不必单列上线。
+- `cap_auction` **有害**(overall win 0.615→0.417, mean 2.538→0.717): 买入档里高竞价强度行恰是赢家, 推翻 §7.4 横截面"中档竞价"画像 → 印证"IC/横截面 ≠ 钱", 一切以买入档真实盈亏为准。
+
+### 7.8 0155 风险严格度 sweep — 变体定义(结果待取)
+`scripts/duanxianxia_risk_strictness_sweep.py`(复用 0154 的 `_decision/_agg/_buy_exs` 同口径, 加法、可回退): 对每日候选用当前 `compute_edge_v9` 重算 edge/`edge_components.risk_penalty`/`risk_detail`, 各变体先做过滤子集再套真实 `_assign_actions`, 比较实际 BUY 集次日 excess(overall/cold/ctw, `_agg`):
+- `baseline` / `risk_strict`(剔任何 risk_flag, 0154 冠军, 作参照上界)。
+- `pen_ge_{10,20,30,45}`: 仅剔 `risk_penalty ≥ 阈值` 的行(渐进严格度 → 看胜率是否单调、能否在保样本前提下保住提升)。
+- `veto_only` / `drop_lowliq` / `drop_highboard` / `drop_highopen`: 按单一风险类别(hard_veto / low_liquidity / high_board_position / high_open_cost)剔除(定位胜率提升的驱动源)。
+- 输出 `projects/duanxianxia/reports/_audit/risk_strictness_sweep_0155.json`。队列 `0155_risk_strictness_sweep_20260705.json`。

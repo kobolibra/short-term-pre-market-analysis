@@ -1,0 +1,7 @@
+{
+  "id": "0155",
+  "script": "scripts/duanxianxia_risk_strictness_sweep.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Task 0155: risk-strictness sensitivity sweep (0154 follow-up) — baseline vs risk_strict vs risk_penalty thresholds (>=10/20/30/45) vs per-category drop (veto/lowliq/highboard/highopen); buy-level win/payoff/drawdown, overall+cold+ctw"
+}

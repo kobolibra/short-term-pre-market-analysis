@@ -1,0 +1,1 @@
+{"id": "0153", "script": "scripts/duanxianxia_factor_decorrelation.py", "args": [], "timeout": 600, "note": "Task 0153: factor collinearity/decorrelation/interaction + top-decile profile diagnostic on existing data (why linear reweight is saturated; where independent alpha remains)"}

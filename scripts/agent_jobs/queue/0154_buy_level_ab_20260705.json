@@ -1,0 +1,1 @@
+{"id": "0154", "script": "scripts/duanxianxia_buy_level_ab.py", "args": [], "timeout": 600, "note": "Task 0154: buy-level A/B (current-code) baseline gate vs risk_strict/profile/cap_auction; realized win-rate/payoff/drawdown at buy set"}

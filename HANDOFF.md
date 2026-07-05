@@ -17,7 +17,7 @@
   4. 你从 `agent-results` 分支读结果。
 - **你自己的 web 抓取工具抓不了某些站(如 9fzt)** ——只有服务器上的 urllib 脚本能读。凡是"读服务器数据/抓外部站/跑回测"都走排队作业。
 - **两条并行工作线**: (A) 盘前选股模型迭代; (B) IPO 日历自动推送。
-- **最新阶段(2026-07-05, jobs ~0148–0154)**: 用户明确纠偏「现有数据都没吃透, 别急着加新数据」→ 转入**现有候选池数据全维度榨干**, 以真实买入档盈亏做最终裁判。已系统性证明 **因子权重/线性空间已到相关性天花板**(0151–0153), 增量只能来自 **选股画像 + 风险层(买入档)**。当前正跑 **0154 买入级 A/B(结果待取)**。详见 §2.9。**下一个 job id = 0155。**
+- **最新阶段(2026-07-05, jobs ~0148–0154)**: 用户明确纠偏「现有数据都没吃透, 别急着加新数据」→ 转入**现有候选池数据全维度榨干**, 以真实买入档盈亏做最终裁判。已系统性证明 **因子权重/线性空间已到相关性天花板**(0151–0153), 增量只能来自 **选股画像 + 风险层(买入档)**。当前正跑 **0154 买入级 A/B(结果待取)**。详见 §2.9 与 §7(原始数值附录)。**下一个 job id = 0155。**
 
 ---
 
@@ -100,9 +100,9 @@ excess_ret = 收盘涨幅 - 竞价涨幅 = (close - open) / preclose * 100
   ```
   - 7 个权重全部可被 params 覆盖(`edge_w_amt` 0.3232 / `edge_w_auction` 0.0909 / `edge_w_liquidity` 0.2424 / `edge_w_money` 0.1616 / `edge_w_pressure` 0.1414 / `edge_w_weimai` 0.0303 / `edge_w_orderbook` 0.0202)。
   - `amt_pct` = 竞价成交额当日横截面百分位(0–100)。
-  - **0152 已证: 线性重配这 7 个权重无增量, 不要再动权重**(见 §2.9)。
+  - **0152 已证: 线性重配这 7 个权重无增量, 不要再动权重**(见 §2.9 / §7.3)。
 - **决策层**(`duanxianxia_v9_output.py::_assign_actions` + `REGIME_ACTION_GATE`): regime 自适应分位闸门打 BUY/WATCH/DROP。现行闸门: cold{买入分位0.015, floor50, max_buys1} / cold_to_warming{0.030,48,3} / warming{同} / normal{0.050,45,4} / hot{0.080,42,5}; risk 行买入需 +8 余量。**cold 每天只买 top-1。**
-- `edge_components.sub` 每个候选都带全部 7 因子值 + 诊断字段(风险闸门: 高开/低流/假封/FAKE_STRENGTH/高位连板/前日炸败/leader_fade), 分析时可直接读, 无需重算原始。
+- `edge_components.sub` 每个候选都带全部 7 因子值 + 诊断字段(风险闸门: 高开/低流/假封/FAKE_STRENGTH/高位连板/前日炸败/leader_fade, 阈值见 §7.6), 分析时可直接读, 无需重算原始。
 
 ### 2.4 生产代码链路 (谁算什么)
 - `duanxianxia_premarket_v9_runner.py::run_v9(date, root)` — 入口。
@@ -181,7 +181,7 @@ Python 3.10.12; numpy 2.2.6 / pandas 2.2.3 / torch 2.11.0+cpu / sympy 1.14.0。*
 | 0151 全宇宙因子 IC | ✅ | 最强单因子: 竞价成交额万 0.0815、auction_strength 0.0749(cov1.0)、liquidity 0.0673; risk_penalty 方向正确(负相关) |
 | 0152 edge 权重 A/B(5 组) | ✅ | mean_ic 全距仅 0.004(噪声内); 集中化把顶档 spread 腰斩(1.47→0.86) → **不上线任何重配**, baseline 最优 |
 | 0153 共线/去相关/交互/顶档 | ✅ | 相关性天花板坐实; 交互全 ≤ 单因子; 顶档画像=高 liq(88.8)+高 money(87.9)+**中档 auction(41.4)**; 顶档 risk_flag 命中 59% |
-| **0154 买入级 A/B** | 🟡 **结果待取** | baseline vs risk_strict / profile / cap_auction 的真实买入档胜率/赔率/回撤(overall+cold+ctw) |
+| **0154 买入级 A/B** | 🟡 **结果待取** | baseline vs risk_strict / profile / cap_auction 的真实买入档胜率/赔率/回撤(overall+cold+ctw)；变体定义见 §7.5 |
 
 #### 0154 读法(已想好, 新对话直接用)
 - 若 `risk_strict` 或 `profile` 的 **win_rate↑ 且 payoff 不塌** → 找到可上线买入过滤器 → 参数敏感性 A/B → 经 `_assign_actions` 前置过滤或 `compute_edge_v9` 上线(**必过 A/B**, 保留"顶档只买 top1-2、不稀释"洞见)。
@@ -273,3 +273,54 @@ Python 3.10.12; numpy 2.2.6 / pandas 2.2.3 / torch 2.11.0+cpu / sympy 1.14.0。*
 | 决策闸门 | `scripts/duanxianxia_v9_output.py::_assign_actions` + `REGIME_ACTION_GATE` |
 | 当前主线脚本 | `scripts/duanxianxia_buy_level_ab.py` (0154 买入级 A/B) |
 | MCP 连接键 | 读=`mcpServer_github3` / 写=`mcpServer_github7` |
+
+---
+
+## 7. 原始结果附录 (防重跑) + 关键 SHA / 回测口径
+
+> 这些是已完成研究的**完整原始数值**, 放这里就是为了新对话**不必重跑 0151–0153**。要重现口径见对应脚本。
+
+### 7.1 回测窗口与 regime
+- 窗口 = 20 个交易日(2026-05-21 ~ 07-03)。regime 构成: cold 17 天 + cold_to_warming(ctw) 3 天(无 warming/normal/hot 天)。
+- 因此 ctw 结论 n=3, cold 结论 n≈17; 买入档(cold max_buys=1)全窗口买入样本 ≈ 20, 过滤后更少 → 一切结论按 n 加权, 标注不确定性。
+
+### 7.2 0151 全宇宙因子 IC(Spearman, 逐日横截面均值)
+- 竞价成交额万 0.0815 | auction_strength 0.0749(cov 1.0) | liquidity 0.0673 | auction_amount_pct 0.0546(近期才 live) | money / pressure_score 中等 | weimai_strength 弱 | orderbook 弱。
+- risk_penalty 与超额负相关(方向正确, 风险惩罚有效)。
+- edge_score 综合 IC ≈ 0.064; 信号高度集中于顶档(第 8–10 十分位), 1–7 档基本噪声。
+
+### 7.3 0152 edge 权重 A/B(5 组)
+| 组 | mean_ic | IR | cold_ic | ctw_ic | topDec | spread |
+|---|---|---|---|---|---|---|
+| baseline | 0.0636 | 0.481 | 0.0396 | 0.1997 | **1.473** | **1.736** |
+| ic_prop | 0.0602 | 0.473 | 0.0338 | 0.2098 | 1.341 | 1.443 |
+| auction_heavy | 0.0609 | 0.493 | 0.0351 | 0.207 | 1.334 | 1.474 |
+| full_cov | 0.0638 | 0.530 | 0.0388 | 0.2053 | 0.88 | 1.134 |
+| drop_dead | 0.0641 | 0.532 | 0.0397 | 0.2024 | 0.86 | 1.104 |
+- 结论: mean_ic 全距仅 0.004(SE≈0.03, 噪声内); IR 最高的 full_cov/drop_dead 反而把顶档 spread 腰斩(1.47→0.86)。`best_by_spread = baseline`。**任何重配都不上线, 保持 baseline 权重。**
+
+### 7.4 0153 共线/去相关/交互/顶档诊断
+- edge_ic = 0.0636。
+- 边际 IC: auction_amount_pct 0.0482 | auction_strength 0.0749 | liquidity 0.0673 | money 0.0461 | pressure_score 0.0558 | weimai_strength 0.0158 | orderbook 0.0352。
+- 偏 IC(auction | liquidity) = 0.0378(相对边际 0.0749 → 约一半独立)。
+- 交互 IC(rank 乘积): auction×liq 0.0681 | auction×money 0.0621 | liq×money 0.0656(全部 ≤ 最强单因子 0.0749 → 无交互 alpha)。
+- Spearman 相关矩阵(核心簇): amt_pct↔auction 0.825 | amt_pct↔liq 0.795 | auction↔liq 0.814 | auction↔money 0.658 | liq↔money 0.833 | liq↔pressure 0.68。weimai/orderbook 近正交但本身弱。
+- 顶档赢家画像(平均百分位): liquidity 88.8 | money 87.9 | amt_pct 66.1 | **auction_strength 仅 41.4(中档!)** | pressure 49.5。底档: auction 8.5 | liq 25.6 | money 11.6。
+- 顶档 risk_flag 命中率 = 0.59。
+- 解读: 赢家 = 高流动 + 高资金 + **中档竞价**; auction_strength 在极端处饱和/反转(解释 0152 集中化把顶档打崩)。
+
+### 7.5 0154 买入级 A/B — 变体精确定义(结果待取)
+`scripts/duanxianxia_buy_level_ab.py`: 用当前代码(无污染)对每日候选重算 `compute_edge_v9` 的 edge/risk, 再套真实 `_assign_actions` 闸门, 比较 4 个选股变体在**实际 BUY 集**上的次日超额(`daily.excess`), 分 overall / cold / ctw 三档, 用 `_agg` 汇总(n / mean_excess / win_rate / avg_win / avg_loss / payoff):
+- `baseline` = 现行 REGIME_ACTION_GATE 的 BUY 集。
+- `risk_strict` = 先剔除 risk_flag 行再过闸门(针对顶档 59% 带险)。
+- `profile` = 要求 liquidity ≥ 当日中位数 **且** money ≥ 当日中位数, 再过闸门(赢家画像)。
+- `cap_auction` = 剔除 auction_strength ≥ 当日 90 分位 的行, 再过闸门(赢家只需中档竞价)。
+- 导入: `Daily, DEFAULT_PROJECT_ROOT, compute_edge_v9, _assign_actions, _regime_label`; 助手 `_decision, _median, _pct_threshold(q=0.90), _agg, _buy_exs`。输出 `projects/duanxianxia/reports/_audit/buy_level_ab_0154.json`。队列文件 `0154_buy_level_ab_20260705.json`。
+
+### 7.6 关键文件 SHA / 提交链 / 风险闸门阈值
+- `scripts/duanxianxia_v9_edge.py` = `87e2d8ff` — `compute_edge_v9`。风险闸门阈值: high_open_cost(≥7%, +14) / low_liquidity(≤35, +12) / fake_seal(+16) / FAKE_STRENGTH(+18) / relay(+8) / high_board(≥3板, 每板+12, cap 45) / prev_broken(+28) / hard_veto(≥5板 或 炸/败, ≥总惩60) / leader_fade(+30, hard_veto)。常量 RISK_EXTRA_MARGIN=8.0, WATCH_TOP_FRAC=0.25, WATCH_FLOOR=35.0。
+- `scripts/duanxianxia_v9_output.py` = `0c23b60e`(gate 定档提交 `d1362db`) — `_assign_actions` + `REGIME_ACTION_GATE`。
+- `scripts/v10_optimize.py` = `bfd1ac57` — `Daily`/`excess`/`DEFAULT_PROJECT_ROOT`。
+- 本轮研究脚本提交: 0151 `863196e` / 0152 `e2431ec` / 0153 `da18071` / 0154 `b18c965`。
+- `main` 提交链(近端): `e2431ec`(0152) → `da18071`(0153) → `b18c965`(0154, 当前 HEAD)。
+- `agent-results` 结果分支(每次 publish 重写历史, 只留 1 条): 0153 publish HEAD ≈ `a8fcb79`(06:10Z), 0152 publish ≈ `bd71b18`(00:40Z)。**读结果只认 `agent-results` 分支上的 `<id>.result.json`, 不要靠 HEAD 判断是否跑完。**

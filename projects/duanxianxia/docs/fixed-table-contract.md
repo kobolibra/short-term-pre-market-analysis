@@ -142,6 +142,7 @@
 - 说明：与 `auction.jjyd.vratio`/`auction.jjyd.qiangchou`/`auction.jjyd.net_amount` 同属“竞价/竞价异动”分组，此前遗漏于本合同（**治理遗漏，非数据错误**：抓取、解析、落盘、使用口径均已在 `scripts/duanxianxia_canonical.py`（`REGISTRY["auction.jjyd.weimai"]`）与 `field-rename-map.md` §4 中正确实现，job 0089/0091 已完成真实数据单位核实），2026-07-05 补充固化入本合同。
 - 落盘货币字段单位（与本组其余表规则不同，需特别注意，避免重复换算）：字段 `auction_turnover`／`main_net_inflow`／`seal_volume`／`auction_amount`／`free_float_mktcap`／`main_net_inflow_full`／`super_large_order`／`large_order` 在源数据中已经是“元”，**不得**再乘 1e4 或 1e8；仅 `seal_amount` 例外，为“万”，需 ×1e4 换算为元。
 - `free_float_mktcap` 口径为 FF（自由流通市值），与 `vratio`/`qiangchou`/`net_amount` 的 FF 口径一致（跨表交叉验证误差 <0.5%，见 `duanxianxia_canonical.py` `_self_test()`）。
+- **调度归属（2026-07-05 核实确认）**：已直接查验生产代码 `scripts/duanxianxia_batch.py`：`GROUPS["premarket"]["datasets"]` 列表中包含 `auction_weimai`；`SEQUENCE` 字典中 `auction_weimai = 10`（与 `auction_fengdan` 相同）。这证明 `weimai` 本就是盘前 9:25 自动批次的正式成员，与 `vratio`/`qiangchou`/`net_amount`/`fengdan` 同批抓取、同批落盘，并非零散或手动调用。此调度归属已在第三节正式编号，不再作为待确认事项。
 
 ### 10) `auction.jjlive.fengdan`｜竞价封单
 - `source_path`: `竞价/竞价封单`
@@ -209,13 +210,14 @@
 
 后续固定使用下面这套编号与分组，不得混：
 
-### 盘前（6 张固定表 + 2 张独立补充表）
+### 盘前（7 档编号，`fengdan`/`weimai` 共用序号 10）
 - 1 = `rank.rocket`｜飙升榜
 - 4 = `rank.hot_stock_day`｜热度榜（日）
 - 7 = `auction.jjyd.vratio`｜竞价爆量
 - 8 = `auction.jjyd.qiangchou`｜竞价抢筹
 - 9 = `auction.jjyd.net_amount`｜竞价净额
 - 10 = `auction.jjlive.fengdan`｜竞价封单
+- 10 = `auction.jjyd.weimai`｜竞价异动/涨停委买（与 `fengdan` 共用序号 10：已直接核对生产代码 `scripts/duanxianxia_batch.py` 的 `GROUPS["premarket"]["datasets"]`（含 `auction_weimai`）与 `SEQUENCE` 字典（`auction_weimai` = 10，同 `auction_fengdan`），确认 `weimai` 本就是盘前 9:25 批次的正式成员，与 `vratio`/`qiangchou`/`net_amount`/`fengdan` 同批抓取、同批落盘；序号重复是生产代码里既有的真实取值，不是本文档笔误，此处如实记录，不再作为待确认事项）
 - 16 = `home.kaipan.plate.summary`｜主页板块强度全主标签汇总表
 - 17 = `home.qxlive.top_metrics`｜主页 qxlive 顶部指标按钮组
 
@@ -224,8 +226,7 @@
 - 随机延迟：**5–15 秒**
 - 动作：自动抓取 + 自动落盘保存
 - 用户最新确认：原来的股票覆盖型第5表不要了，直接替换为主标签汇总型第5表；继续放进盘前一起下载，并作为盘前分析的市场主标签视角输入。
-- 当前新增规则：盘前下载同时包含 `rank.rocket`（飙升榜）与 `rank.hot_stock_day`（热度榜（日）），与竞价 4 表、qxlive 主标签汇总表、主页 qxlive 顶部指标按钮组一起落盘保存。
-- 说明：`auction.jjyd.weimai`（竞价异动/涨停委买）在实际抓取链路中与 `vratio`/`qiangchou`/`net_amount` 同批落盘，但其盘前调度门槛尚未在本文件中正式编号确认，暂不计入上述编号列表，避免引入未经用户确认的调度声明；如需正式编号纳入盘前列表，需用户单独确认。
+- 当前新增规则：盘前下载同时包含 `rank.rocket`（飙升榜）与 `rank.hot_stock_day`（热度榜（日）），与竞价 5 表（`vratio`/`qiangchou`/`net_amount`/`fengdan`/`weimai`）、qxlive 主标签汇总表、主页 qxlive 顶部指标按钮组一起落盘保存。
 
 ### 盘中（5 张）
 - 1 = `rank.rocket`｜飙升榜

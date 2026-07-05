@@ -1,0 +1,7 @@
+{
+  "id": "0156",
+  "script": "scripts/duanxianxia_dump_0703_raw_tables_0156.py",
+  "args": ["2026-07-03"],
+  "timeout": 120,
+  "note": "Task 0156: dump full raw weimai+vratio capture tables for 2026-07-03 for item9/vratio semantics verification."
+}

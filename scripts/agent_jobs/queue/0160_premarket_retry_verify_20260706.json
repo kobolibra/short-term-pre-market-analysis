@@ -1,0 +1,7 @@
+{
+  "id": "0160",
+  "script": "scripts/duanxianxia_premarket_retry_verify_0160.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Verify premarket path now installs fetch-retry monkey-patch (auction hardening)."
+}

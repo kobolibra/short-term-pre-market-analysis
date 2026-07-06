@@ -1,0 +1,1 @@
+{"id":"0166","script":"scripts/duanxianxia_indicator_listing_0166.py","args":["2026-07-06"],"timeout":600,"note":"VERIFY: fengdan接入 feature_builder_v12 + D1-D6重建 indicator_builder_v13 后, 列出真实capture的D1-D6指标(真封单/承接/资金占比/分歧), 校验 import self-test 已绿 + 覆盖率"}

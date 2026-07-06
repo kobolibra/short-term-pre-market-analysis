@@ -1,0 +1,7 @@
+{
+  "id": "0163",
+  "script": "scripts/duanxianxia_indicator_listing_0157.py",
+  "args": ["2026-07-06", "30"],
+  "timeout": 600,
+  "note": "Re-run D1-D6 dimension indicator listing for 2026-07-06 after auction backfill (0162 filled all 5 auction tables)."
+}

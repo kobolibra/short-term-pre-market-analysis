@@ -1,0 +1,7 @@
+{
+  "id": "0165",
+  "script": "scripts/duanxianxia_weimai_columns_probe_0165.py",
+  "args": ["2026-07-06"],
+  "timeout": 600,
+  "note": "READ-ONLY: dump weimai raw4/raw8/raw17 vs fengdan f925 to pin column meaning + fengdan/FF coverage counts"
+}

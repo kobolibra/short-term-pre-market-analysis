@@ -89,6 +89,7 @@ _MERGE_PRIORITY: Dict[str, Sequence[str]] = {
                       "auction.jjyd.qiangchou", "auction.jjyd.weimai"),
     "main_net_inflow": ("auction.jjyd.net_amount", "auction.jjyd.weimai"),
     "seal_amount": ("auction.jjyd.weimai", "auction.jjyd.vratio"),
+    "seal_amount_wan_raw": ("auction.jjyd.weimai",),  # 0156: 未剔除竞价成交的委买额(raw4); weimai-only
     "volume_ratio": ("auction.jjyd.vratio",),
     "grab_strength": ("auction.jjyd.qiangchou",),
     "concept": ("auction.jjyd.vratio", "auction.jjyd.net_amount",
@@ -260,6 +261,7 @@ def _assemble(code: str, srcmap: Mapping[str, Mapping[str, Any]]) -> Dict[str, A
     turnover_rate = take("turnover_rate")
     main_net = take("main_net_inflow")
     seal_amount = take("seal_amount")
+    seal_amount_raw = take("seal_amount_wan_raw")
     volume_ratio = take("volume_ratio")
     grab_strength = take("grab_strength")
     concept = take("concept")
@@ -292,6 +294,7 @@ def _assemble(code: str, srcmap: Mapping[str, Mapping[str, Any]]) -> Dict[str, A
         "superLargeOrder": super_large,
         "largeOrder": large,
         "sealAmount": seal_amount,
+        "sealAmountRaw": seal_amount_raw,   # 未剔除竞价成交的委买额 (元, weimai raw[4])
         "boardLabel": board,
         "price": price,
         "concept": concept,
@@ -405,6 +408,9 @@ def _self_test() -> bool:
     assert a["price"] == 45.66, a["price"]
     # seal_amount preferred from weimai raw[17]=208089万 -> x1e4
     assert a["sealAmount"] == 208089 * 10000, a["sealAmount"]
+    # sealAmountRaw = weimai raw[4] (未剔除竞价成交的委买额, 元)
+    assert a["sealAmountRaw"] == 2339609266, a["sealAmountRaw"]
+    assert a["_field_sources"]["seal_amount_wan_raw"] == "weimai"
     assert a["changeRate"] == 10.0, a["changeRate"]
     assert a["turnoverRate"] == 0.52, a["turnoverRate"]
     # 3 sources hit; qiangchou stock is a different code

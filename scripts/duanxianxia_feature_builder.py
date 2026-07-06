@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-duanxianxia_feature_builder.py  --  v11 milestone M1 (L3 feature/loader rebuild).
+duanxianxia_feature_builder.py  --  v12 milestone (L3 feature/loader rebuild).
 
 Canonical-first replacement for the legacy transform-2 loader.
 
@@ -15,6 +15,12 @@ sources into one flat, time-isolated feature table keyed by stock code, exposing
 the v10 factor primitives (FINAL semantics, see docs/rebuild-plan-v11.md +
 docs/HANDOFF.md §5.2) with canonical names and money in 元.
 
+v12 (2026-07-06): additionally overlays the auction.jjlive.fengdan named_dict
+source onto the merged features by code, exposing the 9:15/9:20/9:25 committed
+bid snapshots sealBid915/sealBid920/sealBid925 (元). These support D4 cross-check
+(真封单 = raw4-raw8 = f925) and the D5 time-divergence indicator. Fengdan does
+NOT participate in the 4-source merge/source_hits; it is a pure by-code overlay.
+
 Time isolation (v10 KEEP rule): T0 premarket auction captures are taken in the
 09:25 cron window. This builder additionally refuses any capture file whose
 embedded wall-clock timestamp is confidently AFTER the T0 cutoff (default
@@ -24,6 +30,7 @@ look-ahead data into T0 features.
 Public API:
     VERSION
     AUCTION_DATASETS
+    FENGDAN_DATASET
     DATASET_KINDS
     canonical_rows_for_dataset(rows, dataset_id) -> (canon_rows, n_errors)
     build_from_datasets(datasets, *, date=None, cutoff='09:29', capture_meta=None) -> dict
@@ -49,7 +56,7 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 from duanxianxia_canonical import REGISTRY
 from duanxianxia_canonical_routing import canonicalize_row, KIND_TO_DATASET
 
-VERSION = "feature_builder_v11.0"
+VERSION = "feature_builder_v12.0"
 
 # The 4 premarket auction sources merged into the T0 feature table.
 AUCTION_DATASETS: Tuple[str, ...] = (
@@ -58,6 +65,9 @@ AUCTION_DATASETS: Tuple[str, ...] = (
     "auction.jjyd.net_amount",
     "auction.jjyd.weimai",
 )
+
+# Overlaid (not merged) by-code onto the features: 9:15/9:20/9:25 committed bids.
+FENGDAN_DATASET: str = "auction.jjlive.fengdan"
 
 # dataset_id -> fetcher FetchResult.kind (reverse of routing map), for reference.
 DATASET_KINDS: Dict[str, str] = {v: k for k, v in KIND_TO_DATASET.items()}
@@ -111,6 +121,8 @@ _TS_KEYS = ("fetched_at", "captured_at", "capture_time", "timestamp",
 # Fail fast if a dataset id drifts away from the canonical registry.
 assert all(d in REGISTRY for d in AUCTION_DATASETS), \
     "AUCTION_DATASETS out of sync with duanxianxia_canonical.REGISTRY"
+assert FENGDAN_DATASET in REGISTRY, \
+    "FENGDAN_DATASET out of sync with duanxianxia_canonical.REGISTRY"
 
 
 # --------------------------------------------------------------------------- #
@@ -298,6 +310,12 @@ def _assemble(code: str, srcmap: Mapping[str, Mapping[str, Any]]) -> Dict[str, A
         "boardLabel": board,
         "price": price,
         "concept": concept,
+        # fengdan overlay (by-code, filled in build_from_datasets); 元
+        "sealBid915": None,
+        "sealBid920": None,
+        "sealBid925": None,
+        "fengdanConcept": None,
+        "fengdan_hit": False,
         "source_hits": sources,
         "source_hit_count": len(sources),
         "_field_sources": prov,
@@ -319,7 +337,9 @@ def build_from_datasets(datasets: Mapping[str, Sequence[Any]], *,
                         date: Optional[str] = None,
                         cutoff: str = T0_DEFAULT_CUTOFF,
                         capture_meta: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
-    """Pure core: dataset_id -> fetcher rows  ->  merged canonical feature table."""
+    """Pure core: dataset_id -> fetcher rows  ->  merged canonical feature table.
+    The 4 AUCTION_DATASETS are merged by code; FENGDAN_DATASET (if present) is
+    overlaid by code, contributing sealBid915/920/925 (元) but not source_hits."""
     datasets_canon: Dict[str, List[Dict[str, Any]]] = {}
     coverage: Dict[str, Dict[str, int]] = {}
     for dsid in AUCTION_DATASETS:
@@ -329,12 +349,37 @@ def build_from_datasets(datasets: Mapping[str, Sequence[Any]], *,
         coverage[dsid] = {"rows_in": len(rows), "canonical_ok": len(canon),
                           "canonical_error": errors}
     features = _merge(datasets_canon)
+
+    # --- fengdan overlay (by-code; does NOT affect source_hits/merge) ---
+    fengdan_rows = datasets.get(FENGDAN_DATASET) or []
+    fengdan_canon, fengdan_err = canonical_rows_for_dataset(fengdan_rows, FENGDAN_DATASET)
+    coverage[FENGDAN_DATASET] = {"rows_in": len(fengdan_rows),
+                                 "canonical_ok": len(fengdan_canon),
+                                 "canonical_error": fengdan_err}
+    fmap: Dict[str, Mapping[str, Any]] = {}
+    for c in fengdan_canon:
+        code = _norm_code(c.get("code"))
+        if code:
+            fmap[code] = c
+    n_fengdan_merged = 0
+    for feat in features:
+        fc = fmap.get(feat["code"])
+        if fc is not None:
+            feat["sealBid915"] = fc.get("seal_bid_915")
+            feat["sealBid920"] = fc.get("seal_bid_920")
+            feat["sealBid925"] = fc.get("seal_bid_925")
+            feat["fengdanConcept"] = fc.get("concept")
+            feat["fengdan_hit"] = True
+            n_fengdan_merged += 1
+
     features.sort(key=lambda f: (-f["source_hit_count"], f["code"]))
     return {
         "version": VERSION,
         "date": date,
         "t0_cutoff": cutoff,
         "n_features": len(features),
+        "n_fengdan": len(fmap),
+        "n_fengdan_merged": n_fengdan_merged,
         "coverage": coverage,
         "capture_meta": dict(capture_meta or {}),
         "features": features,
@@ -357,6 +402,18 @@ def build_feature_table(capture_dir: Any, *, cutoff: str = T0_DEFAULT_CUTOFF) ->
         capture_meta[dsid] = {"present": True, **meta}
         if picked is not None:
             datasets[dsid] = _rows_of(picked[1])
+    # fengdan (named_dict): its own dir, or any subdir whose name contains 'fengdan'
+    fdir = capture_dir / FENGDAN_DATASET
+    if not fdir.is_dir() and capture_dir.is_dir():
+        cand = [p for p in capture_dir.iterdir() if p.is_dir() and "fengdan" in p.name]
+        fdir = cand[0] if cand else None
+    if fdir is not None and Path(fdir).is_dir():
+        picked, meta = _pick_capture_file(Path(fdir), cutoff_secs)
+        capture_meta[FENGDAN_DATASET] = {"present": True, "dir": Path(fdir).name, **meta}
+        if picked is not None:
+            datasets[FENGDAN_DATASET] = _rows_of(picked[1])
+    else:
+        capture_meta[FENGDAN_DATASET] = {"present": False}
     return build_from_datasets(datasets, date=capture_dir.name, cutoff=cutoff,
                                capture_meta=capture_meta)
 
@@ -375,11 +432,15 @@ def _self_test() -> bool:
          "氢氟酸|电解液", 0.56]
     q = ["300279", "和晶科技", 22, None, "none", "1.01",
          "189", "机器人", "1.01", "189", None, "11.93", 0.09]
+    fd = {"code": "002407", "name": "多氟多", "board_label": "首板",
+          "amount_915": "1.5亿", "amount_920": "0.3亿", "amount_925": "0.2亿",
+          "latest_change_pct": "10.00%", "tag_1": "氢氟酸"}
     datasets = {
         "auction.jjyd.vratio": [{"code": "002407", "raw": v}],
         "auction.jjyd.weimai": [{"code": "002407", "raw": w}],
         "auction.jjyd.net_amount": [{"code": "002407", "raw": n}],
         "auction.jjyd.qiangchou": [{"code": "300279", "raw": q}],
+        "auction.jjlive.fengdan": [fd],
     }
     res = build_from_datasets(datasets, date="2026-06-29")
     feats = {f["code"]: f for f in res["features"]}
@@ -391,42 +452,47 @@ def _self_test() -> bool:
     assert a["_field_sources"]["free_float_mktcap"] == "weimai"
     # bidAmount from vratio raw[6]=1779万 -> 1.779e7 元
     assert a["bidAmount"] == 17_790_000, a["bidAmount"]
-    # _field_sources uses canonical field name "auction_turnover" (not output key "bidAmount")
     assert a["_field_sources"]["auction_turnover"] == "vratio"
-    # bidStrength = bidAmount / FF * 1e4
     assert abs(a["bidStrength"] - 17_790_000 / 46177984662 * 1e4) < 1e-9, a["bidStrength"]
-    # volumeRatio only from vratio raw[11]
     assert a["volumeRatio"] == 6.1, a["volumeRatio"]
-    # mainNetInflow preferred from net_amount raw[4]=14442万 -> 1.4442e8 元
     assert a["mainNetInflow"] == 144_420_000, a["mainNetInflow"]
     assert a["_field_sources"]["main_net_inflow"] == "net_amount"
-    # weimai-only primitives
     assert a["mainNetInflowFull"] == 144416464, a["mainNetInflowFull"]
     assert a["superLargeOrder"] == 203217386, a["superLargeOrder"]
     assert a["largeOrder"] == -58800922, a["largeOrder"]
     assert a["boardLabel"] == "首板", a["boardLabel"]
     assert a["price"] == 45.66, a["price"]
-    # seal_amount preferred from weimai raw[17]=208089万 -> x1e4
     assert a["sealAmount"] == 208089 * 10000, a["sealAmount"]
-    # sealAmountRaw = weimai raw[4] (未剔除竞价成交的委买额, 元)
     assert a["sealAmountRaw"] == 2339609266, a["sealAmountRaw"]
     assert a["_field_sources"]["seal_amount_wan_raw"] == "weimai"
     assert a["changeRate"] == 10.0, a["changeRate"]
     assert a["turnoverRate"] == 0.52, a["turnoverRate"]
-    # 3 sources hit; qiangchou stock is a different code
+    # fengdan overlay: 9:15/9:20/9:25 committed bids in 元
+    assert a["fengdan_hit"] is True, a["fengdan_hit"]
+    assert a["sealBid915"] == 150_000_000, a["sealBid915"]
+    assert a["sealBid920"] == 30_000_000, a["sealBid920"]
+    assert a["sealBid925"] == 20_000_000, a["sealBid925"]
+    # fengdan overlay must NOT inflate the 4-source merge accounting
     assert a["source_hit_count"] == 3, a["source_hits"]
     assert set(a["source_hits"]) == {"vratio", "weimai", "net_amount"}, a["source_hits"]
-    # mislabel guard: the legacy named field must never leak through
     assert "auction_volume_ratio" not in a
 
     b = feats["300279"]
     assert b["grabStrength"] == 11.93, b["grabStrength"]
     assert b["volumeRatio"] is None, b["volumeRatio"]
     assert b["source_hit_count"] == 1, b["source_hits"]
+    # no fengdan for this code
+    assert b["fengdan_hit"] is False, b["fengdan_hit"]
+    assert b["sealBid925"] is None, b["sealBid925"]
+
+    # fengdan coverage recorded
+    assert res["coverage"]["auction.jjlive.fengdan"]["canonical_ok"] == 1, res["coverage"]
+    assert res["n_fengdan_merged"] == 1, res["n_fengdan_merged"]
 
     # coverage: a positional row missing raw[] is counted, not crashed/dropped silently
     res2 = build_from_datasets({"auction.jjyd.vratio": [{"code": "x"}]})
     assert res2["coverage"]["auction.jjyd.vratio"]["canonical_error"] == 1, res2["coverage"]
+    assert res2["coverage"]["auction.jjlive.fengdan"]["rows_in"] == 0, res2["coverage"]
 
     # time-isolation: confident post-cutoff timestamp excluded; pre-cutoff kept
     cutoff_secs = _cutoff_seconds(T0_DEFAULT_CUTOFF)
@@ -445,7 +511,7 @@ _self_test()
 # --------------------------------------------------------------------------- #
 def _main(argv: Optional[Sequence[str]] = None) -> int:
     ap = argparse.ArgumentParser(
-        description="Build the v11 T0 canonical feature table from a captures/<date> dir")
+        description="Build the v12 T0 canonical feature table from a captures/<date> dir")
     ap.add_argument("capture_dir", help="path to captures/<YYYY-MM-DD>")
     ap.add_argument("--cutoff", default=T0_DEFAULT_CUTOFF,
                     help="T0 time-isolation cutoff HH:MM (default 09:29)")

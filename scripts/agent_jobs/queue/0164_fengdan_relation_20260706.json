@@ -1,0 +1,7 @@
+{
+  "id": "0164",
+  "script": "scripts/duanxianxia_fengdan_relation_probe_0164.py",
+  "args": ["2026-07-06"],
+  "timeout": 600,
+  "note": "READ-ONLY: verify amount_915/920/925 vs bidAmount/weimai seal relationship (H1/H2)"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "0162",
+  "script": "scripts/duanxianxia_fetch_retry.py",
+  "args": ["--backfill", "auction_vratio", "auction_qiangchou", "auction_net_amount", "auction_weimai", "auction_fengdan"],
+  "timeout": 900,
+  "note": "User-requested: backfill TODAY's premarket auction capture (5 datasets). Uses retry-patched fetcher + persist_capture into captures/<today>."
+}

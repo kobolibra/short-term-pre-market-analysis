@@ -1,0 +1,7 @@
+{
+  "id": "0157",
+  "script": "scripts/duanxianxia_indicator_listing_0157.py",
+  "args": ["2026-07-06", "30"],
+  "timeout": 300,
+  "note": "Task 0157: list D1-D6 dimension indicators for 2026-07-06 premarket auction captures via feature_builder+indicator_builder."
+}

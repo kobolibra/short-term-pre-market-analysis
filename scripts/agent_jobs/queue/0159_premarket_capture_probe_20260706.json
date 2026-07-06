@@ -1,0 +1,7 @@
+{
+  "id": "0159",
+  "script": "scripts/duanxianxia_premarket_capture_probe_0159.py",
+  "args": [],
+  "timeout": 900,
+  "note": "Probe premarket capture-only to surface per-dataset auction.jjyd.* fetch errors; diagnose why premarket auction data stopped downloading."
+}

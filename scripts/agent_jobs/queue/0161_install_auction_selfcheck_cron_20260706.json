@@ -1,0 +1,7 @@
+{
+  "id": "0161",
+  "script": "scripts/duanxianxia_0161_install_auction_selfcheck_cron.py",
+  "args": [],
+  "timeout": 300,
+  "note": "Install trading-day 09:30 auction premarket self-check cron (idempotent; preserves all existing crons)."
+}

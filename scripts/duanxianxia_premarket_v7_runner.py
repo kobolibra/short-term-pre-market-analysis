@@ -29,6 +29,30 @@ if str(SCRIPTS_DIR) not in sys.path:
 # Stage 1+2: import batch (no main runs because __name__ != '__main__')
 import duanxianxia_batch  # type: ignore  # noqa: E402
 
+# Stage 2b: table-level fetch retry + Playwright timeout floor for the PREMARKET
+# path. Root cause of missing auction.jjyd.* / auction.jjlive.* tables on some
+# trading days: cron_runner.sh routes premarket through THIS runner, which --
+# unlike the non-premarket branch that goes via duanxianxia_fetch_retry.py --
+# applied NO retry at all. A single transient auction fetch blip at the 09:25
+# cron (Playwright networkidle 60s timeout / requests SSL EOF) therefore
+# dropped the whole auction group to 0 rows for the day with no second attempt,
+# while the faster same-group tables (qxlive / rank) still succeeded. Reuse the
+# exact, already-tested retry monkey-patch here so the fragile auction fetchers
+# get 3x exponential-backoff retries + a 60s Playwright wait-timeout floor too.
+# The patch is class-level on DuanxianxiaFetcher, so it applies to the shared
+# class object that batch.py already imported. Never let hardening break capture.
+try:
+    import duanxianxia_fetch_retry as _fetch_retry  # noqa: E402
+
+    _n_retry = _fetch_retry.install_retry()
+    _n_tmo = _fetch_retry.install_pw_timeout_floor()
+    sys.stderr.write(
+        f"[premarket_v7_runner] fetch retry patched={_n_retry} "
+        f"pw_timeout_floored={_n_tmo}\n"
+    )
+except Exception as _exc:  # noqa: BLE001 -- hardening must never break capture
+    sys.stderr.write(f"[premarket_v7_runner] fetch retry install skipped: {_exc}\n")
+
 # Stage 3: pull premarket-for-batch adapters (both engines importable).
 from duanxianxia_premarket_v7_3_runner import build_premarket_analysis_v7_3  # noqa: E402
 from duanxianxia_premarket_v9_runner import build_premarket_analysis_v9  # noqa: E402

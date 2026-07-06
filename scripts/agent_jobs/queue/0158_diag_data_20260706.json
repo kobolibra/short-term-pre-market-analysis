@@ -1,0 +1,7 @@
+{
+  "id": "0158",
+  "script": "scripts/duanxianxia_diag_data_0158.py",
+  "args": ["2026-07-06"],
+  "timeout": 180,
+  "note": "Task 0158: read-only diagnostic of server-local data availability for 2026-07-06 (captures datasets, reports tree, analysis_v9 schema)."
+}

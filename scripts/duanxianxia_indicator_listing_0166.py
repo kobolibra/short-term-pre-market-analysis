@@ -49,7 +49,7 @@ def main(argv=None) -> int:
     ap.add_argument("--cutoff", default=ib.fb.T0_DEFAULT_CUTOFF)
     args = ap.parse_args(argv)
 
-    root = _project_root()
+    import v10_optimize as _v10; root = Path(_v10.DEFAULT_PROJECT_ROOT)
     cap_root = root / "captures"
     date = args.date
     if date is None:

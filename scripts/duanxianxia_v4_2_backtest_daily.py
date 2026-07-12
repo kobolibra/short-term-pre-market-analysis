@@ -37,6 +37,13 @@ def _past_trading_days(n: int = 5) -> List[str]:
 
 def main() -> int:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    # 幂等：今天的结果已存在则跳过
+    today = date.today().isoformat()
+    out_path = OUTPUT_DIR / f"{today}.json"
+    if out_path.exists():
+        print(f"v4.2 backtest skipped: {out_path} already exists")
+        return 0
+
     days = _past_trading_days(5)
     history = D6History()
     summary: Dict[str, Any] = {"version": VERSION, "days": days, "results": []}
@@ -82,8 +89,6 @@ def main() -> int:
             summary["results"].append({"date": day, "status": "error", "error": str(e)})
 
     # 写 JSON
-    today = date.today().isoformat()
-    out_path = OUTPUT_DIR / f"{today}.json"
     out_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     print(f"v4.2 backtest done: {len(days)} days → {out_path}")
     return 0

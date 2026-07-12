@@ -157,14 +157,14 @@ def _parse_first_seal_seconds(first_seal_time: Optional[str]) -> Optional[int]:
 
 
 def _calc_fill_ratio(feature: Optional[Dict[str, Any]]) -> Optional[float]:
-    """计算 fill_ratio = bidAmount / sealAmountRaw"""
+    """计算 fill_ratio = bidAmount / sealBid925（封单无法覆盖竞价卖压则>1，风险高）"""
     if feature is None:
         return None
     bid = feature.get("bidAmount")
-    seal_raw = feature.get("sealAmountRaw")
-    if bid is None or seal_raw in (None, 0):
+    seal = feature.get("sealBid925")
+    if bid is None or seal in (None, 0):
         return None
-    return bid / seal_raw
+    return bid / seal
 
 
 def _calc_seal_amount_ratio(
@@ -172,12 +172,13 @@ def _calc_seal_amount_ratio(
     review_free_float_mktcap: Optional[float]
 ) -> Optional[float]:
     """
-    计算 seal_amount_ratio = 封单金额 / 流通市值 × 100%
-    封单金额优先取 fengdan sealBid925，其次取 weimai sealAmount。
+    计算 seal_amount_ratio = 封单金额 / 流通市值 × 100%。
+    封单金额取 fengdan sealBid925。
+    流通市值优先取 feature 自带，其次取 review_plate 的流通市值。
     """
     if feature is None:
         return None
-    seal = feature.get("sealBid925") or feature.get("sealAmount")
+    seal = feature.get("sealBid925")
     ff = feature.get("free_float_mktcap") or review_free_float_mktcap
     if seal is None or ff in (None, 0):
         return None
@@ -185,10 +186,10 @@ def _calc_seal_amount_ratio(
 
 
 def _calc_seal_strength(feature: Optional[Dict[str, Any]]) -> Optional[float]:
-    """计算 seal_strength = 封单金额 / 竞价成交额"""
+    """计算 seal_strength = 封单金额 / 竞价成交额（微观盘口承接意愿）"""
     if feature is None:
         return None
-    seal = feature.get("sealBid925") or feature.get("sealAmount")
+    seal = feature.get("sealBid925")
     bid = feature.get("bidAmount")
     if seal is None or bid in (None, 0):
         return None
@@ -432,7 +433,7 @@ def _self_test() -> bool:
 
     # 测试路由: 一字板+开板=0 → 一字封
     rp1 = {"zt_type": "一字板", "board_count_text": "2天2板", "streak": 2, "open_num": 0}
-    feat1 = {"code": "000001", "name": "测试", "bidAmount": 1e8, "sealAmountRaw": 2e8,
+    feat1 = {"code": "000001", "name": "测试", "bidAmount": 1e8,
              "sealBid925": 3e8, "changeRate": 5.0, "turnoverRate": 0.5}
     rs1 = route_single_stock("000001", feat1, rp1)
     assert rs1.pool == PoolType.POOL_YIZI, f"Expected 一字封, got {rs1.pool}"
@@ -466,7 +467,7 @@ def _self_test() -> bool:
     assert RiskTag.HIGH_LEVEL in rs6.risk_tags
 
     # 测试 WEAK_SEAL: fill_ratio > 1.2
-    feat_weak = {"code": "000007", "bidAmount": 2e8, "sealAmountRaw": 1e8}  # fill=2.0
+    feat_weak = {"code": "000007", "bidAmount": 2e8, "sealBid925": 1e8}  # fill=2.0
     rp7 = {"zt_type": "普通板", "board_count_text": "首板", "streak": 1, "open_num": 0}
     rs7 = route_single_stock("000007", feat_weak, rp7)
     assert RiskTag.WEAK_SEAL in rs7.risk_tags, f"Expected WEAK_SEAL, got {rs7.risk_tags}"

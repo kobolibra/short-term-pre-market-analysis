@@ -159,6 +159,38 @@ def _turnover_rate_score(turnover: Optional[float], median: Optional[float],
         return max(0.0, 60.0 - (turnover - hi) / max(median, 0.01) * 40.0)
 
 
+def _safe_volume_ratio(
+    volume_ratio: Optional[float],
+    yesterday_bid_amount: Optional[float],
+    all_yesterday_bid_amounts: List[float],
+    cap: float = 3.0,
+) -> Optional[float]:
+    """
+    安全 volume_ratio：小基数保护 + 封顶。
+
+    设计文档 §2.1:
+    - 若昨日竞价成交额低于全市场 10% 分位数 → 返回 None（不参与排名）
+    - 正常取值时封顶 cap 倍
+
+    Args:
+        volume_ratio: 原始 volume_ratio
+        yesterday_bid_amount: 该股票昨日竞价成交额
+        all_yesterday_bid_amounts: 全市场昨日竞价成交额列表
+        cap: 封顶倍数 (默认 3.0)
+    """
+    if volume_ratio is None:
+        return None
+    # 小基数保护：昨日竞价额低于 10% 分位 → NULL
+    if yesterday_bid_amount is not None and all_yesterday_bid_amounts:
+        clean = sorted([v for v in all_yesterday_bid_amounts if v is not None and v > 0])
+        if clean and len(clean) >= 10:
+            p10 = clean[int(len(clean) * 0.10)]
+            if yesterday_bid_amount < p10:
+                return None
+    # 封顶
+    return min(volume_ratio, cap)
+
+
 # ============================================================================
 # 风控过滤
 # ============================================================================
@@ -365,6 +397,8 @@ def _rank_pool_huanshou(
 def _rank_pool_fenqi(
     stocks: List[RoutedStock],
     pool_median_turnover: Optional[float],
+    yesterday_bid_map: Optional[Dict[str, float]] = None,
+    all_yesterday_bids: Optional[List[float]] = None,
 ) -> List[RankedStock]:
     """
     分歧封池排名。
@@ -372,12 +406,16 @@ def _rank_pool_fenqi(
     change_rate 0%-6% 最优 → turnover_rate 降序 → volume_ratio 正向加分
     """
     ranked: List[RankedStock] = []
+    yesterday_bid_map = yesterday_bid_map or {}
+    all_yesterday_bids = all_yesterday_bids or []
 
     for rs in stocks:
         feat = rs.feature or {}
         change_rate = feat.get("changeRate")
         turnover = feat.get("turnoverRate")
-        volume_ratio = feat.get("volumeRatio")
+        raw_volume_ratio = feat.get("volumeRatio")
+        yesterday_bid = yesterday_bid_map.get(rs.code)
+        volume_ratio = _safe_volume_ratio(raw_volume_ratio, yesterday_bid, all_yesterday_bids)
 
         rk = RankedStock(
             code=rs.code, name=rs.name, pool=rs.pool,
@@ -398,10 +436,9 @@ def _rank_pool_fenqi(
         # 修复必须放量: turnover_rate 降序
         rk.score_secondary = turnover if turnover is not None else -999.0
 
-        # volume_ratio: 封顶 3 倍, 大于 1 越好
+        # volume_ratio: 经 _safe_volume_ratio 封顶+小基数保护
         if volume_ratio is not None:
-            vr = min(volume_ratio, 3.0)
-            rk.score_tertiary = vr
+            rk.score_tertiary = volume_ratio
         else:
             rk.score_tertiary = -999.0
 
@@ -415,6 +452,8 @@ def _rank_pool_feiban(
     stocks: List[RoutedStock],
     pool_median_turnover: Optional[float],
     pool_median_bid_amount: Optional[float],
+    yesterday_bid_map: Optional[Dict[str, float]] = None,
+    all_yesterday_bids: Optional[List[float]] = None,
 ) -> List[RankedStock]:
     """
     非板池排名。
@@ -422,11 +461,15 @@ def _rank_pool_feiban(
     change_rate 3%-7% 最优 → volume_ratio 降序 → bid_amount 降序
     """
     ranked: List[RankedStock] = []
+    yesterday_bid_map = yesterday_bid_map or {}
+    all_yesterday_bids = all_yesterday_bids or []
 
     for rs in stocks:
         feat = rs.feature or {}
         change_rate = feat.get("changeRate")
-        volume_ratio = feat.get("volumeRatio")
+        raw_volume_ratio = feat.get("volumeRatio")
+        yesterday_bid = yesterday_bid_map.get(rs.code)
+        volume_ratio = _safe_volume_ratio(raw_volume_ratio, yesterday_bid, all_yesterday_bids)
         bid_amount = feat.get("bidAmount")
 
         rk = RankedStock(
@@ -435,9 +478,9 @@ def _rank_pool_feiban(
         )
         rk.score_primary = _change_rate_score(change_rate, 3.0, 7.0)
 
-        # volume_ratio: 封顶 3 倍, 越大越好
+        # volume_ratio: 经 _safe_volume_ratio 封顶+小基数保护
         if volume_ratio is not None:
-            rk.score_secondary = min(volume_ratio, 3.0)
+            rk.score_secondary = volume_ratio
         else:
             rk.score_secondary = -999.0
 
@@ -552,6 +595,8 @@ def rank_pool(
     pool_type: PoolType,
     hot_rank_map: Optional[Dict[str, int]] = None,
     rocket_rank_map: Optional[Dict[str, int]] = None,
+    yesterday_bid_map: Optional[Dict[str, float]] = None,
+    all_yesterday_bids: Optional[List[float]] = None,
 ) -> PoolRankResult:
     """
     对单个池执行完整排名流程: 风控过滤 → 核心排名 → Bonus 调制 → Top 3。
@@ -561,6 +606,8 @@ def rank_pool(
         pool_type: 池类型
         hot_rank_map: code → hot_rank 映射
         rocket_rank_map: code → rocket_rank 映射
+        yesterday_bid_map: code → T-1 竞价成交额映射（用于 volume_ratio 小基数保护）
+        all_yesterday_bids: 全市场 T-1 竞价成交额列表（用于 volume_ratio 10% 分位计算）
 
     Returns:
         PoolRankResult 包含全部排名和 Top 3
@@ -606,9 +653,11 @@ def rank_pool(
         pool_std = _pool_std([rs.feature.get("turnoverRate") for rs in passed if rs.feature])
         ranked = _rank_pool_huanshou(passed, result.pool_median_turnover, pool_std)
     elif pool_type == PoolType.POOL_FENQI:
-        ranked = _rank_pool_fenqi(passed, result.pool_median_turnover)
+        ranked = _rank_pool_fenqi(passed, result.pool_median_turnover,
+                                     yesterday_bid_map, all_yesterday_bids)
     elif pool_type == PoolType.POOL_FEIBAN:
-        ranked = _rank_pool_feiban(passed, result.pool_median_turnover, result.pool_median_bid_amount)
+        ranked = _rank_pool_feiban(passed, result.pool_median_turnover, result.pool_median_bid_amount,
+                                     yesterday_bid_map, all_yesterday_bids)
     else:
         ranked = []
 
@@ -635,6 +684,8 @@ def rank_all_pools(
     pools: Dict[PoolType, List[RoutedStock]],
     hot_rank_map: Optional[Dict[str, int]] = None,
     rocket_rank_map: Optional[Dict[str, int]] = None,
+    yesterday_bid_map: Optional[Dict[str, float]] = None,
+    all_yesterday_bids: Optional[List[float]] = None,
 ) -> Dict[PoolType, PoolRankResult]:
     """
     对所有四个池执行完整排名。
@@ -643,6 +694,8 @@ def rank_all_pools(
         pools: {PoolType: [RoutedStock]} 路由后的分池股票
         hot_rank_map: code → hot_rank 映射
         rocket_rank_map: code → rocket_rank 映射
+        yesterday_bid_map: code → T-1 竞价成交额映射
+        all_yesterday_bids: 全市场 T-1 竞价成交额列表
 
     Returns:
         {PoolType: PoolRankResult} 各池排名结果
@@ -651,7 +704,10 @@ def rank_all_pools(
     for pool_type in [PoolType.POOL_YIZI, PoolType.POOL_HUANSHOU,
                        PoolType.POOL_FENQI, PoolType.POOL_FEIBAN]:
         stocks = pools.get(pool_type, [])
-        results[pool_type] = rank_pool(stocks, pool_type, hot_rank_map, rocket_rank_map)
+        results[pool_type] = rank_pool(
+            stocks, pool_type, hot_rank_map, rocket_rank_map,
+            yesterday_bid_map, all_yesterday_bids,
+        )
     return results
 
 

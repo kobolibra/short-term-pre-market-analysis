@@ -358,6 +358,222 @@ def run_v4_2_pipeline(
 
 
 # ============================================================================
+# batch.py 适配器 (供 cron 管线调用)
+# ============================================================================
+
+def build_premarket_analysis_v4_2(
+    report: Dict[str, Any],
+    project_root: Optional[str | Path] = None,
+) -> Dict[str, Any]:
+    """batch.py 适配器: report → v4.2 决策。
+
+    签名与 build_premarket_analysis_v9 / build_premarket_analysis_v7_3 一致。
+    被 duanxianxia_premarket_v7_runner.py monkey-patch 到 batch.py 的
+    build_premarket_analysis 函数上。
+
+    数据流:
+      cron → duanxianxia_cron_runner.sh premarket
+      → duanxianxia_premarket_v7_runner.py (ACTIVE_ENGINE = 此函数)
+      → duanxianxia_batch.py main() → build_premarket_analysis(report)
+      → 此函数 → run_v4_2_pipeline() → 适配 batch 格式
+    """
+    # 推断交易日期
+    trade_date = _infer_trade_date_from_report(report)
+
+    # 确定 project_root
+    from duanxianxia_premarket_v7_2_runner import DEFAULT_PROJECT_ROOT
+    root = Path(project_root) if project_root is not None else DEFAULT_PROJECT_ROOT
+
+    # 运行 v4.2 管线
+    result = run_v4_2_pipeline(
+        date_t0=trade_date,
+        project_root=str(root),
+    )
+
+    if "error" in result:
+        return {
+            "enabled": False,
+            "version": VERSION,
+            "error": result["error"],
+            "meta": {"engine": "premarket_v4_2", "error": result["error"]},
+        }
+
+    # 适配 batch 格式
+    ep = result.get("execution_plan", {})
+    orders = ep.get("orders", [])
+    emo = result.get("emotion", {})
+
+    # 买入候选 (所有订单)
+    buy_rows = _v4_2_orders_to_batch_rows(orders, emo)
+    buy_codes = {str(r.get("code")) for r in buy_rows}
+
+    # 观察候选 (排名靠前但未入选的，从各池 top_n 中取)
+    watch_rows = _v4_2_watch_candidates(result, buy_codes)
+
+    # 闸门信息
+    buy_gate = {
+        "regime": emo.get("state", "UNKNOWN"),
+        "selected": len(buy_rows),
+        "emotion_state": emo.get("state"),
+        "position_cap": emo.get("total_position_cap", 1.0),
+        "buy_mode": emo.get("buy_mode"),
+        "crisis_count": emo.get("crisis_count", 0),
+        "t0_downgraded": emo.get("t0_downgraded", False),
+    }
+
+    total_candidates = sum(
+        result.get("pools", {}).get(pn, {}).get("n_total", 0)
+        for pn in ["一字封", "换手封", "分歧封", "非板"]
+    )
+
+    return {
+        "enabled": True,
+        "version": VERSION,
+        "candidate_count": total_candidates,
+        "top_candidates": buy_rows,
+        "actionable_candidates": buy_rows,
+        "watch_candidates": watch_rows,
+        "buy_gate": buy_gate,
+        "meta": {
+            "engine": "premarket_v4_2",
+            "emotion": emo,
+            "buy_gate": buy_gate,
+        },
+        # 保留完整 v4.2 结果供调试
+        "v4_2_raw": {
+            "emotion": emo,
+            "pools": result.get("pools", {}),
+            "warnings": result.get("warnings", []),
+            "diagnostics": result.get("diagnostics", {}),
+        },
+    }
+
+
+def _infer_trade_date_from_report(report: Dict[str, Any]) -> str:
+    """从 batch.py 的 report dict 中推断交易日期。
+
+    优先从 items[0].capture_path 提取，其次用 generated_at。
+    """
+    # 尝试从 capture_path 提取
+    for item in report.get("items", []) or []:
+        capture_path = str((item or {}).get("capture_path") or "").strip()
+        if not capture_path:
+            continue
+        parts = Path(capture_path).parts
+        for idx, part in enumerate(parts):
+            if part == "captures" and idx + 1 < len(parts):
+                try:
+                    from datetime import datetime
+                    return datetime.fromisoformat(parts[idx + 1]).strftime("%Y-%m-%d")
+                except Exception:
+                    pass
+
+    # 回退到 generated_at
+    generated_at = str(report.get("generated_at") or "").strip()
+    if len(generated_at) >= 10:
+        try:
+            from datetime import datetime
+            return datetime.fromisoformat(generated_at[:10]).strftime("%Y-%m-%d")
+        except Exception:
+            pass
+
+    # 最后回退到今天
+    from datetime import date
+    return date.today().isoformat()
+
+
+def _v4_2_orders_to_batch_rows(
+    orders: List[Dict[str, Any]],
+    emo: Dict[str, Any],
+) -> List[Dict[str, Any]]:
+    """将 v4.2 订单列表转换为 batch.py 兼容的候选行格式。"""
+    rows: List[Dict[str, Any]] = []
+    for i, order in enumerate(orders):
+        pool = order.get("pool", "")
+        reasons = _v4_2_reasons(order, emo)
+        risks = _v4_2_risks(order)
+
+        rows.append({
+            "code": order.get("code", ""),
+            "name": order.get("name", ""),
+            "rank": order.get("pool_rank", i + 1),
+            "action_type": "BUY",
+            "pre_gate_action_type": "BUY",
+            "score": order.get("position_pct", 0),
+            "conviction_score": order.get("position_pct", 0),
+            "expected_return_score": order.get("position_pct", 0),
+            "action_reason": "；".join(reasons),
+            "reasons": reasons,
+            "risks": risks,
+            "source_hit_count": 1,
+            "pool": pool,
+            "position_pct": order.get("position_pct", 0),
+            "buy_strategy": order.get("buy_strategy", ""),
+            "confirmation_threshold": order.get("confirmation_threshold", "正常"),
+            "height_mult": order.get("height_mult", 1.0),
+            "risk_mult": order.get("risk_mult", 1.0),
+            "emotion_cap": order.get("emotion_cap", 1.0),
+        })
+    return rows
+
+
+def _v4_2_watch_candidates(
+    result: Dict[str, Any],
+    buy_codes: set,
+    max_watch: int = 15,
+) -> List[Dict[str, Any]]:
+    """从各池 top_n 中提取未入选的股票作为观察候选。"""
+    watch_rows: List[Dict[str, Any]] = []
+    for pool_name, pool_data in result.get("pools", {}).items():
+        for rk in pool_data.get("top_n", []):
+            if str(rk.get("code", "")) in buy_codes:
+                continue
+            routed = rk.get("routed", {})
+            reasons = [
+                f"{pool_name}池排名#{rk.get('rank', '?')}",
+                f"板数={routed.get('board_height', 0)}",
+            ]
+            if rk.get("bonus_applied"):
+                reasons.append(f"Bonus +{rk['bonus_applied']}")
+            watch_rows.append({
+                "code": rk.get("code", ""),
+                "name": rk.get("name", ""),
+                "rank": rk.get("rank", 0),
+                "action_type": "WATCH",
+                "pre_gate_action_type": "WATCH",
+                "score": rk.get("score_primary") or 0,
+                "action_reason": "；".join(reasons),
+                "reasons": reasons,
+                "risks": routed.get("risk_tags", []),
+                "source_hit_count": 0,
+                "pool": pool_name,
+            })
+    return watch_rows[:max_watch]
+
+
+def _v4_2_reasons(order: Dict[str, Any], emo: Dict[str, Any]) -> List[str]:
+    """生成 v4.2 订单的推荐理由。"""
+    reasons = [f"{order.get('pool', '')}池排名#{order.get('pool_rank', '?')}"]
+    pos = order.get("position_pct", 0)
+    reasons.append(f"仓位{pos:.1f}%")
+    buy = order.get("buy_strategy", "")
+    if buy:
+        reasons.append(buy)
+    if order.get("height_mult", 1.0) < 1.0:
+        reasons.append(f"高度调制×{order['height_mult']:.1f}")
+    if order.get("risk_mult", 1.0) < 1.0:
+        reasons.append(f"风险调制×{order['risk_mult']:.1f}")
+    if emo.get("t0_downgraded"):
+        reasons.append(f"T0降级: {emo.get('t0_downgrade_reason', '')}")
+    return reasons
+
+
+def _v4_2_risks(order: Dict[str, Any]) -> List[str]:
+    """提取 v4.2 订单的风险标签。"""
+    return order.get("risk_tags", [])
+
+
+# ============================================================================
 # CLI
 # ============================================================================
 

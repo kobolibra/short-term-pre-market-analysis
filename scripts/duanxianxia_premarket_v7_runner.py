@@ -53,12 +53,13 @@ try:
 except Exception as _exc:  # noqa: BLE001 -- hardening must never break capture
     sys.stderr.write(f"[premarket_v7_runner] fetch retry install skipped: {_exc}\n")
 
-# Stage 3: pull premarket-for-batch adapters (both engines importable).
+# Stage 3: pull premarket-for-batch adapters (all engines importable).
 from duanxianxia_premarket_v7_3_runner import build_premarket_analysis_v7_3  # noqa: E402
 from duanxianxia_premarket_v9_runner import build_premarket_analysis_v9  # noqa: E402
+from duanxianxia_v4_2_runner import build_premarket_analysis_v4_2  # noqa: E402
 
-# Active premarket decision engine. Switch to build_premarket_analysis_v7_3 to roll back.
-ACTIVE_ENGINE = build_premarket_analysis_v9
+# Active premarket decision engine. Switch to build_premarket_analysis_v7_3 / v9 to roll back.
+ACTIVE_ENGINE = build_premarket_analysis_v4_2
 
 # Stage 4: monkey-patch
 duanxianxia_batch.build_premarket_analysis = ACTIVE_ENGINE

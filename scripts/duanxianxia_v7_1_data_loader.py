@@ -223,6 +223,18 @@ def load_premarket_bundle(date_t0: str, project_root: Path | str, *, history_day
     ltgd_all = _try(DS_REVIEW_LTGD)
     ltgd_5day_t1 = [r for r in ltgd_all if str(r.get("周期", "") or "").strip() == "5日"]
     ztpool_t1 = _try(DS_HOME_ZTPOOL)
+    # home.ztpool 的 晋级率 在 capture.meta.groups 中，不在 rows 中
+    # 始终从 meta.groups 提取晋级率数据用于情绪判定
+    try:
+        ztpool_cap = load_capture_at_time(project_root, date_t1_str, DS_HOME_ZTPOOL, pick="latest", raise_if_missing=False)
+        if ztpool_cap:
+            ztpool_meta = _extract_meta(ztpool_cap)
+            ztpool_groups = ztpool_meta.get("groups", [])
+            if isinstance(ztpool_groups, list) and ztpool_groups:
+                # 用 groups 替代 rows，因为 groups 包含 晋级率 字段
+                ztpool_t1 = ztpool_groups
+    except Exception:
+        pass
 
     # T0 qxlive 顶部指标:今日早盘 ≤09:33 首批快照(当日市场环境/regime 口径)。
     q0 = load_capture_at_time(project_root, date_t0, DS_HOME_QXLIVE_TOP, max_hhmmss=qxlive_premarket_boundary, pick="earliest_before", raise_if_missing=False)

@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-13_rerun3_duanxianxia_v4_2_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-13T13:50:00+08:00",
+  "note": "v4.2 premarket RE-RUN: fix ztpool - 晋级率 is actually in capture.meta.groups (not rows)"
+}

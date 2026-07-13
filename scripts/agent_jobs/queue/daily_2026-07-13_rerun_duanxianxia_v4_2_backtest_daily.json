@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-13_rerun_duanxianxia_v4_2_backtest_daily",
+  "script": "scripts/duanxianxia_v4_2_backtest_daily.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-13T12:00:00+08:00",
+  "note": "v4.2 backtest re-run with fixes (raw field pass-through + ztpool promo_rate + vratio cutoff 100000)"
+}

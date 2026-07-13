@@ -54,6 +54,7 @@ def main() -> int:
                 date_t0=day,
                 project_root=str(PROJECT_ROOT),
                 history=history,
+                premarket_auction_cutoff="100000",  # 回测放宽截断时间，避免因数据采集时间差异导致数据缺失
             )
             if "error" in result:
                 summary["results"].append({"date": day, "status": "error", "error": result["error"]})

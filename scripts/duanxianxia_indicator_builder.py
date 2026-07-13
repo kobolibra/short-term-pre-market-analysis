@@ -15,7 +15,6 @@ resolved by an external layer -- this builder only passes concept through):
       d1_auction_change_pct   竞价涨幅 %                    = changeRate
   D2  量能   volume / energy
       d2_bid_amount           竞价成交额 (元)             = bidAmount (raw6)
-      d2_bid_strength         竞价强度                    = bidAmount / FF
       d2_volume_ratio         量比                        = volumeRatio
       d2_turnover_rate        换手率                      = turnoverRate
       d2_grab_strength        抢筹强度 (与量比不同, 保留)   = grabStrength
@@ -58,13 +57,13 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 import duanxianxia_feature_builder as fb
 
-VERSION = "indicator_builder_v13.0"
+VERSION = "indicator_builder_v14.0"
 
 # Dimension -> (display name, ordered numeric indicator keys)
 DIMENSIONS: Dict[str, Dict[str, Any]] = {
     "D1": {"name": "定价", "keys": ["d1_auction_change_pct"]},
     "D2": {"name": "量能", "keys": [
-        "d2_bid_amount", "d2_bid_strength", "d2_volume_ratio",
+        "d2_bid_amount", "d2_volume_ratio",
         "d2_turnover_rate", "d2_grab_strength"]},
     "D3": {"name": "资金质量", "keys": ["d3_main_net_inflow", "d3_fund_ratio"]},
     "D4": {"name": "封板承接", "keys": [
@@ -119,7 +118,6 @@ def _indicators_for(feat: Mapping[str, Any]) -> Dict[str, Any]:
         "d1_auction_change_pct": change,
         # D2 量能
         "d2_bid_amount": bid,
-        "d2_bid_strength": _ratio(bid, ff),
         "d2_volume_ratio": feat.get("volumeRatio"),
         "d2_turnover_rate": feat.get("turnoverRate"),
         "d2_grab_strength": feat.get("grabStrength"),
@@ -220,7 +218,6 @@ def _self_test() -> bool:
     assert a["d1_auction_change_pct"] == 10.0, a["d1_auction_change_pct"]
     # D2
     assert a["d2_bid_amount"] == 17_790_000, a["d2_bid_amount"]
-    assert abs(a["d2_bid_strength"] - 17_790_000 / 46177984662) < 1e-12
     assert a["d2_volume_ratio"] == 6.1, a["d2_volume_ratio"]
     assert a["d2_turnover_rate"] == 0.52, a["d2_turnover_rate"]
     assert a["d2_grab_strength"] is None, a["d2_grab_strength"]

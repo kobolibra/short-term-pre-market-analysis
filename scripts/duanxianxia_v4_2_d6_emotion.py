@@ -231,7 +231,7 @@ def _extract_review_daily_pbbx_from_ztpool(ztpool_rows: List[Dict[str, Any]]) ->
     }
     for row in (ztpool_rows or []):
         ladder = str(row.get("ladder_group") or row.get("分组名称") or "").strip()
-        promo = row.get("promo_rate")  # 已经是百分比数值
+        promo = row.get("promo_rate") or row.get("晋级率")  # 回退到中文字段名
         if promo is None:
             continue
         try:

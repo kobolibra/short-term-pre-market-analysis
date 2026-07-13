@@ -248,7 +248,7 @@ REGISTRY.update({
     },
     "auction.jjlive.fengdan": {
         "raw_kind": "named_dict",
-        "parse_spec": "dict(en_keys+section)",
+        "parse_spec": "dict(en_keys)",
         "fields": [
             _f("code", "text", "code"),
             _f("name", "text", "name"),
@@ -259,12 +259,7 @@ REGISTRY.update({
             _f("seal_bid_925", "cn_amount", "amount_925", caliber="commit_bid"),
             _f("latest_change_pct", "cn_pct", "latest_change_pct"),
             _f("concept", "text", "tag_1"),
-            _f("section_yizi_count", "count", "section_yizi_count"),
-            _f("section_seal_total", "cn_amount", "section_seal_total"),
-            _f("section_t15_total", "cn_amount", "section_t15_total"),
-            _f("section_t20_total", "cn_amount", "section_t20_total"),
-            _f("section_t25_total", "cn_amount", "section_t25_total"),
-        ],
+            ],
     },
     "home.ztpool": {
         "raw_kind": "named_dict",
@@ -494,15 +489,11 @@ def _self_test():
         {"rank": 1, "code": "603890", "name": "\u6625\u79cb\u7535\u5b50",
          "tag_1": "AI PC", "board_label": "2\u677f",
          "amount_915": "63.9\u4ebf", "amount_920": "19.7\u4ebf",
-         "amount_925": "20.6\u4ebf", "latest_change_pct": "10.00%",
-         "section_yizi_count": 5, "section_seal_total": "37.1\u4ebf",
-         "section_t15_total": "180.8\u4ebf", "section_t20_total": "33\u4ebf",
-         "section_t25_total": "37.1\u4ebf"})
+         "amount_925": "20.6\u4ebf", "latest_change_pct": "10.00%"})
     assert fd["code"] == "603890", fd
     assert fd["seal_bid_915"] == 6_390_000_000, fd["seal_bid_915"]
     assert fd["latest_change_pct"] == 10.0, fd["latest_change_pct"]
     assert fd["concept"] == "AI PC", fd["concept"]
-    assert fd["section_seal_total"] == 3_710_000_000, fd["section_seal_total"]
     assert field_caliber("auction.jjlive.fengdan", "seal_bid_915") == "commit_bid"
 
     zt = raw_to_canonical("home.ztpool",

@@ -83,6 +83,7 @@ VERSION = "v4.2.0"
 
 def _load_rank_data(
     bundle: PremarketDataBundle,
+    premarket_auction_cutoff: str = "092900",
 ) -> Tuple[Dict[str, int], Dict[str, int]]:
     """
     从 premarket bundle 中加载热度榜和飙升榜排名数据。
@@ -104,13 +105,10 @@ def _load_rank_data(
         ("rank.hot_stock_day", hot_rank_map),
     ]:
         try:
-            from duanxianxia_v7_1_data_loader import (
-                load_capture_at_time,
-                PREMARKET_AUCTION_CUTOFF_HHMMSS,
-            )
+            from duanxianxia_v7_1_data_loader import load_capture_at_time
             capture = load_capture_at_time(
                 project_root, date_t0, rank_ds,
-                max_hhmmss=PREMARKET_AUCTION_CUTOFF_HHMMSS,
+                max_hhmmss=premarket_auction_cutoff,
                 pick="earliest_before",
                 raise_if_missing=False,
             )
@@ -168,6 +166,7 @@ def run_v4_2_pipeline(
     history: Optional[D6History] = None,
     static_thresholds: Optional[Dict[str, float]] = None,
     top_n_per_pool: int = 3,
+    premarket_auction_cutoff: str = "092900",
 ) -> Dict[str, Any]:
     """
     执行 v4.2 完整决策链路。
@@ -178,6 +177,7 @@ def run_v4_2_pipeline(
         history: D6 历史数据 (用于滚动分位数)
         static_thresholds: D6 静态阈值 (历史数据不足时回退)
         top_n_per_pool: 每池取 Top N
+        premarket_auction_cutoff: 竞价数据截断时间 (默认 "092900"; 回测时可放宽至 "100000")
 
     Returns:
         {
@@ -197,7 +197,7 @@ def run_v4_2_pipeline(
     # Layer 0: 数据加载
     # ========================================================================
     try:
-        bundle = load_premarket_bundle(date_t0, project_root)
+        bundle = load_premarket_bundle(date_t0, project_root, premarket_auction_cutoff=premarket_auction_cutoff)
     except DataLoaderError as e:
         return {
             "version": VERSION,
@@ -249,7 +249,7 @@ def run_v4_2_pipeline(
     diagnostics["ztpool_t1"] = {"n_rows": len(ztpool_t1)}
 
     # 加载 rank 数据
-    hot_rank_map, rocket_rank_map = _load_rank_data(bundle)
+    hot_rank_map, rocket_rank_map = _load_rank_data(bundle, premarket_auction_cutoff=premarket_auction_cutoff)
     diagnostics["rank_data"] = {
         "n_hot_rank": len(hot_rank_map),
         "n_rocket_rank": len(rocket_rank_map),

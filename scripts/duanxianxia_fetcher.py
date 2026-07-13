@@ -1274,7 +1274,7 @@ class DuanxianxiaFetcher:
             if str(item.get('code', '') or '').strip()
         }
 
-        # 按板块强度排序，取前10个主标签
+        # 按板块强度排序，取前5个主标签
         def strength_val(item: Dict[str, Any]) -> float:
             try:
                 return float(str(item.get('val', '') or '0').strip())
@@ -1282,7 +1282,7 @@ class DuanxianxiaFetcher:
                 return 0.0
 
         sorted_strong = sorted(strong_values, key=strength_val, reverse=True)
-        TOP_N = 10
+        TOP_N = 5
         ordered_codes: List[str] = []
         for item in sorted_strong:
             code = str(item.get('code', '') or '').strip()

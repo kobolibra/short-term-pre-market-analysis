@@ -62,7 +62,6 @@ from duanxianxia_v4_2_d7_router import (
 )
 from duanxianxia_v4_2_pool_ranker import (
     rank_all_pools,
-    build_rank_maps,
     PoolRankResult,
     RankedStock,
 )
@@ -217,7 +216,8 @@ def run_v4_2_pipeline(
             "auction.jjyd.net_amount": "auction_netamount",
             "auction.jjyd.weimai": "auction_weimai",
         }[dsid], [])
-        datasets[dsid] = [{"code": r.get("code", ""), "raw": r} for r in rows]
+        # 直接传 capture rows; canonicalize_row → _row_source 会从 each row["raw"] 提取 positional array
+        datasets[dsid] = rows
 
     # fengdan
     datasets[FENGDAN_DATASET] = bundle.auction_fengdan
@@ -313,6 +313,7 @@ def run_v4_2_pipeline(
             "t0_downgrade_reason": emotion_result.t0_downgrade_reason,
             "ztbx_collapse": emotion_result.ztbx_collapse,
             "lbbx_collapse": emotion_result.lbbx_collapse,
+            "kqxy_925": emotion_result.diagnostics.get("kqxy_925"),
             "kqxy_spike": emotion_result.kqxy_spike,
             "pool_enabled": {
                 "一字封": emotion_result.pool_yizi_enabled,

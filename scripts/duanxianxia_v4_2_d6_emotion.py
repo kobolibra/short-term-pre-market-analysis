@@ -387,9 +387,9 @@ def determine_emotion_state(
     # T0 确认闸门: 计划 → 验证
     # ========================================================================
 
-    # ZTBX 塌方: ZTBX@9:25 < T-1 ZTBX × 0.5 或 ZTBX@9:25 < -2%
-    if ztbx_925 is not None and ztbx_t1 is not None:
-        if ztbx_925 < ztbx_t1 * 0.5 or ztbx_925 < -2.0:
+    # ZTBX 塌方: ZTBX@9:25 < -2% (绝对阈值), 或 ZTBX@9:25 < T-1 ZTBX × 0.5 (仅当 T-1 为正时)
+    if ztbx_925 is not None:
+        if ztbx_925 < -2.0 or (ztbx_t1 is not None and ztbx_t1 > 0 and ztbx_925 < ztbx_t1 * 0.5):
             result.ztbx_collapse = True
             if result.state == EmotionState.NORMAL:
                 result.state = EmotionState.WARNING

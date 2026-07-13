@@ -84,7 +84,7 @@ def main() -> int:
                     ztbx=emo["ztbx_925"],
                     jinji_mean=emo.get("jinji_mean"),
                     red_rate=emo.get("red_rate"),
-                    kqxy=None,
+                    kqxy=emo.get("kqxy_925"),
                 )
         except Exception as e:
             summary["results"].append({"date": day, "status": "error", "error": str(e)})

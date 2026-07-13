@@ -23,7 +23,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from duanxianxia_v4_2_d6_emotion import EmotionState, BuyMode, D6EmotionResult
+from duanxianxia_v4_2_d6_emotion import RiskTier, BuyMode, D6EmotionResult
 from duanxianxia_v4_2_d7_router import PoolType, RiskTag, RoutedStock
 from duanxianxia_v4_2_pool_ranker import PoolRankResult, RankedStock
 
@@ -163,9 +163,9 @@ def build_execution_plan(
     """
     plan = ExecutionPlan(
         date=date,
-        emotion_state=emotion_result.state_label,
+        emotion_state=emotion_result.phase_label,
         emotion_result=emotion_result,
-        total_position_cap=emotion_result.total_position_cap,
+        total_position_cap=emotion_result.position_cap,
     )
 
     orders: List[ExecutionOrder] = []
@@ -193,16 +193,16 @@ def build_execution_plan(
         pool_enabled = True
         pool_mult = 1.0
         if pool_type == PoolType.POOL_YIZI:
-            pool_enabled = emotion_result.pool_yizi_enabled
+            pool_enabled = emotion_result.yizi_enabled
             pool_mult = emotion_result.pool_yizi_mult
         elif pool_type == PoolType.POOL_HUANSHOU:
-            pool_enabled = emotion_result.pool_huanshou_enabled
+            pool_enabled = emotion_result.huanshou_enabled
             pool_mult = emotion_result.pool_huanshou_mult
         elif pool_type == PoolType.POOL_FENQI:
-            pool_enabled = emotion_result.pool_fenqi_enabled
+            pool_enabled = emotion_result.fenqi_enabled
             pool_mult = emotion_result.pool_fenqi_mult
         elif pool_type == PoolType.POOL_FEIBAN:
-            pool_enabled = emotion_result.pool_feiban_enabled
+            pool_enabled = emotion_result.feiban_enabled
             pool_mult = emotion_result.pool_feiban_mult
 
         pool_summary[result.pool_label] = {
@@ -227,11 +227,11 @@ def build_execution_plan(
             risk_mult = _calc_risk_tag_multiplier(rs.risk_tags if rs else [])
             position = _calc_final_position(
                 pool_type, height_mult, risk_mult,
-                emotion_result.total_position_cap, pool_mult
+                emotion_result.position_cap, pool_mult
             )
 
             # 确定买点策略
-            buy_strategy = _determine_buy_strategy(pool_type, emotion_result.state)
+            buy_strategy = _determine_buy_strategy(pool_type, emotion_result.risk_tier)
 
             order = ExecutionOrder(
                 code=rk.code,
@@ -242,7 +242,7 @@ def build_execution_plan(
                 base_position_pct=_POOL_BASE_POSITION.get(pool_type, 1.0),
                 height_mult=height_mult,
                 risk_mult=round(risk_mult, 2),
-                emotion_cap=emotion_result.total_position_cap,
+                emotion_cap=emotion_result.position_cap,
                 buy_mode=emotion_result.buy_mode.value,
                 buy_strategy=buy_strategy,
                 risk_tags=[t.value for t in (rs.risk_tags if rs else [])],
@@ -271,20 +271,20 @@ def build_execution_plan(
         "n_orders": len(orders),
         "allocated_pct": plan.allocated_position,
         "reserve_pct": plan.reserve_position,
-        "emotion_cap": emotion_result.total_position_cap,
+        "emotion_cap": emotion_result.position_cap,
     }
 
     return plan
 
 
-def _determine_buy_strategy(pool_type: PoolType, state: EmotionState) -> str:
-    """根据池类型和情绪状态确定具体买点策略"""
-    if state == EmotionState.CRISIS:
+def _determine_buy_strategy(pool_type: PoolType, risk_tier: RiskTier) -> str:
+    """根据池类型和风险等级确定具体买点策略"""
+    if risk_tier == RiskTier.CRISIS:
         if pool_type == PoolType.POOL_FENQI:
             return "仅分歧封轻仓试错，排板确认"
         return "CRISIS 禁用"
 
-    if state == EmotionState.WARNING:
+    if risk_tier == RiskTier.WARNING:
         if pool_type == PoolType.POOL_YIZI:
             return "排板为主，不竞价买"
         elif pool_type == PoolType.POOL_HUANSHOU:
@@ -394,10 +394,10 @@ def _self_test() -> bool:
 
     # 构造测试数据
     emo = D6EmotionResult(
-        state=EmotionState.NORMAL, state_label="NORMAL",
-        total_position_cap=1.0,
-        pool_yizi_enabled=True, pool_huanshou_enabled=True,
-        pool_fenqi_enabled=True, pool_feiban_enabled=True,
+        risk_tier=RiskTier.NORMAL, phase_label="NORMAL",
+        position_cap=1.0,
+        yizi_enabled=True, huanshou_enabled=True,
+        fenqi_enabled=True, feiban_enabled=True,
         pool_yizi_mult=1.0, pool_huanshou_mult=1.0,
         pool_fenqi_mult=1.0, pool_feiban_mult=1.0,
     )
@@ -465,10 +465,10 @@ def _self_test() -> bool:
 
     # 测试 2: CRISIS 执行计划
     emo_crisis = D6EmotionResult(
-        state=EmotionState.CRISIS, state_label="CRISIS",
-        total_position_cap=0.2,
-        pool_yizi_enabled=False, pool_huanshou_enabled=False,
-        pool_fenqi_enabled=True, pool_feiban_enabled=False,
+        risk_tier=RiskTier.CRISIS, phase_label="CRISIS",
+        position_cap=0.2,
+        yizi_enabled=False, huanshou_enabled=False,
+        fenqi_enabled=True, feiban_enabled=False,
         pool_fenqi_mult=0.3,
     )
     plan_crisis = build_execution_plan(pool_results, emo_crisis, date="2026-07-12")

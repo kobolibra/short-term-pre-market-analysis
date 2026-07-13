@@ -64,11 +64,12 @@ def main() -> int:
             summary["results"].append({
                 "date": day,
                 "status": "ok",
-                "emotion": emo.get("state"),
-                "position_cap": emo.get("total_position_cap", 1.0),
-                "jinji_mean": emo.get("jinji_mean"),
+                "phase": emo.get("phase_label"),
+                "risk_tier": emo.get("risk_tier"),
+                "position_cap": emo.get("position_cap", 1.0),
+                "jinji_weighted": emo.get("jinji_weighted"),
                 "ztbx_925": emo.get("ztbx_925"),
-                "t0_downgraded": emo.get("t0_downgraded", False),
+                "t0_impulse": emo.get("t0_impulse"),
                 "n_orders": len(orders),
                 "orders": [
                     {"code": o["code"], "name": o.get("name", ""), "pool": o["pool"],
@@ -80,11 +81,11 @@ def main() -> int:
             if emo.get("ztbx_925") is not None:
                 history.add_day(
                     ztbx=emo["ztbx_925"],
-                    jinji_mean=emo.get("jinji_mean"),
-                    sz=emo.get("sz_925"),
-                    xd=emo.get("xd_925"),
-                    qx=emo.get("qx_925"),
+                    lbbx=emo.get("lbbx_925"),
+                    advance_share=emo.get("advance_share"),
                     dt=emo.get("dt_925"),
+                    jinji_1_2=emo.get("jinji_1_2"),
+                    jinji_2_3=emo.get("jinji_2_3"),
                 )
         except Exception as e:
             summary["results"].append({"date": day, "status": "error", "error": str(e)})

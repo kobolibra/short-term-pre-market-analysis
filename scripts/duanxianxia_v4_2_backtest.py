@@ -101,25 +101,25 @@ def _main(argv: Optional[List[str]] = None) -> int:
             n_success += 1
 
             order_codes = [f"{o['code']} {o.get('name','')}" for o in orders]
-            print(f"情绪={emo['state']} | 仓位上限={emo['total_position_cap']*100:.0f}% | "
+            print(f"周期={emo['phase_label']} | 风险={emo['risk_tier']} | 仓位上限={emo['position_cap']*100:.0f}% | "
                   f"入选={len(orders)}只 {order_codes}")
 
             if args.verbose and orders:
                 for o in orders:
                     print(f"    {o['code']} {o.get('name','')} | {o['pool']} "
                           f"| 仓位={o['position_pct']}% | {o['buy_strategy']}")
-                if emo.get("t0_downgraded"):
-                    print(f"    ⚠️ T0降级: {emo['t0_downgrade_reason']}")
+                if emo.get("t0_impulse") == "NEGATIVE":
+                    print(f"    ⚠️ T0负向冲击: {emo.get('transition_reason', [])}")
 
             # 更新历史
             if emo.get("ztbx_925") is not None:
                 history.add_day(
                     ztbx=emo["ztbx_925"],
-                    jinji_mean=emo.get("jinji_mean"),
-                    sz=emo.get("sz_925"),
-                    xd=emo.get("xd_925"),
-                    qx=emo.get("qx_925"),
+                    lbbx=emo.get("lbbx_925"),
+                    advance_share=emo.get("advance_share"),
                     dt=emo.get("dt_925"),
+                    jinji_1_2=emo.get("jinji_1_2"),
+                    jinji_2_3=emo.get("jinji_2_3"),
                 )
 
         except Exception as e:
@@ -135,11 +135,11 @@ def _main(argv: Optional[List[str]] = None) -> int:
     print(f"{'='*60}")
 
     # 逐日选股汇总表
-    print(f"\n{'日期':<12} {'情绪':<8} {'仓位上限':>8} {'入选':>6} {'股票列表'}")
+    print(f"\n{'日期':<12} {'周期':<10} {'风险':<8} {'仓位上限':>8} {'入选':>6} {'股票列表'}")
     print("-" * 80)
     for r in all_results:
         if r.get("status") == "error":
-            print(f"{r['date']:<12} {'ERROR':<8} {'-':>8} {'-':>6} {r.get('error','')}")
+            print(f"{r['date']:<12} {'ERROR':<10} {'-':>8} {'-':>8} {'-':>6} {r.get('error','')}")
             continue
         emo = r.get("emotion", {})
         ep = r.get("execution_plan", {})
@@ -147,8 +147,8 @@ def _main(argv: Optional[List[str]] = None) -> int:
         codes = ", ".join(f"{o.get('code','')} {o.get('name','')}({o.get('pool','')})" for o in orders)
         if not codes:
             codes = "(无)"
-        downgraded = " ⚠️降级" if emo.get("t0_downgraded") else ""
-        print(f"{r['date']:<12} {emo.get('state','?'):<8} {emo.get('total_position_cap',0)*100:>7.0f}% {len(orders):>5}只 {codes}{downgraded}")
+        downgraded = " ⚠️冲击" if emo.get("t0_impulse") == "NEGATIVE" else ""
+        print(f"{r['date']:<12} {emo.get('phase_label','?'):<10} {emo.get('risk_tier','?'):<8} {emo.get('position_cap',0)*100:>7.0f}% {len(orders):>5}只 {codes}{downgraded}")
 
     # 输出 JSON
     summary = {
@@ -176,9 +176,9 @@ def _main(argv: Optional[List[str]] = None) -> int:
             emo = r.get("emotion", {})
             ep = r.get("execution_plan", {})
             lines.append(f"\n--- {r['date']} ---")
-            lines.append(f"情绪: {emo.get('state','?')} | 仓位上限: {emo.get('total_position_cap',0)*100:.0f}%")
-            if emo.get("t0_downgraded"):
-                lines.append(f"T0降级: {emo.get('t0_downgrade_reason','')}")
+            lines.append(f"周期: {emo.get('phase_label','?')} | 风险: {emo.get('risk_tier','?')} | 仓位上限: {emo.get('position_cap',0)*100:.0f}%")
+            if emo.get("t0_impulse") == "NEGATIVE":
+                lines.append(f"T0负向冲击: {emo.get('transition_reason', [])}")
             for o in ep.get("orders", []):
                 lines.append(f"  {o['code']} {o.get('name','')} | {o['pool']} | {o['position_pct']}% | {o['buy_strategy']}")
             if not ep.get("orders"):

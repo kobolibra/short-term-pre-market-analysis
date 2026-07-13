@@ -50,7 +50,8 @@ from duanxianxia_v4_2_d6_emotion import (
     determine_emotion_state,
     D6EmotionResult,
     D6History,
-    EmotionState,
+    EmotionPhase,
+    RiskTier,
     BuyMode,
     _extract_qxlive_metric,
 )
@@ -262,7 +263,6 @@ def run_v4_2_pipeline(
         ztpool_t1=ztpool_t1,
         qxlive_top_t0=bundle.qxlive_top_t0_rows,
         qxlive_top_t1=bundle.qxlive_top_t1_rows,
-        features=features,
         history=history,
         static_thresholds=static_thresholds,
     )
@@ -297,33 +297,29 @@ def run_v4_2_pipeline(
         "version": VERSION,
         "date": date_t0,
         "emotion": {
-            "state": emotion_result.state_label,
-            "total_position_cap": emotion_result.total_position_cap,
+            "phase": emotion_result.phase.value,
+            "phase_label": emotion_result.phase_label,
+            "level": emotion_result.level.value,
+            "direction": emotion_result.direction.value,
+            "risk_tier": emotion_result.risk_tier.value,
+            "position_cap": emotion_result.position_cap,
             "buy_mode": emotion_result.buy_mode.value,
-            "jinji_mean": emotion_result.jinji_mean,
+            "jinji_weighted": emotion_result.jinji_weighted,
+            "jinji_1_2": emotion_result.jinji_1_2,
+            "jinji_2_3": emotion_result.jinji_2_3,
             "ztbx_925": emotion_result.ztbx_925,
             "lbbx_925": emotion_result.lbbx_925,
-            "crisis_count": emotion_result.crisis_count,
-            "crisis_detail": {
-                "crisis_1_ztbx": emotion_result.crisis_1,
-                "crisis_2_jinji": emotion_result.crisis_2,
-                "crisis_3_breadth": emotion_result.crisis_3,
-                "crisis_4_qx": emotion_result.crisis_4,
-                "crisis_5_dt": emotion_result.crisis_5,
-                "crisis_6_lbbx": emotion_result.crisis_6,
-            },
-            "t0_downgraded": emotion_result.t0_downgraded,
-            "t0_downgrade_reason": emotion_result.t0_downgrade_reason,
+            "advance_share": emotion_result.advance_share,
+            "dt_925": emotion_result.dt_925,
+            "t0_impulse": emotion_result.t0_impulse,
             "ztbx_collapse": emotion_result.ztbx_collapse,
             "lbbx_collapse": emotion_result.lbbx_collapse,
-            "qx_925": emotion_result.diagnostics.get("qx_925"),
-            "breadth_ratio": emotion_result.diagnostics.get("breadth_ratio"),
-            "dt_925": emotion_result.diagnostics.get("dt_925"),
+            "breadth_shock": emotion_result.breadth_shock,
             "pool_enabled": {
-                "一字封": emotion_result.pool_yizi_enabled,
-                "换手封": emotion_result.pool_huanshou_enabled,
-                "分歧封": emotion_result.pool_fenqi_enabled,
-                "非板": emotion_result.pool_feiban_enabled,
+                "一字封": emotion_result.yizi_enabled,
+                "换手封": emotion_result.huanshou_enabled,
+                "分歧封": emotion_result.fenqi_enabled,
+                "非板": emotion_result.feiban_enabled,
             },
             "pool_mult": {
                 "一字封": emotion_result.pool_yizi_mult,
@@ -331,6 +327,21 @@ def run_v4_2_pipeline(
                 "分歧封": emotion_result.pool_fenqi_mult,
                 "非板": emotion_result.pool_feiban_mult,
             },
+            "phase_confidence": emotion_result.phase_confidence,
+            "data_quality": emotion_result.data_quality,
+            "transition_from": emotion_result.transition_from,
+            "transition_reason": emotion_result.transition_reason,
+            "profit_level": emotion_result.profit_level,
+            "breadth_level": emotion_result.breadth_level,
+            "relay_level": emotion_result.relay_level,
+            "profit_slope": emotion_result.profit_slope,
+            "breadth_slope": emotion_result.breadth_slope,
+            "relay_slope": emotion_result.relay_slope,
+            "height_preference": emotion_result.height_preference,
+            "fenqi_priority": emotion_result.fenqi_priority,
+            "auction_buy_enabled": emotion_result.auction_buy_enabled,
+            "warnings": emotion_result.warnings,
+            "diagnostics": emotion_result.diagnostics,
         },
         "pools": {
             pr.pool_label: {
@@ -417,13 +428,15 @@ def build_premarket_analysis_v4_2(
 
     # 闸门信息
     buy_gate = {
-        "regime": emo.get("state", "UNKNOWN"),
+        "regime": emo.get("phase_label", "UNKNOWN"),
         "selected": len(buy_rows),
-        "emotion_state": emo.get("state"),
-        "position_cap": emo.get("total_position_cap", 1.0),
+        "emotion_state": emo.get("phase_label"),
+        "phase": emo.get("phase"),
+        "risk_tier": emo.get("risk_tier"),
+        "position_cap": emo.get("position_cap", 1.0),
         "buy_mode": emo.get("buy_mode"),
-        "crisis_count": emo.get("crisis_count", 0),
-        "t0_downgraded": emo.get("t0_downgraded", False),
+        "t0_impulse": emo.get("t0_impulse"),
+        "ztbx_collapse": emo.get("ztbx_collapse", False),
     }
 
     total_candidates = sum(
@@ -568,8 +581,8 @@ def _v4_2_reasons(order: Dict[str, Any], emo: Dict[str, Any]) -> List[str]:
         reasons.append(f"高度调制×{order['height_mult']:.1f}")
     if order.get("risk_mult", 1.0) < 1.0:
         reasons.append(f"风险调制×{order['risk_mult']:.1f}")
-    if emo.get("t0_downgraded"):
-        reasons.append(f"T0降级: {emo.get('t0_downgrade_reason', '')}")
+    if emo.get("t0_impulse") == "NEGATIVE":
+        reasons.append(f"T0负向冲击: {emo.get('transition_reason', [])}")
     return reasons
 
 
@@ -609,7 +622,9 @@ def _main(argv: Optional[List[str]] = None) -> int:
         print("=" * 60)
         print(f"  盘前竞价选股系统 {VERSION}")
         print(f"  日期: {result['date']}")
-        print(f"  情绪: {emo['state']} | 总仓位: {emo['total_position_cap']*100:.0f}%")
+        print(f"  周期: {emo['phase_label']} | 水位: {emo['level']} | 方向: {emo['direction']}")
+        print(f"  风险: {emo['risk_tier']} | 仓位上限: {emo['position_cap']*100:.0f}%")
+        print(f"  晋级率加权: {emo.get('jinji_weighted')}% | advance_share: {emo.get('advance_share')}")
         print("=" * 60)
 
         for pool_name, pool_data in result["pools"].items():

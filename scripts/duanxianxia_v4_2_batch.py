@@ -126,14 +126,14 @@ def _main(argv: Optional[List[str]] = None) -> int:
             ep = result["execution_plan"]
             n_orders = len(ep.get("orders", []))
 
-            print(f"  情绪: {emo['state']} | 总仓位: {emo['total_position_cap']*100:.0f}%")
-            print(f"  晋级率均值: {emo.get('jinji_mean')}% | ZTBX@9:25: {emo.get('ztbx_925')}%")
-            print(f"  危机: ZTBX={emo['crisis_detail']['crisis_1_ztbx']} "
-                  f"晋级率={emo['crisis_detail']['crisis_2_jinji']} "
-                  f"红盘率={emo['crisis_detail']['crisis_3_red_rate']}")
+            print(f"  周期: {emo['phase_label']} | 水位: {emo['level']} | 方向: {emo['direction']}")
+            print(f"  风险: {emo['risk_tier']} | 仓位上限: {emo['position_cap']*100:.0f}%")
+            print(f"  晋级率加权: {emo.get('jinji_weighted')}% | 1进2: {emo.get('jinji_1_2')}% | 2进3: {emo.get('jinji_2_3')}%")
+            print(f"  ZTBX@9:25: {emo.get('ztbx_925')}% | advance_share: {emo.get('advance_share')} | DT: {emo.get('dt_925')}")
+            print(f"  ZTBX塌方={emo['ztbx_collapse']} LBBX塌方={emo['lbbx_collapse']} 广度冲击={emo['breadth_shock']}")
 
-            if emo.get("t0_downgraded"):
-                print(f"  ⚠️ T0降级: {emo['t0_downgrade_reason']}")
+            if emo.get("t0_impulse") == "NEGATIVE":
+                print(f"  ⚠️ T0负向冲击: {emo.get('transition_reason', [])}")
 
             # 池详情
             for pool_name, pool_data in result["pools"].items():
@@ -154,18 +154,19 @@ def _main(argv: Optional[List[str]] = None) -> int:
             if emo.get("ztbx_925") is not None:
                 history.add_day(
                     ztbx=emo["ztbx_925"],
-                    jinji_mean=emo.get("jinji_mean"),
-                    sz=emo.get("sz_925"),
-                    xd=emo.get("xd_925"),
-                    qx=emo.get("qx_925"),
+                    lbbx=emo.get("lbbx_925"),
+                    advance_share=emo.get("advance_share"),
                     dt=emo.get("dt_925"),
+                    jinji_1_2=emo.get("jinji_1_2"),
+                    jinji_2_3=emo.get("jinji_2_3"),
                 )
 
             summary["daily_results"].append({
                 "date": day,
                 "status": "success",
-                "emotion": emo["state"],
-                "position_cap": emo["total_position_cap"],
+                "phase": emo["phase_label"],
+                "risk_tier": emo["risk_tier"],
+                "position_cap": emo["position_cap"],
                 "n_orders": n_orders,
                 "orders": [
                     {"code": o["code"], "name": o["name"], "pool": o["pool"],
@@ -215,7 +216,7 @@ def _main(argv: Optional[List[str]] = None) -> int:
             if dr["status"] == "error":
                 lines.append(f"  ❌ 错误: {dr.get('error', 'unknown')}")
                 continue
-            lines.append(f"  情绪: {dr['emotion']} | 仓位上限: {dr['position_cap']*100:.0f}%")
+            lines.append(f"  周期: {dr['phase']} | 风险: {dr['risk_tier']} | 仓位上限: {dr['position_cap']*100:.0f}%")
             lines.append(f"  可下单: {dr['n_orders']} 只")
             for o in dr.get("orders", []):
                 lines.append(f"    {o['code']} {o['name']} | {o['pool']} | {o['position_pct']}%")

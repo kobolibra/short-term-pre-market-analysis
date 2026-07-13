@@ -548,6 +548,8 @@ def determine_emotion_state(
         "lbbx_925": lbbx_925,
         "lbbx_t1": lbbx_t1,
         "qx_925": qx_925,
+        "sz_925": sz_925,
+        "xd_925": xd_925,
         "breadth_ratio": breadth_ratio,
         "dt_925": dt_925,
         "red_rate": red_rate,

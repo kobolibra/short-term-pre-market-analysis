@@ -156,7 +156,10 @@ def _main(argv: Optional[List[str]] = None) -> int:
                     ztbx=emo["ztbx_925"],
                     jinji_mean=emo.get("jinji_mean"),
                     red_rate=emo.get("red_rate"),
-                    kqxy=None,  # KQXY 从 diagnostics 中提取
+                    qx=emo.get("qx_925"),
+                    sz=emo.get("sz_925"),
+                    xd=emo.get("xd_925"),
+                    dt=emo.get("dt_925"),
                 )
 
             summary["daily_results"].append({

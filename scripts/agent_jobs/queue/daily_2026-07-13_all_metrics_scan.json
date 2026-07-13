@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-13_all_metrics_scan",
+  "script": "scripts/duanxianxia_v4_2_all_metrics_scan.py",
+  "args": [],
+  "timeout": 600,
+  "created": "2026-07-13T13:00:00+08:00",
+  "note": "Scan all 12 qxlive top_metrics historical values to find KQXY replacement"
+}

@@ -235,7 +235,7 @@ def _extract_review_daily_pbbx_from_ztpool(ztpool_rows: List[Dict[str, Any]]) ->
         if promo is None:
             continue
         try:
-            val = float(promo)
+            val = float(str(promo).replace("%", "").strip())
         except (ValueError, TypeError):
             continue
         if "1进2" in ladder:

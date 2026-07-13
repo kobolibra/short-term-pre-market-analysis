@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-13_kqxy_scan",
+  "script": "scripts/duanxianxia_v4_2_kqxy_scan.py",
+  "args": [],
+  "timeout": 600,
+  "created": "2026-07-13T12:00:00+08:00",
+  "note": "Scan all historical KQXY values from qxlive top_metrics captures"
+}

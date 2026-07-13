@@ -47,6 +47,7 @@ SUITE_DAILY = [
     ("v25_sparse_validation.py", ["--min-train", "5"]),
     ("v26_shadow_strategy.py", []),
     ("duanxianxia_v4_2_backtest_daily.py", []),
+    ("duanxianxia_v4_2_premarket_daily.py", []),
 ]
 
 # pending-safe label evaluator: retry hourly because same-day dailyline / T+1 labels land later

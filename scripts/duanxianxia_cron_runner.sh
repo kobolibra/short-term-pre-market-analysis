@@ -31,6 +31,13 @@ esac
 
 cd /home/investmentofficehku/.openclaw/workspace
 
+# 每次运行前同步最新代码，确保持续修复能及时生效
+if git fetch origin main --quiet && git reset --hard origin/main --quiet; then
+  echo "git synced to $(git rev-parse --short HEAD)"
+else
+  echo "git sync FAILED (check remote/credentials)"
+fi
+
 if [[ "$GROUP" == "premarket" ]]; then
   # Preserve the original production architecture for premarket:
   # run the batch main flow end-to-end (capture + analysis + webhook/bitable),

@@ -247,32 +247,44 @@ def _extract_review_daily_pbbx(rows: List[Dict[str, Any]]) -> Dict[str, Optional
 def _extract_review_daily_pbbx_from_ztpool(ztpool_rows: List[Dict[str, Any]]) -> Dict[str, Optional[float]]:
     """
     从 home.ztpool 数据中提取 PBBX 晋级率分层。
-    ztpool 包含 ladder_group (分组名称) + promo_rate (晋级率) 字段。
+    ztpool rows 是单只股票行，每行含 ladder_group (分组名称) + promo_rate (晋级率%)。
+    同 ladder_group 的 promo_rate 相同，取第一个即可。
+    支持: 首板(去重), 1进2, 2进3, 3进4, 4板+, 总计.
     """
     # 注意: 代码中强制重命名为 pbbx_jinji, 与 qxlive 的 pbbx_volume 物理隔离
     result: Dict[str, Optional[float]] = {
         "PBBX_1_2": None, "PBBX_2_3": None,
         "PBBX_3_4": None, "PBBX_4P": None, "PBBX_TOP": None
     }
+    seen_groups: set = set()
+    all_vals: List[float] = []
+
     for row in (ztpool_rows or []):
         ladder = str(row.get("ladder_group") or row.get("分组名称") or "").strip()
-        promo = row.get("promo_rate") or row.get("晋级率")  # 回退到中文字段名
-        if promo is None:
+        promo = row.get("promo_rate") or row.get("晋级率")
+        if promo is None or ladder in seen_groups:
             continue
+        seen_groups.add(ladder)
         try:
             val = float(str(promo).replace("%", "").strip())
         except (ValueError, TypeError):
             continue
+        all_vals.append(val)
+
         if "1进2" in ladder:
             result["PBBX_1_2"] = val
         elif "2进3" in ladder:
             result["PBBX_2_3"] = val
         elif "3进4" in ladder:
             result["PBBX_3_4"] = val
-        elif "4板" in ladder or "4进5" in ladder:
+        elif "4板" in ladder or "4进5" in ladder or "5板" in ladder:
             result["PBBX_4P"] = val
-        elif "总" in ladder or "TOP" in ladder:
+        elif "总" in ladder or "TOP" in ladder or "首板" in ladder:
             result["PBBX_TOP"] = val
+
+    # 如果 PBBX_TOP 为空但其他分组有值，用有值分组的均值作为 TOP
+    if result["PBBX_TOP"] is None and all_vals:
+        result["PBBX_TOP"] = round(sum(all_vals) / len(all_vals), 2)
     return result
 
 
@@ -346,6 +358,9 @@ def determine_emotion_state(
         jinji_mean = pbbx_1_2
     elif pbbx_2_3 is not None:
         jinji_mean = pbbx_2_3
+    elif pbbx_jinji.get("PBBX_TOP") is not None:
+        # 如果只有首板/总计数据(无1进2/2进3), 用 PBBX_TOP 作为近似
+        jinji_mean = pbbx_jinji["PBBX_TOP"]
     result.jinji_mean = jinji_mean
 
     # ========================================================================

@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-13_rerun5_duanxianxia_v4_2_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-13T14:30:00+08:00",
+  "note": "v4.2 PREMARKET: 修复晋级率提取 - 数据在rows(非meta.groups), 支持首板+均值回退"
+}

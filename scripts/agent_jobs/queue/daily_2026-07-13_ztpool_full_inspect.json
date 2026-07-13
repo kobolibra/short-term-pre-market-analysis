@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-13_ztpool_full_inspect",
+  "script": "scripts/duanxianxia_v4_2_ztpool_full_inspect.py",
+  "args": [],
+  "timeout": 1200,
+  "created": "2026-07-13T17:00:00+08:00",
+  "note": "Full inspection: home.ztpool vs review.daily.top_metrics - how many layers of promotion rates are actually available per day"
+}

@@ -81,10 +81,9 @@ def main() -> int:
                 history.add_day(
                     ztbx=emo["ztbx_925"],
                     jinji_mean=emo.get("jinji_mean"),
-                    red_rate=emo.get("red_rate"),
-                    qx=emo.get("qx_925"),
                     sz=emo.get("sz_925"),
                     xd=emo.get("xd_925"),
+                    qx=emo.get("qx_925"),
                     dt=emo.get("dt_925"),
                 )
         except Exception as e:

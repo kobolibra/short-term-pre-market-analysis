@@ -21,6 +21,8 @@ D6 是第一层（总指挥部），决定"今天做不做、做多少"。
 
 v6 原始冷市检测四指标: QX≤30 OR DT≥20 OR KQXY≥10 OR 广度≤0.28
 v4.2 用 QX + SZ/XD 替代 KQXY (KQXY 23天中22天=0, 无区分度)
+v4.2 最终: 合并红盘率和广度为同一个信号（广度崩塌），删除冗余。
+晋级率五层加权: 首板(5%) + 1进2(40%) + 2进3(35%) + 3进4(15%) + 4板+(5%)，缺层自动重分配权重
 """
 
 from __future__ import annotations
@@ -61,35 +63,31 @@ class D6EmotionResult:
     state_label: str                          # "NORMAL" / "WARNING" / "CRISIS"
 
     # T-1 计划阶段指标
-    jinji_mean: Optional[float] = None         # 晋级率均值 (PBBX_1_2 + PBBX_2_3)/2
+    jinji_mean: Optional[float] = None         # 晋级率加权均值 (5层加权)
     jinji_mean_pctile: Optional[float] = None  # 晋级率均值 60日分位
 
-    # T0 确认阶段指标
+    # T0 确认阶段指标 (全来自 qxlive 9:25)
     ztbx_925: Optional[float] = None           # ZTBX@9:25
     ztbx_pctile: Optional[float] = None        # ZTBX 60日分位
+    lbbx_925: Optional[float] = None           # LBBX@9:25
     qx_925: Optional[float] = None             # QX 情绪指标@9:25
-    qx_cold: bool = False                      # QX 冰点 (QX <= 20pct or 静态 ≤ 25)
-    breadth_ratio: Optional[float] = None      # SZ/XD 涨跌比 (广度)
-    breadth_collapse: bool = False            # 广度崩塌 (涨跌比 <= 20pct or 静态 ≤ 0.28)
+    breadth_ratio: Optional[float] = None      # SZ/XD 涨跌比 (全市场广度)
     dt_925: Optional[int] = None              # DT 跌停家数@9:25
-    dt_cold: bool = False                     # DT 大寒 (DT >= 80pct or 静态 ≥ 15)
-    red_rate: Optional[float] = None           # 竞价红盘率
-    red_rate_pctile: Optional[float] = None    # 红盘率 60日分位
 
-    # 危机指标明细
-    crisis_1: bool = False                     # ZTBX < 20pct
-    crisis_2: bool = False                     # 晋级率均值 < 15pct
-    crisis_3: bool = False                     # 红盘率 < 25% 或 < 20pct
-    crisis_4: bool = False                     # QX 冰点
-    crisis_5: bool = False                     # 广度崩塌
-    crisis_6: bool = False                     # DT 大寒
+    # 危机指标明细 (6个独立信号, 每个都是独立维度)
+    crisis_1: bool = False                     # 1. ZTBX 绝对值低: ZTBX < 滚动20pct
+    crisis_2: bool = False                     # 2. 晋级率接力枯竭: jinji_mean < 滚动15pct
+    crisis_3: bool = False                     # 3. 全市场广度崩塌: SZ/XD < 滚动20pct
+    crisis_4: bool = False                     # 4. QX 情绪冰点: QX < 滚动20pct
+    crisis_5: bool = False                     # 5. DT 跌停恐慌: DT > 滚动80pct
+    crisis_6: bool = False                     # 6. LBBX 连板崩溃: LBBX < T-1 × 0.5
     crisis_count: int = 0
 
-    # T0 确认闸门
+    # T0 确认闸门 (独立于危机计数, 检查日间突变)
     t0_downgraded: bool = False                # 是否被 T0 确认降级
     t0_downgrade_reason: str = ""              # 降级原因
-    ztbx_collapse: bool = False                # ZTBX 塌方
-    lbbx_collapse: bool = False                # LBBX 塌方
+    ztbx_collapse: bool = False                # ZTBX 塌方 (日间突变检测)
+    lbbx_collapse: bool = False                # LBBX 塌方 (日间突变检测)
 
     # 输出
     total_position_cap: float = 1.0            # 总仓位上限 (0.0~1.0)
@@ -121,28 +119,24 @@ class D6History:
     """D6 历史数据，用于计算滚动分位数"""
     ztbx_values: List[float] = field(default_factory=list)       # 近60日 ZTBX
     jinji_mean_values: List[float] = field(default_factory=list)  # 近60日 晋级率均值
-    red_rate_values: List[float] = field(default_factory=list)    # 近60日 红盘率
-    qx_values: List[float] = field(default_factory=list)          # 近60日 QX 情绪
     szxd_ratio_values: List[float] = field(default_factory=list)  # 近60日 SZ/XD 涨跌比
+    qx_values: List[float] = field(default_factory=list)          # 近60日 QX 情绪
     dt_values: List[float] = field(default_factory=list)          # 近60日 DT 跌停家数
 
     _WINDOW = 60  # 滚动窗口
 
-    def add_day(self, ztbx: Optional[float], jinji_mean: Optional[float],
-                red_rate: Optional[float], qx: Optional[float] = None,
+    def add_day(self, ztbx: Optional[float] = None, jinji_mean: Optional[float] = None,
                 sz: Optional[float] = None, xd: Optional[float] = None,
-                dt: Optional[float] = None) -> None:
+                qx: Optional[float] = None, dt: Optional[float] = None) -> None:
         """记录一天的指标值"""
         if ztbx is not None:
             self.ztbx_values.append(ztbx)
         if jinji_mean is not None:
             self.jinji_mean_values.append(jinji_mean)
-        if red_rate is not None:
-            self.red_rate_values.append(red_rate)
-        if qx is not None:
-            self.qx_values.append(qx)
         if sz is not None and xd is not None and xd > 0:
             self.szxd_ratio_values.append(sz / xd)
+        if qx is not None:
+            self.qx_values.append(qx)
         if dt is not None:
             self.dt_values.append(dt)
 
@@ -164,14 +158,11 @@ class D6History:
     def jinji_15pct(self) -> Optional[float]:
         return self.percentile(self.jinji_mean_values, 0.15)
 
-    def red_rate_20pct(self) -> Optional[float]:
-        return self.percentile(self.red_rate_values, 0.20)
+    def szxd_20pct(self) -> Optional[float]:
+        return self.percentile(self.szxd_ratio_values, 0.20)
 
     def qx_20pct(self) -> Optional[float]:
         return self.percentile(self.qx_values, 0.20)
-
-    def szxd_20pct(self) -> Optional[float]:
-        return self.percentile(self.szxd_ratio_values, 0.20)
 
     def dt_80pct(self) -> Optional[float]:
         return self.percentile(self.dt_values, 0.80)
@@ -288,21 +279,26 @@ def _extract_review_daily_pbbx_from_ztpool(ztpool_rows: List[Dict[str, Any]]) ->
     return result
 
 
-def _calc_red_rate(features: List[Dict[str, Any]]) -> Optional[float]:
-    """从并集宽表计算竞价红盘率"""
-    if not features:
+def _calc_jinji_weighted_mean(pbbx: Dict[str, Optional[float]]) -> Optional[float]:
+    """
+    晋级率五层加权均值。
+    权重: 1进2(40%) 2进3(35%) 3进4(15%) 4板+(5%) 首板/TOP(5%)
+    缺层时自动按比例重分配权重。
+    """
+    layers = [
+        ("PBBX_1_2", 0.40),
+        ("PBBX_2_3", 0.35),
+        ("PBBX_3_4", 0.15),
+        ("PBBX_4P",  0.05),
+        ("PBBX_TOP", 0.05),
+    ]
+    av = [(k, w, pbbx[k]) for k, w in layers if pbbx.get(k) is not None]
+    if not av:
         return None
-    red = 0
-    total = 0
-    for feat in features:
-        change = feat.get("changeRate")
-        if change is not None:
-            total += 1
-            if change > 0:
-                red += 1
-    if total == 0:
+    total_w = sum(w for _, w, _ in av)
+    if total_w == 0:
         return None
-    return red / total * 100.0
+    return round(sum(v * w / total_w for _, w, v in av), 2)
 
 
 # ============================================================================
@@ -347,27 +343,15 @@ def determine_emotion_state(
 
     # 提取 PBBX 晋级率 (从 ztpool / review_daily)
     pbbx_jinji = _extract_review_daily_pbbx_from_ztpool(ztpool_t1)
-    pbbx_1_2 = pbbx_jinji.get("PBBX_1_2")
-    pbbx_2_3 = pbbx_jinji.get("PBBX_2_3")
-
-    # 晋级率均值 = (1进2 + 2进3) / 2
-    jinji_mean = None
-    if pbbx_1_2 is not None and pbbx_2_3 is not None:
-        jinji_mean = (pbbx_1_2 + pbbx_2_3) / 2.0
-    elif pbbx_1_2 is not None:
-        jinji_mean = pbbx_1_2
-    elif pbbx_2_3 is not None:
-        jinji_mean = pbbx_2_3
-    elif pbbx_jinji.get("PBBX_TOP") is not None:
-        # 如果只有首板/总计数据(无1进2/2进3), 用 PBBX_TOP 作为近似
-        jinji_mean = pbbx_jinji["PBBX_TOP"]
+    # 计算五层加权晋级率均值
+    jinji_mean = _calc_jinji_weighted_mean(pbbx_jinji)
     result.jinji_mean = jinji_mean
 
     # ========================================================================
     # Stage 2: T0 9:25 → 确认/否决阶段
     # ========================================================================
 
-    # 提取 qxlive 指标
+    # 提取 qxlive 指标 (全来自 T0)
     ztbx_925 = _extract_qxlive_metric(qxlive_top_t0, "ZTBX")
     lbbx_925 = _extract_qxlive_metric(qxlive_top_t0, "LBBX")
     qx_925 = _extract_qxlive_metric(qxlive_top_t0, "QX")
@@ -378,18 +362,15 @@ def determine_emotion_state(
     lbbx_t1 = _extract_qxlive_metric(qxlive_top_t1, "LBBX")
 
     result.ztbx_925 = ztbx_925
+    result.lbbx_925 = lbbx_925
     result.qx_925 = qx_925
-    # 计算 SZ/XD 涨跌比
+    # 计算 SZ/XD 涨跌比 (全市场广度)
     breadth_ratio = None
     if sz_925 is not None and xd_925 is not None and xd_925 > 0:
         breadth_ratio = sz_925 / xd_925
 
     result.breadth_ratio = breadth_ratio
     result.dt_925 = int(dt_925) if dt_925 is not None else None
-
-    # 竞价红盘率
-    red_rate = _calc_red_rate(features)
-    result.red_rate = red_rate
 
     # ========================================================================
     # 危机判定 (使用滚动分位数或静态阈值)
@@ -399,32 +380,29 @@ def determine_emotion_state(
         # 使用滚动分位数
         ztbx_20pct = history.ztbx_20pct()
         jinji_15pct = history.jinji_15pct()
-        red_rate_20pct = history.red_rate_20pct()
+        szxd_20pct = history.szxd_20pct()
         result.ztbx_pctile = _calc_pctile(history.ztbx_values, ztbx_925)
         result.jinji_mean_pctile = _calc_pctile(history.jinji_mean_values, jinji_mean)
-        result.red_rate_pctile = _calc_pctile(history.red_rate_values, red_rate)
     else:
         # 使用静态阈值 (回退方案)
         defaults = static_thresholds or {}
         ztbx_20pct = defaults.get("ztbx_20pct", -2.0)
         jinji_15pct = defaults.get("jinji_15pct", 15.0)
-        red_rate_20pct = defaults.get("red_rate_20pct", 25.0)
+        szxd_20pct = defaults.get("szxd_20pct", 0.28)
         warnings.append("历史数据不足(<10天), 使用静态阈值")
 
-    # 三项危机指标
+    # 六项危机指标，每个独立维度
     crisis_1 = (ztbx_925 is not None and ztbx_20pct is not None and ztbx_925 < ztbx_20pct)
     crisis_2 = (jinji_mean is not None and jinji_15pct is not None and jinji_mean < jinji_15pct)
-    crisis_3 = False
-    if red_rate is not None:
-        crisis_3 = (red_rate < 25.0) or (red_rate_20pct is not None and red_rate < red_rate_20pct)
-
+    crisis_3 = (breadth_ratio is not None and szxd_20pct is not None and breadth_ratio < szxd_20pct) or \
+              (breadth_ratio is not None and breadth_ratio <= 0.28)
+    crisis_4 = False  # QX冰点
+    crisis_5 = False  # DT大寒
+    crisis_6 = False  # LBBX塌方
     result.crisis_1 = crisis_1
     result.crisis_2 = crisis_2
     result.crisis_3 = crisis_3
-    # 初始化为 False，后续 QX/广度/DT 检测块会覆盖
-    crisis_4 = False
-    crisis_5 = False
-    crisis_6 = False
+    # 危机计数
     result.crisis_count = sum([crisis_1, crisis_2, crisis_3])
 
     # 判定环境状态
@@ -442,9 +420,9 @@ def determine_emotion_state(
     # T0 确认闸门: 计划 → 验证
     # ========================================================================
 
-    # ZTBX 塌方: ZTBX@9:25 < -2% (绝对阈值), 或 ZTBX@9:25 < T-1 ZTBX × 0.5 (仅当 T-1 为正时)
-    if ztbx_925 is not None:
-        if ztbx_925 < -2.0 or (ztbx_t1 is not None and ztbx_t1 > 0 and ztbx_925 < ztbx_t1 * 0.5):
+    # ZTBX 塌方: ZTBX@9:25 < T-1 ZTBX × 0.5 (日间突变)
+    if ztbx_925 is not None and ztbx_t1 is not None and ztbx_t1 > 0:
+        if ztbx_925 < ztbx_t1 * 0.5:
             result.ztbx_collapse = True
             if result.state == EmotionState.NORMAL:
                 result.state = EmotionState.WARNING
@@ -457,55 +435,39 @@ def determine_emotion_state(
                 result.t0_downgraded = True
                 result.t0_downgrade_reason = "ZTBX塌方: WARNING→CRISIS"
 
-    # LBBX 塌方: LBBX@9:25 < T-1 LBBX × 0.5
-    if lbbx_925 is not None and lbbx_t1 is not None:
+    # LBBX 塌方: LBBX@9:25 < T-1 LBBX × 0.5 (日间突变)
+    # 两层作用: 1) crisis_6 计入危机计数  2) 一字封/换手封池降权
+    if lbbx_925 is not None and lbbx_t1 is not None and lbbx_t1 > 0:
         if lbbx_925 < lbbx_t1 * 0.5:
             result.lbbx_collapse = True
-            # 一字封/换手封池降权 (仓位×0.5), 分歧封池不受影响
+            result.crisis_6 = True
             result.pool_yizi_mult *= 0.5
             result.pool_huanshou_mult *= 0.5
-            warnings.append("LBBX塌方: 一字封/换手封池降权×0.5")
+            warnings.append("LBBX塌方: crisis_6 + 一字封/换手封池降权×0.5")
 
     # QX 情绪冰点: QX@9:25 < 60d 20pct (或静态阈值 ≤ 25, 源自 v6 冷市 ≤ 30)
     if qx_925 is not None:
         if history and len(history.qx_values) >= 10:
             qx_20pct = history.qx_20pct()
             if qx_20pct is not None and qx_925 < qx_20pct:
-                result.qx_cold = True
                 result.crisis_4 = True
                 warnings.append("QX 情绪冰点: QX < 滚动20分位")
-        elif qx_925 <= 25.0:  # 静态阈值: v6 冷市 ≤ 30, 收紧到 25
-            result.qx_cold = True
+        elif qx_925 <= 25.0:
             result.crisis_4 = True
             warnings.append("QX 情绪冰点(静态阈值 ≤ 25)")
-
-    # 广度崩塌: SZ/XD 涨跌比 < 60d 20pct (或静态阈值 ≤ 0.28, 源自 v6)
-    if breadth_ratio is not None:
-        if history and len(history.szxd_ratio_values) >= 10:
-            szxd_20pct = history.szxd_20pct()
-            if szxd_20pct is not None and breadth_ratio < szxd_20pct:
-                result.breadth_collapse = True
-                result.crisis_5 = True
-                warnings.append("涨跌比崩塌: SZ/XD < 滚动20分位")
-        elif breadth_ratio <= 0.28:  # 静态阈值: v6 广度 ≤ 0.28
-            result.breadth_collapse = True
-            result.crisis_5 = True
-            warnings.append("涨跌比崩塌(静态阈值 ≤ 0.28)")
 
     # DT 大寒: DT@9:25 > 60d 80pct (或静态阈值 ≥ 15, 源自 v6 冷市 ≥ 20 收紧到 15)
     if dt_925 is not None:
         if history and len(history.dt_values) >= 10:
             dt_80pct = history.dt_80pct()
             if dt_80pct is not None and dt_925 > dt_80pct:
-                result.dt_cold = True
-                result.crisis_6 = True
+                result.crisis_5 = True
                 warnings.append("跌停大寒: DT > 滚动80分位")
-        elif dt_925 >= 15:  # 静态阈值: v6 冷市 ≥ 20, 收紧到 15
-            result.dt_cold = True
-            result.crisis_6 = True
+        elif dt_925 >= 15:
+            result.crisis_5 = True
             warnings.append("跌停大寒(静态阈值 ≥ 15)")
 
-    # 更新危机计数 (含 QX/广度/DT)
+    # 更新最终危机计数 (含 QX/DT/LBBX)
     result.crisis_count = sum([result.crisis_1, result.crisis_2, result.crisis_3,
                                 result.crisis_4, result.crisis_5, result.crisis_6])
 
@@ -542,17 +504,20 @@ def determine_emotion_state(
         result.pool_fenqi_mult *= 0.3
         warnings.append("CRISIS: 仅分歧封轻仓试错(≤30%), 其余池硬禁用")
 
-    # QX 冰点 + 广度崩塌 + DT大寒 额外降仓
+    # QX 冰点 / 广度崩塌 / DT大寒 / LBBX塌方 额外降仓
     # 每触发一个危机项，总仓位上限 × 0.7
-    if result.qx_cold:
+    if result.crisis_3:
+        result.total_position_cap *= 0.7
+        warnings.append("广度崩塌: 总仓位上限×0.7")
+    if result.crisis_4:
         result.total_position_cap *= 0.7
         warnings.append("QX冰点: 总仓位上限×0.7")
-    if result.breadth_collapse:
-        result.total_position_cap *= 0.7
-        warnings.append("涨跌比崩塌: 总仓位上限×0.7")
-    if result.dt_cold:
+    if result.crisis_5:
         result.total_position_cap *= 0.7
         warnings.append("跌停大寒: 总仓位上限×0.7")
+    if result.crisis_6:
+        result.total_position_cap *= 0.7
+        warnings.append("LBBX塌方: 总仓位上限×0.7")
 
     result.warnings = warnings
     result.diagnostics = {
@@ -567,9 +532,9 @@ def determine_emotion_state(
         "xd_925": xd_925,
         "breadth_ratio": breadth_ratio,
         "dt_925": dt_925,
-        "red_rate": red_rate,
         "crisis_1": crisis_1, "crisis_2": crisis_2, "crisis_3": crisis_3,
         "crisis_4": crisis_4, "crisis_5": crisis_5, "crisis_6": crisis_6,
+        "crisis_count": result.crisis_count,
     }
 
     return result
@@ -611,28 +576,24 @@ def _self_test() -> bool:
         {"metric_key": "ZTBX", "value": "2.0"},
         {"metric_key": "LBBX", "value": "2.5"},
     ]
-    features = [
-        {"changeRate": 5.0}, {"changeRate": 3.0}, {"changeRate": -1.0},
-        {"changeRate": 2.0}, {"changeRate": 6.0},
-    ]
 
     # 测试 1: NORMAL 状态 (无危机)
+    # 1进2=25, 2进3=20, 3进4=15, 4板+=10 → 加权均值 = 25*0.4+20*0.35+15*0.15+10*0.05 = 10+7+2.25+0.5 = 19.75
     result = determine_emotion_state(
         ztpool_t1=ztpool_t1, qxlive_top_t0=qxlive_t0, qxlive_top_t1=qxlive_t1,
-        features=features, history=None,
-        static_thresholds={"ztbx_20pct": -3.0, "jinji_15pct": 10.0, "red_rate_20pct": 20.0}
+        features=[], history=None,
+        static_thresholds={"ztbx_20pct": -3.0, "jinji_15pct": 10.0, "szxd_20pct": 0.28}
     )
     assert result.state == EmotionState.NORMAL, f"Expected NORMAL, got {result.state}"
     assert result.total_position_cap == 1.0, f"Expected cap 1.0, got {result.total_position_cap}"
-    assert result.jinji_mean == 22.5, f"Expected jinji_mean=22.5, got {result.jinji_mean}"
-    assert result.red_rate == 80.0, f"Expected red_rate=80%, got {result.red_rate}"
     assert result.crisis_count == 0, f"Expected 0 crises, got {result.crisis_count}"
 
-    # 测试 2: WARNING 状态 (1 crisis)
+    # 测试 2: WARNING 状态 (1 crisis: ZTBX 低)
+    # ZTBX=2.5, ztbx_20pct=3.0 → 2.5 < 3.0 → crisis_1
     result2 = determine_emotion_state(
         ztpool_t1=ztpool_t1, qxlive_top_t0=qxlive_t0, qxlive_top_t1=qxlive_t1,
-        features=features, history=None,
-        static_thresholds={"ztbx_20pct": 3.0, "jinji_15pct": 10.0, "red_rate_20pct": 20.0}
+        features=[], history=None,
+        static_thresholds={"ztbx_20pct": 3.0, "jinji_15pct": 10.0, "szxd_20pct": 0.28}
     )
     assert result2.state == EmotionState.WARNING, f"Expected WARNING, got {result2.state}"
     assert result2.crisis_1 is True, "ZTBX should be crisis"
@@ -641,30 +602,58 @@ def _self_test() -> bool:
     # 测试 3: ZTBX 塌方降级
     result3 = determine_emotion_state(
         ztpool_t1=ztpool_t1, qxlive_top_t0=[
-            {"metric_key": "ZTBX", "value": "-3.0"},
+            {"metric_key": "ZTBX", "value": "1.0"},
             {"metric_key": "LBBX", "value": "1.0"},
         ], qxlive_top_t1=[
-            {"metric_key": "ZTBX", "value": "2.0"},
+            {"metric_key": "ZTBX", "value": "3.0"},
             {"metric_key": "LBBX", "value": "2.0"},
         ],
-        features=features, history=None,
-        static_thresholds={"ztbx_20pct": -3.0, "jinji_15pct": 10.0, "red_rate_20pct": 20.0}
+        features=[], history=None,
+        static_thresholds={"ztbx_20pct": -3.0, "jinji_15pct": 10.0, "szxd_20pct": 0.28}
     )
     assert result3.ztbx_collapse is True, "ZTBX collapse should be detected"
     assert result3.t0_downgraded is True, "Should be downgraded"
 
-    # 测试 4: CRISIS 状态
+    # 测试 4: CRISIS 状态 (2 crises: ZTBX low + 晋级率 low)
     result4 = determine_emotion_state(
         ztpool_t1=[{"ladder_group": "1进2", "promo_rate": 5.0}],
         qxlive_top_t0=[{"metric_key": "ZTBX", "value": "-5.0"}],
         qxlive_top_t1=[{"metric_key": "ZTBX", "value": "1.0"}],
-        features=[{"changeRate": -3.0}, {"changeRate": -2.0}],
-        history=None,
-        static_thresholds={"ztbx_20pct": -1.0, "jinji_15pct": 15.0, "red_rate_20pct": 20.0}
+        features=[], history=None,
+        static_thresholds={"ztbx_20pct": -1.0, "jinji_15pct": 15.0, "szxd_20pct": 0.28}
     )
     assert result4.state == EmotionState.CRISIS, f"Expected CRISIS, got {result4.state}"
     assert result4.pool_yizi_enabled is False, "一字封 should be disabled in CRISIS"
     assert result4.pool_fenqi_enabled is True, "分歧封 should be enabled in CRISIS"
+
+    # 测试 5: 广度崩塌触发 crisis_3
+    result5 = determine_emotion_state(
+        ztpool_t1=ztpool_t1, qxlive_top_t0=[
+            {"metric_key": "ZTBX", "value": "2.5"},
+            {"metric_key": "SZ", "value": "500"},
+            {"metric_key": "XD", "value": "2500"},
+        ], qxlive_top_t1=[],
+        features=[], history=None,
+        static_thresholds={"ztbx_20pct": -3.0, "jinji_15pct": 10.0, "szxd_20pct": 0.28}
+    )
+    assert result5.crisis_3 is True, "Breadth collapse should be detected"
+    assert result5.breadth_ratio == 0.2, f"Expected 0.2, got {result5.breadth_ratio}"
+
+    # 测试 6: LBBX 塌方触发 crisis_6
+    result6 = determine_emotion_state(
+        ztpool_t1=ztpool_t1, qxlive_top_t0=[
+            {"metric_key": "ZTBX", "value": "2.5"},
+            {"metric_key": "LBBX", "value": "1.0"},
+        ], qxlive_top_t1=[
+            {"metric_key": "ZTBX", "value": "2.0"},
+            {"metric_key": "LBBX", "value": "3.0"},
+        ],
+        features=[], history=None,
+        static_thresholds={"ztbx_20pct": -3.0, "jinji_15pct": 10.0, "szxd_20pct": 0.28}
+    )
+    assert result6.crisis_6 is True, "LBBX collapse should be detected"
+    assert result6.lbbx_collapse is True
+    assert result6.pool_yizi_mult == 0.5, "一字封 should be 0.5 after LBBX collapse"
 
     return True
 

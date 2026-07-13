@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-13_rerun6_duanxianxia_v4_2_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-13T17:30:00+08:00",
+  "note": "v4.2 D6全面重写: 五层加权晋级率, 删除冗余crisis_3/5, LBBX塌方=crisis_6, 红盘率移除"
+}

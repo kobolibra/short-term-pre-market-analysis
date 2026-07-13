@@ -8,7 +8,7 @@ D6 是第一层（总指挥部），决定"今天做不做、做多少"。
 
 数据来源:
   - review_daily (T-1 盘后): PBBX 晋级率 5 层分解 (pbbx_jinji)
-  - qxlive 9:25 快照: ZTBX, LBBX, KQXY
+  - qxlive 9:25 快照: ZTBX, LBBX, QX, SZ, XD, DT
   - 并集宽表统计: 竞价红盘率
 
 输出:
@@ -18,6 +18,9 @@ D6 是第一层（总指挥部），决定"今天做不做、做多少"。
   - 买点模式
 
 设计文档: dimension-design-v4/dimension-design-v4.html §3
+
+v6 原始冷市检测四指标: QX≤30 OR DT≥20 OR KQXY≥10 OR 广度≤0.28
+v4.2 用 QX + SZ/XD 替代 KQXY (KQXY 23天中22天=0, 无区分度)
 """
 
 from __future__ import annotations
@@ -64,6 +67,12 @@ class D6EmotionResult:
     # T0 确认阶段指标
     ztbx_925: Optional[float] = None           # ZTBX@9:25
     ztbx_pctile: Optional[float] = None        # ZTBX 60日分位
+    qx_925: Optional[float] = None             # QX 情绪指标@9:25
+    qx_cold: bool = False                      # QX 冰点 (QX <= 20pct or 静态 ≤ 25)
+    breadth_ratio: Optional[float] = None      # SZ/XD 涨跌比 (广度)
+    breadth_collapse: bool = False            # 广度崩塌 (涨跌比 <= 20pct or 静态 ≤ 0.28)
+    dt_925: Optional[int] = None              # DT 跌停家数@9:25
+    dt_cold: bool = False                     # DT 大寒 (DT >= 80pct or 静态 ≥ 15)
     red_rate: Optional[float] = None           # 竞价红盘率
     red_rate_pctile: Optional[float] = None    # 红盘率 60日分位
 
@@ -71,6 +80,9 @@ class D6EmotionResult:
     crisis_1: bool = False                     # ZTBX < 20pct
     crisis_2: bool = False                     # 晋级率均值 < 15pct
     crisis_3: bool = False                     # 红盘率 < 25% 或 < 20pct
+    crisis_4: bool = False                     # QX 冰点
+    crisis_5: bool = False                     # 广度崩塌
+    crisis_6: bool = False                     # DT 大寒
     crisis_count: int = 0
 
     # T0 确认闸门
@@ -78,7 +90,6 @@ class D6EmotionResult:
     t0_downgrade_reason: str = ""              # 降级原因
     ztbx_collapse: bool = False                # ZTBX 塌方
     lbbx_collapse: bool = False                # LBBX 塌方
-    kqxy_spike: bool = False                   # KQXY 飙升
 
     # 输出
     total_position_cap: float = 1.0            # 总仓位上限 (0.0~1.0)
@@ -111,12 +122,16 @@ class D6History:
     ztbx_values: List[float] = field(default_factory=list)       # 近60日 ZTBX
     jinji_mean_values: List[float] = field(default_factory=list)  # 近60日 晋级率均值
     red_rate_values: List[float] = field(default_factory=list)    # 近60日 红盘率
-    kqxy_values: List[float] = field(default_factory=list)        # 近60日 KQXY
+    qx_values: List[float] = field(default_factory=list)          # 近60日 QX 情绪
+    szxd_ratio_values: List[float] = field(default_factory=list)  # 近60日 SZ/XD 涨跌比
+    dt_values: List[float] = field(default_factory=list)          # 近60日 DT 跌停家数
 
     _WINDOW = 60  # 滚动窗口
 
     def add_day(self, ztbx: Optional[float], jinji_mean: Optional[float],
-                red_rate: Optional[float], kqxy: Optional[float]) -> None:
+                red_rate: Optional[float], qx: Optional[float] = None,
+                sz: Optional[float] = None, xd: Optional[float] = None,
+                dt: Optional[float] = None) -> None:
         """记录一天的指标值"""
         if ztbx is not None:
             self.ztbx_values.append(ztbx)
@@ -124,8 +139,12 @@ class D6History:
             self.jinji_mean_values.append(jinji_mean)
         if red_rate is not None:
             self.red_rate_values.append(red_rate)
-        if kqxy is not None:
-            self.kqxy_values.append(kqxy)
+        if qx is not None:
+            self.qx_values.append(qx)
+        if sz is not None and xd is not None and xd > 0:
+            self.szxd_ratio_values.append(sz / xd)
+        if dt is not None:
+            self.dt_values.append(dt)
 
     def percentile(self, values: List[float], p: float) -> Optional[float]:
         """计算分位数（线性插值）"""
@@ -148,8 +167,14 @@ class D6History:
     def red_rate_20pct(self) -> Optional[float]:
         return self.percentile(self.red_rate_values, 0.20)
 
-    def kqxy_80pct(self) -> Optional[float]:
-        return self.percentile(self.kqxy_values, 0.80)
+    def qx_20pct(self) -> Optional[float]:
+        return self.percentile(self.qx_values, 0.20)
+
+    def szxd_20pct(self) -> Optional[float]:
+        return self.percentile(self.szxd_ratio_values, 0.20)
+
+    def dt_80pct(self) -> Optional[float]:
+        return self.percentile(self.dt_values, 0.80)
 
 
 # ============================================================================
@@ -330,11 +355,22 @@ def determine_emotion_state(
     # 提取 qxlive 指标
     ztbx_925 = _extract_qxlive_metric(qxlive_top_t0, "ZTBX")
     lbbx_925 = _extract_qxlive_metric(qxlive_top_t0, "LBBX")
-    kqxy_925 = _extract_qxlive_metric(qxlive_top_t0, "KQXY")
+    qx_925 = _extract_qxlive_metric(qxlive_top_t0, "QX")
+    dt_925 = _extract_qxlive_metric(qxlive_top_t0, "DT")
+    sz_925 = _extract_qxlive_metric(qxlive_top_t0, "SZ")
+    xd_925 = _extract_qxlive_metric(qxlive_top_t0, "XD")
     ztbx_t1 = _extract_qxlive_metric(qxlive_top_t1, "ZTBX")
     lbbx_t1 = _extract_qxlive_metric(qxlive_top_t1, "LBBX")
 
     result.ztbx_925 = ztbx_925
+    result.qx_925 = qx_925
+    # 计算 SZ/XD 涨跌比
+    breadth_ratio = None
+    if sz_925 is not None and xd_925 is not None and xd_925 > 0:
+        breadth_ratio = sz_925 / xd_925
+
+    result.breadth_ratio = breadth_ratio
+    result.dt_925 = int(dt_925) if dt_925 is not None else None
 
     # 竞价红盘率
     red_rate = _calc_red_rate(features)
@@ -370,6 +406,10 @@ def determine_emotion_state(
     result.crisis_1 = crisis_1
     result.crisis_2 = crisis_2
     result.crisis_3 = crisis_3
+    # 初始化为 False，后续 QX/广度/DT 检测块会覆盖
+    crisis_4 = False
+    crisis_5 = False
+    crisis_6 = False
     result.crisis_count = sum([crisis_1, crisis_2, crisis_3])
 
     # 判定环境状态
@@ -411,17 +451,48 @@ def determine_emotion_state(
             result.pool_huanshou_mult *= 0.5
             warnings.append("LBBX塌方: 一字封/换手封池降权×0.5")
 
-    # KQXY 飙升: KQXY@9:25 > 60d 80pct
-    if kqxy_925 is not None:
-        if history and len(history.kqxy_values) >= 10:
-            kqxy_80pct = history.kqxy_80pct()
-            if kqxy_80pct is not None and kqxy_925 > kqxy_80pct:
-                result.kqxy_spike = True
-                # 全仓上限 × 0.7 (亏钱效应飙升 = 市场恐慌)
-                warnings.append("KQXY飙升: 全仓上限×0.7")
-        elif kqxy_925 > 30.0:  # 静态阈值
-            result.kqxy_spike = True
-            warnings.append("KQXY飙升(静态阈值>30): 全仓上限×0.7")
+    # QX 情绪冰点: QX@9:25 < 60d 20pct (或静态阈值 ≤ 25, 源自 v6 冷市 ≤ 30)
+    if qx_925 is not None:
+        if history and len(history.qx_values) >= 10:
+            qx_20pct = history.qx_20pct()
+            if qx_20pct is not None and qx_925 < qx_20pct:
+                result.qx_cold = True
+                result.crisis_4 = True
+                warnings.append("QX 情绪冰点: QX < 滚动20分位")
+        elif qx_925 <= 25.0:  # 静态阈值: v6 冷市 ≤ 30, 收紧到 25
+            result.qx_cold = True
+            result.crisis_4 = True
+            warnings.append("QX 情绪冰点(静态阈值 ≤ 25)")
+
+    # 广度崩塌: SZ/XD 涨跌比 < 60d 20pct (或静态阈值 ≤ 0.28, 源自 v6)
+    if breadth_ratio is not None:
+        if history and len(history.szxd_ratio_values) >= 10:
+            szxd_20pct = history.szxd_20pct()
+            if szxd_20pct is not None and breadth_ratio < szxd_20pct:
+                result.breadth_collapse = True
+                result.crisis_5 = True
+                warnings.append("涨跌比崩塌: SZ/XD < 滚动20分位")
+        elif breadth_ratio <= 0.28:  # 静态阈值: v6 广度 ≤ 0.28
+            result.breadth_collapse = True
+            result.crisis_5 = True
+            warnings.append("涨跌比崩塌(静态阈值 ≤ 0.28)")
+
+    # DT 大寒: DT@9:25 > 60d 80pct (或静态阈值 ≥ 15, 源自 v6 冷市 ≥ 20 收紧到 15)
+    if dt_925 is not None:
+        if history and len(history.dt_values) >= 10:
+            dt_80pct = history.dt_80pct()
+            if dt_80pct is not None and dt_925 > dt_80pct:
+                result.dt_cold = True
+                result.crisis_6 = True
+                warnings.append("跌停大寒: DT > 滚动80分位")
+        elif dt_925 >= 15:  # 静态阈值: v6 冷市 ≥ 20, 收紧到 15
+            result.dt_cold = True
+            result.crisis_6 = True
+            warnings.append("跌停大寒(静态阈值 ≥ 15)")
+
+    # 更新危机计数 (含 QX/广度/DT)
+    result.crisis_count = sum([result.crisis_1, result.crisis_2, result.crisis_3,
+                                result.crisis_4, result.crisis_5, result.crisis_6])
 
     # ========================================================================
     # 输出: 仓位上限 + 结构优先级 + 买点模式
@@ -456,9 +527,17 @@ def determine_emotion_state(
         result.pool_fenqi_mult *= 0.3
         warnings.append("CRISIS: 仅分歧封轻仓试错(≤30%), 其余池硬禁用")
 
-    # KQXY 飙升额外降仓
-    if result.kqxy_spike:
+    # QX 冰点 + 广度崩塌 + DT大寒 额外降仓
+    # 每触发一个危机项，总仓位上限 × 0.7
+    if result.qx_cold:
         result.total_position_cap *= 0.7
+        warnings.append("QX冰点: 总仓位上限×0.7")
+    if result.breadth_collapse:
+        result.total_position_cap *= 0.7
+        warnings.append("涨跌比崩塌: 总仓位上限×0.7")
+    if result.dt_cold:
+        result.total_position_cap *= 0.7
+        warnings.append("跌停大寒: 总仓位上限×0.7")
 
     result.warnings = warnings
     result.diagnostics = {
@@ -468,9 +547,12 @@ def determine_emotion_state(
         "ztbx_t1": ztbx_t1,
         "lbbx_925": lbbx_925,
         "lbbx_t1": lbbx_t1,
-        "kqxy_925": kqxy_925,
+        "qx_925": qx_925,
+        "breadth_ratio": breadth_ratio,
+        "dt_925": dt_925,
         "red_rate": red_rate,
         "crisis_1": crisis_1, "crisis_2": crisis_2, "crisis_3": crisis_3,
+        "crisis_4": crisis_4, "crisis_5": crisis_5, "crisis_6": crisis_6,
     }
 
     return result
@@ -503,7 +585,10 @@ def _self_test() -> bool:
     qxlive_t0 = [
         {"metric_key": "ZTBX", "value": "2.5"},
         {"metric_key": "LBBX", "value": "3.0"},
-        {"metric_key": "KQXY", "value": "5.0"},
+        {"metric_key": "QX", "value": "35.0"},
+        {"metric_key": "SZ", "value": "2100"},
+        {"metric_key": "XD", "value": "1500"},
+        {"metric_key": "DT", "value": "3"},
     ]
     qxlive_t1 = [
         {"metric_key": "ZTBX", "value": "2.0"},

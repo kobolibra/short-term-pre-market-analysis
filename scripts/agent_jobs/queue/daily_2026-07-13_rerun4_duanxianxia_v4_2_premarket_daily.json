@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-13_rerun4_duanxianxia_v4_2_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-13T14:00:00+08:00",
+  "note": "v4.2 RE-RUN: KQXY→QX+SZ/XD+DT 三指标替代, 增长率 meta.groups 修复"
+}

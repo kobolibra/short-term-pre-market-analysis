@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-14_rerun12_feishu_analysis_push",
+  "script": "scripts/duanxianxia_v4_2_premarket_feishu_rerun.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-14T17:00:00+08:00",
+  "note": "worker环境变量传递修复: DUANXIANXIA_WEBHOOK_URL传给子进程"
+}

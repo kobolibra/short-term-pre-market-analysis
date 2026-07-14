@@ -13,11 +13,20 @@ whitelisted 脚本，把结果写到 reports/_audit/agent_jobs/<id>.result.json�
 """
 from __future__ import annotations
 import json
+import os
 import subprocess
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
+
+# 需要从父进程传递给子进程的环境变量
+PASSTHROUGH_ENV = [
+    "DUANXIANXIA_WEBHOOK_URL",
+    "FEISHU_APP_ID",
+    "FEISHU_APP_SECRET",
+    "IPO_FEISHU_WEBHOOK_URL",
+]
 from zoneinfo import ZoneInfo
 
 WORKSPACE = Path("/home/investmentofficehku/.openclaw/workspace").resolve()
@@ -104,11 +113,17 @@ def _run_one(spec: dict) -> str:
     args = [str(a) for a in (spec.get("args") or [])]
     timeout = int(spec.get("timeout") or DEFAULT_TIMEOUT)
     cmd = ["python3", str(target), *args]
+    # 传递关键环境变量给子进程
+    child_env = os.environ.copy()
+    for k in PASSTHROUGH_ENV:
+        if k in os.environ:
+            child_env[k] = os.environ[k]
     started = _now()
     t0 = time.time()
     try:
         proc = subprocess.run(
-            cmd, cwd=str(WORKSPACE), text=True, capture_output=True, timeout=timeout
+            cmd, cwd=str(WORKSPACE), text=True, capture_output=True,
+            timeout=timeout, env=child_env,
         )
         rec.update({
             "ok": proc.returncode == 0,

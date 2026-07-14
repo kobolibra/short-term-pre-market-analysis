@@ -1,0 +1,13 @@
+{
+  "id": "daily_2026-07-14_v16_strategy",
+  "script": "scripts/v16_strategy.py",
+  "args": [
+    "--top-n",
+    "30",
+    "--min-train",
+    "5"
+  ],
+  "timeout": 2400,
+  "created": "2026-07-14T10:01:53+08:00",
+  "note": "daily auto-refresh 2026-07-14"
+}

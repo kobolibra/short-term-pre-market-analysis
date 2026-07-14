@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-14_rerun8_duanxianxia_v4_2_backtest_daily",
+  "script": "scripts/duanxianxia_v4_2_backtest_daily.py",
+  "args": ["--today", "2026-07-14", "--days", "5"],
+  "timeout": 2400,
+  "created": "2026-07-14T10:00:00+08:00",
+  "note": "v4.2 D6重写+时区修复: 5天每日回测"
+}

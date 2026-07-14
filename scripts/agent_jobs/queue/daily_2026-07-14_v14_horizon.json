@@ -1,0 +1,11 @@
+{
+  "id": "daily_2026-07-14_v14_horizon",
+  "script": "scripts/v14_horizon.py",
+  "args": [
+    "--top-n",
+    "30"
+  ],
+  "timeout": 2400,
+  "created": "2026-07-14T10:01:53+08:00",
+  "note": "daily auto-refresh 2026-07-14"
+}

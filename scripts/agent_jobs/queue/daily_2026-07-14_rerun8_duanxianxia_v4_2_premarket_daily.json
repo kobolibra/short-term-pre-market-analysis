@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-14_rerun8_duanxianxia_v4_2_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": ["--date", "2026-07-14"],
+  "timeout": 2400,
+  "created": "2026-07-14T10:00:00+08:00",
+  "note": "v4.2 D6重写+时区修复: 3×3矩阵+三家族+状态迁移, 盘前分析"
+}

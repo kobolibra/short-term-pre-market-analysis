@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-duanxianxia_v4_2_backtest_daily.py  --  v4.2 每日回测（零参数，自动检测过去5个交易日）
+duanxianxia_v4_2_backtest_daily.py  --  v4.2 每日回测
 
+自动检测过去5个交易日，用滚动历史做每日情绪周期评估。
 由 agent_daily_refresh.py 入队，agent_job_worker.py 执行。
 结果写入 reports/_audit/v4_2_backtest/YYYY-MM-DD.json。
+
+用法: python3 duanxianxia_v4_2_backtest_daily.py [--today 2026-07-14] [--days 5]
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -25,9 +29,22 @@ PROJECT_ROOT = WORKSPACE / "projects" / "duanxianxia"
 OUTPUT_DIR = PROJECT_ROOT / "reports" / "_audit" / "v4_2_backtest"
 
 
-def _past_trading_days(n: int = 5) -> List[str]:
+def _shanghai_today() -> str:
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
+    except Exception:
+        return date.today().isoformat()
+
+
+def _past_trading_days(n: int = 5, end_date: str = None) -> List[str]:
     days = []
-    cur = date.today() - timedelta(days=1)  # 从昨天开始
+    if end_date:
+        from datetime import datetime
+        cur = datetime.fromisoformat(end_date).date()
+    else:
+        cur = date.today()
+    cur -= timedelta(days=1)  # 从昨天开始
     while len(days) < n:
         if cur.weekday() < 5:
             days.append(cur.isoformat())
@@ -36,13 +53,17 @@ def _past_trading_days(n: int = 5) -> List[str]:
 
 
 def main() -> int:
+    p = argparse.ArgumentParser()
+    p.add_argument("--today", default=None, help="今天日期, 默认上海时间今天")
+    p.add_argument("--days", type=int, default=5, help="回测天数")
+    args = p.parse_args()
+    today = args.today or _shanghai_today()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    today = date.today().isoformat()
     out_path = OUTPUT_DIR / f"{today}.json"
     if out_path.exists():
         print(f"v4.2 backtest: overwriting existing {out_path} (re-run with fixes)")
 
-    days = _past_trading_days(5)
+    days = _past_trading_days(args.days, end_date=args.today)
     history = D6History()
     summary: Dict[str, Any] = {"version": VERSION, "days": days, "results": []}
 

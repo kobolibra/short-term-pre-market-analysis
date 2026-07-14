@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-duanxianxia_v4_2_premarket_daily.py  --  v4.2 盘前分析重跑（零参数，当天）
+duanxianxia_v4_2_premarket_daily.py  --  v4.2 盘前分析重跑
 
 用已下载的 9:25 捕捉数据重跑 v4.2 盘前选股管线。
 由 agent_daily_refresh.py 入队，agent_job_worker.py 执行。
 结果写入 reports/_audit/v4_2_premarket/YYYY-MM-DD.json。
+
+用法: python3 duanxianxia_v4_2_premarket_daily.py --date 2026-07-14
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -26,9 +29,20 @@ PROJECT_ROOT = WORKSPACE / "projects" / "duanxianxia"
 OUTPUT_DIR = PROJECT_ROOT / "reports" / "_audit" / "v4_2_premarket"
 
 
+def _shanghai_today() -> str:
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
+    except Exception:
+        return date.today().isoformat()
+
+
 def main() -> int:
+    p = argparse.ArgumentParser()
+    p.add_argument("--date", default=None, help="分析日期, 默认上海时间今天")
+    args = p.parse_args()
+    today = args.date or _shanghai_today()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    today = date.today().isoformat()
     out_path = OUTPUT_DIR / f"{today}.json"
 
     print(f"v4.2 premarket analysis: running for {today}...")

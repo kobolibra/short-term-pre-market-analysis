@@ -1,0 +1,12 @@
+{
+  "id": "daily_2026-07-14_v10_optimize",
+  "script": "scripts/v10_optimize.py",
+  "args": [
+    "--no-regen",
+    "--top-n",
+    "30"
+  ],
+  "timeout": 2400,
+  "created": "2026-07-14T10:01:53+08:00",
+  "note": "daily auto-refresh 2026-07-14"
+}

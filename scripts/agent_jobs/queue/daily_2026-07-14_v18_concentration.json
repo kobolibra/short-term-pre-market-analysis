@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-14_v18_concentration",
+  "script": "scripts/v18_concentration.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-14T10:01:53+08:00",
+  "note": "daily auto-refresh 2026-07-14"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-14_rerun8_duanxianxia_v4_2_backtest_full",
+  "script": "scripts/duanxianxia_v4_2_backtest_daily.py",
+  "args": ["--today", "2026-07-14", "--days", "20"],
+  "timeout": 4800,
+  "created": "2026-07-14T10:00:00+08:00",
+  "note": "v4.2 D6重写: 20天完整回测, 积累历史验证3×3矩阵+状态迁移"
+}

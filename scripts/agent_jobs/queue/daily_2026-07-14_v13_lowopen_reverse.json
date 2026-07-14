@@ -1,0 +1,13 @@
+{
+  "id": "daily_2026-07-14_v13_lowopen_reverse",
+  "script": "scripts/v13_lowopen_reverse.py",
+  "args": [
+    "--low-open-max",
+    "2.0",
+    "--top-n",
+    "30"
+  ],
+  "timeout": 2400,
+  "created": "2026-07-14T10:01:53+08:00",
+  "note": "daily auto-refresh 2026-07-14"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "daily_2026-07-14_v15_cohort_selector",
+  "script": "scripts/v15_cohort_selector.py",
+  "args": [
+    "--top-n",
+    "30",
+    "--min-train",
+    "5",
+    "--low-open-max",
+    "2.0"
+  ],
+  "timeout": 2400,
+  "created": "2026-07-14T10:01:53+08:00",
+  "note": "daily auto-refresh 2026-07-14"
+}

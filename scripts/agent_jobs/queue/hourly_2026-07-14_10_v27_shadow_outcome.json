@@ -1,0 +1,8 @@
+{
+  "id": "hourly_2026-07-14_10_v27_shadow_outcome",
+  "script": "scripts/v27_shadow_outcome.py",
+  "args": [],
+  "timeout": 1200,
+  "created": "2026-07-14T10:01:53+08:00",
+  "note": "hourly retry 2026-07-14 10:00 for pending-safe shadow outcome labels"
+}

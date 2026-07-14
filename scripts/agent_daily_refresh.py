@@ -77,10 +77,14 @@ def main():
         qf = QUEUE_DIR / f"{job_id}.json"
         if qf.exists():
             continue
+        # 对于每日脚本需要传入日期参数(解决时区问题)
+        all_args = [*args]
+        if script in ("duanxianxia_v4_2_premarket_daily.py", "duanxianxia_v4_2_backtest_daily.py"):
+            all_args.extend(["--date" if "premarket" in script else "--today", today])
         qf.write_text(json.dumps({
             "id": job_id,
             "script": f"scripts/{script}",
-            "args": args,
+            "args": all_args,
             "timeout": 2400,
             "created": now.isoformat(timespec="seconds"),
             "note": f"daily auto-refresh {today}",

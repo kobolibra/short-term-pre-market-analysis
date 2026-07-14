@@ -19,8 +19,11 @@ D6 不只是风险预算层。D6 必须首先识别市场所处的情绪周期�
 2. 市场广度(breadth):   advance_share + (1-DT分位) 取中位数
 3. 接力生态(relay):   relay_health = 0.55×1进2 + 0.45×2进3, 分位
 
-总水位 = median(profit, breadth, relay)
+总水位 = weighted_median(profit, breadth, relay×2)
+  → relay 2x 权重: 它是短线最核心信号(有没有人接盘)
 方向 = 每个家族近3-5日稳健斜率取中位数, 至少2个家族同向
+
+滞回区间: LOW→MID 需 0.40, MID→LOW 只需 0.30; HIGH→MID 需 0.60, MID→HIGH 只需 0.70
 
 ============================================================================
 3×3 九宫格
@@ -293,7 +296,7 @@ PHASE_STRUCTURE = {
     EmotionPhase.HIGH_STAGNATION:   {"height": "HIGH", "fenqi": "LOW", "yizi": True, "huanshou": True, "fenqi_enabled": False, "feiban": False},
     EmotionPhase.RETREAT_EARLY:     {"height": "LOW", "fenqi": "DISABLED", "yizi": False, "huanshou": False, "fenqi_enabled": True, "feiban": False},
     EmotionPhase.RETREAT:           {"height": "LOW", "fenqi": "DISABLED", "yizi": False, "huanshou": False, "fenqi_enabled": False, "feiban": False},
-    EmotionPhase.CHOP:              {"height": "MID", "fenqi": "NORMAL", "yizi": True, "huanshou": True, "fenqi_enabled": True, "feiban": True},
+    EmotionPhase.CHOP:              {"height": "MID", "fenqi": "NORMAL", "yizi": False, "huanshou": True, "fenqi_enabled": True, "feiban": True},
     EmotionPhase.UNKNOWN:           {"height": "LOW", "fenqi": "DISABLED", "yizi": False, "huanshou": False, "fenqi_enabled": False, "feiban": False},
 }
 
@@ -460,6 +463,17 @@ def _classify_direction(slope: float, deadband: float = DIRECTION_DEADBAND) -> E
         return EmotionDirection.DOWN
 
 
+def _phase_to_level(phase: Optional[EmotionPhase]) -> Optional[EmotionLevel]:
+    """从相位反推水位, 用于滞回区间"""
+    if phase is None or phase == EmotionPhase.UNKNOWN:
+        return None
+    if phase in (EmotionPhase.ICE_FALL, EmotionPhase.ICE_BASE, EmotionPhase.REPAIR):
+        return EmotionLevel.LOW
+    if phase in (EmotionPhase.EXPANSION, EmotionPhase.CHOP, EmotionPhase.RETREAT):
+        return EmotionLevel.MID
+    return EmotionLevel.HIGH  # CLIMAX_ACCEL, HIGH_STAGNATION, RETREAT_EARLY
+
+
 def _classify_phase(level: EmotionLevel, direction: EmotionDirection) -> EmotionPhase:
     """水位×方向 → 相位"""
     if level == EmotionLevel.LOW:
@@ -606,16 +620,20 @@ def determine_emotion_state(
 
     # 家族1: 强势股兑现
     if has_history:
-        ztbx_pct = _calc_pctile(history.ztbx_values, ztbx_925) or 0.5
-        lbbx_pct = _calc_pctile(history.lbbx_values, lbbx_925) or 0.5
+        ztbx_pct = _calc_pctile(history.ztbx_values, ztbx_925)
+        ztbx_pct = ztbx_pct if ztbx_pct is not None else 0.5
+        lbbx_pct = _calc_pctile(history.lbbx_values, lbbx_925)
+        lbbx_pct = lbbx_pct if lbbx_pct is not None else 0.5
         profit_level = round((ztbx_pct + lbbx_pct) / 2, 4)
     else:
         profit_level = 0.5  # 默认中位
 
     # 家族2: 市场广度
     if has_history:
-        adv_pct = _calc_pctile(history.advance_share_values, advance_share) or 0.5
-        dt_pct = _calc_pctile(history.dt_values, dt_925) or 0.5
+        adv_pct = _calc_pctile(history.advance_share_values, advance_share)
+        adv_pct = adv_pct if adv_pct is not None else 0.5
+        dt_pct = _calc_pctile(history.dt_values, dt_925)
+        dt_pct = dt_pct if dt_pct is not None else 0.5
         breadth_level = round((adv_pct + (1 - dt_pct)) / 2, 4)
     else:
         # 静态回退
@@ -629,15 +647,17 @@ def determine_emotion_state(
 
     # 家族3: 接力生态
     if has_history and relay_health is not None:
-        relay_level = _calc_pctile(history.relay_health_values, relay_health) or 0.5
+        relay_level = _calc_pctile(history.relay_health_values, relay_health)
+        relay_level = relay_level if relay_level is not None else 0.5
     elif relay_health is not None:
         relay_level = 0.15 if relay_health < thresh.get("relay_health_15pct", 15.0) else 0.50
     else:
         relay_level = 0.50
 
-    # 总水位
-    level_score = round(sorted([profit_level, breadth_level, relay_level])[1], 4)  # 中位数
-    level = _classify_level(level_score, prev_level=None)
+    # 总水位(加权中位数: 接力生态 2x 权重, 因为它是短线最核心信号)
+    weighted = sorted([profit_level, breadth_level, relay_level, relay_level])
+    level_score = round((weighted[1] + weighted[2]) / 2, 4)
+    level = _classify_level(level_score, prev_level=_phase_to_level(prev_phase))
 
     # ========================================================================
     # 阶段 4: 三家族方向计算
@@ -907,12 +927,12 @@ def _self_test() -> bool:
     assert r4.direction != EmotionDirection.UNKNOWN, f"direction should be known with history"
     print(f"  Test4 PASS: direction={r4.direction.value}, level={r4.level.value}, phase={r4.phase_label}")
 
-    # 测试5: 冰点下杀 (LOW+DOWN)
+    # 测试5: 冰点下杀 (LOW+DOWN) — 加权中位数下 relay 2x权重
     hist_cold = D6History()
     for i in range(10):
         hist_cold.add_day(ztbx=-3.0 - i * 0.3, lbbx=-2.0 - i * 0.2,
                           advance_share=0.15 - i * 0.01, dt=20 + i * 2,
-                          relay_health=10.0 - i * 0.75)
+                          relay_health=30.0 - i * 1.5)
     r5 = determine_emotion_state(
         [{"分组名称": "1进2", "晋级率": 5.0, "晋级数": 1, "样本数": 20},
          {"分组名称": "2进3", "晋级率": 0.0, "晋级数": 0, "样本数": 5}],
@@ -922,9 +942,9 @@ def _self_test() -> bool:
         [{"metric_key": "ZTBX", "value": "-4.0"}, {"metric_key": "LBBX", "value": "-2.0"}],
         history=hist_cold, prev_phase=None,
     )
-    assert r5.phase == EmotionPhase.RETREAT, f"Expected RETREAT (MID+DOWN), got {r5.phase}"
-    assert r5.position_cap < 0.2, f"RETREAT should have low cap, got {r5.position_cap}"
-    print(f"  Test5 PASS: RETREAT detected, cap={r5.position_cap}, level={r5.level_score:.3f}")
+    assert r5.phase == EmotionPhase.ICE_FALL, f"Expected ICE_FALL (LOW+DOWN), got {r5.phase}"
+    assert r5.position_cap == 0.0, f"ICE_FALL should have cap=0, got {r5.position_cap}"
+    print(f"  Test5 PASS: ICE_FALL detected, cap={r5.position_cap}, level={r5.level_score:.3f}")
 
     # 测试6: 晋级率缺失(eligible=0) → 该层为None, 不参与relay_health
     r6 = determine_emotion_state(

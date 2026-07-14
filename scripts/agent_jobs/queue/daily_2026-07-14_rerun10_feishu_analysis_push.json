@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-14_rerun10_feishu_analysis_push",
+  "script": "scripts/duanxianxia_v4_2_premarket_feishu_rerun.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-14T10:00:00+08:00",
+  "note": "用最新代码重跑今天盘前分析+推送到飞书(包含D6情绪周期+选股)"
+}

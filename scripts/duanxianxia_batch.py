@@ -2937,7 +2937,15 @@ def build_feishu_table_card(
 
 def build_feishu_summary_card(report: Dict[str, Any]) -> Dict[str, Any]:
     template = CARD_TEMPLATES.get(report.get("group", ""), "blue")
+    # 盘前分析: 显示情绪周期相位
     title = f"duanxianxia｜{report['group_label']}批量下载回执"
+    if report.get("group") == "premarket":
+        analysis = report.get("analysis", {})
+        if isinstance(analysis, dict) and analysis.get("enabled"):
+            buy_gate = (analysis.get("meta", {}) if isinstance(analysis.get("meta"), dict) else {}).get("buy_gate", {})
+            regime = buy_gate.get("regime", "")
+            if regime:
+                title = f"duanxianxia｜盘前 {regime}"
     hide_paths = report.get("group") in {"premarket", "intraday", "intraday_cashflow", "postmarket", "postmarket_cashflow"}
     note = "" if hide_paths else f"报告文件：{report['report_path']}"
     return build_feishu_card_message(title, render_summary_text(report).replace("**", ""), template=template, note=note)
@@ -3323,18 +3331,54 @@ def render_summary_text(report: Dict[str, Any]) -> str:
     )
 
     analysis = report.get("analysis", {})
-    top_candidates = analysis.get("top_candidates", []) if isinstance(analysis, dict) else []
-    if top_candidates:
+    # 处理 v4.2 情绪周期分析（新格式）
+    analysis_enabled = analysis.get("enabled", False) if isinstance(analysis, dict) else False
+    if analysis_enabled and group == "premarket":
+        meta = analysis.get("meta", {})
+        buy_gate = meta.get("buy_gate", {})
+        emo = meta.get("emotion", {})
         lines.extend([
             "",
-            f"**盘前分析候选（共 {len(top_candidates)} 条）**" if group == "premarket" else f"**分析候选（共 {len(top_candidates)} 条）**",
+            "**【D6 情绪周期】**",
+            f"- 周期相位：{buy_gate.get('regime', 'UNKNOWN')}",
+            f"- 风险等级：{buy_gate.get('risk_tier', 'UNKNOWN')}",
+            f"- 仓位上限：{buy_gate.get('position_cap', 0)*100:.0f}%",
+            f"- 已选：{buy_gate.get('selected', 0)}只",
         ])
-        for cand in top_candidates:
-            reason_text = "；".join(cand.get("reasons", [])[:3]) or "无"
-            risk_text = "；".join(cand.get("risks", [])[:2]) or "无"
-            lines.append(
-                f"- {cand.get('rank')}. {cand.get('name')}（{cand.get('code')}）｜评分 {cand.get('score')}｜命中 {cand.get('source_hit_count')} 表｜理由：{reason_text}｜风险：{risk_text}"
-            )
+        # 关键指标
+        if emo.get("ztbx_925") is not None:
+            lines.append(f"- ZTBX@9:25：{emo.get('ztbx_925'):.2f}%")
+        if emo.get("advance_share") is not None:
+            lines.append(f"- 上涨占比：{emo.get('advance_share'):.2%}")
+        if emo.get("jinji_weighted") is not None:
+            lines.append(f"- 加权晋级率：{emo.get('jinji_weighted'):.1f}%")
+
+    top_candidates = analysis.get("top_candidates", []) if isinstance(analysis, dict) else []
+    if top_candidates:
+        # 判断格式: v4.2 有 pool 字段, 旧格式有 reasons 字段
+        is_v4_2 = isinstance(top_candidates[0], dict) and "pool" in top_candidates[0]
+        if is_v4_2:
+            lines.extend([
+                "",
+                f"**盘前选股候选（共 {len(top_candidates)} 只）**",
+            ])
+            for cand in top_candidates:
+                code = cand.get("code", "")
+                name = cand.get("name", "")
+                pool = cand.get("pool", "")
+                pos = cand.get("position_pct", 0)
+                lines.append(f"- {name}（{code}）| {pool} | 仓位 {pos}%")
+        else:
+            lines.extend([
+                "",
+                f"**盘前分析候选（共 {len(top_candidates)} 条）**" if group == "premarket" else f"**分析候选（共 {len(top_candidates)} 条）**",
+            ])
+            for cand in top_candidates:
+                reason_text = "；".join(cand.get("reasons", [])[:3]) or "无"
+                risk_text = "；".join(cand.get("risks", [])[:2]) or "无"
+                lines.append(
+                    f"- {cand.get('rank')}. {cand.get('name')}（{cand.get('code')}）｜评分 {cand.get('score')}｜命中 {cand.get('source_hit_count')} 表｜理由：{reason_text}｜风险：{risk_text}"
+                )
 
     strong_up_candidates = analysis.get("strong_up_candidates", []) if isinstance(analysis, dict) else []
     weak_to_strong_candidates = analysis.get("weak_to_strong_candidates", []) if isinstance(analysis, dict) else []

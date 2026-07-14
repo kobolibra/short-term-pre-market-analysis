@@ -26,6 +26,7 @@ RESULT_DIR = WORKSPACE / "projects" / "duanxianxia" / "reports" / "_audit" / "ag
 TZ = ZoneInfo("Asia/Shanghai")
 DEFAULT_TIMEOUT = 1800
 TAIL = 16000
+MAX_TOTAL_RUNTIME = 300  # 5 分钟总运行时间上限，防止锁被长期占用
 
 
 def _now() -> str:
@@ -49,6 +50,23 @@ def _load_jobs() -> list:
             continue
         spec["_file"] = f.name
         jobs.append(spec)
+    # 优先级排序: feishu > rerun > premarket > backtest > daily > hourly > 其他
+    def _priority(spec):
+        jid = str(spec.get("id", "")).lower()
+        if "feishu" in jid:
+            return 0
+        if "rerun" in jid:
+            return 1
+        if "premarket" in jid:
+            return 2
+        if "backtest" in jid:
+            return 3
+        if jid.startswith("daily_"):
+            return 4
+        if jid.startswith("hourly_"):
+            return 5
+        return 6
+    jobs.sort(key=_priority)
     return jobs
 
 
@@ -118,6 +136,7 @@ def main() -> int:
     RESULT_DIR.mkdir(parents=True, exist_ok=True)
     jobs = _load_jobs()
     summary = {"scanned": len(jobs), "ran": [], "skipped": [], "errors": []}
+    start_time = time.time()
     for spec in jobs:
         if spec.get("_bad"):
             summary["errors"].append({spec["_bad"]: spec["_err"]})
@@ -130,6 +149,9 @@ def main() -> int:
             summary["ran"].append({jid: status})
         else:
             summary["errors"].append({jid: status})
+        # 检查总运行时间，防止超时卡住锁
+        if time.time() - start_time > MAX_TOTAL_RUNTIME:
+            break
     _write(RESULT_DIR / "_worker_heartbeat.json", {"last_run": _now(), **summary})
     print(json.dumps(summary, ensure_ascii=False))
     return 0

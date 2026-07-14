@@ -167,6 +167,7 @@ def run_v4_2_pipeline(
     static_thresholds: Optional[Dict[str, float]] = None,
     top_n_per_pool: int = 3,
     premarket_auction_cutoff: str = "092900",
+    bundle: Optional[PremarketDataBundle] = None,
 ) -> Dict[str, Any]:
     """
     执行 v4.2 完整决策链路。
@@ -178,6 +179,7 @@ def run_v4_2_pipeline(
         static_thresholds: D6 静态阈值 (历史数据不足时回退)
         top_n_per_pool: 每池取 Top N
         premarket_auction_cutoff: 竞价数据截断时间 (默认 "092900"; 回测时可放宽至 "100000")
+        bundle: 可选, 预加载的 PremarketDataBundle (传入后跳过数据加载步骤)
 
     Returns:
         {
@@ -196,15 +198,19 @@ def run_v4_2_pipeline(
     # ========================================================================
     # Layer 0: 数据加载
     # ========================================================================
-    try:
-        bundle = load_premarket_bundle(date_t0, project_root, premarket_auction_cutoff=premarket_auction_cutoff)
-    except DataLoaderError as e:
-        return {
-            "version": VERSION,
-            "date": date_t0,
-            "error": f"数据加载失败: {e}",
-            "warnings": [],
-        }
+    if bundle is not None:
+        # 使用预加载的 bundle (从 report items 构建, 避免重新下载)
+        pass
+    else:
+        try:
+            bundle = load_premarket_bundle(date_t0, project_root, premarket_auction_cutoff=premarket_auction_cutoff)
+        except DataLoaderError as e:
+            return {
+                "version": VERSION,
+                "date": date_t0,
+                "error": f"数据加载失败: {e}",
+                "warnings": [],
+            }
 
     warnings.extend(bundle.warnings)
 
@@ -377,6 +383,85 @@ def run_v4_2_pipeline(
 # batch.py 适配器 (供 cron 管线调用)
 # ============================================================================
 
+
+def _extract_t0_rows_from_item(item: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """从 report item 的 capture_path 读取实际行数据"""
+    capture_path = item.get("capture_path", "")
+    if not capture_path:
+        return []
+    try:
+        capture = json.loads(Path(capture_path).read_text(encoding="utf-8"))
+        return capture.get("rows", [])
+    except Exception:
+        return []
+
+
+def _build_bundle_from_report(
+    report: Dict[str, Any],
+    project_root: Path,
+    trade_date: str,
+) -> PremarketDataBundle:
+    """从已有 report 的 capture 数据构建 PremarketDataBundle, 避免重新下载。
+
+    T0 竞价数据从 report items 的 capture_path 读取 (9:25 原始数据),
+    T-1 数据仍从 captures 目录加载 (历史数据, 不会变)。
+
+    如果 report 没有 items, 退回常规 load_premarket_bundle。
+    """
+    # 用常规 load_premarket_bundle 获取 T-1 数据
+    from duanxianxia_v7_1_data_loader import load_premarket_bundle as _load_bundle
+
+    items = report.get("items", [])
+    if not items:
+        return _load_bundle(trade_date, str(project_root),
+                            premarket_auction_cutoff="092900")
+    item_map: Dict[str, Dict[str, Any]] = {}
+    for item in items:
+        did = item.get("dataset_id", "")
+        if did:
+            item_map[did] = item
+
+    # 加载 T-1 数据 (历史数据, 从 captures 加载)
+    base_bundle = _load_bundle(trade_date, str(project_root),
+                               premarket_auction_cutoff="092900")
+
+    # 从 report items 读取 T0 竞价数据 (9:25 原始快照)
+    def _rows(ds_id: str) -> List[Dict[str, Any]]:
+        return _extract_t0_rows_from_item(item_map.get(ds_id, {}))
+
+    return PremarketDataBundle(
+        date_t0=base_bundle.date_t0,
+        date_t1=base_bundle.date_t1,
+        date_t2=base_bundle.date_t2,
+        project_root=base_bundle.project_root,
+        # T0: 从 report items 读取原始竞价数据
+        auction_vratio=_rows("auction.jjyd.vratio"),
+        auction_qiangchou=_rows("auction.jjyd.qiangchou"),
+        auction_netamount=_rows("auction.jjyd.net_amount"),
+        auction_fengdan=_rows("auction.jjlive.fengdan"),
+        auction_weimai=_rows("auction.jjyd.weimai"),
+        kaipan_t0_rows=_rows("home.kaipan.plate.summary"),
+        kaipan_t0_meta=base_bundle.kaipan_t0_meta,
+        qxlive_top_t0_rows=_rows("home.qxlive.top_metrics"),
+        qxlive_top_t0_meta=base_bundle.qxlive_top_t0_meta,
+        # T-1: 从 captures 加载 (历史数据不变)
+        kaipan_t1_rows=base_bundle.kaipan_t1_rows,
+        kaipan_t1_meta=base_bundle.kaipan_t1_meta,
+        cashflow_today_t1=base_bundle.cashflow_today_t1,
+        cashflow_3day_t1=base_bundle.cashflow_3day_t1,
+        cashflow_5day_t1=base_bundle.cashflow_5day_t1,
+        cashflow_10day_t1=base_bundle.cashflow_10day_t1,
+        fupan_t1=base_bundle.fupan_t1,
+        ltgd_5day_t1=base_bundle.ltgd_5day_t1,
+        ztpool_t1=base_bundle.ztpool_t1,
+        qxlive_top_t1_rows=base_bundle.qxlive_top_t1_rows,
+        qxlive_top_t1_meta=base_bundle.qxlive_top_t1_meta,
+        qxlive_top_t2_rows=base_bundle.qxlive_top_t2_rows,
+        qxlive_top_t2_meta=base_bundle.qxlive_top_t2_meta,
+        kaipan_history=base_bundle.kaipan_history,
+        warnings=base_bundle.warnings,
+    )
+
 def build_premarket_analysis_v4_2(
     report: Dict[str, Any],
     project_root: Optional[str | Path] = None,
@@ -400,10 +485,14 @@ def build_premarket_analysis_v4_2(
     from duanxianxia_premarket_v7_2_runner import DEFAULT_PROJECT_ROOT
     root = Path(project_root) if project_root is not None else DEFAULT_PROJECT_ROOT
 
+    # 从已有 report 的 capture 数据构建 bundle (T0用9:25原始数据, 不重新下载)
+    bundle = _build_bundle_from_report(report, root, trade_date)
+
     # 运行 v4.2 管线
     result = run_v4_2_pipeline(
         date_t0=trade_date,
         project_root=str(root),
+        bundle=bundle,
     )
 
     if "error" in result:

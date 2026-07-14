@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-14_rerun14_feishu_analysis_push",
+  "script": "scripts/duanxianxia_v4_2_premarket_feishu_rerun.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-14T19:15:00+08:00",
+  "note": "用新代码(报告数据直接读取, 不重新下载)重跑飞书推送"
+}

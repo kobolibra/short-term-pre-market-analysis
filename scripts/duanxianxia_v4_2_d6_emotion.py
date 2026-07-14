@@ -17,7 +17,7 @@ D6 不只是风险预算层。D6 必须首先识别市场所处的情绪周期�
 ============================================================================
 1. 强势股兑现(profit):  ZTBX + LBBX 分位取中位数
 2. 市场广度(breadth):   advance_share + (1-DT分位) 取中位数
-3. 接力生态(relay):     1进2 + 2进3 分位取中位数(收缩后)
+3. 接力生态(relay):   relay_health = 0.55×1进2 + 0.45×2进3, 分位
 
 总水位 = median(profit, breadth, relay)
 方向 = 每个家族近3-5日稳健斜率取中位数, 至少2个家族同向
@@ -31,11 +31,16 @@ MID    发酵主升      震荡混沌      退潮扩散
 LOW    冰点修复      冰点磨底      冰点下杀
 
 ============================================================================
-晋级率
+接力健康度
 ============================================================================
-分子分母来自 ztpool 的 晋级数/样本数, 使用收缩估计:
-  smoothed_rate = (promoted + alpha) / (eligible + alpha + beta)
-避免小样本过拟合。alpha=1, beta=1 (Laplace平滑)。
+单一指标 relay_health 贯穿全链路(展示/水位/方向统一口径):
+  relay_health = 0.55 × smoothed_rate(1进2) + 0.45 × smoothed_rate(2进3)
+
+1进2权重 0.55: 样本多(15-50只)/信号稳定/代表新接力形成
+2进3权重 0.45: 接力持续确认, 是二阶信号
+
+3进4以上样本太小(3-8只), 分位数无统计意义, 不纳入计算。
+Laplace平滑: smoothed_rate = (promoted + 1) / (eligible + 2) × 100
 
 ============================================================================
 状态迁移
@@ -115,20 +120,18 @@ class D6History:
     lbbx_values: List[float] = field(default_factory=list)
     advance_share_values: List[float] = field(default_factory=list)
     dt_values: List[float] = field(default_factory=list)
-    jinji_1_2_values: List[float] = field(default_factory=list)
-    jinji_2_3_values: List[float] = field(default_factory=list)
+    relay_health_values: List[float] = field(default_factory=list)
 
     _WINDOW = 60
 
     def add_day(self, ztbx: Optional[float] = None, lbbx: Optional[float] = None,
                 advance_share: Optional[float] = None, dt: Optional[float] = None,
-                jinji_1_2: Optional[float] = None, jinji_2_3: Optional[float] = None) -> None:
+                relay_health: Optional[float] = None) -> None:
         if ztbx is not None: self.ztbx_values.append(ztbx)
         if lbbx is not None: self.lbbx_values.append(lbbx)
         if advance_share is not None: self.advance_share_values.append(advance_share)
         if dt is not None: self.dt_values.append(dt)
-        if jinji_1_2 is not None: self.jinji_1_2_values.append(jinji_1_2)
-        if jinji_2_3 is not None: self.jinji_2_3_values.append(jinji_2_3)
+        if relay_health is not None: self.relay_health_values.append(relay_health)
 
     def _pctile(self, values: List[float], q: float) -> Optional[float]:
         if len(values) < 5:
@@ -145,8 +148,7 @@ class D6History:
     def lbbx_20pct(self) -> Optional[float]: return self._pctile(self.lbbx_values, 0.20)
     def advance_share_20pct(self) -> Optional[float]: return self._pctile(self.advance_share_values, 0.20)
     def dt_80pct(self) -> Optional[float]: return self._pctile(self.dt_values, 0.80)
-    def jinji_1_2_15pct(self) -> Optional[float]: return self._pctile(self.jinji_1_2_values, 0.15)
-    def jinji_2_3_15pct(self) -> Optional[float]: return self._pctile(self.jinji_2_3_values, 0.15)
+    def relay_health_15pct(self) -> Optional[float]: return self._pctile(self.relay_health_values, 0.15)
 
     def robust_slope(self, values: List[float], n: int = 3) -> Optional[float]:
         """稳健斜率: 最近n日变化的中位数"""
@@ -162,7 +164,7 @@ class D6History:
     @property
     def min_days(self) -> int:
         return min(len(self.ztbx_values), len(self.advance_share_values),
-                   len(self.jinji_1_2_values), len(self.jinji_2_3_values))
+                   len(self.relay_health_values))
 
 @dataclass
 class D6EmotionResult:
@@ -230,7 +232,7 @@ class D6EmotionResult:
     dt_925: Optional[int] = None
     jinji_1_2: Optional[float] = None
     jinji_2_3: Optional[float] = None
-    jinji_weighted: Optional[float] = None
+    relay_health: Optional[float] = None
 
     # === 诊断 ===
     warnings: List[str] = field(default_factory=list)
@@ -255,22 +257,16 @@ DIRECTION_DEADBAND = 0.03
 ALPHA = 1.0
 BETA = 1.0
 
-# 晋级率最大有效权重
-MAX_EFFECTIVE_WEIGHT = {
-    "1_2": 0.55,
-    "2_3": 0.50,
-    "3_4": 0.25,
-    "4P": 0.10,
-    "TOP": 0.10,
-}
+# 接力健康度权重: 1进2(样本多信号稳) 0.55 + 2进3(接力持续) 0.45
+RELAY_WEIGHT_1_2 = 0.55
+RELAY_WEIGHT_2_3 = 0.45
 
 # 静态阈值(历史不足时回退)
 STATIC_DEFAULTS = {
     "ztbx_20pct": -2.0,
     "advance_share_20pct": 0.25,
     "dt_80pct": 15.0,
-    "jinji_1_2_15pct": 15.0,
-    "jinji_2_3_15pct": 10.0,
+    "relay_health_15pct": 15.0,
 }
 
 # 周期相位→风险预算映射
@@ -348,9 +344,9 @@ PHASE_LABELS = {
 
 def _extract_ztpool_pbbx(ztpool_rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     """
-    从 home.ztpool 数据中提取 PBBX 晋级率分层(含分子分母)。
+    从 home.ztpool 数据中提取 PBBX 晋级率(1进2 + 2进3)。
+    只提取样本量足够的两层, 3进4以上样本太小无统计意义。
     ztpool rows 每行含: 分组名称, 晋级率, 晋级数, 样本数
-    同分组的晋级率/晋级数/样本数相同, 取第一个即可。
     """
     result: Dict[str, Dict[str, Any]] = {}
     seen: set = set()
@@ -389,9 +385,6 @@ def _extract_ztpool_pbbx(ztpool_rows: List[Dict[str, Any]]) -> Dict[str, Dict[st
         key = None
         if "1进2" in ladder: key = "PBBX_1_2"
         elif "2进3" in ladder: key = "PBBX_2_3"
-        elif "3进4" in ladder: key = "PBBX_3_4"
-        elif "4" in ladder and ("进" in ladder or "板" in ladder): key = "PBBX_4P"
-        elif "首板" in ladder or "1板" in ladder: key = "PBBX_TOP"
 
         if key:
             result[key] = {
@@ -571,38 +564,21 @@ def determine_emotion_state(
     pbbx = _extract_ztpool_pbbx(ztpool_t1)
     jinji_1_2_raw = pbbx.get("PBBX_1_2", {})
     jinji_2_3_raw = pbbx.get("PBBX_2_3", {})
-    jinji_3_4_raw = pbbx.get("PBBX_3_4", {})
-    jinji_4p_raw = pbbx.get("PBBX_4P", {})
-    jinji_top_raw = pbbx.get("PBBX_TOP", {})
 
     # 收缩估计晋级率
     jinji_1_2 = _smoothed_rate(jinji_1_2_raw.get("promoted"), jinji_1_2_raw.get("eligible"))
     jinji_2_3 = _smoothed_rate(jinji_2_3_raw.get("promoted"), jinji_2_3_raw.get("eligible"))
-    jinji_3_4 = _smoothed_rate(jinji_3_4_raw.get("promoted"), jinji_3_4_raw.get("eligible"))
-    jinji_4p = _smoothed_rate(jinji_4p_raw.get("promoted"), jinji_4p_raw.get("eligible"))
-    jinji_top = _smoothed_rate(jinji_top_raw.get("promoted"), jinji_top_raw.get("eligible"))
 
-    # 加权晋级率(含最大有效权重约束)
-    layers = [
-        ("PBBX_1_2", jinji_1_2, 0.40, MAX_EFFECTIVE_WEIGHT["1_2"]),
-        ("PBBX_2_3", jinji_2_3, 0.35, MAX_EFFECTIVE_WEIGHT["2_3"]),
-        ("PBBX_3_4", jinji_3_4, 0.15, MAX_EFFECTIVE_WEIGHT["3_4"]),
-        ("PBBX_4P", jinji_4p, 0.05, MAX_EFFECTIVE_WEIGHT["4P"]),
-    ]
-    # TOP 如果是合成的(由其他层均值), 不参与计算
-    top_is_synthetic = (jinji_top is not None and jinji_1_2 is not None and jinji_2_3 is not None and
-                        (jinji_3_4 is not None or jinji_4p is not None))
-    if not top_is_synthetic:
-        layers.append(("PBBX_TOP", jinji_top, 0.05, MAX_EFFECTIVE_WEIGHT["TOP"]))
-
-    av = [(k, w, v, mw) for k, w, v, mw in layers if w is not None]
-    # 应用最大有效权重约束: cap weight(v) by max_effective_weight(mw)
-    capped_av = [(k, min(v, mw), w) for k, w, v, mw in av]
-    jinji_weighted = None
-    if capped_av:
-        total_w = sum(w for _, w, _ in capped_av)
-        if total_w > 0:
-            jinji_weighted = round(sum(r * w / total_w for _, w, r in capped_av), 2)
+    # 接力健康度: 单一指标贯穿全链路
+    # 1进2权重 0.55 (样本多/信号稳/新接力形成), 2进3权重 0.45 (接力持续确认)
+    if jinji_1_2 is not None and jinji_2_3 is not None:
+        relay_health = round(RELAY_WEIGHT_1_2 * jinji_1_2 + RELAY_WEIGHT_2_3 * jinji_2_3, 2)
+    elif jinji_1_2 is not None:
+        relay_health = jinji_1_2
+    elif jinji_2_3 is not None:
+        relay_health = jinji_2_3
+    else:
+        relay_health = None
 
     # ========================================================================
     # 阶段 2: 数据质量评估
@@ -611,7 +587,7 @@ def determine_emotion_state(
     data_quality = {
         "profit_family": "VALID" if ztbx_925 is not None else "MISSING",
         "breadth_family": "VALID" if advance_share is not None else "MISSING",
-        "relay_family": "VALID" if jinji_1_2 is not None or jinji_2_3 is not None else "MISSING",
+        "relay_family": "VALID" if relay_health is not None else "MISSING",
     }
     # 部分数据标记 DEGRADED
     if jinji_1_2 is None and jinji_2_3 is not None:
@@ -652,14 +628,10 @@ def determine_emotion_state(
             breadth_level = 0.30
 
     # 家族3: 接力生态
-    if has_history and jinji_1_2 is not None and jinji_2_3 is not None:
-        j1_pct = _calc_pctile(history.jinji_1_2_values, jinji_1_2) or 0.5
-        j2_pct = _calc_pctile(history.jinji_2_3_values, jinji_2_3) or 0.5
-        relay_level = round((j1_pct + j2_pct) / 2, 4)
-    elif jinji_1_2 is not None or jinji_2_3 is not None:
-        j_val = jinji_1_2 if jinji_1_2 is not None else jinji_2_3
-        j_thresh = thresh.get("jinji_1_2_15pct", 15.0) if jinji_1_2 is not None else thresh.get("jinji_2_3_15pct", 10.0)
-        relay_level = 0.15 if j_val < j_thresh else 0.50
+    if has_history and relay_health is not None:
+        relay_level = _calc_pctile(history.relay_health_values, relay_health) or 0.5
+    elif relay_health is not None:
+        relay_level = 0.15 if relay_health < thresh.get("relay_health_15pct", 15.0) else 0.50
     else:
         relay_level = 0.50
 
@@ -678,15 +650,8 @@ def determine_emotion_state(
     if has_history:
         profit_slope = history.robust_slope(history.ztbx_values)
         breadth_slope = history.robust_slope(history.advance_share_values)
-        if len(history.jinji_1_2_values) >= 4:
-            relay_slope_1 = history.robust_slope(history.jinji_1_2_values)
-            relay_slope_2 = history.robust_slope(history.jinji_2_3_values)
-            if relay_slope_1 is not None and relay_slope_2 is not None:
-                relay_slope = (relay_slope_1 + relay_slope_2) / 2
-            elif relay_slope_1 is not None:
-                relay_slope = relay_slope_1
-            else:
-                relay_slope = relay_slope_2
+        if len(history.relay_health_values) >= 4:
+            relay_slope = history.robust_slope(history.relay_health_values)
 
     # 方向一致性: 至少2个家族同向
     if profit_slope is not None and breadth_slope is not None and relay_slope is not None:
@@ -856,7 +821,7 @@ def determine_emotion_state(
         dt_925=dt_925,
         jinji_1_2=jinji_1_2,
         jinji_2_3=jinji_2_3,
-        jinji_weighted=jinji_weighted,
+        relay_health=relay_health,
         warnings=warnings,
         diagnostics={
             "pbbx_raw": pbbx,
@@ -907,16 +872,19 @@ def _self_test() -> bool:
     r1 = determine_emotion_state(ztpool, qxlive_t0, qxlive_t1, history=None, prev_phase=None)
     assert r1.jinji_1_2 is not None, f"jinji_1_2 should not be None, got {r1.jinji_1_2}"
     assert r1.jinji_2_3 is not None
+    assert r1.relay_health is not None, f"relay_health should not be None"
     assert abs(r1.advance_share - 2100/(2100+1500)) < 0.001, f"advance_share wrong: {r1.advance_share}"
     assert r1.phase_confidence > 0, f"confidence should be >0"
-    print(f"  Test1 PASS: jinji_1_2={r1.jinji_1_2}, advance_share={r1.advance_share}, phase={r1.phase_label}")
+    print(f"  Test1 PASS: jinji_1_2={r1.jinji_1_2}, relay_health={r1.relay_health}, advance_share={r1.advance_share}, phase={r1.phase_label}")
 
     # 测试2: 收缩估计
     # promoted=5, eligible=20 → smoothed = (5+1)/(20+1+1) = 6/22 = 27.27%
     assert abs(r1.jinji_1_2 - 27.27) < 0.5, f"smoothed 1_2 wrong: {r1.jinji_1_2}"
     # promoted=2, eligible=10 → smoothed = (2+1)/(10+1+1) = 3/12 = 25.0%
     assert abs(r1.jinji_2_3 - 25.0) < 0.5, f"smoothed 2_3 wrong: {r1.jinji_2_3}"
-    print(f"  Test2 PASS: smoothed rates correct")
+    # relay_health = 0.55*27.27 + 0.45*25.0 = 14.9985 + 11.25 = 26.25
+    assert abs(r1.relay_health - 26.25) < 1.0, f"relay_health wrong: {r1.relay_health}"
+    print(f"  Test2 PASS: smoothed rates correct, relay_health={r1.relay_health}")
 
     # 测试3: ZTBX塌方 (sign_break: t1>0 and t0<0)
     r3 = determine_emotion_state(
@@ -934,7 +902,7 @@ def _self_test() -> bool:
     for i in range(10):
         hist.add_day(ztbx=2.0 + i * 0.1, lbbx=2.0 + i * 0.1,
                      advance_share=0.4 + i * 0.02, dt=5 - i * 0.2,
-                     jinji_1_2=25.0 + i, jinji_2_3=20.0 + i * 0.5)
+                     relay_health=25.0 + i * 0.75)
     r4 = determine_emotion_state(ztpool, qxlive_t0, qxlive_t1, history=hist, prev_phase=None)
     assert r4.direction != EmotionDirection.UNKNOWN, f"direction should be known with history"
     print(f"  Test4 PASS: direction={r4.direction.value}, level={r4.level.value}, phase={r4.phase_label}")
@@ -944,7 +912,7 @@ def _self_test() -> bool:
     for i in range(10):
         hist_cold.add_day(ztbx=-3.0 - i * 0.3, lbbx=-2.0 - i * 0.2,
                           advance_share=0.15 - i * 0.01, dt=20 + i * 2,
-                          jinji_1_2=10.0 - i, jinji_2_3=5.0 - i * 0.5)
+                          relay_health=10.0 - i * 0.75)
     r5 = determine_emotion_state(
         [{"分组名称": "1进2", "晋级率": 5.0, "晋级数": 1, "样本数": 20},
          {"分组名称": "2进3", "晋级率": 0.0, "晋级数": 0, "样本数": 5}],
@@ -958,16 +926,16 @@ def _self_test() -> bool:
     assert r5.position_cap < 0.2, f"RETREAT should have low cap, got {r5.position_cap}"
     print(f"  Test5 PASS: RETREAT detected, cap={r5.position_cap}, level={r5.level_score:.3f}")
 
-    # 测试6: 晋级率缺失(eligible=0) → 该层为None, 不参与加权
+    # 测试6: 晋级率缺失(eligible=0) → 该层为None, 不参与relay_health
     r6 = determine_emotion_state(
         [{"分组名称": "1进2", "晋级率": 25.0, "晋级数": 5, "样本数": 20}],
         qxlive_t0, qxlive_t1, history=None, prev_phase=None,
     )
     assert r6.jinji_1_2 is not None, "1进2 should exist"
     assert r6.jinji_2_3 is None, "2进3 should be None (no data)"
-    assert r6.jinji_weighted is not None, "weighted should still work with 1 layer"
+    assert r6.relay_health is not None, "relay_health should still work with 1 layer"
     assert r6.data_quality["relay_family"] == "DEGRADED"
-    print(f"  Test6 PASS: single layer weighted={r6.jinji_weighted}, DQ={r6.data_quality['relay_family']}")
+    print(f"  Test6 PASS: single layer relay_health={r6.relay_health}, DQ={r6.data_quality['relay_family']}")
 
     print("\n=== ALL TESTS PASSED ===")
     return True

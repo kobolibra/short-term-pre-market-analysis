@@ -118,8 +118,7 @@ def _main(argv: Optional[List[str]] = None) -> int:
                     lbbx=emo.get("lbbx_925"),
                     advance_share=emo.get("advance_share"),
                     dt=emo.get("dt_925"),
-                    jinji_1_2=emo.get("jinji_1_2"),
-                    jinji_2_3=emo.get("jinji_2_3"),
+                    relay_health=emo.get("relay_health"),
                 )
 
         except Exception as e:

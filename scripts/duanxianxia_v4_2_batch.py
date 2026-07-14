@@ -128,7 +128,7 @@ def _main(argv: Optional[List[str]] = None) -> int:
 
             print(f"  周期: {emo['phase_label']} | 水位: {emo['level']} | 方向: {emo['direction']}")
             print(f"  风险: {emo['risk_tier']} | 仓位上限: {emo['position_cap']*100:.0f}%")
-            print(f"  晋级率加权: {emo.get('jinji_weighted')}% | 1进2: {emo.get('jinji_1_2')}% | 2进3: {emo.get('jinji_2_3')}%")
+            print(f"  接力健康度: {emo.get('relay_health')}% | 1进2: {emo.get('jinji_1_2')}% | 2进3: {emo.get('jinji_2_3')}%")
             print(f"  ZTBX@9:25: {emo.get('ztbx_925')}% | advance_share: {emo.get('advance_share')} | DT: {emo.get('dt_925')}")
             print(f"  ZTBX塌方={emo['ztbx_collapse']} LBBX塌方={emo['lbbx_collapse']} 广度冲击={emo['breadth_shock']}")
 
@@ -157,8 +157,7 @@ def _main(argv: Optional[List[str]] = None) -> int:
                     lbbx=emo.get("lbbx_925"),
                     advance_share=emo.get("advance_share"),
                     dt=emo.get("dt_925"),
-                    jinji_1_2=emo.get("jinji_1_2"),
-                    jinji_2_3=emo.get("jinji_2_3"),
+                    relay_health=emo.get("relay_health"),
                 )
 
             summary["daily_results"].append({

@@ -88,7 +88,7 @@ def main() -> int:
                 "phase": emo.get("phase_label"),
                 "risk_tier": emo.get("risk_tier"),
                 "position_cap": emo.get("position_cap", 1.0),
-                "jinji_weighted": emo.get("jinji_weighted"),
+                "jinji_weighted": emo.get("relay_health"),
                 "ztbx_925": emo.get("ztbx_925"),
                 "t0_impulse": emo.get("t0_impulse"),
                 "n_orders": len(orders),
@@ -105,8 +105,7 @@ def main() -> int:
                     lbbx=emo.get("lbbx_925"),
                     advance_share=emo.get("advance_share"),
                     dt=emo.get("dt_925"),
-                    jinji_1_2=emo.get("jinji_1_2"),
-                    jinji_2_3=emo.get("jinji_2_3"),
+                    relay_health=emo.get("relay_health"),
                 )
         except Exception as e:
             summary["results"].append({"date": day, "status": "error", "error": str(e)})

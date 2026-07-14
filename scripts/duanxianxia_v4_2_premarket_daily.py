@@ -74,7 +74,7 @@ def main() -> int:
             "risk_tier": emo.get("risk_tier"),
             "position_cap": emo.get("position_cap", 1.0),
             "buy_mode": emo.get("buy_mode"),
-            "jinji_weighted": emo.get("jinji_weighted"),
+            "relay_health": emo.get("relay_health"),
             "jinji_1_2": emo.get("jinji_1_2"),
             "jinji_2_3": emo.get("jinji_2_3"),
             "ztbx_925": emo.get("ztbx_925"),

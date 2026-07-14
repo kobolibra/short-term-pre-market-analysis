@@ -3350,8 +3350,8 @@ def render_summary_text(report: Dict[str, Any]) -> str:
             lines.append(f"- ZTBX@9:25：{emo.get('ztbx_925'):.2f}%")
         if emo.get("advance_share") is not None:
             lines.append(f"- 上涨占比：{emo.get('advance_share'):.2%}")
-        if emo.get("jinji_weighted") is not None:
-            lines.append(f"- 加权晋级率：{emo.get('jinji_weighted'):.1f}%")
+        if emo.get("relay_health") is not None:
+            lines.append(f"- 接力健康度：{emo.get('relay_health'):.1f}%")
 
     top_candidates = analysis.get("top_candidates", []) if isinstance(analysis, dict) else []
     if top_candidates:
@@ -3523,6 +3523,10 @@ def main() -> int:
             report["analysis"] = build_postmarket_analysis(report)
         report["bitable_sync"] = sync_analysis_to_bitable(report, meta_name=args.review_meta_name)
 
+        # 保留原始 webhook URL, 方便后续重推
+        if not report.get("_webhook_url"):
+            report["_webhook_url"] = args.webhook_url or report.get("_webhook_url", "")
+
         if args.save_analysis_copy:
             report_path = persist_report(report)
             report["report_path"] = str(report_path)
@@ -3657,6 +3661,7 @@ def main() -> int:
         report["analysis"] = build_postmarket_analysis(report)
     report["bitable_sync"] = sync_analysis_to_bitable(report, meta_name=args.review_meta_name)
 
+    report["_webhook_url"] = args.webhook_url  # 存进报告, 方便后续重推
     report_path = persist_report(report)
     report["report_path"] = str(report_path)
     report["webhook"] = post_webhook(

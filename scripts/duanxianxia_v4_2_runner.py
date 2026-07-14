@@ -304,7 +304,7 @@ def run_v4_2_pipeline(
             "risk_tier": emotion_result.risk_tier.value,
             "position_cap": emotion_result.position_cap,
             "buy_mode": emotion_result.buy_mode.value,
-            "jinji_weighted": emotion_result.jinji_weighted,
+            "relay_health": emotion_result.relay_health,
             "jinji_1_2": emotion_result.jinji_1_2,
             "jinji_2_3": emotion_result.jinji_2_3,
             "ztbx_925": emotion_result.ztbx_925,
@@ -624,7 +624,7 @@ def _main(argv: Optional[List[str]] = None) -> int:
         print(f"  日期: {result['date']}")
         print(f"  周期: {emo['phase_label']} | 水位: {emo['level']} | 方向: {emo['direction']}")
         print(f"  风险: {emo['risk_tier']} | 仓位上限: {emo['position_cap']*100:.0f}%")
-        print(f"  晋级率加权: {emo.get('jinji_weighted')}% | advance_share: {emo.get('advance_share')}")
+        print(f"  接力健康度: {emo.get('relay_health')}% | advance_share: {emo.get('advance_share')}")
         print("=" * 60)
 
         for pool_name, pool_data in result["pools"].items():

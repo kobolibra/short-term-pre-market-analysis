@@ -68,10 +68,22 @@ def main() -> int:
 
     print(f"[feishu_rerun] using report: {report_path}")
 
-    webhook_url = os.getenv("DUANXIANXIA_WEBHOOK_URL", "").strip()
+    # 从报告文件中读取 webhook URL (9:25 cron 存入的)
+    webhook_url = ""
+    try:
+        with open(report_path, "r", encoding="utf-8") as f:
+            report_data = json.load(f)
+        webhook_url = report_data.get("_webhook_url", "").strip()
+    except Exception:
+        pass
+
     if not webhook_url:
-        print("[feishu_rerun] ERROR: DUANXIANXIA_WEBHOOK_URL not set")
+        webhook_url = os.getenv("DUANXIANXIA_WEBHOOK_URL", "").strip()
+    if not webhook_url:
+        print("[feishu_rerun] ERROR: no webhook URL found in report or env")
         return 1
+
+    print(f"[feishu_rerun] webhook URL found, pushing...")
 
     # 导入 batch 并 monkey-patch
     import duanxianxia_batch

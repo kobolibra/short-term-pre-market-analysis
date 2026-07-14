@@ -91,6 +91,22 @@ def main():
         }, ensure_ascii=False, indent=2), encoding="utf-8")
         created.append(job_id)
 
+    # 每日自动入队飞书推送重跑：用最新分析代码重新生成飞书消息
+    # 必须在 daily premarket 跑完之后跑，所以单独入队但延迟处理(高优先级)
+    script = "duanxianxia_v4_2_premarket_feishu_rerun.py"
+    job_id = f"daily_{today}_feishu_analysis_push"
+    qf = QUEUE_DIR / f"{job_id}.json"
+    if not qf.exists():
+        qf.write_text(json.dumps({
+            "id": job_id,
+            "script": f"scripts/{script}",
+            "args": [],
+            "timeout": 2400,
+            "created": now.isoformat(timespec="seconds"),
+            "note": f"daily auto-refresh {today} - 用最新代码重跑盘前分析+飞书推送(含D6情绪周期+选股)",
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        created.append(job_id)
+
     for script, args in SUITE_HOURLY:
         stem = script[:-3]
         job_id = f"hourly_{today}_{hour}_{stem}"

@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-14_rerun11_feishu_analysis_push",
+  "script": "scripts/duanxianxia_v4_2_premarket_feishu_rerun.py",
+  "args": [],
+  "timeout": 2400,
+  "created": "2026-07-14T11:30:00+08:00",
+  "note": "rerun10修正: 报告路径修复, 先搜 premarket/ 子目录再平铺"
+}

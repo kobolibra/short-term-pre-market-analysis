@@ -39,7 +39,17 @@ def _find_latest_premarket_report(today: str) -> Optional[Path]:
     day_dir = REPORTS_DIR / today
     if not day_dir.is_dir():
         return None
-    # 找 premarket_*.json 文件，按修改时间倒序
+    # 报告在 reports/YYYY-MM-DD/premarket/HHMMSS.json 子目录里
+    premarket_dir = day_dir / "premarket"
+    if premarket_dir.is_dir():
+        candidates = sorted(
+            premarket_dir.glob("*.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        if candidates:
+            return candidates[0]
+    # fallback: 平铺文件
     candidates = sorted(
         day_dir.glob("premarket_*.json"),
         key=lambda p: p.stat().st_mtime,

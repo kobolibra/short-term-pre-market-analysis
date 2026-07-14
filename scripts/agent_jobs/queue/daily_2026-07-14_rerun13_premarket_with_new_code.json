@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-14_rerun13_premarket_with_new_code",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": ["--date", "2026-07-14"],
+  "timeout": 2400,
+  "created": "2026-07-14T19:00:00+08:00",
+  "note": "用新代码(滞回修复+加权中位数+or0.5陷阱修复+CHOP修复)重跑今天盘前分析"
+}

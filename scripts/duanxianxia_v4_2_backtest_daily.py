@@ -13,6 +13,7 @@ duanxianxia_v4_2_backtest_daily.py  --  v4.2 每日回测
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import sys
 from datetime import date, datetime, timedelta
@@ -62,6 +63,7 @@ def _past_trading_days(n: int = 5, end_date: str = None) -> List[str]:
     return list(reversed(days))
 
 
+@functools.lru_cache(maxsize=1)
 def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> D6History:
     """直接从 captures/ 原始数据构建 D6History, 不依赖过去分析结果。"""
     history = D6History()

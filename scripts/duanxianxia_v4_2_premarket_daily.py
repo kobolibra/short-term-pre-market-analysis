@@ -13,6 +13,7 @@ duanxianxia_v4_2_premarket_daily.py  --  v4.2 盘前分析重跑
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import sys
 from datetime import date, datetime
@@ -74,6 +75,7 @@ def _find_latest_premarket_report(today: str) -> Optional[Path]:
     return candidates[0] if candidates else None
 
 
+@functools.lru_cache(maxsize=1)
 def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> D6History:
     """直接从 captures/ 原始数据构建 D6History, 不依赖过去分析结果。
 

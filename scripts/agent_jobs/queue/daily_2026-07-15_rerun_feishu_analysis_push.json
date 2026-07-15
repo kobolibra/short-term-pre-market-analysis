@@ -1,8 +1,0 @@
-{
-  "id": "daily_2026-07-15_rerun_feishu_analysis_push",
-  "script": "scripts/duanxianxia_v4_2_premarket_feishu_rerun.py",
-  "args": [],
-  "timeout": 2400,
-  "created": "2026-07-15T12:00:00+08:00",
-  "note": "rerun: 重跑飞书推送"
-}

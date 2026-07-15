@@ -1,8 +1,0 @@
-{
-  "id": "daily_2026-07-15_rerun5_qx_indicator",
-  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
-  "args": ["--date", "2026-07-15"],
-  "timeout": 2400,
-  "created": "2026-07-15T14:00:00+08:00",
-  "note": "rerun5: QX综合情绪指标+完整KQXY覆盖层"
-}

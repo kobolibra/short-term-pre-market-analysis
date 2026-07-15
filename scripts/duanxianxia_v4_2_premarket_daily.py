@@ -78,7 +78,7 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
     """直接从 captures/ 原始数据构建 D6History, 不依赖过去分析结果。
 
     扫描 captures/ 下所有日期目录, 读取 qxlive 和 ztpool 数据,
-    提取 ztbx_925, lbbx_925, advance_share, dt_925, relay_health。
+    提取 ztbx_925, lbbx_925, advance_share, dt_925, relay_health, kqxy。
 
     用于首次运行或过去分析结果不足时的回退方案。
     """
@@ -96,7 +96,7 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
         if len(date_str) != 10 or date_str[4] != "-":
             continue
 
-        # qxlive (盘前, 最早 <= 09:30:00)
+        # qxlive (盘前, 最早 <= 09:30:00) — 用于 ZTBX/LBBX/SZ/XD/DT
         qxlive = load_capture_at_time(
             project_root, date_str, DS_HOME_QXLIVE_TOP,
             max_hhmmss=QXLIVE_PREMARKET_BOUNDARY_HHMMSS,
@@ -113,6 +113,18 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
         advance_share = None
         if sz is not None and xd is not None and (sz + xd) > 0:
             advance_share = round(sz / (sz + xd), 4)
+
+        # qxlive 盘后 (取最新, 不限时间) — 用于 KQXY
+        kqxy = None
+        kq_live = load_capture_at_time(
+            project_root, date_str, DS_HOME_QXLIVE_TOP,
+            pick="latest", raise_if_missing=False,
+        )
+        if kq_live:
+            kq_rows = _extract_rows(kq_live)
+            kq_val = _extract_qxlive_metric(kq_rows, "KQXY")
+            if kq_val is not None and kq_val > 0:
+                kqxy = kq_val
 
         # ztpool (盘后, 取最新)
         ztpool = load_capture_at_time(
@@ -145,6 +157,7 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
                 advance_share=advance_share,
                 dt=int(dt) if dt is not None else None,
                 relay_health=relay_health,
+                kqxy=kqxy,
             )
 
     return history
@@ -176,17 +189,18 @@ def _build_history_from_past_results(source_dir: Path, max_days: int = 60) -> D6
                 advance_share=r.get("advance_share"),
                 dt=r.get("dt_925"),
                 relay_health=r.get("relay_health"),
+                kqxy=r.get("kqxy_t1"),
             )
     return history
 
 
 def _merge_histories(*histories: D6History) -> D6History:
     """合并多个 D6History, 按各序列独立排序后去重重建。"""
-    all_vals: Dict[str, List[float]] = {"ztbx": [], "lbbx": [], "adv": [], "dt": [], "relay": []}
+    all_vals: Dict[str, List[float]] = {"ztbx": [], "lbbx": [], "adv": [], "dt": [], "relay": [], "kqxy": []}
     for h in histories:
         for arr, key in [(h.ztbx_values, "ztbx"), (h.lbbx_values, "lbbx"),
                          (h.advance_share_values, "adv"), (h.dt_values, "dt"),
-                         (h.relay_health_values, "relay")]:
+                         (h.relay_health_values, "relay"), (h.kqxy_values, "kqxy")]:
             for v in arr:
                 if v is not None:
                     all_vals[key].append(v)
@@ -196,13 +210,15 @@ def _merge_histories(*histories: D6History) -> D6History:
     adv = sorted(all_vals["adv"])
     dt = sorted(all_vals["dt"])
     relay = sorted(all_vals["relay"])
-    for i in range(max(len(ztbx), len(lbbx), len(adv), len(dt), len(relay))):
+    kqxy = sorted(all_vals["kqxy"])
+    for i in range(max(len(ztbx), len(lbbx), len(adv), len(dt), len(relay), len(kqxy))):
         result.add_day(
             ztbx=ztbx[i] if i < len(ztbx) else None,
             lbbx=lbbx[i] if i < len(lbbx) else None,
             advance_share=adv[i] if i < len(adv) else None,
             dt=dt[i] if i < len(dt) else None,
             relay_health=relay[i] if i < len(relay) else None,
+            kqxy=kqxy[i] if i < len(kqxy) else None,
         )
     return result
 

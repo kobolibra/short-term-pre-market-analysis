@@ -117,18 +117,21 @@ class D6History:
     advance_share_values: List[float] = field(default_factory=list)
     dt_values: List[float] = field(default_factory=list)
     relay_health_values: List[float] = field(default_factory=list)
+    kqxy_values: List[float] = field(default_factory=list)
 
     _WINDOW = 60
     _MIN_DAYS_FOR_PCTILE = 20
 
     def add_day(self, ztbx: Optional[float] = None, lbbx: Optional[float] = None,
                 advance_share: Optional[float] = None, dt: Optional[float] = None,
-                relay_health: Optional[float] = None) -> None:
+                relay_health: Optional[float] = None,
+                kqxy: Optional[float] = None) -> None:
         if ztbx is not None: self.ztbx_values.append(ztbx)
         if lbbx is not None: self.lbbx_values.append(lbbx)
         if advance_share is not None: self.advance_share_values.append(advance_share)
         if dt is not None: self.dt_values.append(dt)
         if relay_health is not None: self.relay_health_values.append(relay_health)
+        if kqxy is not None: self.kqxy_values.append(kqxy)
 
     def _pctile(self, values: List[float], q: float) -> Optional[float]:
         """计算分位数, 需要至少 MIN_DAYS_FOR_PCTILE 天"""
@@ -145,9 +148,17 @@ class D6History:
         """是否有足够历史计算分位数"""
         return self.min_days >= self._MIN_DAYS_FOR_PCTILE
 
+    def valid_for_kqxy_pctile(self) -> bool:
+        """KQXY 历史是否足够计算分位数"""
+        return len(self.kqxy_values) >= self._MIN_DAYS_FOR_PCTILE
+
     # 极端否决阈值
     def advance_share_15pct(self) -> Optional[float]: return self._pctile(self.advance_share_values, 0.15)
     def dt_85pct(self) -> Optional[float]: return self._pctile(self.dt_values, 0.85)
+
+    # KQXY 分位阈值
+    def kqxy_30pct(self) -> Optional[float]: return self._pctile(self.kqxy_values, 0.30)
+    def kqxy_70pct(self) -> Optional[float]: return self._pctile(self.kqxy_values, 0.70)
 
     @property
     def min_days(self) -> int:
@@ -485,34 +496,52 @@ def _classify_loss_overlay(
     if kqxy_t1 is None:
         return result
 
-    # KQXY 分位
-    if history is not None and history.valid_for_pctile():
-        # KQXY 分位需要专用的历史序列无法直接使用 D6History(因为 D6History 没有 kqxy 字段)
-        # 这里用静态阈值: KQXY 越高亏钱越严重
-        kqxy_pct = kqxy_t1 / 100.0  # KQXY 原始值范围大约 0-100
-        kqxy_pct = max(0.0, min(1.0, kqxy_pct))
+    # KQXY 分位: 优先用历史序列算真实分位, 不足时用静态阈值
+    if history is not None and history.valid_for_kqxy_pctile():
+        kqxy_pct = _calc_pctile(history.kqxy_values, kqxy_t1)
+        kqxy_pct = kqxy_pct if kqxy_pct is not None else 0.5
     else:
         kqxy_pct = kqxy_t1 / 100.0
         kqxy_pct = max(0.0, min(1.0, kqxy_pct))
 
     result["kqxy_pct"] = round(kqxy_pct, 4)
 
-    # KQXY 水位: 静态阈值 0.30/0.70 (无历史分位时用静态)
-    if kqxy_pct < 0.30:
-        result["loss_level"] = "LOW"
-    elif kqxy_pct > 0.70:
-        result["loss_level"] = "HIGH"
+    # KQXY 水位: 优先用历史分位, 不足时用静态阈值
+    if history is not None and history.valid_for_kqxy_pctile():
+        k30 = history.kqxy_30pct()
+        k70 = history.kqxy_70pct()
+        if k30 is not None and k70 is not None:
+            if kqxy_t1 < k30:
+                result["loss_level"] = "LOW"
+            elif kqxy_t1 > k70:
+                result["loss_level"] = "HIGH"
+            else:
+                result["loss_level"] = "MID"
+        else:
+            if kqxy_pct < 0.30: result["loss_level"] = "LOW"
+            elif kqxy_pct > 0.70: result["loss_level"] = "HIGH"
+            else: result["loss_level"] = "MID"
     else:
-        result["loss_level"] = "MID"
+        if kqxy_pct < 0.30:
+            result["loss_level"] = "LOW"
+        elif kqxy_pct > 0.70:
+            result["loss_level"] = "HIGH"
+        else:
+            result["loss_level"] = "MID"
 
-    # KQXY 方向
+    # KQXY 方向: 用真实分位差
     if kqxy_t2 is not None:
-        kqxy_delta = kqxy_pct - (kqxy_t2 / 100.0)
+        if history is not None and history.valid_for_kqxy_pctile():
+            prev_pct = _calc_pctile(history.kqxy_values, kqxy_t2)
+            prev_pct = prev_pct if prev_pct is not None else kqxy_t2 / 100.0
+        else:
+            prev_pct = kqxy_t2 / 100.0
+        kqxy_delta = kqxy_pct - prev_pct
         result["kqxy_delta"] = round(kqxy_delta, 4)
         if kqxy_delta > epsilon:
-            result["loss_direction"] = "EXPANDING"    # 亏钱效应扩散
+            result["loss_direction"] = "EXPANDING"
         elif kqxy_delta < -epsilon:
-            result["loss_direction"] = "CONTRACTING"  # 亏钱效应收敛
+            result["loss_direction"] = "CONTRACTING"
         else:
             result["loss_direction"] = "FLAT"
     else:

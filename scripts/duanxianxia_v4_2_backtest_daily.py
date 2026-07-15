@@ -89,6 +89,17 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
         advance_share = None
         if sz is not None and xd is not None and (sz + xd) > 0:
             advance_share = round(sz / (sz + xd), 4)
+        # KQXY 盘后 (取最新, 不限时间)
+        kqxy = None
+        kq_live = load_capture_at_time(
+            project_root, date_str, DS_HOME_QXLIVE_TOP,
+            pick="latest", raise_if_missing=False,
+        )
+        if kq_live:
+            kq_rows = _extract_rows(kq_live)
+            kq_val = _extract_qxlive_metric(kq_rows, "KQXY")
+            if kq_val is not None and kq_val > 0:
+                kqxy = kq_val
         ztpool = load_capture_at_time(
             project_root, date_str, DS_HOME_ZTPOOL,
             pick="latest", raise_if_missing=False,
@@ -116,6 +127,7 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
                 advance_share=advance_share,
                 dt=int(dt) if dt is not None else None,
                 relay_health=relay_health,
+                kqxy=kqxy,
             )
     return history
 

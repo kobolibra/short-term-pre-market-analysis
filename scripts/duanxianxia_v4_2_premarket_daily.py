@@ -225,6 +225,7 @@ def _build_history_from_past_results(source_dir: Path, max_days: int = 60) -> D6
                 relay_health=r.get("relay_health"),
                 kqxy=r.get("kqxy_t1"),
                 pre_qx=r.get("qx_925"),
+                close_qx=r.get("close_qx"),
             )
     return history
 

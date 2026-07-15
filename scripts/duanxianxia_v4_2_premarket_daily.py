@@ -30,6 +30,7 @@ from duanxianxia_v4_2_d6_emotion import D6History
 WORKSPACE = Path("/home/investmentofficehku/.openclaw/workspace")
 PROJECT_ROOT = WORKSPACE / "projects" / "duanxianxia"
 OUTPUT_DIR = PROJECT_ROOT / "reports" / "_audit" / "v4_2_premarket"
+BACKTEST_DIR = PROJECT_ROOT / "reports" / "_audit" / "v4_2_backtest"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 
 
@@ -62,6 +63,36 @@ def _find_latest_premarket_report(today: str) -> Optional[Path]:
         reverse=True,
     )
     return candidates[0] if candidates else None
+
+
+def _build_history_from_past_results(source_dir: Path, max_days: int = 60) -> D6History:
+    """从过去分析结果构建 D6History, 用于滚动分位计算。"""
+    history = D6History()
+    if not source_dir.is_dir():
+        return history
+    records: List[Dict[str, Any]] = []
+    for f in sorted(source_dir.glob("*.json")):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+            if "results" in d:
+                for r in d["results"]:
+                    if r.get("status") == "ok":
+                        records.append(r)
+            elif d.get("status") == "ok":
+                records.append(d)
+        except Exception:
+            continue
+    records.sort(key=lambda r: r.get("date", ""))
+    for r in records[-max_days:]:
+        if r.get("ztbx_925") is not None:
+            history.add_day(
+                ztbx=r["ztbx_925"],
+                lbbx=r.get("lbbx_925"),
+                advance_share=r.get("advance_share"),
+                dt=r.get("dt_925"),
+                relay_health=r.get("relay_health"),
+            )
+    return history
 
 
 def main() -> int:
@@ -103,10 +134,41 @@ def main() -> int:
     # 从 report 构建 bundle (T0 数据从 report items 读取, T-1 从 captures 加载)
     bundle = _build_bundle_from_report(report_data, PROJECT_ROOT, today)
 
+    # 从过去分析结果构建 D6History (滚动分位需要历史数据)
+    history = _build_history_from_past_results(OUTPUT_DIR)
+    # 如果 premarket 目录历史不够, 补充 backtest 数据
+    if history.history_days < 20:
+        bt_history = _build_history_from_past_results(BACKTEST_DIR)
+        # 合并: 按日期序取, 不重复
+        all_vals = {}
+        for src in [bt_history, history]:
+            for arr, key in [(src.ztbx_values, "ztbx"), (src.lbbx_values, "lbbx"),
+                              (src.advance_share_values, "adv"), (src.dt_values, "dt"),
+                              (src.relay_health_values, "relay")]:
+                for i, v in enumerate(arr):
+                    all_vals.setdefault((key, i), v)
+        # 重建
+        history = D6History()
+        ztbx = sorted([v for (k, _), v in all_vals.items() if k == "ztbx"])
+        lbbx = sorted([v for (k, _), v in all_vals.items() if k == "lbbx"])
+        adv = sorted([v for (k, _), v in all_vals.items() if k == "adv"])
+        dt = sorted([v for (k, _), v in all_vals.items() if k == "dt"])
+        relay = sorted([v for (k, _), v in all_vals.items() if k == "relay"])
+        for i in range(max(len(ztbx), len(lbbx), len(adv), len(dt), len(relay))):
+            history.add_day(
+                ztbx=ztbx[i] if i < len(ztbx) else None,
+                lbbx=lbbx[i] if i < len(lbbx) else None,
+                advance_share=adv[i] if i < len(adv) else None,
+                dt=dt[i] if i < len(dt) else None,
+                relay_health=relay[i] if i < len(relay) else None,
+            )
+    print(f"v4.2 premarket: history days = {history.history_days}")
+
     result = run_v4_2_pipeline(
         date_t0=today,
         project_root=str(PROJECT_ROOT),
         bundle=bundle,
+        history=history,
     )
 
     if "error" in result:

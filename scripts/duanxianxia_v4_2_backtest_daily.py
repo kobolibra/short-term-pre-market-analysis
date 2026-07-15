@@ -64,7 +64,24 @@ def main() -> int:
         print(f"v4.2 backtest: overwriting existing {out_path} (re-run with fixes)")
 
     days = _past_trading_days(args.days, end_date=args.today)
+    # 从过去回测结果加载历史, 用于滚动分位
     history = D6History()
+    if OUTPUT_DIR.is_dir():
+        for f in sorted(OUTPUT_DIR.glob("*.json")):
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+                for r in d.get("results", []):
+                    if r.get("status") == "ok" and r.get("ztbx_925") is not None:
+                        history.add_day(
+                            ztbx=r["ztbx_925"],
+                            lbbx=r.get("lbbx_925"),
+                            advance_share=r.get("advance_share"),
+                            dt=r.get("dt_925"),
+                            relay_health=r.get("relay_health"),
+                        )
+            except Exception:
+                continue
+    print(f"v4.2 backtest: loaded {history.history_days} history days from past results")
     summary: Dict[str, Any] = {"version": VERSION, "days": days, "results": []}
 
     for day in days:

@@ -171,7 +171,9 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
         elif j23 is not None:
             relay_health = round(j23, 2)
 
-        if ztbx is not None:
+        # v4: 只要有任何数据就加入, 不因盘前缺失而丢弃盘后/relay数据
+        # 盘前 ZTBX 缺失不代表盘后数据不可用, relay_health 来自 ztpool 也独立于盘前
+        if ztbx is not None or ztbx_close is not None or relay_health is not None:
             history.add_day(
                 # 盘前 (向后兼容旧参数名)
                 ztbx=ztbx, lbbx=lbbx,
@@ -427,6 +429,18 @@ def main() -> int:
             },
             "warnings": result.get("warnings", []),
             "diagnostics": result.get("diagnostics", {}),
+            "_history_diag": {
+                "ztbx_pre_days": len(history.ztbx_pre_values),
+                "ztbx_close_days": len(history.ztbx_close_values),
+                "advance_share_pre_days": len(history.advance_share_pre_values),
+                "advance_share_close_days": len(history.advance_share_close_values),
+                "relay_health_days": len(history.relay_health_values),
+                "dt_pre_days": len(history.dt_pre_values),
+                "dt_close_days": len(history.dt_close_values),
+                "kxy_days": len(history.kxy_values),
+                "close_qx_days": len(history.close_qx_values),
+                "pre_qx_days": len(history.pre_qx_values),
+            },
         }
 
     out_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2, default=str), encoding="utf-8")

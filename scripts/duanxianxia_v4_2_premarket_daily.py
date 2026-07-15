@@ -213,7 +213,8 @@ def _build_history_from_past_results(source_dir: Path, max_days: int = 60) -> D6
             continue
     records.sort(key=lambda r: r.get("date", ""))
     for r in records[-max_days:]:
-        if r.get("ztbx_925") is not None:
+        # v4: 放宽门控, 有盘后或relay数据的记录也要加入
+        if r.get("ztbx_925") is not None or r.get("ztbx_close") is not None or r.get("relay_health") is not None:
             history.add_day(
                 ztbx=r["ztbx_925"],
                 lbbx=r.get("lbbx_925"),

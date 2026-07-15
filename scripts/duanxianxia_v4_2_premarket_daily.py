@@ -438,7 +438,7 @@ def main() -> int:
                 "relay_health_days": len(history.relay_health_values),
                 "dt_pre_days": len(history.dt_pre_values),
                 "dt_close_days": len(history.dt_close_values),
-                "kxy_days": len(history.kxy_values),
+                "kqxy_days": len(history.kqxy_values),
                 "close_qx_days": len(history.close_qx_values),
                 "pre_qx_days": len(history.pre_qx_values),
             },

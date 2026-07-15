@@ -3,7 +3,7 @@
 """
 duanxianxia_v4_2_premarket_daily.py  --  v4.2 盘前分析重跑
 
-用已下载的 9:25 捕捉数据重跑 v4.2 盘前选股管线。
+从 9:25 cron 已生成的 premarket report 中读取数据，重跑 v4.2 管线。
 由 agent_daily_refresh.py 入队，agent_job_worker.py 执行。
 结果写入 reports/_audit/v4_2_premarket/YYYY-MM-DD.json。
 
@@ -21,12 +21,16 @@ from typing import Any, Dict, Optional
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from duanxianxia_v4_2_runner import run_v4_2_pipeline, VERSION
+from duanxianxia_v4_2_runner import (
+    run_v4_2_pipeline, VERSION,
+    _build_bundle_from_report,
+)
 from duanxianxia_v4_2_d6_emotion import D6History
 
 WORKSPACE = Path("/home/investmentofficehku/.openclaw/workspace")
 PROJECT_ROOT = WORKSPACE / "projects" / "duanxianxia"
 OUTPUT_DIR = PROJECT_ROOT / "reports" / "_audit" / "v4_2_premarket"
+REPORTS_DIR = PROJECT_ROOT / "reports"
 
 
 def _shanghai_today() -> str:
@@ -35,6 +39,29 @@ def _shanghai_today() -> str:
         return datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
     except Exception:
         return date.today().isoformat()
+
+
+def _find_latest_premarket_report(today: str) -> Optional[Path]:
+    """找今天 9:25 cron 生成的最新 premarket 报告 (与 feishu_rerun 同逻辑)"""
+    day_dir = REPORTS_DIR / today
+    if not day_dir.is_dir():
+        return None
+    premarket_dir = day_dir / "premarket"
+    if premarket_dir.is_dir():
+        candidates = sorted(
+            premarket_dir.glob("*.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        if candidates:
+            return candidates[0]
+    # fallback: 平铺文件
+    candidates = sorted(
+        day_dir.glob("premarket_*.json"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    return candidates[0] if candidates else None
 
 
 def main() -> int:
@@ -47,9 +74,39 @@ def main() -> int:
 
     print(f"v4.2 premarket analysis: running for {today}...")
 
+    # 从已有 premarket report 构建 bundle (不重新下载, 飞书推送同款逻辑)
+    report_path = _find_latest_premarket_report(today)
+    if report_path is None:
+        summary: Dict[str, Any] = {
+            "version": VERSION,
+            "date": today,
+            "status": "error",
+            "error": f"找不到 {today} 的 premarket 报告, 9:25 cron 可能未运行",
+        }
+        out_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+        print(f"v4.2 premarket ERROR: no report found for {today}")
+        return 1
+
+    print(f"v4.2 premarket: using report {report_path}")
+
+    try:
+        with open(report_path, "r", encoding="utf-8") as f:
+            report_data = json.load(f)
+    except Exception as e:
+        summary = {
+            "version": VERSION, "date": today, "status": "error",
+            "error": f"读取报告失败: {e}",
+        }
+        out_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+        return 1
+
+    # 从 report 构建 bundle (T0 数据从 report items 读取, T-1 从 captures 加载)
+    bundle = _build_bundle_from_report(report_data, PROJECT_ROOT, today)
+
     result = run_v4_2_pipeline(
         date_t0=today,
         project_root=str(PROJECT_ROOT),
+        bundle=bundle,
     )
 
     if "error" in result:
@@ -70,6 +127,7 @@ def main() -> int:
             "phase": emo.get("phase"),
             "phase_label": emo.get("phase_label"),
             "level": emo.get("level"),
+            "level_score": emo.get("level_score"),
             "direction": emo.get("direction"),
             "risk_tier": emo.get("risk_tier"),
             "position_cap": emo.get("position_cap", 1.0),
@@ -81,12 +139,21 @@ def main() -> int:
             "lbbx_925": emo.get("lbbx_925"),
             "advance_share": emo.get("advance_share"),
             "dt_925": emo.get("dt_925"),
-            "t0_impulse": emo.get("hard_veto"),
+            "hard_veto": emo.get("hard_veto"),
             "profit_collapse": emo.get("profit_collapse", False),
             "breadth_panic": emo.get("breadth_panic", False),
+            "profit_level": emo.get("profit_level"),
+            "breadth_level": emo.get("breadth_level"),
+            "relay_level": emo.get("relay_level"),
+            "profit_delta": emo.get("profit_delta"),
+            "breadth_delta": emo.get("breadth_delta"),
+            "relay_delta": emo.get("relay_delta"),
+            "height_preference": emo.get("height_preference"),
+            "fenqi_priority": emo.get("fenqi_priority"),
             "pool_enabled": emo.get("pool_enabled", {}),
             "pool_mult": emo.get("pool_mult", {}),
             "phase_confidence": emo.get("phase_confidence"),
+            "data_quality": emo.get("data_quality"),
             "n_orders": len(orders),
             "orders": [
                 {

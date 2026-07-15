@@ -218,6 +218,15 @@ class D6EmotionResult:
     buy_mode: BuyMode = BuyMode.AUCTION_AND_BOARD
     auction_buy_enabled: bool = True
 
+    # === KQXY 亏钱效应覆盖层 ===
+    kqxy_t1: Optional[float] = None         # T-1 盘后 KQXY 原始值
+    kqxy_t2: Optional[float] = None         # T-2 盘后 KQXY 原始值
+    kqxy_pct: Optional[float] = None        # T-1 KQXY 分位 (0-1)
+    kqxy_delta: Optional[float] = None      # KQXY 日变化 (T-1 - T-2 分位差)
+    loss_level: str = "UNKNOWN"             # KQXY 水位: LOW / MID / HIGH
+    loss_direction: str = "UNKNOWN"         # KQXY 方向: CONTRACTING / FLAT / EXPANDING
+    loss_overlay: str = "NONE"              # 亏钱效应覆盖标记: NONE / REPAIR_SUPPORT / REPAIR_WEAK / HIGH_CRACKING
+
     # === 质量 ===
     phase_confidence: float = 0.0
     data_quality: Dict[str, str] = field(default_factory=lambda: {
@@ -441,6 +450,77 @@ def _classify_phase(level: EmotionLevel, direction: EmotionDirection) -> Emotion
         else: return EmotionPhase.HIGH_STAGNATION
 
 
+def _classify_loss_overlay(
+    kqxy_t1: Optional[float],
+    kqxy_t2: Optional[float],
+    history: Optional[D6History],
+    epsilon: float = 0.03,
+) -> Dict[str, Any]:
+    """
+    KQXY 亏钱效应覆盖层。
+
+    KQXY 是 T-1 盘后指标, 不参与 T0 核心 P/B/R 判定。
+    只作为 Phase 修饰层, 解决两个问题:
+      1. 低位是继续下杀/磨底/修复 (ICE 子阶段 + REPAIR 质量)
+      2. 高位强势是否伴随亏钱效应扩散 (内部裂化)
+
+    Returns:
+        {
+            "kqxy_t1": 原始值,
+            "kqxy_t2": 原始值,
+            "kqxy_pct": T-1 KQXY 分位,
+            "kqxy_delta": 日变化,
+            "loss_level": LOW/MID/HIGH,
+            "loss_direction": CONTRACTING/FLAT/EXPANDING/UNKNOWN,
+            "loss_overlay": NONE/REPAIR_SUPPORT/REPAIR_WEAK/HIGH_CRACKING,
+        }
+    """
+    result: Dict[str, Any] = {
+        "kqxy_t1": kqxy_t1, "kqxy_t2": kqxy_t2,
+        "kqxy_pct": None, "kqxy_delta": None,
+        "loss_level": "UNKNOWN", "loss_direction": "UNKNOWN",
+        "loss_overlay": "NONE",
+    }
+
+    if kqxy_t1 is None:
+        return result
+
+    # KQXY 分位
+    if history is not None and history.valid_for_pctile():
+        # KQXY 分位需要专用的历史序列无法直接使用 D6History(因为 D6History 没有 kqxy 字段)
+        # 这里用静态阈值: KQXY 越高亏钱越严重
+        kqxy_pct = kqxy_t1 / 100.0  # KQXY 原始值范围大约 0-100
+        kqxy_pct = max(0.0, min(1.0, kqxy_pct))
+    else:
+        kqxy_pct = kqxy_t1 / 100.0
+        kqxy_pct = max(0.0, min(1.0, kqxy_pct))
+
+    result["kqxy_pct"] = round(kqxy_pct, 4)
+
+    # KQXY 水位: 静态阈值 0.30/0.70 (无历史分位时用静态)
+    if kqxy_pct < 0.30:
+        result["loss_level"] = "LOW"
+    elif kqxy_pct > 0.70:
+        result["loss_level"] = "HIGH"
+    else:
+        result["loss_level"] = "MID"
+
+    # KQXY 方向
+    if kqxy_t2 is not None:
+        kqxy_delta = kqxy_pct - (kqxy_t2 / 100.0)
+        result["kqxy_delta"] = round(kqxy_delta, 4)
+        if kqxy_delta > epsilon:
+            result["loss_direction"] = "EXPANDING"    # 亏钱效应扩散
+        elif kqxy_delta < -epsilon:
+            result["loss_direction"] = "CONTRACTING"  # 亏钱效应收敛
+        else:
+            result["loss_direction"] = "FLAT"
+    else:
+        result["loss_direction"] = "UNKNOWN"
+
+    return result
+
+
 # ============================================================================
 # 主入口
 # ============================================================================
@@ -452,12 +532,14 @@ def determine_emotion_state(
     history: Optional[D6History] = None,
     static_thresholds: Optional[Dict[str, float]] = None,
     prev_phase: Optional[EmotionPhase] = None,
+    kqxy_t1: Optional[float] = None,
+    kqxy_t2: Optional[float] = None,
 ) -> D6EmotionResult:
     """
     主入口: D6 情绪周期判定 (简化版 v3)。
 
     主链:
-      9:25 数据 → P/B/R 分位 → 水位 → 方向 → Phase → 仓位+池
+      9:25 数据 → P/B/R 分位 → 水位 → 方向 → Phase → KQXY 覆盖层 → 仓位+池
 
     Args:
         ztpool_t1: T-1 ztpool 数据
@@ -466,6 +548,8 @@ def determine_emotion_state(
         history: 滚动历史数据 (≥20天启用分位, <20天用静态阈值)
         static_thresholds: 静态阈值覆盖
         prev_phase: 前一交易日相位 (用于滞回)
+        kqxy_t1: T-1 盘后 KQXY 原始值 (非 9:25, 盘后有实际值)
+        kqxy_t2: T-2 盘后 KQXY 原始值
 
     Returns:
         D6EmotionResult: 完整情绪周期判定结果
@@ -664,9 +748,28 @@ def determine_emotion_state(
         direction = EmotionDirection.UNKNOWN
 
     # ========================================================================
-    # 阶段 5: 相位判定
+    # 阶段 5: 相位判定 (P/B/R 基础)
     # ========================================================================
     phase = _classify_phase(level, direction) if direction != EmotionDirection.UNKNOWN else EmotionPhase.UNKNOWN
+
+    # ========================================================================
+    # 阶段 5.5: KQXY 亏钱效应覆盖层 (不影响 Phase, 只修饰执行策略)
+    # ========================================================================
+    loss = _classify_loss_overlay(kqxy_t1, kqxy_t2, history)
+    loss_level = loss["loss_level"]
+    loss_direction = loss["loss_direction"]
+    loss_overlay = "NONE"
+
+    # 低位修复质量: KQXY 收敛 → 强修复, KQXY 扩散 → 弱修复
+    if phase == EmotionPhase.REPAIR:
+        if loss_direction == "CONTRACTING":
+            loss_overlay = "REPAIR_SUPPORT"
+        elif loss_direction == "EXPANDING":
+            loss_overlay = "REPAIR_WEAK"
+
+    # 高位内部裂化: KQXY 扩散 → 降级执行策略
+    if phase == EmotionPhase.HIGH_ACTIVE and loss_direction == "EXPANDING":
+        loss_overlay = "HIGH_CRACKING"
 
     # ========================================================================
     # 阶段 6: 极端否决 (Phase 之外的硬止损)
@@ -704,7 +807,7 @@ def determine_emotion_state(
         warnings.append("极端否决: 广度恐慌 (上涨占比极低 + 跌停家数极高)")
 
     # ========================================================================
-    # 阶段 7: 风险预算 + 结构偏好
+    # 阶段 7: 风险预算 + 结构偏好 (KQXY 覆盖层修饰)
     # ========================================================================
 
     if hard_veto:
@@ -714,7 +817,17 @@ def determine_emotion_state(
         struct = {"height": "LOW", "fenqi": "DISABLED", "yizi": False, "huanshou": False, "fenqi_enabled": False, "feiban": False}
     else:
         risk_tier, base_cap, buy_mode = PHASE_RISK_BUDGET[phase]
-        struct = PHASE_STRUCTURE[phase]
+        struct = PHASE_STRUCTURE[phase].copy()
+
+        # KQXY 覆盖层: 弱修复 → 降仓
+        if loss_overlay == "REPAIR_WEAK":
+            base_cap = min(base_cap, 0.20)
+
+        # KQXY 覆盖层: 高位裂化 → 降级为 HIGH_STAGNATION 策略
+        if loss_overlay == "HIGH_CRACKING":
+            hs = PHASE_STRUCTURE[EmotionPhase.HIGH_STAGNATION]
+            struct = hs.copy()
+            base_cap = min(base_cap, 0.30)
 
         # 数据质量降仓
         if data_quality_level == DataQuality.UNKNOWN:
@@ -728,14 +841,21 @@ def determine_emotion_state(
         position_cap = max(0.0, min(1.0, position_cap))
 
     # ========================================================================
-    # 阶段 8: 子阶段标签
+    # 阶段 8: 子阶段标签 (KQXY 覆盖层修饰)
     # ========================================================================
 
     ice_stage = None
     retreat_stage = None
 
     if phase == EmotionPhase.ICE:
-        ice_stage = "FALLING" if direction == EmotionDirection.DOWN else "BASING"
+        if loss_level == "HIGH" and loss_direction == "EXPANDING":
+            ice_stage = "FALLING"
+        elif loss_level == "HIGH" and loss_direction == "FLAT":
+            ice_stage = "BASING"
+        elif direction == EmotionDirection.DOWN:
+            ice_stage = "FALLING"
+        else:
+            ice_stage = "BASING"
     elif phase == EmotionPhase.RETREAT:
         retreat_stage = "EARLY" if level == EmotionLevel.HIGH else "SPREADING"
 
@@ -758,6 +878,13 @@ def determine_emotion_state(
         hard_veto=hard_veto,
         profit_collapse=profit_collapse,
         breadth_panic=breadth_panic,
+        kqxy_t1=kqxy_t1,
+        kqxy_t2=kqxy_t2,
+        kqxy_pct=loss["kqxy_pct"],
+        kqxy_delta=loss["kqxy_delta"],
+        loss_level=loss_level,
+        loss_direction=loss_direction,
+        loss_overlay=loss_overlay,
         risk_tier=risk_tier,
         position_cap=position_cap,
         height_preference=struct["height"],
@@ -797,6 +924,9 @@ def determine_emotion_state(
             "retreat_stage": retreat_stage,
             "hard_veto": hard_veto,
             "prev_phase": prev_phase.value if prev_phase else None,
+            "loss_overlay": loss_overlay,
+            "loss_level": loss_level,
+            "loss_direction": loss_direction,
         },
     )
 

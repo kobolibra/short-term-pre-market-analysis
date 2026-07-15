@@ -271,6 +271,8 @@ def run_v4_2_pipeline(
         qxlive_top_t1=bundle.qxlive_top_t1_rows,
         history=history,
         static_thresholds=static_thresholds,
+        kqxy_t1=getattr(bundle, "kqxy_t1", None),
+        kqxy_t2=getattr(bundle, "kqxy_t2", None),
     )
     warnings.extend(emotion_result.warnings)
 
@@ -321,6 +323,11 @@ def run_v4_2_pipeline(
             "hard_veto": emotion_result.hard_veto,
             "profit_collapse": emotion_result.profit_collapse,
             "breadth_panic": emotion_result.breadth_panic,
+            "kqxy_t1": emotion_result.kqxy_t1,
+            "kqxy_t2": emotion_result.kqxy_t2,
+            "loss_level": emotion_result.loss_level,
+            "loss_direction": emotion_result.loss_direction,
+            "loss_overlay": emotion_result.loss_overlay,
             "pool_enabled": {
                 "一字封": emotion_result.yizi_enabled,
                 "换手封": emotion_result.huanshou_enabled,
@@ -522,6 +529,26 @@ def _build_bundle_from_report(
         except Exception:
             break
 
+    # 加载 T-1/T-2 盘后 KQXY (不用 premarket 时间限制, 取最新 snapshot)
+    from duanxianxia_v4_2_d6_emotion import _extract_qxlive_metric
+    kqxy_t1 = None
+    kqxy_t2 = None
+    for date_str, attr in [(date_t1_str, "kqxy_t1"), (date_t2_str, "kqxy_t2")]:
+        if date_str is None:
+            continue
+        kq_cap = load_capture_at_time(
+            project_root, date_str, DS_HOME_QXLIVE_TOP,
+            pick="latest", raise_if_missing=False,
+        )
+        if kq_cap:
+            kq_rows = _extract_rows(kq_cap)
+            kq_val = _extract_qxlive_metric(kq_rows, "KQXY")
+            if kq_val is not None and kq_val > 0:
+                if attr == "kqxy_t1":
+                    kqxy_t1 = kq_val
+                else:
+                    kqxy_t2 = kq_val
+
     return PremarketDataBundle(
         date_t0=trade_date,
         date_t1=date_t1_str,
@@ -554,6 +581,10 @@ def _build_bundle_from_report(
         kaipan_history=kaipan_history,
         warnings=t1_warnings,
     )
+    # 动态附加 KQXY 盘后值 (从 qxlive latest snapshot 提取, 非 9:25)
+    bundle.kqxy_t1 = kqxy_t1
+    bundle.kqxy_t2 = kqxy_t2
+    return bundle
 
 def build_premarket_analysis_v4_2(
     report: Dict[str, Any],

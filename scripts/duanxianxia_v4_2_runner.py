@@ -328,6 +328,8 @@ def run_v4_2_pipeline(
             "loss_level": emotion_result.loss_level,
             "loss_direction": emotion_result.loss_direction,
             "loss_overlay": emotion_result.loss_overlay,
+            "qx_925": emotion_result.qx_925,
+            "qx_stats": emotion_result.qx_stats,
             "pool_enabled": {
                 "一字封": emotion_result.yizi_enabled,
                 "换手封": emotion_result.huanshou_enabled,

@@ -86,11 +86,13 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
         sz = _extract_qxlive_metric(qxlive_rows, "SZ")
         xd = _extract_qxlive_metric(qxlive_rows, "XD")
         dt = _extract_qxlive_metric(qxlive_rows, "DT")
+        pre_qx = _extract_qxlive_metric(qxlive_rows, "QX")
         advance_share = None
         if sz is not None and xd is not None and (sz + xd) > 0:
             advance_share = round(sz / (sz + xd), 4)
-        # KQXY 盘后 (取最新, 不限时间)
+        # KQXY + QX 盘后 (取最新, 不限时间)
         kqxy = None
+        close_qx = None
         kq_live = load_capture_at_time(
             project_root, date_str, DS_HOME_QXLIVE_TOP,
             pick="latest", raise_if_missing=False,
@@ -100,6 +102,9 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
             kq_val = _extract_qxlive_metric(kq_rows, "KQXY")
             if kq_val is not None and kq_val > 0:
                 kqxy = kq_val
+            qx_close = _extract_qxlive_metric(kq_rows, "QX")
+            if qx_close is not None:
+                close_qx = qx_close
         ztpool = load_capture_at_time(
             project_root, date_str, DS_HOME_ZTPOOL,
             pick="latest", raise_if_missing=False,
@@ -128,6 +133,8 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
                 dt=int(dt) if dt is not None else None,
                 relay_health=relay_health,
                 kqxy=kqxy,
+                pre_qx=pre_qx,
+                close_qx=close_qx,
             )
     return history
 

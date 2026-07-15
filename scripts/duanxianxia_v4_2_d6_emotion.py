@@ -118,6 +118,8 @@ class D6History:
     dt_values: List[float] = field(default_factory=list)
     relay_health_values: List[float] = field(default_factory=list)
     kqxy_values: List[float] = field(default_factory=list)
+    pre_qx_values: List[float] = field(default_factory=list)      # 盘前 QX@9:25
+    close_qx_values: List[float] = field(default_factory=list)    # 盘后 QX 收盘
 
     _WINDOW = 60
     _MIN_DAYS_FOR_PCTILE = 20
@@ -125,13 +127,17 @@ class D6History:
     def add_day(self, ztbx: Optional[float] = None, lbbx: Optional[float] = None,
                 advance_share: Optional[float] = None, dt: Optional[float] = None,
                 relay_health: Optional[float] = None,
-                kqxy: Optional[float] = None) -> None:
+                kqxy: Optional[float] = None,
+                pre_qx: Optional[float] = None,
+                close_qx: Optional[float] = None) -> None:
         if ztbx is not None: self.ztbx_values.append(ztbx)
         if lbbx is not None: self.lbbx_values.append(lbbx)
         if advance_share is not None: self.advance_share_values.append(advance_share)
         if dt is not None: self.dt_values.append(dt)
         if relay_health is not None: self.relay_health_values.append(relay_health)
         if kqxy is not None: self.kqxy_values.append(kqxy)
+        if pre_qx is not None: self.pre_qx_values.append(pre_qx)
+        if close_qx is not None: self.close_qx_values.append(close_qx)
 
     def _pctile(self, values: List[float], q: float) -> Optional[float]:
         """计算分位数, 需要至少 MIN_DAYS_FOR_PCTILE 天"""
@@ -237,6 +243,16 @@ class D6EmotionResult:
     loss_level: str = "UNKNOWN"             # KQXY 水位: LOW / MID / HIGH
     loss_direction: str = "UNKNOWN"         # KQXY 方向: CONTRACTING / FLAT / EXPANDING
     loss_overlay: str = "NONE"              # 亏钱效应覆盖标记: NONE / REPAIR_SUPPORT / REPAIR_WEAK / HIGH_CRACKING
+
+    # === QX 综合情绪 (仅展示, 不参与决策) ===
+    qx_925: Optional[float] = None              # 当天盘前 QX@9:25
+    qx_stats: Dict[str, Any] = field(default_factory=lambda: {
+        "pre_qx": {"median": None, "std": None, "band1_low": None, "band1_high": None,
+                   "band2_low": None, "band2_high": None, "n": 0},
+        "close_qx": {"median": None, "std": None, "band1_low": None, "band1_high": None,
+                     "band2_low": None, "band2_high": None, "n": 0},
+        "today_position": "UNKNOWN",  # 当天 QX@9:25 相对 close_qx 分布的位置
+    })
 
     # === 质量 ===
     phase_confidence: float = 0.0
@@ -446,6 +462,76 @@ def _phase_to_level(phase: Optional[EmotionPhase]) -> Optional[EmotionLevel]:
     return EmotionLevel.HIGH  # HIGH_ACTIVE, HIGH_STAGNATION
 
 
+import math
+
+def _compute_qx_stats(history: Optional[D6History], qx_925: Optional[float]) -> Dict[str, Any]:
+    """
+    计算 QX 盘前/盘后统计 (仅展示, 不参与决策)。
+
+    使用过去 20 天盘前 QX 和盘后 QX 数据:
+      - 中位数
+      - 1σ 区间 (median ± 1σ)
+      - 2σ 区间 (median ± 2σ)
+      - 当天盘前 QX 的相对位置
+
+    Returns:
+        {
+            "pre_qx":  {median, std, band1_low, band1_high, band2_low, band2_high, n},
+            "close_qx": {median, std, band1_low, band1_high, band2_low, band2_high, n},
+            "today_position": "LOW_TAIL" / "BELOW_1SIGMA" / "WITHIN_1SIGMA" / "ABOVE_1SIGMA" / "HIGH_TAIL" / "UNKNOWN",
+        }
+    """
+    result: Dict[str, Any] = {
+        "pre_qx": {"median": None, "std": None, "band1_low": None, "band1_high": None,
+                   "band2_low": None, "band2_high": None, "n": 0},
+        "close_qx": {"median": None, "std": None, "band1_low": None, "band1_high": None,
+                     "band2_low": None, "band2_high": None, "n": 0},
+        "today_position": "UNKNOWN",
+    }
+
+    def _stats(values: List[float]) -> Dict[str, Any]:
+        if len(values) < 5:
+            return {"median": None, "std": None, "band1_low": None, "band1_high": None,
+                    "band2_low": None, "band2_high": None, "n": len(values)}
+        sv = sorted(values)
+        n = len(sv)
+        median = sv[n // 2] if n % 2 == 1 else (sv[n // 2 - 1] + sv[n // 2]) / 2.0
+        mean = sum(sv) / n
+        variance = sum((v - mean) ** 2 for v in sv) / n
+        std = math.sqrt(variance)
+        return {
+            "median": round(median, 4),
+            "std": round(std, 4),
+            "band1_low": round(median - std, 4),
+            "band1_high": round(median + std, 4),
+            "band2_low": round(median - 2 * std, 4),
+            "band2_high": round(median + 2 * std, 4),
+            "n": n,
+        }
+
+    if history is not None:
+        result["pre_qx"] = _stats(history.pre_qx_values[-20:])
+        result["close_qx"] = _stats(history.close_qx_values[-20:])
+
+    # 判断当天 QX@9:25 相对盘后 QX 分布的位置
+    if qx_925 is not None and result["close_qx"]["median"] is not None:
+        m = result["close_qx"]["median"]
+        s = result["close_qx"]["std"]
+        if s is not None and s > 0:
+            if qx_925 < m - 2 * s:
+                result["today_position"] = "LOW_TAIL"
+            elif qx_925 < m - s:
+                result["today_position"] = "BELOW_1SIGMA"
+            elif qx_925 <= m + s:
+                result["today_position"] = "WITHIN_1SIGMA"
+            elif qx_925 <= m + 2 * s:
+                result["today_position"] = "ABOVE_1SIGMA"
+            else:
+                result["today_position"] = "HIGH_TAIL"
+
+    return result
+
+
 def _classify_phase(level: EmotionLevel, direction: EmotionDirection) -> EmotionPhase:
     """水位 × 方向 → 七宫格相位"""
     if level == EmotionLevel.LOW:
@@ -597,6 +683,7 @@ def determine_emotion_state(
     sz_925 = _extract_qxlive_metric(qxlive_top_t0, "SZ")
     xd_925 = _extract_qxlive_metric(qxlive_top_t0, "XD")
     dt_925_raw = _extract_qxlive_metric(qxlive_top_t0, "DT")
+    qx_925 = _extract_qxlive_metric(qxlive_top_t0, "QX")
 
     # T-1 值 (用于方向计算和极端否决)
     ztbx_t1 = _extract_qxlive_metric(qxlive_top_t1, "ZTBX")
@@ -801,6 +888,11 @@ def determine_emotion_state(
         loss_overlay = "HIGH_CRACKING"
 
     # ========================================================================
+    # 阶段 5.6: QX 综合情绪统计 (仅展示, 不参与决策)
+    # ========================================================================
+    qx_stats = _compute_qx_stats(history, qx_925)
+
+    # ========================================================================
     # 阶段 6: 极端否决 (Phase 之外的硬止损)
     # ========================================================================
 
@@ -914,6 +1006,8 @@ def determine_emotion_state(
         loss_level=loss_level,
         loss_direction=loss_direction,
         loss_overlay=loss_overlay,
+        qx_925=qx_925,
+        qx_stats=qx_stats,
         risk_tier=risk_tier,
         position_cap=position_cap,
         height_preference=struct["height"],

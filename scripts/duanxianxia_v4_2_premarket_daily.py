@@ -110,12 +110,16 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
         xd = _extract_qxlive_metric(qxlive_rows, "XD")
         dt = _extract_qxlive_metric(qxlive_rows, "DT")
 
+        # 盘前 QX (仅展示, 不参与决策)
+        pre_qx = _extract_qxlive_metric(qxlive_rows, "QX")
+
         advance_share = None
         if sz is not None and xd is not None and (sz + xd) > 0:
             advance_share = round(sz / (sz + xd), 4)
 
-        # qxlive 盘后 (取最新, 不限时间) — 用于 KQXY
+        # qxlive 盘后 (取最新, 不限时间) — 用于 KQXY 和 QX
         kqxy = None
+        close_qx = None
         kq_live = load_capture_at_time(
             project_root, date_str, DS_HOME_QXLIVE_TOP,
             pick="latest", raise_if_missing=False,
@@ -125,6 +129,9 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
             kq_val = _extract_qxlive_metric(kq_rows, "KQXY")
             if kq_val is not None and kq_val > 0:
                 kqxy = kq_val
+            qx_close = _extract_qxlive_metric(kq_rows, "QX")
+            if qx_close is not None:
+                close_qx = qx_close
 
         # ztpool (盘后, 取最新)
         ztpool = load_capture_at_time(
@@ -158,6 +165,8 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
                 dt=int(dt) if dt is not None else None,
                 relay_health=relay_health,
                 kqxy=kqxy,
+                pre_qx=pre_qx,
+                close_qx=close_qx,
             )
 
     return history
@@ -190,17 +199,19 @@ def _build_history_from_past_results(source_dir: Path, max_days: int = 60) -> D6
                 dt=r.get("dt_925"),
                 relay_health=r.get("relay_health"),
                 kqxy=r.get("kqxy_t1"),
+                pre_qx=r.get("qx_925"),
             )
     return history
 
 
 def _merge_histories(*histories: D6History) -> D6History:
     """合并多个 D6History, 按各序列独立排序后去重重建。"""
-    all_vals: Dict[str, List[float]] = {"ztbx": [], "lbbx": [], "adv": [], "dt": [], "relay": [], "kqxy": []}
+    all_vals: Dict[str, List[float]] = {"ztbx": [], "lbbx": [], "adv": [], "dt": [], "relay": [], "kqxy": [], "pre_qx": [], "close_qx": []}
     for h in histories:
         for arr, key in [(h.ztbx_values, "ztbx"), (h.lbbx_values, "lbbx"),
                          (h.advance_share_values, "adv"), (h.dt_values, "dt"),
-                         (h.relay_health_values, "relay"), (h.kqxy_values, "kqxy")]:
+                         (h.relay_health_values, "relay"), (h.kqxy_values, "kqxy"),
+                         (h.pre_qx_values, "pre_qx"), (h.close_qx_values, "close_qx")]:
             for v in arr:
                 if v is not None:
                     all_vals[key].append(v)
@@ -211,7 +222,9 @@ def _merge_histories(*histories: D6History) -> D6History:
     dt = sorted(all_vals["dt"])
     relay = sorted(all_vals["relay"])
     kqxy = sorted(all_vals["kqxy"])
-    for i in range(max(len(ztbx), len(lbbx), len(adv), len(dt), len(relay), len(kqxy))):
+    pre_qx = sorted(all_vals["pre_qx"])
+    close_qx = sorted(all_vals["close_qx"])
+    for i in range(max(len(ztbx), len(lbbx), len(adv), len(dt), len(relay), len(kqxy), len(pre_qx), len(close_qx))):
         result.add_day(
             ztbx=ztbx[i] if i < len(ztbx) else None,
             lbbx=lbbx[i] if i < len(lbbx) else None,
@@ -219,6 +232,8 @@ def _merge_histories(*histories: D6History) -> D6History:
             dt=dt[i] if i < len(dt) else None,
             relay_health=relay[i] if i < len(relay) else None,
             kqxy=kqxy[i] if i < len(kqxy) else None,
+            pre_qx=pre_qx[i] if i < len(pre_qx) else None,
+            close_qx=close_qx[i] if i < len(close_qx) else None,
         )
     return result
 
@@ -310,6 +325,13 @@ def main() -> int:
             "hard_veto": emo.get("hard_veto"),
             "profit_collapse": emo.get("profit_collapse", False),
             "breadth_panic": emo.get("breadth_panic", False),
+            "kqxy_t1": emo.get("kqxy_t1"),
+            "kqxy_t2": emo.get("kqxy_t2"),
+            "loss_level": emo.get("loss_level"),
+            "loss_direction": emo.get("loss_direction"),
+            "loss_overlay": emo.get("loss_overlay"),
+            "qx_925": emo.get("qx_925"),
+            "qx_stats": emo.get("qx_stats", {}),
             "profit_level": emo.get("profit_level"),
             "breadth_level": emo.get("breadth_level"),
             "relay_level": emo.get("relay_level"),

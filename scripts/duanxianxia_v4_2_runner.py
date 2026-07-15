@@ -306,6 +306,7 @@ def run_v4_2_pipeline(
             "phase": emotion_result.phase.value,
             "phase_label": emotion_result.phase_label,
             "level": emotion_result.level.value,
+            "level_score": emotion_result.level_score,
             "direction": emotion_result.direction.value,
             "risk_tier": emotion_result.risk_tier.value,
             "position_cap": emotion_result.position_cap,
@@ -317,10 +318,9 @@ def run_v4_2_pipeline(
             "lbbx_925": emotion_result.lbbx_925,
             "advance_share": emotion_result.advance_share,
             "dt_925": emotion_result.dt_925,
-            "t0_impulse": emotion_result.t0_impulse,
-            "ztbx_collapse": emotion_result.ztbx_collapse,
-            "lbbx_collapse": emotion_result.lbbx_collapse,
-            "breadth_shock": emotion_result.breadth_shock,
+            "hard_veto": emotion_result.hard_veto,
+            "profit_collapse": emotion_result.profit_collapse,
+            "breadth_panic": emotion_result.breadth_panic,
             "pool_enabled": {
                 "一字封": emotion_result.yizi_enabled,
                 "换手封": emotion_result.huanshou_enabled,
@@ -335,14 +335,12 @@ def run_v4_2_pipeline(
             },
             "phase_confidence": emotion_result.phase_confidence,
             "data_quality": emotion_result.data_quality,
-            "transition_from": emotion_result.transition_from,
-            "transition_reason": emotion_result.transition_reason,
             "profit_level": emotion_result.profit_level,
             "breadth_level": emotion_result.breadth_level,
             "relay_level": emotion_result.relay_level,
-            "profit_slope": emotion_result.profit_slope,
-            "breadth_slope": emotion_result.breadth_slope,
-            "relay_slope": emotion_result.relay_slope,
+            "profit_delta": emotion_result.profit_delta,
+            "breadth_delta": emotion_result.breadth_delta,
+            "relay_delta": emotion_result.relay_delta,
             "height_preference": emotion_result.height_preference,
             "fenqi_priority": emotion_result.fenqi_priority,
             "auction_buy_enabled": emotion_result.auction_buy_enabled,
@@ -524,8 +522,8 @@ def build_premarket_analysis_v4_2(
         "risk_tier": emo.get("risk_tier"),
         "position_cap": emo.get("position_cap", 1.0),
         "buy_mode": emo.get("buy_mode"),
-        "t0_impulse": emo.get("t0_impulse"),
-        "ztbx_collapse": emo.get("ztbx_collapse", False),
+        "t0_impulse": emo.get("hard_veto"),
+        "profit_collapse": emo.get("profit_collapse", False),
     }
 
     total_candidates = sum(
@@ -670,8 +668,8 @@ def _v4_2_reasons(order: Dict[str, Any], emo: Dict[str, Any]) -> List[str]:
         reasons.append(f"高度调制×{order['height_mult']:.1f}")
     if order.get("risk_mult", 1.0) < 1.0:
         reasons.append(f"风险调制×{order['risk_mult']:.1f}")
-    if emo.get("t0_impulse") == "NEGATIVE":
-        reasons.append(f"T0负向冲击: {emo.get('transition_reason', [])}")
+    if emo.get("hard_veto"):
+        reasons.append("极端否决触发")
     return reasons
 
 

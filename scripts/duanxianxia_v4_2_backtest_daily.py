@@ -90,7 +90,7 @@ def main() -> int:
                 "position_cap": emo.get("position_cap", 1.0),
                 "jinji_weighted": emo.get("relay_health"),
                 "ztbx_925": emo.get("ztbx_925"),
-                "t0_impulse": emo.get("t0_impulse"),
+                "t0_impulse": emo.get("hard_veto"),
                 "n_orders": len(orders),
                 "orders": [
                     {"code": o["code"], "name": o.get("name", ""), "pool": o["pool"],

@@ -130,10 +130,10 @@ def _main(argv: Optional[List[str]] = None) -> int:
             print(f"  风险: {emo['risk_tier']} | 仓位上限: {emo['position_cap']*100:.0f}%")
             print(f"  接力健康度: {emo.get('relay_health')}% | 1进2: {emo.get('jinji_1_2')}% | 2进3: {emo.get('jinji_2_3')}%")
             print(f"  ZTBX@9:25: {emo.get('ztbx_925')}% | advance_share: {emo.get('advance_share')} | DT: {emo.get('dt_925')}")
-            print(f"  ZTBX塌方={emo['ztbx_collapse']} LBBX塌方={emo['lbbx_collapse']} 广度冲击={emo['breadth_shock']}")
+            print(f"  否决={emo.get('hard_veto')} 翻负={emo.get('profit_collapse')} 广度恐慌={emo.get('breadth_panic')}")
 
-            if emo.get("t0_impulse") == "NEGATIVE":
-                print(f"  ⚠️ T0负向冲击: {emo.get('transition_reason', [])}")
+            if emo.get("hard_veto"):
+                print(f"  ⚠️ 极端否决触发!")
 
             # 池详情
             for pool_name, pool_data in result["pools"].items():

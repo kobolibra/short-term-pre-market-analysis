@@ -108,8 +108,8 @@ def _main(argv: Optional[List[str]] = None) -> int:
                 for o in orders:
                     print(f"    {o['code']} {o.get('name','')} | {o['pool']} "
                           f"| 仓位={o['position_pct']}% | {o['buy_strategy']}")
-                if emo.get("t0_impulse") == "NEGATIVE":
-                    print(f"    ⚠️ T0负向冲击: {emo.get('transition_reason', [])}")
+                if emo.get("hard_veto"):
+                    print(f"    ⚠️ 极端否决触发: 翻负={emo.get('profit_collapse')} 广度恐慌={emo.get('breadth_panic')}")
 
             # 更新历史
             if emo.get("ztbx_925") is not None:
@@ -146,7 +146,7 @@ def _main(argv: Optional[List[str]] = None) -> int:
         codes = ", ".join(f"{o.get('code','')} {o.get('name','')}({o.get('pool','')})" for o in orders)
         if not codes:
             codes = "(无)"
-        downgraded = " ⚠️冲击" if emo.get("t0_impulse") == "NEGATIVE" else ""
+        downgraded = " ⚠️否决" if emo.get("hard_veto") else ""
         print(f"{r['date']:<12} {emo.get('phase_label','?'):<10} {emo.get('risk_tier','?'):<8} {emo.get('position_cap',0)*100:>7.0f}% {len(orders):>5}只 {codes}{downgraded}")
 
     # 输出 JSON
@@ -176,8 +176,8 @@ def _main(argv: Optional[List[str]] = None) -> int:
             ep = r.get("execution_plan", {})
             lines.append(f"\n--- {r['date']} ---")
             lines.append(f"周期: {emo.get('phase_label','?')} | 风险: {emo.get('risk_tier','?')} | 仓位上限: {emo.get('position_cap',0)*100:.0f}%")
-            if emo.get("t0_impulse") == "NEGATIVE":
-                lines.append(f"T0负向冲击: {emo.get('transition_reason', [])}")
+            if emo.get("hard_veto"):
+                lines.append(f"极端否决: 翻负={emo.get('profit_collapse')} 广度恐慌={emo.get('breadth_panic')}")
             for o in ep.get("orders", []):
                 lines.append(f"  {o['code']} {o.get('name','')} | {o['pool']} | {o['position_pct']}% | {o['buy_strategy']}")
             if not ep.get("orders"):

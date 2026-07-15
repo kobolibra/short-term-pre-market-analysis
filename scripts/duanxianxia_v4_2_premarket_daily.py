@@ -81,14 +81,12 @@ def main() -> int:
             "lbbx_925": emo.get("lbbx_925"),
             "advance_share": emo.get("advance_share"),
             "dt_925": emo.get("dt_925"),
-            "t0_impulse": emo.get("t0_impulse"),
-            "ztbx_collapse": emo.get("ztbx_collapse", False),
-            "lbbx_collapse": emo.get("lbbx_collapse", False),
-            "breadth_shock": emo.get("breadth_shock", False),
+            "t0_impulse": emo.get("hard_veto"),
+            "profit_collapse": emo.get("profit_collapse", False),
+            "breadth_panic": emo.get("breadth_panic", False),
             "pool_enabled": emo.get("pool_enabled", {}),
             "pool_mult": emo.get("pool_mult", {}),
             "phase_confidence": emo.get("phase_confidence"),
-            "transition_reason": emo.get("transition_reason", []),
             "n_orders": len(orders),
             "orders": [
                 {

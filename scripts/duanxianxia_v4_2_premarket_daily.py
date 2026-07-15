@@ -326,14 +326,14 @@ def main() -> int:
     bundle = _build_bundle_from_report(report_data, PROJECT_ROOT, today)
 
     # 构建 D6History: 优先级 1) 过去分析结果  2) 原始 captures 数据
+    # v4: 始终合并 raw captures, 因为盘后 P/B 数据只存在于原始 captures 中,
+    # 旧分析结果 JSON 不包含 ztbx_close 等 v4 新字段
     history = _merge_histories(
         _build_history_from_past_results(OUTPUT_DIR),
         _build_history_from_past_results(BACKTEST_DIR),
+        _build_history_from_raw_captures(PROJECT_ROOT),
     )
-    if history.history_days < 20:
-        raw_history = _build_history_from_raw_captures(PROJECT_ROOT)
-        history = _merge_histories(history, raw_history)
-    print(f"v4.2 premarket: history days = {history.history_days}")
+    print(f"v4.2 premarket: history days(pre)={history.history_days}, close_days={history.close_days}")
 
     result = run_v4_2_pipeline(
         date_t0=today,

@@ -117,9 +117,13 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
         if sz is not None and xd is not None and (sz + xd) > 0:
             advance_share = round(sz / (sz + xd), 4)
 
-        # qxlive 盘后 (取最新, 不限时间) — 用于 KQXY 和 QX
+        # qxlive 盘后 (取最新, 不限时间) — 用于 KQXY + QX + P/B 盘后指标 (v4)
         kqxy = None
         close_qx = None
+        ztbx_close = None
+        lbbx_close = None
+        advance_share_close = None
+        dt_close = None
         kq_live = load_capture_at_time(
             project_root, date_str, DS_HOME_QXLIVE_TOP,
             pick="latest", raise_if_missing=False,
@@ -132,6 +136,15 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
             qx_close = _extract_qxlive_metric(kq_rows, "QX")
             if qx_close is not None:
                 close_qx = qx_close
+            # v4 新增: P/B 盘后指标 (用于水位计算, 市场底色)
+            ztbx_close = _extract_qxlive_metric(kq_rows, "ZTBX")
+            lbbx_close = _extract_qxlive_metric(kq_rows, "LBBX")
+            sz_close = _extract_qxlive_metric(kq_rows, "SZ")
+            xd_close = _extract_qxlive_metric(kq_rows, "XD")
+            dt_close_raw = _extract_qxlive_metric(kq_rows, "DT")
+            if sz_close is not None and xd_close is not None and (sz_close + xd_close) > 0:
+                advance_share_close = round(sz_close / (sz_close + xd_close), 4)
+            dt_close = int(dt_close_raw) if dt_close_raw is not None else None
 
         # ztpool (盘后, 取最新)
         ztpool = load_capture_at_time(
@@ -160,9 +173,16 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
 
         if ztbx is not None:
             history.add_day(
+                # 盘前 (向后兼容旧参数名)
                 ztbx=ztbx, lbbx=lbbx,
                 advance_share=advance_share,
                 dt=int(dt) if dt is not None else None,
+                # 盘后 (v4 新增, 用于水位计算)
+                ztbx_close=ztbx_close,
+                lbbx_close=lbbx_close,
+                advance_share_close=advance_share_close,
+                dt_close=dt_close,
+                # 其他
                 relay_health=relay_health,
                 kqxy=kqxy,
                 pre_qx=pre_qx,
@@ -197,6 +217,11 @@ def _build_history_from_past_results(source_dir: Path, max_days: int = 60) -> D6
                 lbbx=r.get("lbbx_925"),
                 advance_share=r.get("advance_share"),
                 dt=r.get("dt_925"),
+                # v4 新增: 盘后指标 (旧数据可能不存在, None 时自动跳过)
+                ztbx_close=r.get("ztbx_close"),
+                lbbx_close=r.get("lbbx_close"),
+                advance_share_close=r.get("advance_share_close"),
+                dt_close=r.get("dt_close"),
                 relay_health=r.get("relay_health"),
                 kqxy=r.get("kqxy_t1"),
                 pre_qx=r.get("qx_925"),
@@ -205,13 +230,25 @@ def _build_history_from_past_results(source_dir: Path, max_days: int = 60) -> D6
 
 
 def _merge_histories(*histories: D6History) -> D6History:
-    """合并多个 D6History, 按各序列独立排序后去重重建。"""
-    all_vals: Dict[str, List[float]] = {"ztbx": [], "lbbx": [], "adv": [], "dt": [], "relay": [], "kqxy": [], "pre_qx": [], "close_qx": []}
+    """合并多个 D6History, 按各序列独立排序后去重重建。
+
+    注意: 合并后丢失时间对应关系, 但分位计算只依赖值的分布,
+    不依赖时间顺序, 因此不影响水位/方向计算。
+    """
+    all_vals: Dict[str, List[float]] = {
+        "ztbx": [], "lbbx": [], "adv": [], "dt": [],
+        "ztbx_close": [], "lbbx_close": [], "adv_close": [], "dt_close": [],
+        "relay": [], "kqxy": [], "pre_qx": [], "close_qx": [],
+    }
     for h in histories:
-        for arr, key in [(h.ztbx_values, "ztbx"), (h.lbbx_values, "lbbx"),
-                         (h.advance_share_values, "adv"), (h.dt_values, "dt"),
-                         (h.relay_health_values, "relay"), (h.kqxy_values, "kqxy"),
-                         (h.pre_qx_values, "pre_qx"), (h.close_qx_values, "close_qx")]:
+        for arr, key in [
+            (h.ztbx_pre_values, "ztbx"), (h.lbbx_pre_values, "lbbx"),
+            (h.advance_share_pre_values, "adv"), (h.dt_pre_values, "dt"),
+            (h.ztbx_close_values, "ztbx_close"), (h.lbbx_close_values, "lbbx_close"),
+            (h.advance_share_close_values, "adv_close"), (h.dt_close_values, "dt_close"),
+            (h.relay_health_values, "relay"), (h.kqxy_values, "kqxy"),
+            (h.pre_qx_values, "pre_qx"), (h.close_qx_values, "close_qx"),
+        ]:
             for v in arr:
                 if v is not None:
                     all_vals[key].append(v)
@@ -220,16 +257,29 @@ def _merge_histories(*histories: D6History) -> D6History:
     lbbx = sorted(all_vals["lbbx"])
     adv = sorted(all_vals["adv"])
     dt = sorted(all_vals["dt"])
+    ztbx_close = sorted(all_vals["ztbx_close"])
+    lbbx_close = sorted(all_vals["lbbx_close"])
+    adv_close = sorted(all_vals["adv_close"])
+    dt_close = sorted(all_vals["dt_close"])
     relay = sorted(all_vals["relay"])
     kqxy = sorted(all_vals["kqxy"])
     pre_qx = sorted(all_vals["pre_qx"])
     close_qx = sorted(all_vals["close_qx"])
-    for i in range(max(len(ztbx), len(lbbx), len(adv), len(dt), len(relay), len(kqxy), len(pre_qx), len(close_qx))):
+    max_len = max(
+        len(ztbx), len(lbbx), len(adv), len(dt),
+        len(ztbx_close), len(lbbx_close), len(adv_close), len(dt_close),
+        len(relay), len(kqxy), len(pre_qx), len(close_qx),
+    )
+    for i in range(max_len):
         result.add_day(
             ztbx=ztbx[i] if i < len(ztbx) else None,
             lbbx=lbbx[i] if i < len(lbbx) else None,
             advance_share=adv[i] if i < len(adv) else None,
             dt=dt[i] if i < len(dt) else None,
+            ztbx_close=ztbx_close[i] if i < len(ztbx_close) else None,
+            lbbx_close=lbbx_close[i] if i < len(lbbx_close) else None,
+            advance_share_close=adv_close[i] if i < len(adv_close) else None,
+            dt_close=dt_close[i] if i < len(dt_close) else None,
             relay_health=relay[i] if i < len(relay) else None,
             kqxy=kqxy[i] if i < len(kqxy) else None,
             pre_qx=pre_qx[i] if i < len(pre_qx) else None,
@@ -338,6 +388,14 @@ def main() -> int:
             "profit_delta": emo.get("profit_delta"),
             "breadth_delta": emo.get("breadth_delta"),
             "relay_delta": emo.get("relay_delta"),
+            # v4 新增: 双时间截面水位 + 盘后原始指标
+            "close_level_score": emo.get("close_level_score"),
+            "pre_level_score": emo.get("pre_level_score"),
+            "level_source": emo.get("level_source"),
+            "ztbx_close": emo.get("ztbx_close"),
+            "lbbx_close": emo.get("lbbx_close"),
+            "advance_share_close": emo.get("advance_share_close"),
+            "dt_close": emo.get("dt_close"),
             "height_preference": emo.get("height_preference"),
             "fenqi_priority": emo.get("fenqi_priority"),
             "pool_enabled": emo.get("pool_enabled", {}),

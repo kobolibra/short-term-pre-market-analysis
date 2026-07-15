@@ -163,6 +163,9 @@ class PremarketDataBundle:
     kaipan_t0_meta: Dict[str, Any] = field(default_factory=dict)
     qxlive_top_t0_rows: List[Dict[str, Any]] = field(default_factory=list)
     qxlive_top_t0_meta: Dict[str, Any] = field(default_factory=dict)
+    # v4 新增: T-1 盘后 qxlive 指标 (收盘, 不限时间, 取最新, 用于水位计算)
+    qxlive_close_t1_rows: List[Dict[str, Any]] = field(default_factory=list)
+    qxlive_close_t1_meta: Dict[str, Any] = field(default_factory=dict)
 
     def to_summary_dict(self) -> Dict[str, Any]:
         return {
@@ -241,6 +244,12 @@ def load_premarket_bundle(date_t0: str, project_root: Path | str, *, history_day
     else:
         qxlive_top_t2_rows = []; qxlive_top_t2_meta = {}
 
+    # v4 新增: T-1 盘后 qxlive 指标 (收盘, 不限时间, 取最新, 用于水位计算)
+    qc1 = load_capture_at_time(project_root, date_t1_str, DS_HOME_QXLIVE_TOP,
+                                pick="latest", raise_if_missing=False)
+    qxlive_close_t1_rows = _extract_rows(qc1)
+    qxlive_close_t1_meta = _extract_meta(qc1) if qc1 else {}
+
     kaipan_history: List[Tuple[str, List[Dict[str, Any]], Dict[str, Any]]] = []
     cur = d_t1
     for _ in range(history_days):
@@ -250,7 +259,7 @@ def load_premarket_bundle(date_t0: str, project_root: Path | str, *, history_day
             kaipan_history.append((ds, _extract_rows(cap), _extract_meta(cap)))
         cur = previous_trading_day(project_root, cur, n=1)
 
-    return PremarketDataBundle(date_t0, date_t1_str, date_t2_str, str(project_root), auction_vratio, auction_qiangchou, auction_netamount, auction_fengdan, auction_weimai, kaipan_t1_rows, kaipan_t1_meta, cashflow_today_t1, cashflow_3day_t1, cashflow_5day_t1, cashflow_10day_t1, fupan_t1, ltgd_5day_t1, ztpool_t1, qxlive_top_t1_rows, qxlive_top_t1_meta, qxlive_top_t2_rows, qxlive_top_t2_meta, kaipan_history, warnings, kaipan_t0_rows=kaipan_t0_rows, kaipan_t0_meta=kaipan_t0_meta, qxlive_top_t0_rows=qxlive_top_t0_rows, qxlive_top_t0_meta=qxlive_top_t0_meta)
+    return PremarketDataBundle(date_t0, date_t1_str, date_t2_str, str(project_root), auction_vratio, auction_qiangchou, auction_netamount, auction_fengdan, auction_weimai, kaipan_t1_rows, kaipan_t1_meta, cashflow_today_t1, cashflow_3day_t1, cashflow_5day_t1, cashflow_10day_t1, fupan_t1, ltgd_5day_t1, ztpool_t1, qxlive_top_t1_rows, qxlive_top_t1_meta, qxlive_top_t2_rows, qxlive_top_t2_meta, kaipan_history, warnings, kaipan_t0_rows=kaipan_t0_rows, kaipan_t0_meta=kaipan_t0_meta, qxlive_top_t0_rows=qxlive_top_t0_rows, qxlive_top_t0_meta=qxlive_top_t0_meta, qxlive_close_t1_rows=qxlive_close_t1_rows, qxlive_close_t1_meta=qxlive_close_t1_meta)
 
 def _main() -> int:
     p = argparse.ArgumentParser()

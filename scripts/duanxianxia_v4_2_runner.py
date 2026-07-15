@@ -269,10 +269,10 @@ def run_v4_2_pipeline(
         ztpool_t1=ztpool_t1,
         qxlive_top_t0=bundle.qxlive_top_t0_rows,
         qxlive_top_t1=bundle.qxlive_top_t1_rows,
+        qxlive_close_t1=getattr(bundle, "qxlive_close_t1_rows", None),  # v4 新增
         history=history,
         static_thresholds=static_thresholds,
-        kqxy_t1=getattr(bundle, "kqxy_t1", None),
-        kqxy_t2=getattr(bundle, "kqxy_t2", None),
+        # kqxy_t1/kqxy_t2 不再显式传入, 由 determine_emotion_state 自动从 history 提取
     )
     warnings.extend(emotion_result.warnings)
 
@@ -484,6 +484,14 @@ def _build_bundle_from_report(
     if not qxlive_top_t1_rows:
         t1_warnings.append(f"missing_or_empty: {DS_HOME_QXLIVE_TOP} t1")
 
+    # v4 新增: T-1 盘后 qxlive 指标 (收盘, 不限时间, 取最新, 用于水位计算)
+    qc1 = load_capture_at_time(
+        project_root, date_t1_str, DS_HOME_QXLIVE_TOP,
+        pick="latest", raise_if_missing=False,
+    )
+    qxlive_close_t1_rows = _extract_rows(qc1)
+    qxlive_close_t1_meta = _extract_meta(qc1) if qc1 else {}
+
     # T-2 qxlive
     if date_t2_str:
         q2 = load_capture_at_time(
@@ -582,8 +590,11 @@ def _build_bundle_from_report(
         qxlive_top_t2_meta=qxlive_top_t2_meta,
         kaipan_history=kaipan_history,
         warnings=t1_warnings,
+        qxlive_close_t1_rows=qxlive_close_t1_rows,
+        qxlive_close_t1_meta=qxlive_close_t1_meta,
     )
-    # 动态附加 KQXY 盘后值 (从 qxlive latest snapshot 提取, 非 9:25)
+    # KQXY 盘后值 (从 qxlive latest snapshot 提取, 非 9:25)
+    # v4: determine_emotion_state 已自动从 history 提取, 此处保留用于其他用途
     bundle.kqxy_t1 = kqxy_t1
     bundle.kqxy_t2 = kqxy_t2
     return bundle

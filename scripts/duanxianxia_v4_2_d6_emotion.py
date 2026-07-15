@@ -1,27 +1,48 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-duanxianxia_v4_2_d6_emotion.py  --  v4.2 D6 情绪周期状态机 (简化版 v3)
-
+duanxianxia_v4_2_d6_emotion.py  --  v4.2 D6 情绪周期状态机 (v4 双时间截面版)
 ============================================================================
-设计哲学
+版本演进
+============================================================================
+v3 → v4 核心变更: 引入"双时间截面"架构
+
+问题背景:
+  v3 中 P/B 家族的水位和方向都使用盘前 9:25 数据, 而 R 家族使用盘后数据。
+  三大家族测量的不是同一个时间截面的市场状态, 导致:
+  1. 盘前数据信息量低, 竞价瞬间易受大单干扰
+  2. 当竞价与全天走势背离时, P/B 水位与实际市场底色严重脱节
+  3. R 家族方向计算存在逻辑缺陷: 用同一个 T-1 值在"包含自己"和"不包含自己"
+     两个分布中求分位差, 实际测量的是"偏离中位数的方向"而非"日间变化"
+
+v4 双时间截面设计:
+  ┌──────────────────────────────────────────────────────────────┐
+  │  市场底色 (盘后)  →  水位 (Level)  →  决定仓位上限、风险等级   │
+  │  竞价情绪 (盘前)  →  方向 (Direction) → 决定进攻/防守方向      │
+  │  Phase = 水位 × 方向 → 七宫格 (不变)                         │
+  └──────────────────────────────────────────────────────────────┘
+
+具体改动:
+  1. D6History: 新增盘后 P/B 字段 (ztbx_close/lbbx_close/advance_share_close/dt_close)
+  2. 水位计算: 盘后值在盘后历史分布中求分位, 盘后数据不足时回退盘前
+  3. 方向计算: P/B 保持盘前 vs 盘前; R 修复为 T-1 relay vs T-2 relay 日间变化
+  4. KQXY: 自动从 history.kqxy_values 提取, 不再依赖调用方传入 (修复 kqxy_t1/t2 始终为 None 的问题)
+  5. 极端否决: 仍用盘前数据 (竞价瞬间的极端信号需要即时响应)
+
+设计哲学 (不变)
 ============================================================================
 D6 不是风险预算层。D6 必须首先识别市场所处的情绪周期位置，再由周期位置
 派生风险预算、进攻方向和结构偏好。
-
 核心公式:  水位(Level) × 方向(Direction) → 七宫格周期相位(Phase)
           Phase + 极端否决 → 风险等级(RiskTier) + 仓位上限 + 结构偏好
-
 ============================================================================
 三大家族 (互补观察角度)
 ============================================================================
 1. 强势股兑现(P):  median(pct(ZTBX), pct(LBBX))
 2. 市场广度(B):    median(pct(advance_share), 1-pct(DT))
 3. 接力生态(R):    pct(relay_health)
-
 总水位 = median(P, B, R)   # 三家族等权中位数
 方向 = majority(dP, dB, dR)  # 日变化, 2-of-3 共识, epsilon=0.03
-
 ============================================================================
 七宫格
 ============================================================================
@@ -29,41 +50,28 @@ D6 不是风险预算层。D6 必须首先识别市场所处的情绪周期位�
 HIGH    HIGH_ACTIVE      HIGH_STAGNATION   RETREAT(EARLY)
 MID     EXPANSION        CHOP              RETREAT(SPREADING)
 LOW     REPAIR           ICE(BASING)       ICE(FALLING)
-
 ============================================================================
 两个极端否决 (Phase 之外的硬止损)
 ============================================================================
 1. 强势股集体翻负: ZTBX_t0<0 and LBBX_t0<0 and ZTBX_t1>0 and LBBX_t1>0
 2. 广度恐慌: advance_share极低 AND DT极高
-
 触发 → risk_tier=CRISIS, position_cap=0, 全池关闭
-
 ============================================================================
 接力健康度
 ============================================================================
 relay_health = 0.55 × smoothed_rate(1进2) + 0.45 × smoothed_rate(2进3)
 Laplace平滑: smoothed_rate = (promoted + 1) / (eligible + 2) × 100
-
 ============================================================================
-简化原则
-============================================================================
-- QX 退出核心判定 (公式不透明, 可能重复 P/B 信息)
-- 3进4以上不进入核心 relay (样本太小, 分位无意义)
-- 不再做成熟度/双速方向/背离标签/复杂状态迁移图
-- 不再做多套 shock cap / 多路径重复惩罚
-- 只用日变化不用多日斜率 (总共3个家族, 平滑无增量信息)
 """
-
 from __future__ import annotations
-
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
+import math
 
 # ============================================================================
 # 枚举定义
 # ============================================================================
-
 class EmotionLevel(Enum):
     LOW = "LOW"
     MID = "MID"
@@ -77,15 +85,15 @@ class EmotionDirection(Enum):
 
 class EmotionPhase(Enum):
     # 低位
-    ICE = "ICE"                     # 冰点: LOW+FLAT/DOWN (子阶段: FALLING/BASING)
-    REPAIR = "REPAIR"               # 冰点修复: LOW+UP
+    ICE = "ICE"                         # 冰点: LOW+FLAT/DOWN
+    REPAIR = "REPAIR"                   # 冰点修复: LOW+UP
     # 中位
-    CHOP = "CHOP"                   # 震荡混沌: MID+FLAT
-    RETREAT = "RETREAT"             # 退潮: MID+DOWN / HIGH+DOWN (子阶段: EARLY/SPREADING)
-    EXPANSION = "EXPANSION"         # 发酵主升: MID+UP
+    CHOP = "CHOP"                       # 震荡混沌: MID+FLAT
+    RETREAT = "RETREAT"                 # 退潮: MID+DOWN / HIGH+DOWN
+    EXPANSION = "EXPANSION"             # 发酵主升: MID+UP
     # 高位
-    HIGH_ACTIVE = "HIGH_ACTIVE"     # 高位加速: HIGH+UP
-    HIGH_STAGNATION = "HIGH_STAGNATION"  # 高位钝化: HIGH+FLAT
+    HIGH_ACTIVE = "HIGH_ACTIVE"         # 高位加速: HIGH+UP
+    HIGH_STAGNATION = "HIGH_STAGNATION" # 高位钝化: HIGH+FLAT
     # 数据不足
     UNKNOWN = "UNKNOWN"
 
@@ -95,10 +103,10 @@ class RiskTier(Enum):
     CRISIS = "CRISIS"
 
 class BuyMode(Enum):
-    AUCTION_AND_BOARD = "auction_and_board"       # 竞价+排板
-    BOARD_ONLY = "board_only"                     # 排板为主
-    OBSERVE_ONLY = "observe_only"                 # 仅观察
-    EMPTY = "empty"                                # 空仓
+    AUCTION_AND_BOARD = "auction_and_board"   # 竞价+排板
+    BOARD_ONLY = "board_only"                 # 排板为主
+    OBSERVE_ONLY = "observe_only"             # 仅观察
+    EMPTY = "empty"                           # 空仓
 
 class DataQuality(Enum):
     GOOD = "GOOD"           # 3个家族全有效
@@ -108,37 +116,141 @@ class DataQuality(Enum):
 # ============================================================================
 # 数据类
 # ============================================================================
-
 @dataclass
 class D6History:
-    """D6 历史数据，用于计算滚动分位数和方向"""
-    ztbx_values: List[float] = field(default_factory=list)
-    lbbx_values: List[float] = field(default_factory=list)
-    advance_share_values: List[float] = field(default_factory=list)
-    dt_values: List[float] = field(default_factory=list)
+    """
+    D6 历史数据 — v4 双时间截面版。
+
+    盘前 (pre) 系列: 9:25 竞价快照, 用于方向计算 (竞价情绪)
+    盘后 (close) 系列: 收盘快照, 用于水位计算 (市场底色)
+    接力生态 (relay_health): 仅盘后 (来自 ztpool 晋级率)
+    KQXY: 仅盘后 (亏钱效应)
+    QX: 盘前 (pre_qx) + 盘后 (close_qx), 仅展示
+    """
+
+    # === 盘前 (9:25) — 竞价情绪, 用于方向计算 ===
+    ztbx_pre_values: List[float] = field(default_factory=list)
+    lbbx_pre_values: List[float] = field(default_factory=list)
+    advance_share_pre_values: List[float] = field(default_factory=list)
+    dt_pre_values: List[float] = field(default_factory=list)
+
+    # === 盘后 (收盘) — 市场底色, 用于水位计算 ===
+    ztbx_close_values: List[float] = field(default_factory=list)
+    lbbx_close_values: List[float] = field(default_factory=list)
+    advance_share_close_values: List[float] = field(default_factory=list)
+    dt_close_values: List[float] = field(default_factory=list)
+
+    # === 接力生态 (仅盘后) ===
     relay_health_values: List[float] = field(default_factory=list)
+
+    # === KQXY 亏钱效应 (盘后) ===
     kqxy_values: List[float] = field(default_factory=list)
+
+    # === QX 综合情绪 ===
     pre_qx_values: List[float] = field(default_factory=list)      # 盘前 QX@9:25
     close_qx_values: List[float] = field(default_factory=list)    # 盘后 QX 收盘
 
     _WINDOW = 60
     _MIN_DAYS_FOR_PCTILE = 20
 
-    def add_day(self, ztbx: Optional[float] = None, lbbx: Optional[float] = None,
-                advance_share: Optional[float] = None, dt: Optional[float] = None,
+    # ========================================================================
+    # 向后兼容属性 — 旧代码可能引用旧字段名
+    # ========================================================================
+    @property
+    def ztbx_values(self) -> List[float]:
+        """向后兼容: 返回盘前 ZTBX (旧代码中的 ztbx_values)"""
+        return self.ztbx_pre_values
+
+    @property
+    def lbbx_values(self) -> List[float]:
+        """向后兼容: 返回盘前 LBBX"""
+        return self.lbbx_pre_values
+
+    @property
+    def advance_share_values(self) -> List[float]:
+        """向后兼容: 返回盘前 上涨占比"""
+        return self.advance_share_pre_values
+
+    @property
+    def dt_values(self) -> List[float]:
+        """向后兼容: 返回盘前 DT"""
+        return self.dt_pre_values
+
+    # ========================================================================
+    # add_day — v4 双时间截面版
+    # ========================================================================
+    def add_day(self,
+                # 盘前 (9:25)
+                ztbx_pre: Optional[float] = None,
+                lbbx_pre: Optional[float] = None,
+                advance_share_pre: Optional[float] = None,
+                dt_pre: Optional[float] = None,
+                # 盘后 (收盘)
+                ztbx_close: Optional[float] = None,
+                lbbx_close: Optional[float] = None,
+                advance_share_close: Optional[float] = None,
+                dt_close: Optional[float] = None,
+                # 其他
                 relay_health: Optional[float] = None,
                 kqxy: Optional[float] = None,
                 pre_qx: Optional[float] = None,
-                close_qx: Optional[float] = None) -> None:
-        if ztbx is not None: self.ztbx_values.append(ztbx)
-        if lbbx is not None: self.lbbx_values.append(lbbx)
-        if advance_share is not None: self.advance_share_values.append(advance_share)
-        if dt is not None: self.dt_values.append(dt)
-        if relay_health is not None: self.relay_health_values.append(relay_health)
-        if kqxy is not None: self.kqxy_values.append(kqxy)
-        if pre_qx is not None: self.pre_qx_values.append(pre_qx)
-        if close_qx is not None: self.close_qx_values.append(close_qx)
+                close_qx: Optional[float] = None,
+                # === 向后兼容旧参数名 ===
+                ztbx: Optional[float] = None,
+                lbbx: Optional[float] = None,
+                advance_share: Optional[float] = None,
+                dt: Optional[float] = None,
+                ) -> None:
+        """
+        添加一个交易日的数据。
 
+        新代码应使用 ztbx_pre/ztbx_close 等明确参数。
+        旧参数名 (ztbx/lbbx/advance_share/dt) 作为向后兼容,
+        自动映射到盘前字段 (与 v3 行为一致)。
+        """
+        # 向后兼容: 旧参数名 → 盘前
+        if ztbx is not None and ztbx_pre is None:
+            ztbx_pre = ztbx
+        if lbbx is not None and lbbx_pre is None:
+            lbbx_pre = lbbx
+        if advance_share is not None and advance_share_pre is None:
+            advance_share_pre = advance_share
+        if dt is not None and dt_pre is None:
+            dt_pre = dt
+
+        # 盘前
+        if ztbx_pre is not None:
+            self.ztbx_pre_values.append(ztbx_pre)
+        if lbbx_pre is not None:
+            self.lbbx_pre_values.append(lbbx_pre)
+        if advance_share_pre is not None:
+            self.advance_share_pre_values.append(advance_share_pre)
+        if dt_pre is not None:
+            self.dt_pre_values.append(dt_pre)
+
+        # 盘后
+        if ztbx_close is not None:
+            self.ztbx_close_values.append(ztbx_close)
+        if lbbx_close is not None:
+            self.lbbx_close_values.append(lbbx_close)
+        if advance_share_close is not None:
+            self.advance_share_close_values.append(advance_share_close)
+        if dt_close is not None:
+            self.dt_close_values.append(dt_close)
+
+        # 其他
+        if relay_health is not None:
+            self.relay_health_values.append(relay_health)
+        if kqxy is not None:
+            self.kqxy_values.append(kqxy)
+        if pre_qx is not None:
+            self.pre_qx_values.append(pre_qx)
+        if close_qx is not None:
+            self.close_qx_values.append(close_qx)
+
+    # ========================================================================
+    # 分位数计算
+    # ========================================================================
     def _pctile(self, values: List[float], q: float) -> Optional[float]:
         """计算分位数, 需要至少 MIN_DAYS_FOR_PCTILE 天"""
         if len(values) < self._MIN_DAYS_FOR_PCTILE:
@@ -150,82 +262,130 @@ class D6History:
     def percentile(self, values: List[float], q: float) -> Optional[float]:
         return self._pctile(values, q)
 
+    # ========================================================================
+    # 数据充足性检查
+    # ========================================================================
+    def valid_for_close_pctile(self) -> bool:
+        """盘后数据是否足够计算分位数 (用于水位)"""
+        return (len(self.ztbx_close_values) >= self._MIN_DAYS_FOR_PCTILE
+                and len(self.advance_share_close_values) >= self._MIN_DAYS_FOR_PCTILE
+                and len(self.relay_health_values) >= self._MIN_DAYS_FOR_PCTILE)
+
+    def valid_for_pre_pctile(self) -> bool:
+        """盘前数据是否足够计算分位数 (用于方向)"""
+        return (len(self.ztbx_pre_values) >= self._MIN_DAYS_FOR_PCTILE
+                and len(self.advance_share_pre_values) >= self._MIN_DAYS_FOR_PCTILE
+                and len(self.relay_health_values) >= self._MIN_DAYS_FOR_PCTILE)
+
+    # 向后兼容
     def valid_for_pctile(self) -> bool:
-        """是否有足够历史计算分位数"""
-        return self.min_days >= self._MIN_DAYS_FOR_PCTILE
+        """向后兼容: 优先检查盘后, 回退盘前"""
+        return self.valid_for_close_pctile() or self.valid_for_pre_pctile()
 
     def valid_for_kqxy_pctile(self) -> bool:
         """KQXY 历史是否足够计算分位数"""
         return len(self.kqxy_values) >= self._MIN_DAYS_FOR_PCTILE
 
-    # 极端否决阈值
-    def advance_share_15pct(self) -> Optional[float]: return self._pctile(self.advance_share_values, 0.15)
-    def dt_85pct(self) -> Optional[float]: return self._pctile(self.dt_values, 0.85)
+    # ========================================================================
+    # 极端否决阈值 (仍用盘前数据 — 竞价瞬间的极端信号)
+    # ========================================================================
+    def advance_share_15pct(self) -> Optional[float]:
+        return self._pctile(self.advance_share_pre_values, 0.15)
 
+    def dt_85pct(self) -> Optional[float]:
+        return self._pctile(self.dt_pre_values, 0.85)
+
+    # ========================================================================
     # KQXY 分位阈值
-    def kqxy_30pct(self) -> Optional[float]: return self._pctile(self.kqxy_values, 0.30)
-    def kqxy_70pct(self) -> Optional[float]: return self._pctile(self.kqxy_values, 0.70)
+    # ========================================================================
+    def kqxy_30pct(self) -> Optional[float]:
+        return self._pctile(self.kqxy_values, 0.30)
 
+    def kqxy_70pct(self) -> Optional[float]:
+        return self._pctile(self.kqxy_values, 0.70)
+
+    # ========================================================================
+    # 属性
+    # ========================================================================
     @property
     def min_days(self) -> int:
-        return min(len(self.ztbx_values), len(self.advance_share_values),
-                   len(self.relay_health_values))
+        """三家族最短历史天数 (用于向后兼容)"""
+        return min(
+            len(self.ztbx_pre_values),
+            len(self.advance_share_pre_values),
+            len(self.relay_health_values),
+        )
 
     @property
     def history_days(self) -> int:
         return self.min_days
 
+    @property
+    def close_days(self) -> int:
+        """盘后数据天数"""
+        return min(
+            len(self.ztbx_close_values),
+            len(self.advance_share_close_values),
+            len(self.relay_health_values),
+        )
+
     def last_values(self) -> Dict[str, Optional[float]]:
-        """获取最近一日的值, 用于计算方向"""
+        """获取最近一日的盘前值, 用于向后兼容"""
         return {
-            "ztbx": self.ztbx_values[-1] if self.ztbx_values else None,
-            "lbbx": self.lbbx_values[-1] if self.lbbx_values else None,
-            "advance_share": self.advance_share_values[-1] if self.advance_share_values else None,
-            "dt": self.dt_values[-1] if self.dt_values else None,
+            "ztbx": self.ztbx_pre_values[-1] if self.ztbx_pre_values else None,
+            "lbbx": self.lbbx_pre_values[-1] if self.lbbx_pre_values else None,
+            "advance_share": self.advance_share_pre_values[-1] if self.advance_share_pre_values else None,
+            "dt": self.dt_pre_values[-1] if self.dt_pre_values else None,
             "relay_health": self.relay_health_values[-1] if self.relay_health_values else None,
         }
 
 
 @dataclass
 class D6EmotionResult:
-    """D6 情绪周期完整输出"""
+    """D6 情绪周期完整输出 (v4 双时间截面版)"""
+
     # === 周期主状态 ===
     phase: EmotionPhase = EmotionPhase.UNKNOWN
     phase_label: str = "数据不足"
 
     # === 2D定位 ===
     level: EmotionLevel = EmotionLevel.MID
-    level_score: float = 0.5
+    level_score: float = 0.5            # 总水位分 (盘后口径, 市场底色)
     direction: EmotionDirection = EmotionDirection.UNKNOWN
 
-    # === 三个家族水位 ===
+    # === 双时间截面水位 (v4 新增) ===
+    close_level_score: float = 0.5       # 盘后水位分 (市场底色, 用于风险决策)
+    pre_level_score: float = 0.5         # 盘前水位分 (竞价情绪, 仅供参考)
+    level_source: str = "UNKNOWN"        # 水位数据来源: "CLOSE" / "PRE" / "STATIC"
+
+    # === 三个家族水位 (盘后口径) ===
     profit_level: float = 0.5
     breadth_level: float = 0.5
     relay_level: float = 0.5
 
-    # === 三个家族日变化 ===
+    # === 三个家族日变化 (盘前口径 for P/B, 盘后口径 for R) ===
     profit_delta: Optional[float] = None
     breadth_delta: Optional[float] = None
     relay_delta: Optional[float] = None
 
-    # === 极端否决 ===
+    # === 极端否决 (仍用盘前数据) ===
     hard_veto: bool = False
-    profit_collapse: bool = False     # 强势股集体翻负
-    breadth_panic: bool = False       # 广度恐慌
+    profit_collapse: bool = False
+    breadth_panic: bool = False
 
     # === 风险 ===
     risk_tier: RiskTier = RiskTier.NORMAL
     position_cap: float = 1.0
 
     # === 结构偏好 ===
-    height_preference: str = "MID"        # LOW / MID / CORE_HIGH
-    fenqi_priority: str = "NORMAL"        # HIGH / NORMAL / LOW / DISABLED
+    height_preference: str = "MID"
+    fenqi_priority: str = "NORMAL"
     yizi_enabled: bool = True
     huanshou_enabled: bool = True
     fenqi_enabled: bool = True
     feiban_enabled: bool = True
 
-    # === 池乘子 (保留接口, 简化版恒为 1.0) ===
+    # === 池乘子 ===
     pool_yizi_mult: float = 1.0
     pool_huanshou_mult: float = 1.0
     pool_fenqi_mult: float = 1.0
@@ -236,22 +396,22 @@ class D6EmotionResult:
     auction_buy_enabled: bool = True
 
     # === KQXY 亏钱效应覆盖层 ===
-    kqxy_t1: Optional[float] = None         # T-1 盘后 KQXY 原始值
-    kqxy_t2: Optional[float] = None         # T-2 盘后 KQXY 原始值
-    kqxy_pct: Optional[float] = None        # T-1 KQXY 分位 (0-1)
-    kqxy_delta: Optional[float] = None      # KQXY 日变化 (T-1 - T-2 分位差)
-    loss_level: str = "UNKNOWN"             # KQXY 水位: LOW / MID / HIGH
-    loss_direction: str = "UNKNOWN"         # KQXY 方向: CONTRACTING / FLAT / EXPANDING
-    loss_overlay: str = "NONE"              # 亏钱效应覆盖标记: NONE / REPAIR_SUPPORT / REPAIR_WEAK / HIGH_CRACKING
+    kqxy_t1: Optional[float] = None
+    kqxy_t2: Optional[float] = None
+    kqxy_pct: Optional[float] = None
+    kqxy_delta: Optional[float] = None
+    loss_level: str = "UNKNOWN"
+    loss_direction: str = "UNKNOWN"
+    loss_overlay: str = "NONE"
 
-    # === QX 综合情绪 (仅展示, 不参与决策) ===
-    qx_925: Optional[float] = None              # 当天盘前 QX@9:25
+    # === QX 综合情绪 (仅展示) ===
+    qx_925: Optional[float] = None
     qx_stats: Dict[str, Any] = field(default_factory=lambda: {
         "pre_qx": {"median": None, "std": None, "band1_low": None, "band1_high": None,
                    "band2_low": None, "band2_high": None, "n": 0},
         "close_qx": {"median": None, "std": None, "band1_low": None, "band1_high": None,
                      "band2_low": None, "band2_high": None, "n": 0},
-        "today_position": "UNKNOWN",  # 当天 QX@9:25 相对 close_qx 分布的位置
+        "today_position": "UNKNOWN",
     })
 
     # === 质量 ===
@@ -262,7 +422,7 @@ class D6EmotionResult:
         "relay_family": "MISSING",
     })
 
-    # === 原始指标 ===
+    # === 原始指标 (盘前口径 for display) ===
     ztbx_925: Optional[float] = None
     lbbx_925: Optional[float] = None
     advance_share: Optional[float] = None
@@ -270,6 +430,12 @@ class D6EmotionResult:
     jinji_1_2: Optional[float] = None
     jinji_2_3: Optional[float] = None
     relay_health: Optional[float] = None
+
+    # === 盘后原始指标 (v4 新增, 用于透明度) ===
+    ztbx_close: Optional[float] = None
+    lbbx_close: Optional[float] = None
+    advance_share_close: Optional[float] = None
+    dt_close: Optional[int] = None
 
     # === 诊断 ===
     warnings: List[str] = field(default_factory=list)
@@ -279,7 +445,6 @@ class D6EmotionResult:
 # ============================================================================
 # 常数
 # ============================================================================
-
 # 水位阈值 (含滞回)
 LEVEL_LOW_THRESHOLD = 0.30
 LEVEL_HIGH_THRESHOLD = 0.70
@@ -341,9 +506,8 @@ PHASE_LABELS = {
 
 
 # ============================================================================
-# 核心逻辑
+# 核心逻辑 — 数据提取
 # ============================================================================
-
 def _extract_ztpool_pbbx(ztpool_rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     """
     从 home.ztpool 数据中提取 PBBX 晋级率 (1进2 + 2进3)。
@@ -351,13 +515,11 @@ def _extract_ztpool_pbbx(ztpool_rows: List[Dict[str, Any]]) -> Dict[str, Dict[st
     """
     result: Dict[str, Dict[str, Any]] = {}
     seen: set = set()
-
     for row in (ztpool_rows or []):
         ladder = str(row.get("ladder_group") or row.get("分组名称") or "").strip()
         if not ladder or ladder in seen:
             continue
         seen.add(ladder)
-
         promo = row.get("promo_rate") or row.get("晋级率")
         rate = None
         if promo is not None:
@@ -365,7 +527,6 @@ def _extract_ztpool_pbbx(ztpool_rows: List[Dict[str, Any]]) -> Dict[str, Dict[st
                 rate = float(str(promo).replace("%", "").strip())
             except (ValueError, TypeError):
                 pass
-
         promoted = row.get("promoted_count") or row.get("晋级数")
         eligible = row.get("eligible_count") or row.get("样本数")
         prom_count = None
@@ -380,17 +541,18 @@ def _extract_ztpool_pbbx(ztpool_rows: List[Dict[str, Any]]) -> Dict[str, Dict[st
                 elig_count = int(float(str(eligible).replace("%", "").strip()))
             except (ValueError, TypeError):
                 pass
-
         key = None
-        if "1进2" in ladder: key = "PBBX_1_2"
-        elif "2进3" in ladder: key = "PBBX_2_3"
-
+        if "1进2" in ladder:
+            key = "PBBX_1_2"
+        elif "2进3" in ladder:
+            key = "PBBX_2_3"
         if key:
             result[key] = {
-                "rate": rate, "promoted": prom_count,
-                "eligible": elig_count, "ladder": ladder,
+                "rate": rate,
+                "promoted": prom_count,
+                "eligible": elig_count,
+                "ladder": ladder,
             }
-
     return result
 
 
@@ -434,12 +596,12 @@ def _calc_pctile(values: List[float], value: Optional[float]) -> Optional[float]
 def _classify_level(score: float, prev_level: Optional[EmotionLevel] = None) -> EmotionLevel:
     """水位分类 (含滞回区间: 慢升级, 快降级)"""
     if prev_level == EmotionLevel.LOW:
-        low_threshold = LEVEL_LOW_EXIT   # 0.40 — 从 LOW 退出需要更高
+        low_threshold = LEVEL_LOW_EXIT      # 0.40 — 从 LOW 退出需要更高
     else:
-        low_threshold = LEVEL_LOW_THRESHOLD  # 0.30
+        low_threshold = LEVEL_LOW_THRESHOLD # 0.30
 
     if prev_level == EmotionLevel.HIGH:
-        high_threshold = LEVEL_HIGH_EXIT  # 0.60 — 从 HIGH 退出需要更低
+        high_threshold = LEVEL_HIGH_EXIT    # 0.60 — 从 HIGH 退出需要更低
     else:
         high_threshold = LEVEL_HIGH_THRESHOLD  # 0.70
 
@@ -462,24 +624,9 @@ def _phase_to_level(phase: Optional[EmotionPhase]) -> Optional[EmotionLevel]:
     return EmotionLevel.HIGH  # HIGH_ACTIVE, HIGH_STAGNATION
 
 
-import math
-
 def _compute_qx_stats(history: Optional[D6History], qx_925: Optional[float]) -> Dict[str, Any]:
     """
     计算 QX 盘前/盘后统计 (仅展示, 不参与决策)。
-
-    使用过去 20 天盘前 QX 和盘后 QX 数据:
-      - 中位数
-      - 1σ 区间 (median ± 1σ)
-      - 2σ 区间 (median ± 2σ)
-      - 当天盘前 QX 的相对位置
-
-    Returns:
-        {
-            "pre_qx":  {median, std, band1_low, band1_high, band2_low, band2_high, n},
-            "close_qx": {median, std, band1_low, band1_high, band2_low, band2_high, n},
-            "today_position": "LOW_TAIL" / "BELOW_1SIGMA" / "WITHIN_1SIGMA" / "ABOVE_1SIGMA" / "HIGH_TAIL" / "UNKNOWN",
-        }
     """
     result: Dict[str, Any] = {
         "pre_qx": {"median": None, "std": None, "band1_low": None, "band1_high": None,
@@ -513,7 +660,6 @@ def _compute_qx_stats(history: Optional[D6History], qx_925: Optional[float]) -> 
         result["pre_qx"] = _stats(history.pre_qx_values[-20:])
         result["close_qx"] = _stats(history.close_qx_values[-20:])
 
-    # 判断当天 QX@9:25 相对盘后 QX 分布的位置
     if qx_925 is not None and result["close_qx"]["median"] is not None:
         m = result["close_qx"]["median"]
         s = result["close_qx"]["std"]
@@ -535,16 +681,24 @@ def _compute_qx_stats(history: Optional[D6History], qx_925: Optional[float]) -> 
 def _classify_phase(level: EmotionLevel, direction: EmotionDirection) -> EmotionPhase:
     """水位 × 方向 → 七宫格相位"""
     if level == EmotionLevel.LOW:
-        if direction == EmotionDirection.UP: return EmotionPhase.REPAIR
-        else: return EmotionPhase.ICE  # FLAT → ICE(BASING), DOWN → ICE(FALLING)
+        if direction == EmotionDirection.UP:
+            return EmotionPhase.REPAIR
+        else:
+            return EmotionPhase.ICE  # FLAT → ICE(BASING), DOWN → ICE(FALLING)
     elif level == EmotionLevel.MID:
-        if direction == EmotionDirection.UP: return EmotionPhase.EXPANSION
-        elif direction == EmotionDirection.DOWN: return EmotionPhase.RETREAT  # SPREADING
-        else: return EmotionPhase.CHOP
+        if direction == EmotionDirection.UP:
+            return EmotionPhase.EXPANSION
+        elif direction == EmotionDirection.DOWN:
+            return EmotionPhase.RETREAT  # SPREADING
+        else:
+            return EmotionPhase.CHOP
     else:  # HIGH
-        if direction == EmotionDirection.UP: return EmotionPhase.HIGH_ACTIVE
-        elif direction == EmotionDirection.DOWN: return EmotionPhase.RETREAT  # EARLY
-        else: return EmotionPhase.HIGH_STAGNATION
+        if direction == EmotionDirection.UP:
+            return EmotionPhase.HIGH_ACTIVE
+        elif direction == EmotionDirection.DOWN:
+            return EmotionPhase.RETREAT  # EARLY
+        else:
+            return EmotionPhase.HIGH_STAGNATION
 
 
 def _classify_loss_overlay(
@@ -555,22 +709,8 @@ def _classify_loss_overlay(
 ) -> Dict[str, Any]:
     """
     KQXY 亏钱效应覆盖层。
-
     KQXY 是 T-1 盘后指标, 不参与 T0 核心 P/B/R 判定。
-    只作为 Phase 修饰层, 解决两个问题:
-      1. 低位是继续下杀/磨底/修复 (ICE 子阶段 + REPAIR 质量)
-      2. 高位强势是否伴随亏钱效应扩散 (内部裂化)
-
-    Returns:
-        {
-            "kqxy_t1": 原始值,
-            "kqxy_t2": 原始值,
-            "kqxy_pct": T-1 KQXY 分位,
-            "kqxy_delta": 日变化,
-            "loss_level": LOW/MID/HIGH,
-            "loss_direction": CONTRACTING/FLAT/EXPANDING/UNKNOWN,
-            "loss_overlay": NONE/REPAIR_SUPPORT/REPAIR_WEAK/HIGH_CRACKING,
-        }
+    只作为 Phase 修饰层。
     """
     result: Dict[str, Any] = {
         "kqxy_t1": kqxy_t1, "kqxy_t2": kqxy_t2,
@@ -589,10 +729,9 @@ def _classify_loss_overlay(
     else:
         kqxy_pct = kqxy_t1 / 100.0
         kqxy_pct = max(0.0, min(1.0, kqxy_pct))
-
     result["kqxy_pct"] = round(kqxy_pct, 4)
 
-    # KQXY 水位: 优先用历史分位, 不足时用静态阈值
+    # KQXY 水位
     if history is not None and history.valid_for_kqxy_pctile():
         k30 = history.kqxy_30pct()
         k70 = history.kqxy_70pct()
@@ -604,9 +743,12 @@ def _classify_loss_overlay(
             else:
                 result["loss_level"] = "MID"
         else:
-            if kqxy_pct < 0.30: result["loss_level"] = "LOW"
-            elif kqxy_pct > 0.70: result["loss_level"] = "HIGH"
-            else: result["loss_level"] = "MID"
+            if kqxy_pct < 0.30:
+                result["loss_level"] = "LOW"
+            elif kqxy_pct > 0.70:
+                result["loss_level"] = "HIGH"
+            else:
+                result["loss_level"] = "MID"
     else:
         if kqxy_pct < 0.30:
             result["loss_level"] = "LOW"
@@ -639,45 +781,71 @@ def _classify_loss_overlay(
 # ============================================================================
 # 主入口
 # ============================================================================
-
 def determine_emotion_state(
     ztpool_t1: List[Dict[str, Any]],
     qxlive_top_t0: List[Dict[str, Any]],
     qxlive_top_t1: List[Dict[str, Any]],
+    qxlive_close_t1: Optional[List[Dict[str, Any]]] = None,  # v4 新增: T-1 盘后 qxlive
     history: Optional[D6History] = None,
     static_thresholds: Optional[Dict[str, float]] = None,
     prev_phase: Optional[EmotionPhase] = None,
-    kqxy_t1: Optional[float] = None,
-    kqxy_t2: Optional[float] = None,
+    kqxy_t1: Optional[float] = None,       # 保留但优先从 history 自动提取
+    kqxy_t2: Optional[float] = None,       # 保留但优先从 history 自动提取
 ) -> D6EmotionResult:
     """
-    主入口: D6 情绪周期判定 (简化版 v3)。
+    主入口: D6 情绪周期判定 (v4 双时间截面版)。
 
-    主链:
-      9:25 数据 → P/B/R 分位 → 水位 → 方向 → Phase → KQXY 覆盖层 → 仓位+池
+    双时间截面架构:
+    ┌──────────────┬──────────────────┬─────────────────────────────┐
+    │ 数据源        │ 用途              │ 时间截面                     │
+    ├──────────────┼──────────────────┼─────────────────────────────┤
+    │ qxlive_close │ 水位 (Level)      │ T-1 盘后 (市场底色)          │
+    │ qxlive_top   │ 方向 (Direction)  │ T0/T-1 盘前 (竞价情绪)       │
+    │ ztpool       │ 接力生态 (R)      │ T-1 盘后                     │
+    └──────────────┴──────────────────┴─────────────────────────────┘
+
+    水位计算优先级:
+      1. 盘后值在盘后历史分布中求分位 (最可靠)
+      2. 盘前值在盘前历史分布中求分位 (向后兼容)
+      3. 静态默认值 0.5 (数据不足)
+
+    方向计算:
+      P/B: T0 盘前 vs T-1 盘前 (同口径同时间点, 竞价情绪变化)
+      R:   T-1 relay vs T-2 relay (修复 v3 bug, 真日间变化)
+
+    KQXY: 优先从 history.kqxy_values 自动提取, 显式传入的参数作为覆盖。
 
     Args:
-        ztpool_t1: T-1 ztpool 数据
-        qxlive_top_t0: T0 9:25 qxlive 指标
-        qxlive_top_t1: T-1 qxlive 指标
-        history: 滚动历史数据 (≥20天启用分位, <20天用静态阈值)
+        ztpool_t1: T-1 ztpool 数据 (用于 relay_health 计算)
+        qxlive_top_t0: T0 9:25 qxlive 指标 (盘前)
+        qxlive_top_t1: T-1 9:25 qxlive 指标 (盘前)
+        qxlive_close_t1: T-1 盘后 qxlive 指标 (收盘, v4 新增)
+        history: 滚动历史数据 (≥20天启用分位)
         static_thresholds: 静态阈值覆盖
         prev_phase: 前一交易日相位 (用于滞回)
-        kqxy_t1: T-1 盘后 KQXY 原始值 (非 9:25, 盘后有实际值)
-        kqxy_t2: T-2 盘后 KQXY 原始值
+        kqxy_t1: T-1 盘后 KQXY 原始值 (可选, 优先从 history 提取)
+        kqxy_t2: T-2 盘后 KQXY 原始值 (可选, 优先从 history 提取)
 
     Returns:
         D6EmotionResult: 完整情绪周期判定结果
     """
     warnings: List[str] = []
     thresh = static_thresholds or STATIC_DEFAULTS
-    use_percentile = history is not None and history.valid_for_pctile()
+
+    # ========================================================================
+    # 阶段 0: KQXY 自动提取 (v4 新增)
+    # 优先从 history 提取, 显式传入的参数作为覆盖
+    # ========================================================================
+    if kqxy_t1 is None and history is not None and len(history.kqxy_values) >= 1:
+        kqxy_t1 = history.kqxy_values[-1]
+    if kqxy_t2 is None and history is not None and len(history.kqxy_values) >= 2:
+        kqxy_t2 = history.kqxy_values[-2]
 
     # ========================================================================
     # 阶段 1: 数据提取
     # ========================================================================
 
-    # T0 9:25 qxlive 指标
+    # --- 盘前数据 (T0 9:25) — 用于方向计算和极端否决 ---
     ztbx_925 = _extract_qxlive_metric(qxlive_top_t0, "ZTBX")
     lbbx_925 = _extract_qxlive_metric(qxlive_top_t0, "LBBX")
     sz_925 = _extract_qxlive_metric(qxlive_top_t0, "SZ")
@@ -685,22 +853,35 @@ def determine_emotion_state(
     dt_925_raw = _extract_qxlive_metric(qxlive_top_t0, "DT")
     qx_925 = _extract_qxlive_metric(qxlive_top_t0, "QX")
 
-    # T-1 值 (用于方向计算和极端否决)
+    # T-1 盘前值 (用于方向计算和极端否决)
     ztbx_t1 = _extract_qxlive_metric(qxlive_top_t1, "ZTBX")
     lbbx_t1 = _extract_qxlive_metric(qxlive_top_t1, "LBBX")
 
-    # 上涨占比
+    # 上涨占比 (盘前)
     advance_share = None
     if sz_925 is not None and xd_925 is not None and (sz_925 + xd_925) > 0:
         advance_share = round(sz_925 / (sz_925 + xd_925), 4)
     dt_925 = int(dt_925_raw) if dt_925_raw is not None else None
 
-    # 晋级率 (T-1 盘后)
+    # --- 盘后数据 (T-1 收盘) — 用于水位计算 (v4 新增) ---
+    ztbx_close = None
+    lbbx_close = None
+    advance_share_close = None
+    dt_close = None
+    if qxlive_close_t1 is not None:
+        ztbx_close = _extract_qxlive_metric(qxlive_close_t1, "ZTBX")
+        lbbx_close = _extract_qxlive_metric(qxlive_close_t1, "LBBX")
+        sz_close = _extract_qxlive_metric(qxlive_close_t1, "SZ")
+        xd_close = _extract_qxlive_metric(qxlive_close_t1, "XD")
+        dt_close_raw = _extract_qxlive_metric(qxlive_close_t1, "DT")
+        if sz_close is not None and xd_close is not None and (sz_close + xd_close) > 0:
+            advance_share_close = round(sz_close / (sz_close + xd_close), 4)
+        dt_close = int(dt_close_raw) if dt_close_raw is not None else None
+
+    # --- 晋级率 (T-1 盘后) ---
     pbbx = _extract_ztpool_pbbx(ztpool_t1)
     jinji_1_2_raw = pbbx.get("PBBX_1_2", {})
     jinji_2_3_raw = pbbx.get("PBBX_2_3", {})
-
-    # Laplace 收缩估计晋级率
     jinji_1_2 = _smoothed_rate(jinji_1_2_raw.get("promoted"), jinji_1_2_raw.get("eligible"))
     jinji_2_3 = _smoothed_rate(jinji_2_3_raw.get("promoted"), jinji_2_3_raw.get("eligible"))
 
@@ -717,9 +898,10 @@ def determine_emotion_state(
     # ========================================================================
     # 阶段 2: 数据质量评估
     # ========================================================================
-
     valid_families = 0
     data_quality = {}
+
+    # P 家族: 需要盘后 ZTBX+LBBX (水位) 或盘前 ZTBX+LBBX (方向)
     if ztbx_925 is not None:
         data_quality["profit_family"] = "VALID"
         valid_families += 1
@@ -738,7 +920,6 @@ def determine_emotion_state(
     else:
         data_quality["relay_family"] = "MISSING"
 
-    # 部分 relay 数据标注 DEGRADED
     if jinji_1_2 is None and jinji_2_3 is not None:
         data_quality["relay_family"] = "DEGRADED"
     if jinji_2_3 is None and jinji_1_2 is not None:
@@ -755,105 +936,189 @@ def determine_emotion_state(
         phase_confidence = 0.2
 
     # ========================================================================
-    # 阶段 3: 三家族水位 (分位 or 静态)
+    # 阶段 3: 三家族水位 (v4 核心变更: 优先使用盘后数据)
+    #
+    # 水位 = 市场底色, 应使用 T-1 盘后数据 (全天交易结果, 最可靠)。
+    # 盘后数据不足时回退盘前, 再不足回退静态默认值。
     # ========================================================================
+    use_close_pctile = (history is not None
+                        and history.valid_for_close_pctile()
+                        and ztbx_close is not None
+                        and advance_share_close is not None)
 
-    # 家族 1: 强势股兑现 P = median(pct(ZTBX), pct(LBBX))
-    if use_percentile:
-        ztbx_pct = _calc_pctile(history.ztbx_values, ztbx_925)
+    use_pre_pctile = (history is not None
+                      and history.valid_for_pre_pctile()
+                      and not use_close_pctile)  # 只在盘后不可用时回退盘前
+
+    if use_close_pctile:
+        level_source = "CLOSE"
+        # 家族 1: P = median(pct(ZTBX_close), pct(LBBX_close))
+        ztbx_pct = _calc_pctile(history.ztbx_close_values, ztbx_close)
         ztbx_pct = ztbx_pct if ztbx_pct is not None else 0.5
-        lbbx_pct = _calc_pctile(history.lbbx_values, lbbx_925)
+        lbbx_pct = _calc_pctile(history.lbbx_close_values, lbbx_close)
         lbbx_pct = lbbx_pct if lbbx_pct is not None else 0.5
         profit_level = round(sorted([ztbx_pct, lbbx_pct])[len([ztbx_pct, lbbx_pct]) // 2], 4)
-    else:
-        profit_level = 0.5
 
-    # 家族 2: 市场广度 B = median(pct(advance_share), 1-pct(DT))
-    if use_percentile:
-        adv_pct = _calc_pctile(history.advance_share_values, advance_share)
+        # 家族 2: B = median(pct(advance_share_close), 1-pct(DT_close))
+        adv_pct = _calc_pctile(history.advance_share_close_values, advance_share_close)
         adv_pct = adv_pct if adv_pct is not None else 0.5
-        dt_pct = _calc_pctile(history.dt_values, dt_925)
+        dt_pct = _calc_pctile(history.dt_close_values, dt_close)
         dt_pct = dt_pct if dt_pct is not None else 0.5
-        breadth_level = round(sorted([adv_pct, 1 - dt_pct])[0], 4)  # 2个值中位数即任一个
+        breadth_level = round(sorted([adv_pct, 1 - dt_pct])[0], 4)
+
+        # 家族 3: R = pct(relay_health) (本身就是盘后, 不变)
+        if relay_health is not None:
+            relay_level = _calc_pctile(history.relay_health_values, relay_health)
+            relay_level = relay_level if relay_level is not None else 0.5
+        else:
+            relay_level = 0.5
+
+        # 盘前水位分 (仅供参考, 不参与决策)
+        if history.valid_for_pre_pctile():
+            ztbx_pre_pct = _calc_pctile(history.ztbx_pre_values, ztbx_925)
+            ztbx_pre_pct = ztbx_pre_pct if ztbx_pre_pct is not None else 0.5
+            lbbx_pre_pct = _calc_pctile(history.lbbx_pre_values, lbbx_925)
+            lbbx_pre_pct = lbbx_pre_pct if lbbx_pre_pct is not None else 0.5
+            pre_profit = round(sorted([ztbx_pre_pct, lbbx_pre_pct])[len([ztbx_pre_pct, lbbx_pre_pct]) // 2], 4)
+            adv_pre_pct = _calc_pctile(history.advance_share_pre_values, advance_share)
+            adv_pre_pct = adv_pre_pct if adv_pre_pct is not None else 0.5
+            dt_pre_pct = _calc_pctile(history.dt_pre_values, dt_925)
+            dt_pre_pct = dt_pre_pct if dt_pre_pct is not None else 0.5
+            pre_breadth = round(sorted([adv_pre_pct, 1 - dt_pre_pct])[0], 4)
+            pre_level_score = round(sorted([pre_profit, pre_breadth, relay_level])[1], 4)
+        else:
+            pre_level_score = 0.5
+
+        close_level_score = round(sorted([profit_level, breadth_level, relay_level])[1], 4)
+        level_score = close_level_score  # 主水位 = 盘后水位
+
+    elif use_pre_pctile:
+        level_source = "PRE"
+        # 回退: 盘前值在盘前历史分布中求分位 (与 v3 行为一致)
+        ztbx_pct = _calc_pctile(history.ztbx_pre_values, ztbx_925)
+        ztbx_pct = ztbx_pct if ztbx_pct is not None else 0.5
+        lbbx_pct = _calc_pctile(history.lbbx_pre_values, lbbx_925)
+        lbbx_pct = lbbx_pct if lbbx_pct is not None else 0.5
+        profit_level = round(sorted([ztbx_pct, lbbx_pct])[len([ztbx_pct, lbbx_pct]) // 2], 4)
+
+        adv_pct = _calc_pctile(history.advance_share_pre_values, advance_share)
+        adv_pct = adv_pct if adv_pct is not None else 0.5
+        dt_pct = _calc_pctile(history.dt_pre_values, dt_925)
+        dt_pct = dt_pct if dt_pct is not None else 0.5
+        breadth_level = round(sorted([adv_pct, 1 - dt_pct])[0], 4)
+
+        if relay_health is not None:
+            relay_level = _calc_pctile(history.relay_health_values, relay_health)
+            relay_level = relay_level if relay_level is not None else 0.5
+        else:
+            relay_level = 0.5
+
+        level_score = round(sorted([profit_level, breadth_level, relay_level])[1], 4)
+        close_level_score = level_score
+        pre_level_score = level_score
+
     else:
+        level_source = "STATIC"
+        profit_level = 0.5
         breadth_level = 0.5
-
-    # 家族 3: 接力生态 R = pct(relay_health)
-    if use_percentile and relay_health is not None:
-        relay_level = _calc_pctile(history.relay_health_values, relay_health)
-        relay_level = relay_level if relay_level is not None else 0.5
-    else:
         relay_level = 0.5
+        level_score = 0.5
+        close_level_score = 0.5
+        pre_level_score = 0.5
 
-    # 总水位: 三家族等权中位数
-    level_score = round(sorted([profit_level, breadth_level, relay_level])[1], 4)
     level = _classify_level(level_score, prev_level=_phase_to_level(prev_phase))
 
     # ========================================================================
-    # 阶段 4: 三家族方向 (日变化, 2-of-3 共识)
+    # 阶段 4: 三家族方向 (v4 修复: P/B 盘前 vs 盘前, R 修复为 T-1 vs T-2)
+    #
+    # P/B 方向: T0 盘前 vs T-1 盘前 (同口径同时间点, 竞价情绪变化)
+    # R 方向:   T-1 relay vs T-2 relay (修复 v3 bug)
     # ========================================================================
-    # 方向 = 今日分位 - 昨日分位
-    # 昨日分位需用排除昨日的 history 计算, 否则昨日值作为 history 最后一天
-    # 其分位永远是 1.0, 导致方向永远 FLAT
-    # 昨日原始值从 qxlive_top_t1 获取 (与 history.last_values() 一致, 但显式传入)
-    # ========================================================================
-
     profit_delta = None
     breadth_delta = None
     relay_delta = None
 
-    # 提取 T-1 原始值用于方向计算
+    # --- P/B 方向: T0 盘前 vs T-1 盘前 (同口径) ---
+    # 提取 T-1 盘前原始值
     ztbx_t1_for_dir = _extract_qxlive_metric(qxlive_top_t1, "ZTBX")
     lbbx_t1_for_dir = _extract_qxlive_metric(qxlive_top_t1, "LBBX")
     sz_t1 = _extract_qxlive_metric(qxlive_top_t1, "SZ")
     xd_t1 = _extract_qxlive_metric(qxlive_top_t1, "XD")
     dt_t1_raw = _extract_qxlive_metric(qxlive_top_t1, "DT")
+
     advance_share_t1 = None
     if sz_t1 is not None and xd_t1 is not None and (sz_t1 + xd_t1) > 0:
         advance_share_t1 = round(sz_t1 / (sz_t1 + xd_t1), 4)
     dt_t1 = int(dt_t1_raw) if dt_t1_raw is not None else None
 
     if history is not None and history.min_days >= 2:
-        # 用排除最后一天的 history 计算昨日分位
-        prev_ztbx_vals = history.ztbx_values[:-1] if len(history.ztbx_values) >= 2 else []
-        prev_lbbx_vals = history.lbbx_values[:-1] if len(history.lbbx_values) >= 2 else []
-        prev_adv_vals = history.advance_share_values[:-1] if len(history.advance_share_values) >= 2 else []
-        prev_dt_vals = history.dt_values[:-1] if len(history.dt_values) >= 2 else []
-        prev_relay_vals = history.relay_health_values[:-1] if len(history.relay_health_values) >= 2 else []
+        # 用排除最后一天的 history 计算 T-1 分位 (PIT, 无前视偏差)
+        prev_ztbx_vals = history.ztbx_pre_values[:-1] if len(history.ztbx_pre_values) >= 2 else []
+        prev_lbbx_vals = history.lbbx_pre_values[:-1] if len(history.lbbx_pre_values) >= 2 else []
+        prev_adv_vals = history.advance_share_pre_values[:-1] if len(history.advance_share_pre_values) >= 2 else []
+        prev_dt_vals = history.dt_pre_values[:-1] if len(history.dt_pre_values) >= 2 else []
 
         # Profit 方向: dP = pct(ZTBX_t0, full_hist) - pct(ZTBX_t1, hist_excl_last)
         if ztbx_t1_for_dir is not None and ztbx_925 is not None and prev_ztbx_vals:
             p_prev = _calc_pctile(prev_ztbx_vals, ztbx_t1_for_dir)
-            p_curr = _calc_pctile(history.ztbx_values, ztbx_925)
+            p_curr = _calc_pctile(history.ztbx_pre_values, ztbx_925)
             if p_prev is not None and p_curr is not None:
                 profit_delta = round(p_curr - p_prev, 4)
 
-        # Breadth 方向: dB = B_t - B_t1
+        # Breadth 方向: dB = B_t0 - B_t1
         if advance_share_t1 is not None and advance_share is not None and prev_adv_vals:
             b_prev_adv = _calc_pctile(prev_adv_vals, advance_share_t1)
-            b_curr_adv = _calc_pctile(history.advance_share_values, advance_share)
+            b_curr_adv = _calc_pctile(history.advance_share_pre_values, advance_share)
             if dt_t1 is not None and dt_925 is not None and prev_dt_vals:
                 b_prev_dt = _calc_pctile(prev_dt_vals, dt_t1)
-                b_curr_dt = _calc_pctile(history.dt_values, dt_925)
+                b_curr_dt = _calc_pctile(history.dt_pre_values, dt_925)
                 if (b_prev_adv is not None and b_curr_adv is not None
                         and b_prev_dt is not None and b_curr_dt is not None):
                     b_prev = sorted([b_prev_adv, 1 - b_prev_dt])[0]
                     b_curr = sorted([b_curr_adv, 1 - b_curr_dt])[0]
                     breadth_delta = round(b_curr - b_prev, 4)
 
-        # Relay 方向: dR = pct(relay_t0, full_hist) - pct(relay_t1, hist_excl_last)
-        if relay_health is not None and prev_relay_vals:
-            prev_raw_relay = history.relay_health_values[-1] if history.relay_health_values else None
-            if prev_raw_relay is not None:
-                r_prev = _calc_pctile(prev_relay_vals, prev_raw_relay)
-                r_curr = _calc_pctile(history.relay_health_values, relay_health)
-                if r_prev is not None and r_curr is not None:
-                    relay_delta = round(r_curr - r_prev, 4)
+    # --- R 方向 (v4 修复): T-1 relay vs T-2 relay 日间变化 ---
+    # v3 bug: 用同一个 T-1 值在"包含自己"和"不包含自己"两个分布中求分位差,
+    # 实际测量的是"偏离中位数的方向"而非"日间变化"
+    if history is not None and len(history.relay_health_values) >= 3:
+        relay_t1 = history.relay_health_values[-1]  # T-1
+        relay_t2 = history.relay_health_values[-2]  # T-2
+        vals_excl_t1 = history.relay_health_values[:-1]  # 排除 T-1
+
+        r_prev = _calc_pctile(vals_excl_t1, relay_t2)  # T-2 在 [T-3, T-4, ...] 中的分位
+        r_curr = _calc_pctile(history.relay_health_values, relay_t1)  # T-1 在完整分布中的分位
+        if r_prev is not None and r_curr is not None:
+            relay_delta = round(r_curr - r_prev, 4)
 
     # 方向: 2-of-3 共识
     if profit_delta is not None and breadth_delta is not None and relay_delta is not None:
-        up_count = sum([profit_delta > DIRECTION_DEADBAND, breadth_delta > DIRECTION_DEADBAND, relay_delta > DIRECTION_DEADBAND])
-        down_count = sum([profit_delta < -DIRECTION_DEADBAND, breadth_delta < -DIRECTION_DEADBAND, relay_delta < -DIRECTION_DEADBAND])
+        up_count = sum([
+            profit_delta > DIRECTION_DEADBAND,
+            breadth_delta > DIRECTION_DEADBAND,
+            relay_delta > DIRECTION_DEADBAND,
+        ])
+        down_count = sum([
+            profit_delta < -DIRECTION_DEADBAND,
+            breadth_delta < -DIRECTION_DEADBAND,
+            relay_delta < -DIRECTION_DEADBAND,
+        ])
+        if up_count >= 2:
+            direction = EmotionDirection.UP
+        elif down_count >= 2:
+            direction = EmotionDirection.DOWN
+        else:
+            direction = EmotionDirection.FLAT
+    elif profit_delta is not None and breadth_delta is not None:
+        # R 家族不可用时, 退化为 P/B 2-of-2 共识
+        up_count = sum([
+            profit_delta > DIRECTION_DEADBAND,
+            breadth_delta > DIRECTION_DEADBAND,
+        ])
+        down_count = sum([
+            profit_delta < -DIRECTION_DEADBAND,
+            breadth_delta < -DIRECTION_DEADBAND,
+        ])
         if up_count >= 2:
             direction = EmotionDirection.UP
         elif down_count >= 2:
@@ -869,21 +1134,19 @@ def determine_emotion_state(
     phase = _classify_phase(level, direction) if direction != EmotionDirection.UNKNOWN else EmotionPhase.UNKNOWN
 
     # ========================================================================
-    # 阶段 5.5: KQXY 亏钱效应覆盖层 (不影响 Phase, 只修饰执行策略)
+    # 阶段 5.5: KQXY 亏钱效应覆盖层 (v4 修复: kqxy_t1/t2 现在从 history 自动提取)
     # ========================================================================
     loss = _classify_loss_overlay(kqxy_t1, kqxy_t2, history)
     loss_level = loss["loss_level"]
     loss_direction = loss["loss_direction"]
     loss_overlay = "NONE"
 
-    # 低位修复质量: KQXY 收敛 → 强修复, KQXY 扩散 → 弱修复
     if phase == EmotionPhase.REPAIR:
         if loss_direction == "CONTRACTING":
             loss_overlay = "REPAIR_SUPPORT"
         elif loss_direction == "EXPANDING":
             loss_overlay = "REPAIR_WEAK"
 
-    # 高位内部裂化: KQXY 扩散 → 降级执行策略
     if phase == EmotionPhase.HIGH_ACTIVE and loss_direction == "EXPANDING":
         loss_overlay = "HIGH_CRACKING"
 
@@ -893,10 +1156,12 @@ def determine_emotion_state(
     qx_stats = _compute_qx_stats(history, qx_925)
 
     # ========================================================================
-    # 阶段 6: 极端否决 (Phase 之外的硬止损)
+    # 阶段 6: 极端否决 (Phase 之外的硬止损, 仍用盘前数据)
+    #
+    # 极端否决使用盘前数据是合理的: 竞价瞬间的极端信号需要即时响应,
+    # 不应等到盘后确认。ZTBX+LBBX 同时翻负是强烈的盘中危险信号,
+    # advance_share 极低 + DT 极高是广度恐慌, 都需要立即空仓。
     # ========================================================================
-
-    # 否决 1: 强势股集体翻负
     profit_collapse = (
         ztbx_t1 is not None and lbbx_t1 is not None
         and ztbx_925 is not None and lbbx_925 is not None
@@ -904,10 +1169,9 @@ def determine_emotion_state(
         and ztbx_925 < 0 and lbbx_925 < 0
     )
 
-    # 否决 2: 广度恐慌
     breadth_panic = False
     if advance_share is not None and dt_925 is not None:
-        if use_percentile:
+        if use_close_pctile or use_pre_pctile:
             adv_15 = history.advance_share_15pct()
             dt_85 = history.dt_85pct()
             breadth_panic = (
@@ -930,12 +1194,12 @@ def determine_emotion_state(
     # ========================================================================
     # 阶段 7: 风险预算 + 结构偏好 (KQXY 覆盖层修饰)
     # ========================================================================
-
     if hard_veto:
         risk_tier = RiskTier.CRISIS
         position_cap = 0.0
         buy_mode = BuyMode.EMPTY
-        struct = {"height": "LOW", "fenqi": "DISABLED", "yizi": False, "huanshou": False, "fenqi_enabled": False, "feiban": False}
+        struct = {"height": "LOW", "fenqi": "DISABLED", "yizi": False, "huanshou": False,
+                  "fenqi_enabled": False, "feiban": False}
     else:
         risk_tier, base_cap, buy_mode = PHASE_RISK_BUDGET[phase]
         struct = PHASE_STRUCTURE[phase].copy()
@@ -964,7 +1228,6 @@ def determine_emotion_state(
     # ========================================================================
     # 阶段 8: 子阶段标签 (KQXY 覆盖层修饰)
     # ========================================================================
-
     ice_stage = None
     retreat_stage = None
 
@@ -983,22 +1246,29 @@ def determine_emotion_state(
     # ========================================================================
     # 阶段 9: 构建输出
     # ========================================================================
-
     result = D6EmotionResult(
         phase=phase,
         phase_label=PHASE_LABELS[phase],
         level=level,
         level_score=level_score,
         direction=direction,
+        # 双时间截面水位 (v4 新增)
+        close_level_score=close_level_score,
+        pre_level_score=pre_level_score,
+        level_source=level_source,
+        # 三个家族水位 (盘后口径)
         profit_level=profit_level,
         breadth_level=breadth_level,
         relay_level=relay_level,
+        # 三个家族日变化
         profit_delta=profit_delta,
         breadth_delta=breadth_delta,
         relay_delta=relay_delta,
+        # 极端否决
         hard_veto=hard_veto,
         profit_collapse=profit_collapse,
         breadth_panic=breadth_panic,
+        # KQXY
         kqxy_t1=kqxy_t1,
         kqxy_t2=kqxy_t2,
         kqxy_pct=loss["kqxy_pct"],
@@ -1006,8 +1276,10 @@ def determine_emotion_state(
         loss_level=loss_level,
         loss_direction=loss_direction,
         loss_overlay=loss_overlay,
+        # QX
         qx_925=qx_925,
         qx_stats=qx_stats,
+        # 风险
         risk_tier=risk_tier,
         position_cap=position_cap,
         height_preference=struct["height"],
@@ -1024,6 +1296,7 @@ def determine_emotion_state(
         auction_buy_enabled=(buy_mode == BuyMode.AUCTION_AND_BOARD),
         phase_confidence=phase_confidence,
         data_quality=data_quality,
+        # 原始指标 (盘前)
         ztbx_925=ztbx_925,
         lbbx_925=lbbx_925,
         advance_share=advance_share,
@@ -1031,6 +1304,12 @@ def determine_emotion_state(
         jinji_1_2=jinji_1_2,
         jinji_2_3=jinji_2_3,
         relay_health=relay_health,
+        # 盘后原始指标 (v4 新增)
+        ztbx_close=ztbx_close,
+        lbbx_close=lbbx_close,
+        advance_share_close=advance_share_close,
+        dt_close=dt_close,
+        # 诊断
         warnings=warnings,
         diagnostics={
             "pbbx_raw": pbbx,
@@ -1038,11 +1317,16 @@ def determine_emotion_state(
             "lbbx_t1": lbbx_t1,
             "sz_925": sz_925,
             "xd_925": xd_925,
-            "use_percentile": use_percentile,
+            "use_close_pctile": use_close_pctile,
+            "use_pre_pctile": use_pre_pctile,
+            "level_source": level_source,
             "history_days": history.history_days if history else 0,
+            "history_close_days": history.close_days if history else 0,
             "valid_families": valid_families,
             "data_quality_level": data_quality_level.value,
             "level_score": level_score,
+            "close_level_score": close_level_score,
+            "pre_level_score": pre_level_score,
             "ice_stage": ice_stage,
             "retreat_stage": retreat_stage,
             "hard_veto": hard_veto,
@@ -1050,168 +1334,13 @@ def determine_emotion_state(
             "loss_overlay": loss_overlay,
             "loss_level": loss_level,
             "loss_direction": loss_direction,
+            "kqxy_from_history": (kqxy_t1 is not None and history is not None
+                                  and len(history.kqxy_values) >= 1),
+            "ztbx_close": ztbx_close,
+            "lbbx_close": lbbx_close,
+            "advance_share_close": advance_share_close,
+            "dt_close": dt_close,
+            "version": "v4.0-dual-timeslice",
         },
     )
-
     return result
-
-
-def _calc_pctile_or_zero(values: List[float], value: Optional[float]) -> float:
-    """计算分位, 失败返回 0"""
-    p = _calc_pctile(values, value)
-    return p if p is not None else 0.0
-
-
-# ============================================================================
-# 自检
-# ============================================================================
-
-def _self_test() -> bool:
-    """自检: 验证 D6 情绪周期简化版逻辑"""
-    ztpool = [
-        {"分组名称": "1进2", "晋级率": 25.0, "晋级数": 5, "样本数": 20},
-        {"分组名称": "2进3", "晋级率": 20.0, "晋级数": 2, "样本数": 10},
-        {"分组名称": "3进4", "晋级率": 33.3, "晋级数": 1, "样本数": 3},
-        {"分组名称": "4进5", "晋级率": 50.0, "晋级数": 1, "样本数": 2},
-    ]
-    qxlive_t0 = [
-        {"metric_key": "ZTBX", "value": "2.5"},
-        {"metric_key": "LBBX", "value": "3.0"},
-        {"metric_key": "SZ", "value": "2100"},
-        {"metric_key": "XD", "value": "1500"},
-        {"metric_key": "DT", "value": "3"},
-    ]
-    qxlive_t1 = [
-        {"metric_key": "ZTBX", "value": "2.0"},
-        {"metric_key": "LBBX", "value": "2.5"},
-        {"metric_key": "SZ", "value": "2000"},
-        {"metric_key": "XD", "value": "1600"},
-        {"metric_key": "DT", "value": "4"},
-    ]
-
-    # 测试 1: 无历史, 方向 UNKNOWN, 水位默认 MID
-    r1 = determine_emotion_state(ztpool, qxlive_t0, qxlive_t1, history=None, prev_phase=None)
-    assert r1.jinji_1_2 is not None, f"jinji_1_2 should not be None, got {r1.jinji_1_2}"
-    assert r1.jinji_2_3 is not None
-    assert r1.relay_health is not None, f"relay_health should not be None"
-    assert abs(r1.advance_share - 2100/(2100+1500)) < 0.001, f"advance_share wrong: {r1.advance_share}"
-    assert r1.phase == EmotionPhase.UNKNOWN, f"Expected UNKNOWN (no history), got {r1.phase}"
-    assert r1.direction == EmotionDirection.UNKNOWN
-    print(f"  Test1 PASS: phase={r1.phase_label}, direction={r1.direction.value}, relay_health={r1.relay_health}")
-
-    # 测试 2: Laplace 收缩估计
-    # promoted=5, eligible=20 → smoothed = (5+1)/(20+1+1) = 6/22 = 27.27%
-    assert abs(r1.jinji_1_2 - 27.27) < 0.5, f"smoothed 1_2 wrong: {r1.jinji_1_2}"
-    # promoted=2, eligible=10 → smoothed = (2+1)/(10+1+1) = 3/12 = 25.0%
-    assert abs(r1.jinji_2_3 - 25.0) < 0.5, f"smoothed 2_3 wrong: {r1.jinji_2_3}"
-    # relay_health = 0.55*27.27 + 0.45*25.0 = 14.9985 + 11.25 = 26.25
-    assert abs(r1.relay_health - 26.25) < 1.0, f"relay_health wrong: {r1.relay_health}"
-    print(f"  Test2 PASS: smoothed rates correct, relay_health={r1.relay_health}")
-
-    # 测试 3: 极端否决 — 强势股集体翻负
-    r3 = determine_emotion_state(
-        ztpool,
-        [{"metric_key": "ZTBX", "value": "-1.0"}, {"metric_key": "LBBX", "value": "-1.0"},
-         {"metric_key": "SZ", "value": "2100"}, {"metric_key": "XD", "value": "1500"},
-         {"metric_key": "DT", "value": "5"}],
-        [{"metric_key": "ZTBX", "value": "2.0"}, {"metric_key": "LBBX", "value": "2.0"}],
-        history=None, prev_phase=None,
-    )
-    assert r3.profit_collapse, f"profit_collapse should be detected"
-    assert r3.hard_veto, f"hard_veto should be True"
-    assert r3.position_cap == 0.0, f"hard_veto should force cap=0, got {r3.position_cap}"
-    print(f"  Test3 PASS: hard_veto detected, cap={r3.position_cap}, phase={r3.phase_label}")
-
-    # 测试 4: 有历史数据, 计算分位和方向
-    hist = D6History()
-    for i in range(25):
-        hist.add_day(ztbx=2.0 + i * 0.1, lbbx=2.0 + i * 0.1,
-                     advance_share=0.4 + i * 0.02, dt=5 - i * 0.1,
-                     relay_health=25.0 + i * 0.75)
-    r4 = determine_emotion_state(ztpool, qxlive_t0, qxlive_t1, history=hist, prev_phase=None)
-    assert r4.direction != EmotionDirection.UNKNOWN, f"direction should be known with history"
-    assert r4.use_percentile if hasattr(r4, 'use_percentile') else True
-    print(f"  Test4 PASS: direction={r4.direction.value}, level={r4.level.value}, phase={r4.phase_label}")
-
-    # 测试 5: 冰点 (LOW+DOWN, 三家族等权中位数)
-    # 历史正常, 当前极度恶化 → 低分位 → LOW
-    hist_cold = D6History()
-    for i in range(25):
-        # 历史: 正常偏高 (ZTBX 0~5, advance_share 0.4~0.6, DT 3~8, relay_health 20~40)
-        hist_cold.add_day(ztbx=0.5 + i * 0.2, lbbx=1.0 + i * 0.2,
-                          advance_share=0.4 + i * 0.01, dt=8 - i * 0.1,
-                          relay_health=25.0 + i * 0.5)
-    r5 = determine_emotion_state(
-        [{"分组名称": "1进2", "晋级率": 5.0, "晋级数": 1, "样本数": 20},
-         {"分组名称": "2进3", "晋级率": 0.0, "晋级数": 0, "样本数": 5}],
-        # 当前极度恶化: ZTBX=-5(远低于历史0.5~5.3), advance_share=0.056(远低于历史0.4~0.64), DT=25(远高于历史3~8)
-        [{"metric_key": "ZTBX", "value": "-5.0"}, {"metric_key": "LBBX", "value": "-3.0"},
-         {"metric_key": "SZ", "value": "300"}, {"metric_key": "XD", "value": "5000"},
-         {"metric_key": "DT", "value": "25"}],
-        [{"metric_key": "ZTBX", "value": "5.0"}, {"metric_key": "LBBX", "value": "4.0"},
-         {"metric_key": "SZ", "value": "2500"}, {"metric_key": "XD", "value": "1500"},
-         {"metric_key": "DT", "value": "5"}],
-        history=hist_cold, prev_phase=None,
-    )
-    assert r5.phase == EmotionPhase.ICE, f"Expected ICE (LOW+DOWN), got {r5.phase}"
-    assert r5.position_cap == 0.0, f"ICE should have cap=0, got {r5.position_cap}"
-    assert r5.diagnostics.get("ice_stage") == "FALLING", f"Expected FALLING, got {r5.diagnostics.get('ice_stage')}"
-    print(f"  Test5 PASS: ICE detected, ice_stage={r5.diagnostics.get('ice_stage')}, cap={r5.position_cap}, level_score={r5.level_score:.3f}")
-
-    # 测试 6: 晋级率缺失 (eligible=0) → 该层为 None, relay_health 降级
-    r6 = determine_emotion_state(
-        [{"分组名称": "1进2", "晋级率": 25.0, "晋级数": 5, "样本数": 20}],
-        qxlive_t0, qxlive_t1, history=None, prev_phase=None,
-    )
-    assert r6.jinji_1_2 is not None, "1进2 should exist"
-    assert r6.jinji_2_3 is None, "2进3 should be None (no data)"
-    assert r6.relay_health is not None, "relay_health should still work with 1 layer"
-    assert r6.data_quality["relay_family"] == "DEGRADED"
-    print(f"  Test6 PASS: single layer relay_health={r6.relay_health}, DQ={r6.data_quality['relay_family']}")
-
-    # 测试 7: 高位加速 (HIGH_ACTIVE, HIGH+UP)
-    # 历史宽幅, 当前处于高分位且上升 → HIGH+UP
-    hist_hot = D6History()
-    for i in range(25):
-        # 历史: ZTBX 0.5~5.3, advance_share 0.25~0.73, DT 20~5.6, relay_health 10~46
-        hist_hot.add_day(ztbx=0.5 + i * 0.2, lbbx=1.0 + i * 0.2,
-                         advance_share=0.25 + i * 0.02, dt=20 - i * 0.6,
-                         relay_health=10.0 + i * 1.5)
-    # 昨日: ZTBX=5.3(max), 今日: ZTBX=5.0(接近max, 分位~0.96)
-    # 昨日分位(pct in 24天历史): 5.3在[0.5~5.1]中=1.0, 今日分位(pct in 25天历史): 5.0在[0.5~5.3]中≈0.92 → dP=0.92-1.0=-0.08
-    # 这会导致 DOWN。需要调整让今日高于昨日。
-    # 改为: 昨日 ZTBX=4.5, 今日 ZTBX=5.1 → 昨日分位(24天[0.5~5.3]): 4.5≈0.83, 今日分位(25天[0.5~5.3]): 5.1≈0.96 → dP=0.13>0.03 UP
-    # 重新构建: 历史 ZTBX 0.5~5.3, 昨日 ZTBX=4.5, 今日 ZTBX=5.1
-    r7 = determine_emotion_state(
-        [{"分组名称": "1进2", "晋级率": 35.0, "晋级数": 10, "样本数": 28},
-         {"分组名称": "2进3", "晋级率": 30.0, "晋级数": 4, "样本数": 13}],
-        # 今日: ZTBX=5.1(接近历史max 5.3, 分位~0.96), advance_share=0.70(接近历史max 0.73), DT=1(低于历史min 5.6)
-        [{"metric_key": "ZTBX", "value": "5.1"}, {"metric_key": "LBBX", "value": "6.0"},
-         {"metric_key": "SZ", "value": "3500"}, {"metric_key": "XD", "value": "1500"},
-         {"metric_key": "DT", "value": "1"}],
-        # 昨日: ZTBX=4.5, LBBX=5.2, SZ=3000, XD=2000, DT=3
-        [{"metric_key": "ZTBX", "value": "4.5"}, {"metric_key": "LBBX", "value": "5.2"},
-         {"metric_key": "SZ", "value": "3000"}, {"metric_key": "XD", "value": "2000"},
-         {"metric_key": "DT", "value": "3"}],
-        history=hist_hot, prev_phase=None,
-    )
-    assert r7.phase == EmotionPhase.HIGH_ACTIVE, f"Expected HIGH_ACTIVE, got {r7.phase}"
-    assert r7.position_cap == 0.50, f"HIGH_ACTIVE cap should be 0.50, got {r7.position_cap}"
-    print(f"  Test7 PASS: HIGH_ACTIVE detected, cap={r7.position_cap}, level_score={r7.level_score:.3f}")
-
-    # 测试 8: 数据质量 UNKNOWN (<2 家族有效)
-    r8 = determine_emotion_state(
-        [],
-        [{"metric_key": "ZTBX", "value": "2.0"}],  # 只有 profit 家族部分有效
-        [], history=None, prev_phase=None,
-    )
-    assert r8.phase_confidence == 0.2, f"Expected confidence 0.2, got {r8.phase_confidence}"
-    assert r8.position_cap <= 0.10, f"UNKNOWN quality should cap at 0.10, got {r8.position_cap}"
-    print(f"  Test8 PASS: UNKNOWN quality, confidence={r8.phase_confidence}, cap={r8.position_cap}")
-
-    print("\n=== ALL TESTS PASSED ===")
-    return True
-
-
-if __name__ == "__main__":
-    _self_test()

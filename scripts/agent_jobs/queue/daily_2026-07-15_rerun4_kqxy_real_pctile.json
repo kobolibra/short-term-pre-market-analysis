@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-15_rerun4_kqxy_real_pctile",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": ["--date", "2026-07-15"],
+  "timeout": 2400,
+  "created": "2026-07-15T13:30:00+08:00",
+  "note": "rerun4: KQXY真实分位(从captures提取历史序列)"
+}

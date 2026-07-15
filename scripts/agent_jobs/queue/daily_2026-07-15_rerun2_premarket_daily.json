@@ -1,0 +1,8 @@
+{
+  "id": "daily_2026-07-15_rerun2_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": ["--date", "2026-07-15"],
+  "timeout": 2400,
+  "created": "2026-07-15T12:30:00+08:00",
+  "note": "rerun2: 原始captures数据回退构建D6历史分位"
+}

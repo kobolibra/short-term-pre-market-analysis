@@ -22,11 +22,21 @@ from typing import Any, Dict, List
 sys.path.insert(0, str(Path(__file__).parent))
 
 from duanxianxia_v4_2_runner import run_v4_2_pipeline, VERSION
-from duanxianxia_v4_2_d6_emotion import D6History
+from duanxianxia_v4_2_d6_emotion import (
+    D6History, _extract_qxlive_metric,
+    _extract_ztpool_pbbx, _smoothed_rate,
+    RELAY_WEIGHT_1_2, RELAY_WEIGHT_2_3,
+)
+from duanxianxia_v7_1_data_loader import (
+    load_capture_at_time, _extract_rows,
+    DS_HOME_QXLIVE_TOP, DS_HOME_ZTPOOL,
+    QXLIVE_PREMARKET_BOUNDARY_HHMMSS,
+)
 
 WORKSPACE = Path("/home/investmentofficehku/.openclaw/workspace")
 PROJECT_ROOT = WORKSPACE / "projects" / "duanxianxia"
 OUTPUT_DIR = PROJECT_ROOT / "reports" / "_audit" / "v4_2_backtest"
+CAPTURES_DIR = PROJECT_ROOT / "captures"
 
 
 def _shanghai_today() -> str:
@@ -50,6 +60,64 @@ def _past_trading_days(n: int = 5, end_date: str = None) -> List[str]:
             days.append(cur.isoformat())
         cur -= timedelta(days=1)
     return list(reversed(days))
+
+
+def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> D6History:
+    """直接从 captures/ 原始数据构建 D6History, 不依赖过去分析结果。"""
+    history = D6History()
+    if not CAPTURES_DIR.is_dir():
+        return history
+    date_dirs = sorted(
+        [d for d in CAPTURES_DIR.iterdir() if d.is_dir()],
+        key=lambda d: d.name,
+    )[-max_days:]
+    for day_dir in date_dirs:
+        date_str = day_dir.name
+        if len(date_str) != 10 or date_str[4] != "-":
+            continue
+        qxlive = load_capture_at_time(
+            project_root, date_str, DS_HOME_QXLIVE_TOP,
+            max_hhmmss=QXLIVE_PREMARKET_BOUNDARY_HHMMSS,
+            pick="earliest_before", raise_if_missing=False,
+        )
+        qxlive_rows = _extract_rows(qxlive)
+        ztbx = _extract_qxlive_metric(qxlive_rows, "ZTBX")
+        lbbx = _extract_qxlive_metric(qxlive_rows, "LBBX")
+        sz = _extract_qxlive_metric(qxlive_rows, "SZ")
+        xd = _extract_qxlive_metric(qxlive_rows, "XD")
+        dt = _extract_qxlive_metric(qxlive_rows, "DT")
+        advance_share = None
+        if sz is not None and xd is not None and (sz + xd) > 0:
+            advance_share = round(sz / (sz + xd), 4)
+        ztpool = load_capture_at_time(
+            project_root, date_str, DS_HOME_ZTPOOL,
+            pick="latest", raise_if_missing=False,
+        )
+        ztpool_rows = _extract_rows(ztpool)
+        pbbx = _extract_ztpool_pbbx(ztpool_rows)
+        j12 = _smoothed_rate(
+            pbbx.get("PBBX_1_2", {}).get("promoted"),
+            pbbx.get("PBBX_1_2", {}).get("eligible"),
+        )
+        j23 = _smoothed_rate(
+            pbbx.get("PBBX_2_3", {}).get("promoted"),
+            pbbx.get("PBBX_2_3", {}).get("eligible"),
+        )
+        relay_health = None
+        if j12 is not None and j23 is not None:
+            relay_health = round(RELAY_WEIGHT_1_2 * j12 + RELAY_WEIGHT_2_3 * j23, 2)
+        elif j12 is not None:
+            relay_health = round(j12, 2)
+        elif j23 is not None:
+            relay_health = round(j23, 2)
+        if ztbx is not None:
+            history.add_day(
+                ztbx=ztbx, lbbx=lbbx,
+                advance_share=advance_share,
+                dt=int(dt) if dt is not None else None,
+                relay_health=relay_health,
+            )
+    return history
 
 
 def main() -> int:
@@ -81,6 +149,18 @@ def main() -> int:
                         )
             except Exception:
                 continue
+    if history.history_days < 20:
+        raw_history = _build_history_from_raw_captures(PROJECT_ROOT)
+        for v in raw_history.ztbx_values:
+            history.add_day(ztbx=v)
+        for v in raw_history.lbbx_values:
+            history.add_day(lbbx=v)
+        for v in raw_history.advance_share_values:
+            history.add_day(advance_share=v)
+        for v in raw_history.dt_values:
+            history.add_day(dt=v)
+        for v in raw_history.relay_health_values:
+            history.add_day(relay_health=v)
     print(f"v4.2 backtest: loaded {history.history_days} history days from past results")
     summary: Dict[str, Any] = {"version": VERSION, "days": days, "results": []}
 

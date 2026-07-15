@@ -17,7 +17,7 @@ import json
 import sys
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -25,13 +25,23 @@ from duanxianxia_v4_2_runner import (
     run_v4_2_pipeline, VERSION,
     _build_bundle_from_report,
 )
-from duanxianxia_v4_2_d6_emotion import D6History
+from duanxianxia_v4_2_d6_emotion import (
+    D6History, _extract_qxlive_metric,
+    _extract_ztpool_pbbx, _smoothed_rate,
+    RELAY_WEIGHT_1_2, RELAY_WEIGHT_2_3,
+)
+from duanxianxia_v7_1_data_loader import (
+    load_capture_at_time, _extract_rows,
+    DS_HOME_QXLIVE_TOP, DS_HOME_ZTPOOL,
+    QXLIVE_PREMARKET_BOUNDARY_HHMMSS,
+)
 
 WORKSPACE = Path("/home/investmentofficehku/.openclaw/workspace")
 PROJECT_ROOT = WORKSPACE / "projects" / "duanxianxia"
 OUTPUT_DIR = PROJECT_ROOT / "reports" / "_audit" / "v4_2_premarket"
 BACKTEST_DIR = PROJECT_ROOT / "reports" / "_audit" / "v4_2_backtest"
 REPORTS_DIR = PROJECT_ROOT / "reports"
+CAPTURES_DIR = PROJECT_ROOT / "captures"
 
 
 def _shanghai_today() -> str:
@@ -56,13 +66,88 @@ def _find_latest_premarket_report(today: str) -> Optional[Path]:
         )
         if candidates:
             return candidates[0]
-    # fallback: 平铺文件
     candidates = sorted(
         day_dir.glob("premarket_*.json"),
         key=lambda p: p.stat().st_mtime,
         reverse=True,
     )
     return candidates[0] if candidates else None
+
+
+def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> D6History:
+    """直接从 captures/ 原始数据构建 D6History, 不依赖过去分析结果。
+
+    扫描 captures/ 下所有日期目录, 读取 qxlive 和 ztpool 数据,
+    提取 ztbx_925, lbbx_925, advance_share, dt_925, relay_health。
+
+    用于首次运行或过去分析结果不足时的回退方案。
+    """
+    history = D6History()
+    if not CAPTURES_DIR.is_dir():
+        return history
+
+    date_dirs = sorted(
+        [d for d in CAPTURES_DIR.iterdir() if d.is_dir()],
+        key=lambda d: d.name,
+    )[-max_days:]
+
+    for day_dir in date_dirs:
+        date_str = day_dir.name
+        if len(date_str) != 10 or date_str[4] != "-":
+            continue
+
+        # qxlive (盘前, 最早 <= 09:30:00)
+        qxlive = load_capture_at_time(
+            project_root, date_str, DS_HOME_QXLIVE_TOP,
+            max_hhmmss=QXLIVE_PREMARKET_BOUNDARY_HHMMSS,
+            pick="earliest_before", raise_if_missing=False,
+        )
+        qxlive_rows = _extract_rows(qxlive)
+
+        ztbx = _extract_qxlive_metric(qxlive_rows, "ZTBX")
+        lbbx = _extract_qxlive_metric(qxlive_rows, "LBBX")
+        sz = _extract_qxlive_metric(qxlive_rows, "SZ")
+        xd = _extract_qxlive_metric(qxlive_rows, "XD")
+        dt = _extract_qxlive_metric(qxlive_rows, "DT")
+
+        advance_share = None
+        if sz is not None and xd is not None and (sz + xd) > 0:
+            advance_share = round(sz / (sz + xd), 4)
+
+        # ztpool (盘后, 取最新)
+        ztpool = load_capture_at_time(
+            project_root, date_str, DS_HOME_ZTPOOL,
+            pick="latest", raise_if_missing=False,
+        )
+        ztpool_rows = _extract_rows(ztpool)
+        pbbx = _extract_ztpool_pbbx(ztpool_rows)
+
+        j12 = _smoothed_rate(
+            pbbx.get("PBBX_1_2", {}).get("promoted"),
+            pbbx.get("PBBX_1_2", {}).get("eligible"),
+        )
+        j23 = _smoothed_rate(
+            pbbx.get("PBBX_2_3", {}).get("promoted"),
+            pbbx.get("PBBX_2_3", {}).get("eligible"),
+        )
+
+        relay_health = None
+        if j12 is not None and j23 is not None:
+            relay_health = round(RELAY_WEIGHT_1_2 * j12 + RELAY_WEIGHT_2_3 * j23, 2)
+        elif j12 is not None:
+            relay_health = round(j12, 2)
+        elif j23 is not None:
+            relay_health = round(j23, 2)
+
+        if ztbx is not None:
+            history.add_day(
+                ztbx=ztbx, lbbx=lbbx,
+                advance_share=advance_share,
+                dt=int(dt) if dt is not None else None,
+                relay_health=relay_health,
+            )
+
+    return history
 
 
 def _build_history_from_past_results(source_dir: Path, max_days: int = 60) -> D6History:
@@ -95,6 +180,33 @@ def _build_history_from_past_results(source_dir: Path, max_days: int = 60) -> D6
     return history
 
 
+def _merge_histories(*histories: D6History) -> D6History:
+    """合并多个 D6History, 按各序列独立排序后去重重建。"""
+    all_vals: Dict[str, List[float]] = {"ztbx": [], "lbbx": [], "adv": [], "dt": [], "relay": []}
+    for h in histories:
+        for arr, key in [(h.ztbx_values, "ztbx"), (h.lbbx_values, "lbbx"),
+                         (h.advance_share_values, "adv"), (h.dt_values, "dt"),
+                         (h.relay_health_values, "relay")]:
+            for v in arr:
+                if v is not None:
+                    all_vals[key].append(v)
+    result = D6History()
+    ztbx = sorted(all_vals["ztbx"])
+    lbbx = sorted(all_vals["lbbx"])
+    adv = sorted(all_vals["adv"])
+    dt = sorted(all_vals["dt"])
+    relay = sorted(all_vals["relay"])
+    for i in range(max(len(ztbx), len(lbbx), len(adv), len(dt), len(relay))):
+        result.add_day(
+            ztbx=ztbx[i] if i < len(ztbx) else None,
+            lbbx=lbbx[i] if i < len(lbbx) else None,
+            advance_share=adv[i] if i < len(adv) else None,
+            dt=dt[i] if i < len(dt) else None,
+            relay_health=relay[i] if i < len(relay) else None,
+        )
+    return result
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--date", default=None, help="分析日期, 默认上海时间今天")
@@ -105,7 +217,6 @@ def main() -> int:
 
     print(f"v4.2 premarket analysis: running for {today}...")
 
-    # 从已有 premarket report 构建 bundle (不重新下载, 飞书推送同款逻辑)
     report_path = _find_latest_premarket_report(today)
     if report_path is None:
         summary: Dict[str, Any] = {
@@ -131,37 +242,16 @@ def main() -> int:
         out_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
         return 1
 
-    # 从 report 构建 bundle (T0 数据从 report items 读取, T-1 从 captures 加载)
     bundle = _build_bundle_from_report(report_data, PROJECT_ROOT, today)
 
-    # 从过去分析结果构建 D6History (滚动分位需要历史数据)
-    history = _build_history_from_past_results(OUTPUT_DIR)
-    # 如果 premarket 目录历史不够, 补充 backtest 数据
+    # 构建 D6History: 优先级 1) 过去分析结果  2) 原始 captures 数据
+    history = _merge_histories(
+        _build_history_from_past_results(OUTPUT_DIR),
+        _build_history_from_past_results(BACKTEST_DIR),
+    )
     if history.history_days < 20:
-        bt_history = _build_history_from_past_results(BACKTEST_DIR)
-        # 合并: 按日期序取, 不重复
-        all_vals = {}
-        for src in [bt_history, history]:
-            for arr, key in [(src.ztbx_values, "ztbx"), (src.lbbx_values, "lbbx"),
-                              (src.advance_share_values, "adv"), (src.dt_values, "dt"),
-                              (src.relay_health_values, "relay")]:
-                for i, v in enumerate(arr):
-                    all_vals.setdefault((key, i), v)
-        # 重建
-        history = D6History()
-        ztbx = sorted([v for (k, _), v in all_vals.items() if k == "ztbx"])
-        lbbx = sorted([v for (k, _), v in all_vals.items() if k == "lbbx"])
-        adv = sorted([v for (k, _), v in all_vals.items() if k == "adv"])
-        dt = sorted([v for (k, _), v in all_vals.items() if k == "dt"])
-        relay = sorted([v for (k, _), v in all_vals.items() if k == "relay"])
-        for i in range(max(len(ztbx), len(lbbx), len(adv), len(dt), len(relay))):
-            history.add_day(
-                ztbx=ztbx[i] if i < len(ztbx) else None,
-                lbbx=lbbx[i] if i < len(lbbx) else None,
-                advance_share=adv[i] if i < len(adv) else None,
-                dt=dt[i] if i < len(dt) else None,
-                relay_health=relay[i] if i < len(relay) else None,
-            )
+        raw_history = _build_history_from_raw_captures(PROJECT_ROOT)
+        history = _merge_histories(history, raw_history)
     print(f"v4.2 premarket: history days = {history.history_days}")
 
     result = run_v4_2_pipeline(

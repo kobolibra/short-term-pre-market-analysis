@@ -402,12 +402,22 @@ def _build_bundle_from_report(
     """从已有 report 的 capture 数据构建 PremarketDataBundle, 避免重新下载。
 
     T0 竞价数据从 report items 的 capture_path 读取 (9:25 原始数据),
-    T-1 数据仍从 captures 目录加载 (历史数据, 不会变)。
+    T-1 数据直接从 captures 目录加载 (历史数据, 不会变)。
 
     如果 report 没有 items, 退回常规 load_premarket_bundle。
+
+    注意: 不调用 load_premarket_bundle(trade_date), 因为 T0 captures
+    可能只存在于 report 中而不在 captures/ 目录下。
     """
-    # 用常规 load_premarket_bundle 获取 T-1 数据
-    from duanxianxia_v7_1_data_loader import load_premarket_bundle as _load_bundle
+    from duanxianxia_v7_1_data_loader import (
+        load_premarket_bundle as _load_bundle,
+        load_capture_at_time, _extract_rows, _extract_meta,
+        previous_trading_day,
+        DS_HOME_QXLIVE_TOP, DS_HOME_ZTPOOL, DS_REVIEW_FUPAN, DS_REVIEW_LTGD,
+        DS_HOME_KAIPAN, DS_CASHFLOW_TODAY, DS_CASHFLOW_3DAY,
+        DS_CASHFLOW_5DAY, DS_CASHFLOW_10DAY,
+        QXLIVE_PREMARKET_BOUNDARY_HHMMSS, DEFAULT_KAIPAN_HISTORY_DAYS,
+    )
 
     items = report.get("items", [])
     if not items:
@@ -419,19 +429,104 @@ def _build_bundle_from_report(
         if did:
             item_map[did] = item
 
-    # 加载 T-1 数据 (历史数据, 从 captures 加载)
-    base_bundle = _load_bundle(trade_date, str(project_root),
-                               premarket_auction_cutoff="092900")
-
     # 从 report items 读取 T0 竞价数据 (9:25 原始快照)
     def _rows(ds_id: str) -> List[Dict[str, Any]]:
         return _extract_t0_rows_from_item(item_map.get(ds_id, {}))
 
+    # 直接加载 T-1 数据 (不依赖 load_premarket_bundle, 避免 T0 缺失报错)
+    d_t0 = date.fromisoformat(trade_date)
+    d_t1 = previous_trading_day(project_root, d_t0, n=1)
+    date_t1_str = d_t1.isoformat()
+    try:
+        d_t2 = previous_trading_day(project_root, d_t0, n=2)
+        date_t2_str: Optional[str] = d_t2.isoformat()
+    except Exception:
+        date_t2_str = None
+
+    t1_warnings: List[str] = []
+
+    def _try(ds: str, d: str = date_t1_str, *, pick: str = "latest",
+             max_hhmmss: Optional[str] = None) -> List[Dict[str, Any]]:
+        cap = load_capture_at_time(
+            project_root, d, ds, pick=pick,
+            max_hhmmss=max_hhmmss, raise_if_missing=False,
+        )
+        if cap is None:
+            t1_warnings.append(f"missing capture: {ds} {d}")
+            return []
+        return _extract_rows(cap)
+
+    def _try_meta(ds: str, d: str = date_t1_str, *, pick: str = "latest",
+                  max_hhmmss: Optional[str] = None) -> Dict[str, Any]:
+        cap = load_capture_at_time(
+            project_root, d, ds, pick=pick,
+            max_hhmmss=max_hhmmss, raise_if_missing=False,
+        )
+        return _extract_meta(cap) if cap else {}
+
+    # T-1 qxlive
+    q1 = load_capture_at_time(
+        project_root, date_t1_str, DS_HOME_QXLIVE_TOP,
+        max_hhmmss=QXLIVE_PREMARKET_BOUNDARY_HHMMSS,
+        pick="earliest_before", raise_if_missing=False,
+    )
+    qxlive_top_t1_rows = _extract_rows(q1)
+    qxlive_top_t1_meta = _extract_meta(q1) if q1 else {}
+    if not qxlive_top_t1_rows:
+        t1_warnings.append(f"missing_or_empty: {DS_HOME_QXLIVE_TOP} t1")
+
+    # T-2 qxlive
+    if date_t2_str:
+        q2 = load_capture_at_time(
+            project_root, date_t2_str, DS_HOME_QXLIVE_TOP,
+            max_hhmmss=QXLIVE_PREMARKET_BOUNDARY_HHMMSS,
+            pick="earliest_before", raise_if_missing=False,
+        )
+        qxlive_top_t2_rows = _extract_rows(q2)
+        qxlive_top_t2_meta = _extract_meta(q2) if q2 else {}
+    else:
+        qxlive_top_t2_rows = []
+        qxlive_top_t2_meta = {}
+
+    # T-1 其他数据
+    fupan_t1 = _try(DS_REVIEW_FUPAN)
+    ztpool_t1 = _try(DS_HOME_ZTPOOL)
+    ltgd_all = _try(DS_REVIEW_LTGD)
+    ltgd_5day_t1 = [r for r in ltgd_all if str(r.get("周期", "") or "").strip() == "5日"]
+    cashflow_today_t1 = _try(DS_CASHFLOW_TODAY)
+    cashflow_3day_t1 = _try(DS_CASHFLOW_3DAY)
+    cashflow_5day_t1 = _try(DS_CASHFLOW_5DAY)
+    cashflow_10day_t1 = _try(DS_CASHFLOW_10DAY)
+
+    # T-1 kaipan
+    kaipan_t1 = load_capture_at_time(
+        project_root, date_t1_str, DS_HOME_KAIPAN,
+        pick="latest", raise_if_missing=False,
+    )
+    kaipan_t1_rows = _extract_rows(kaipan_t1)
+    kaipan_t1_meta = _extract_meta(kaipan_t1)
+
+    # kaipan history (T-2 ~ T-N)
+    kaipan_history: List[Tuple[str, List[Dict[str, Any]], Dict[str, Any]]] = []
+    cur = d_t1
+    for _ in range(DEFAULT_KAIPAN_HISTORY_DAYS):
+        ds = cur.isoformat()
+        cap = load_capture_at_time(
+            project_root, ds, DS_HOME_KAIPAN,
+            pick="latest", raise_if_missing=False,
+        )
+        if cap is not None:
+            kaipan_history.append((ds, _extract_rows(cap), _extract_meta(cap)))
+        try:
+            cur = previous_trading_day(project_root, cur, n=1)
+        except Exception:
+            break
+
     return PremarketDataBundle(
-        date_t0=base_bundle.date_t0,
-        date_t1=base_bundle.date_t1,
-        date_t2=base_bundle.date_t2,
-        project_root=base_bundle.project_root,
+        date_t0=trade_date,
+        date_t1=date_t1_str,
+        date_t2=date_t2_str,
+        project_root=str(project_root),
         # T0: 从 report items 读取原始竞价数据
         auction_vratio=_rows("auction.jjyd.vratio"),
         auction_qiangchou=_rows("auction.jjyd.qiangchou"),
@@ -439,25 +534,25 @@ def _build_bundle_from_report(
         auction_fengdan=_rows("auction.jjlive.fengdan"),
         auction_weimai=_rows("auction.jjyd.weimai"),
         kaipan_t0_rows=_rows("home.kaipan.plate.summary"),
-        kaipan_t0_meta=base_bundle.kaipan_t0_meta,
+        kaipan_t0_meta={},
         qxlive_top_t0_rows=_rows("home.qxlive.top_metrics"),
-        qxlive_top_t0_meta=base_bundle.qxlive_top_t0_meta,
-        # T-1: 从 captures 加载 (历史数据不变)
-        kaipan_t1_rows=base_bundle.kaipan_t1_rows,
-        kaipan_t1_meta=base_bundle.kaipan_t1_meta,
-        cashflow_today_t1=base_bundle.cashflow_today_t1,
-        cashflow_3day_t1=base_bundle.cashflow_3day_t1,
-        cashflow_5day_t1=base_bundle.cashflow_5day_t1,
-        cashflow_10day_t1=base_bundle.cashflow_10day_t1,
-        fupan_t1=base_bundle.fupan_t1,
-        ltgd_5day_t1=base_bundle.ltgd_5day_t1,
-        ztpool_t1=base_bundle.ztpool_t1,
-        qxlive_top_t1_rows=base_bundle.qxlive_top_t1_rows,
-        qxlive_top_t1_meta=base_bundle.qxlive_top_t1_meta,
-        qxlive_top_t2_rows=base_bundle.qxlive_top_t2_rows,
-        qxlive_top_t2_meta=base_bundle.qxlive_top_t2_meta,
-        kaipan_history=base_bundle.kaipan_history,
-        warnings=base_bundle.warnings,
+        qxlive_top_t0_meta={},
+        # T-1: 直接从 captures 加载
+        kaipan_t1_rows=kaipan_t1_rows,
+        kaipan_t1_meta=kaipan_t1_meta,
+        cashflow_today_t1=cashflow_today_t1,
+        cashflow_3day_t1=cashflow_3day_t1,
+        cashflow_5day_t1=cashflow_5day_t1,
+        cashflow_10day_t1=cashflow_10day_t1,
+        fupan_t1=fupan_t1,
+        ltgd_5day_t1=ltgd_5day_t1,
+        ztpool_t1=ztpool_t1,
+        qxlive_top_t1_rows=qxlive_top_t1_rows,
+        qxlive_top_t1_meta=qxlive_top_t1_meta,
+        qxlive_top_t2_rows=qxlive_top_t2_rows,
+        qxlive_top_t2_meta=qxlive_top_t2_meta,
+        kaipan_history=kaipan_history,
+        warnings=t1_warnings,
     )
 
 def build_premarket_analysis_v4_2(

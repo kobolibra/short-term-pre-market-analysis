@@ -1,0 +1,7 @@
+{
+  "id": "daily_2026-07-16_publish_premarket_report",
+  "script": "scripts/_publish_premarket_report.py",
+  "args": ["2026-07-16"],
+  "timeout": 60,
+  "note": "把 9:25 cron 生成的盘前报告复制到 _audit/ 以便 publish_results 推送到 git"
+}

@@ -31,7 +31,7 @@ publish_results() {
   [ -n "$TREE" ] || { echo "write-tree failed"; return 0; }
   COMMIT="$(git commit-tree "$TREE" -m "agent results $(date -Is)")"
   [ -n "$COMMIT" ] || { echo "commit-tree failed"; return 0; }
-  if git push --force origin "$COMMIT:refs/heads/$RESULTS_BRANCH" 2>&1; then
+  if timeout 60 git push --force origin "$COMMIT:refs/heads/$RESULTS_BRANCH" 2>&1; then
     echo "results published to $RESULTS_BRANCH @ ${COMMIT:0:8}"
   else
     echo "results push FAILED (check push credentials)"

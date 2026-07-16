@@ -957,7 +957,7 @@ def determine_emotion_state(
         ztbx_pct = ztbx_pct if ztbx_pct is not None else 0.5
         lbbx_pct = _calc_pctile(history.lbbx_close_values, lbbx_close)
         lbbx_pct = lbbx_pct if lbbx_pct is not None else 0.5
-        profit_level = round(sorted([ztbx_pct, lbbx_pct])[len([ztbx_pct, lbbx_pct]) // 2], 4)
+        profit_level = round((ztbx_pct + lbbx_pct) / 2, 4)  # v4.2.1 fix: 2元素median用均值, 不用max
 
         # 家族 2: B = median(pct(advance_share_close), 1-pct(DT_close))
         adv_pct = _calc_pctile(history.advance_share_close_values, advance_share_close)
@@ -979,7 +979,7 @@ def determine_emotion_state(
             ztbx_pre_pct = ztbx_pre_pct if ztbx_pre_pct is not None else 0.5
             lbbx_pre_pct = _calc_pctile(history.lbbx_pre_values, lbbx_925)
             lbbx_pre_pct = lbbx_pre_pct if lbbx_pre_pct is not None else 0.5
-            pre_profit = round(sorted([ztbx_pre_pct, lbbx_pre_pct])[len([ztbx_pre_pct, lbbx_pre_pct]) // 2], 4)
+            pre_profit = round((ztbx_pre_pct + lbbx_pre_pct) / 2, 4)  # v4.2.1 fix: 2元素median用均值
             adv_pre_pct = _calc_pctile(history.advance_share_pre_values, advance_share)
             adv_pre_pct = adv_pre_pct if adv_pre_pct is not None else 0.5
             dt_pre_pct = _calc_pctile(history.dt_pre_values, dt_925)
@@ -999,7 +999,7 @@ def determine_emotion_state(
         ztbx_pct = ztbx_pct if ztbx_pct is not None else 0.5
         lbbx_pct = _calc_pctile(history.lbbx_pre_values, lbbx_925)
         lbbx_pct = lbbx_pct if lbbx_pct is not None else 0.5
-        profit_level = round(sorted([ztbx_pct, lbbx_pct])[len([ztbx_pct, lbbx_pct]) // 2], 4)
+        profit_level = round((ztbx_pct + lbbx_pct) / 2, 4)  # v4.2.1 fix: 2元素median用均值, 不用max
 
         adv_pct = _calc_pctile(history.advance_share_pre_values, advance_share)
         adv_pct = adv_pct if adv_pct is not None else 0.5

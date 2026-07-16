@@ -633,11 +633,17 @@ def build_premarket_analysis_v4_2(
     # 从已有 report 的 capture 数据构建 bundle (T0用9:25原始数据, 不重新下载)
     bundle = _build_bundle_from_report(report, root, trade_date)
 
+    # 构建历史数据 (从 captures 目录扫描 D6 历史, 用于水位分位计算)
+    # 延迟导入避免循环依赖
+    from duanxianxia_v4_2_premarket_daily import _build_history_from_raw_captures
+    history = _build_history_from_raw_captures(root)
+
     # 运行 v4.2 管线
     result = run_v4_2_pipeline(
         date_t0=trade_date,
         project_root=str(root),
         bundle=bundle,
+        history=history,
     )
 
     if "error" in result:

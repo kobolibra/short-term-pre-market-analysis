@@ -1,0 +1,7 @@
+{
+  "id": "daily_2026-07-16_rerun_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": ["--date", "2026-07-16"],
+  "timeout": 2400,
+  "note": "补跑 7/16 v4.2 盘前分析 — 凌晨 job 因报告未生成而失败"
+}

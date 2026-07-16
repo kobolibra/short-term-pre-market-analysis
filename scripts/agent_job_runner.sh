@@ -3,7 +3,6 @@
 set -uo pipefail
 WS=/home/investmentofficehku/.openclaw/workspace
 RESULTS_REL=projects/duanxianxia/reports/_audit
-REPORTS_REL=projects/duanxianxia/reports
 IPO_RESULTS_REL=projects/ipo_calendar/reports/_audit
 RESULTS_BRANCH=agent-results
 LOG="$WS/$RESULTS_REL/agent_jobs/runner.log"
@@ -18,9 +17,6 @@ publish_results() {
   RFILES=()
   if [ -d "$RESULTS_REL" ]; then
     while IFS= read -r f; do RFILES+=("$f"); done < <(find "$RESULTS_REL" -type f ! -name '*.lock' 2>/dev/null)
-  fi
-  if [ -d "$REPORTS_REL" ]; then
-    while IFS= read -r f; do RFILES+=("$f"); done < <(find "$REPORTS_REL" -maxdepth 3 -type f -name "*.json" ! -path "*/_audit/*" 2>/dev/null)
   fi
   if [ -d "$IPO_RESULTS_REL" ]; then
     while IFS= read -r f; do RFILES+=("$f"); done < <(find "$IPO_RESULTS_REL" -type f ! -name '*.lock' 2>/dev/null)

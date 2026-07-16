@@ -1,0 +1,7 @@
+{
+  "id": "daily_2026-07-16_rerun_premarket_v3",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": ["--date", "2026-07-16"],
+  "timeout": 2400,
+  "note": "补跑v3: DS_REVIEW_DAILY改为review.daily.top_metrics后重跑"
+}

@@ -33,7 +33,7 @@ from duanxianxia_v4_2_d6_emotion import (
 )
 from duanxianxia_v7_1_data_loader import (
     load_capture_at_time, _extract_rows,
-    DS_HOME_QXLIVE_TOP, DS_HOME_ZTPOOL,
+    DS_HOME_QXLIVE_TOP, DS_HOME_ZTPOOL, DS_REVIEW_DAILY,
     QXLIVE_PREMARKET_BOUNDARY_HHMMSS,
 )
 
@@ -73,6 +73,18 @@ def _find_latest_premarket_report(today: str) -> Optional[Path]:
         reverse=True,
     )
     return candidates[0] if candidates else None
+
+
+def _extract_review_metric(rows: List[Dict[str, Any]], metric_key: str) -> Optional[float]:
+    """从 review_daily rows 中提取指定 metric_key 的值."""
+    for row in rows:
+        if str(row.get("metric_key", "")) == metric_key:
+            try:
+                v = row.get("value")
+                return float(v) if v not in (None, "") else None
+            except (ValueError, TypeError):
+                return None
+    return None
 
 
 @functools.lru_cache(maxsize=1)
@@ -119,31 +131,28 @@ def _build_history_from_raw_captures(project_root: Path, max_days: int = 60) -> 
         if sz is not None and xd is not None and (sz + xd) > 0:
             advance_share = round(sz / (sz + xd), 4)
 
-        # qxlive 盘后 (取最新, 不限时间) — 用于 KQXY + QX + P/B 盘后指标 (v4)
+        # review_daily 盘后 (收盘数据, 来自 postmarket cron) — 用于 KQXY + QX + P/B 盘后指标 (v4)
         kqxy = None
         close_qx = None
         ztbx_close = None
         lbbx_close = None
         advance_share_close = None
         dt_close = None
-        kq_live = load_capture_at_time(
-            project_root, date_str, DS_HOME_QXLIVE_TOP,
+        review = load_capture_at_time(
+            project_root, date_str, DS_REVIEW_DAILY,
             pick="latest", raise_if_missing=False,
         )
-        if kq_live:
-            kq_rows = _extract_rows(kq_live)
-            kq_val = _extract_qxlive_metric(kq_rows, "KQXY")
+        if review:
+            review_rows = _extract_rows(review)
+            kq_val = _extract_review_metric(review_rows, "KQXY")
             if kq_val is not None and kq_val > 0:
                 kqxy = kq_val
-            qx_close = _extract_qxlive_metric(kq_rows, "QX")
-            if qx_close is not None:
-                close_qx = qx_close
-            # v4 新增: P/B 盘后指标 (用于水位计算, 市场底色)
-            ztbx_close = _extract_qxlive_metric(kq_rows, "ZTBX")
-            lbbx_close = _extract_qxlive_metric(kq_rows, "LBBX")
-            sz_close = _extract_qxlive_metric(kq_rows, "SZ")
-            xd_close = _extract_qxlive_metric(kq_rows, "XD")
-            dt_close_raw = _extract_qxlive_metric(kq_rows, "DT")
+            close_qx = _extract_review_metric(review_rows, "QX")
+            ztbx_close = _extract_review_metric(review_rows, "ZTBX")
+            lbbx_close = _extract_review_metric(review_rows, "LBBX")
+            sz_close = _extract_review_metric(review_rows, "SZ")
+            xd_close = _extract_review_metric(review_rows, "XD")
+            dt_close_raw = _extract_review_metric(review_rows, "DT")
             if sz_close is not None and xd_close is not None and (sz_close + xd_close) > 0:
                 advance_share_close = round(sz_close / (sz_close + xd_close), 4)
             dt_close = int(dt_close_raw) if dt_close_raw is not None else None

@@ -430,7 +430,7 @@ def _build_bundle_from_report(
         load_premarket_bundle as _load_bundle,
         load_capture_at_time, _extract_rows, _extract_meta,
         previous_trading_day,
-        DS_HOME_QXLIVE_TOP, DS_HOME_ZTPOOL, DS_REVIEW_FUPAN, DS_REVIEW_LTGD,
+        DS_HOME_QXLIVE_TOP, DS_HOME_ZTPOOL, DS_REVIEW_FUPAN, DS_REVIEW_DAILY, DS_REVIEW_LTGD,
         DS_HOME_KAIPAN, DS_CASHFLOW_TODAY, DS_CASHFLOW_3DAY,
         DS_CASHFLOW_5DAY, DS_CASHFLOW_10DAY,
         QXLIVE_PREMARKET_BOUNDARY_HHMMSS, DEFAULT_KAIPAN_HISTORY_DAYS,
@@ -492,13 +492,13 @@ def _build_bundle_from_report(
     if not qxlive_top_t1_rows:
         t1_warnings.append(f"missing_or_empty: {DS_HOME_QXLIVE_TOP} t1")
 
-    # v4 新增: T-1 盘后 qxlive 指标 (收盘, 不限时间, 取最新, 用于水位计算)
-    qc1 = load_capture_at_time(
-        project_root, date_t1_str, DS_HOME_QXLIVE_TOP,
+    # v4 新增: T-1 盘后 review_daily 收盘数据 (来自 postmarket cron, 用于水位计算)
+    rc1 = load_capture_at_time(
+        project_root, date_t1_str, DS_REVIEW_DAILY,
         pick="latest", raise_if_missing=False,
     )
-    qxlive_close_t1_rows = _extract_rows(qc1)
-    qxlive_close_t1_meta = _extract_meta(qc1) if qc1 else {}
+    qxlive_close_t1_rows = _extract_rows(rc1)
+    qxlive_close_t1_meta = _extract_meta(rc1) if rc1 else {}
 
     # T-2 qxlive
     if date_t2_str:

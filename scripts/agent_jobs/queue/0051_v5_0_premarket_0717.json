@@ -1,0 +1,8 @@
+{
+  "id": "0051_v5_0_premarket_0717",
+  "script": "scripts/duanxianxia_v5_0_premarket_daily.py",
+  "args": ["--date", "2026-07-17"],
+  "timeout": 2400,
+  "created": "2026-07-20T12:00:00+08:00",
+  "note": "v5.0 回测 7/17 — 用最新 v5.0 统计剖面框架重新分析 7/17 盘前选股"
+}

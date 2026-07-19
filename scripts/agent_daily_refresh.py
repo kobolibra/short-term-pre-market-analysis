@@ -48,6 +48,7 @@ SUITE_DAILY = [
     ("v26_shadow_strategy.py", []),
     ("duanxianxia_v4_2_backtest_daily.py", []),
     ("duanxianxia_v4_2_premarket_daily.py", []),
+    ("duanxianxia_v5_0_premarket_daily.py", []),
 ]
 
 # pending-safe label evaluator: retry hourly because same-day dailyline / T+1 labels land later
@@ -78,11 +79,11 @@ def main():
         if qf.exists():
             continue
         # premarket_daily 依赖 9:25 cron 生成的盘前报告, 9:30 前不入队
-        if script == "duanxianxia_v4_2_premarket_daily.py" and now.hour < 9:
+        if script in ("duanxianxia_v4_2_premarket_daily.py", "duanxianxia_v5_0_premarket_daily.py") and now.hour < 9:
             continue
         # 对于每日脚本需要传入日期参数(解决时区问题)
         all_args = [*args]
-        if script in ("duanxianxia_v4_2_premarket_daily.py", "duanxianxia_v4_2_backtest_daily.py"):
+        if script in ("duanxianxia_v4_2_premarket_daily.py", "duanxianxia_v4_2_backtest_daily.py", "duanxianxia_v5_0_premarket_daily.py"):
             all_args.extend(["--date" if "premarket" in script else "--today", today])
         qf.write_text(json.dumps({
             "id": job_id,

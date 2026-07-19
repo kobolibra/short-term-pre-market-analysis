@@ -56,7 +56,6 @@ v5.0 统计剖面框架:
 
 from __future__ import annotations
 
-import math
 import statistics
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
@@ -78,12 +77,6 @@ INDICATOR_DEFS = {
     "relay":        {"label": "接力",       "dual_section": False, "polarity": +1},
     "kqxy":         {"label": "KQXY",      "dual_section": False, "polarity": -1},
 }
-
-# 双截面指标 (有 pre 数据的)
-DUAL_SECTION_KEYS = [k for k, v in INDICATOR_DEFS.items() if v["dual_section"]]
-
-# 单截面指标 (只有 close 数据)
-SINGLE_SECTION_KEYS = [k for k, v in INDICATOR_DEFS.items() if not v["dual_section"]]
 
 # 所有指标 (用于 close 分位数)
 ALL_INDICATOR_KEYS = list(INDICATOR_DEFS.keys())
@@ -141,7 +134,6 @@ class ProfileHistory:
     # --- 接力 (单截面, 来自 ztpool) ---
     relay_health: List[float] = field(default_factory=list)
 
-    _WINDOW = 60
     _MIN_DAYS = MIN_DAYS_FOR_PCTILE
 
     def add_day(self,

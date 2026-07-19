@@ -27,7 +27,7 @@ from __future__ import annotations
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -36,6 +36,14 @@ from duanxianxia_v5_0_d6_profile import (
 )
 from duanxianxia_v4_2_d7_router import PoolType, RiskTag, RoutedStock
 from duanxianxia_v4_2_pool_ranker import PoolRankResult, RankedStock
+
+# PoolType 枚举 → 字符串键映射 (POOL_BASE_POSITION / POOL_POSITION_CAP 的键是字符串)
+POOL_TYPE_TO_KEY = {
+    PoolType.POOL_YIZI: "yizi",
+    PoolType.POOL_HUANSHOU: "huanshou",
+    PoolType.POOL_FENQI: "fenqi",
+    PoolType.POOL_FEIBAN: "feiban",
+}
 
 
 # ============================================================================
@@ -132,8 +140,9 @@ def _calc_final_position(
       - profile_position: MarketProfile.position (bottleneck×(1-divergence))
       - pool_mult: 该池的瓶颈维度乘子 (MarketProfile.pool_multipliers)
     """
-    base = POOL_BASE_POSITION.get(pool_type, 1.0)
-    cap = POOL_POSITION_CAP.get(pool_type, 5.0)
+    key = POOL_TYPE_TO_KEY.get(pool_type, "feiban")
+    base = POOL_BASE_POSITION.get(key, 1.0)
+    cap = POOL_POSITION_CAP.get(key, 5.0)
     position = base * height_mult * risk_mult * profile_position * pool_mult
     return min(position, cap)
 
@@ -293,7 +302,7 @@ def build_execution_plan(
                 pool=pool_type,
                 pool_label=pool_label,
                 position_pct=round(position, 2),
-                base_position_pct=POOL_BASE_POSITION.get(pool_type, 1.0),
+                base_position_pct=POOL_BASE_POSITION.get(pool_mult_key, 1.0),
                 height_mult=height_mult,
                 risk_mult=round(risk_mult, 2),
                 profile_position=profile.position,

@@ -28,7 +28,6 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from dataclasses import asdict
 from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -60,8 +59,6 @@ from duanxianxia_v5_0_d6_profile import (
 # 复用 v4.2 的数据提取函数
 from duanxianxia_v4_2_d6_emotion import (
     _extract_qxlive_metric,
-)
-from duanxianxia_v4_2_d6_emotion import (
     _extract_ztpool_pbbx,
     _smoothed_rate,
     RELAY_WEIGHT_1_2,

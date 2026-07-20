@@ -3,6 +3,6 @@
   "script": "scripts/duanxianxia_v5_0_premarket_daily.py",
   "args": ["--date", "2026-07-20"],
   "timeout": 2400,
-  "created": "2026-07-20T14:50:00+08:00",
-  "note": "v5.0 重跑7/20 — 恢复双时间截面: 12数据点, heat=0.278, position=0.207"
+  "created": "2026-07-20T15:00:00+08:00",
+  "note": "v5.0 重跑7/20 — 双时间截面恢复: 12数据点, heat=0.278, position=0.207, board_only"
 }

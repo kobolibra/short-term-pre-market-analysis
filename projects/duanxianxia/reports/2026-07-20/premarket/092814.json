@@ -1,0 +1,1059 @@
+{
+  "project": "duanxianxia",
+  "group": "premarket",
+  "group_label": "盘前",
+  "trigger": "manual_or_cron",
+  "generated_at": "2026-07-20T09:25:42+08:00",
+  "generated_at_utc": "2026-07-20T01:25:42Z",
+  "timezone": "Asia/Shanghai",
+  "expected_count": 9,
+  "success_count": 9,
+  "failure_count": 0,
+  "success": true,
+  "complete": true,
+  "saved": true,
+  "failed_items": [],
+  "incomplete_items": [],
+  "missing_items": [],
+  "items": [
+    {
+      "seq": 1,
+      "dataset": "rocket",
+      "dataset_id": "rank.rocket",
+      "dataset_label": "飙升榜",
+      "source_path": "搜索/榜单",
+      "source_url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+      "fetched_at": "2026-07-20T09:25:44+08:00",
+      "row_count": 100,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-20/rank.rocket/092544.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "value",
+        "raw_rate"
+      ]
+    },
+    {
+      "seq": 4,
+      "dataset": "hotlist_day",
+      "dataset_id": "rank.hot_stock_day",
+      "dataset_label": "热度榜（日）",
+      "source_path": "热度榜/日",
+      "source_url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+      "fetched_at": "2026-07-20T09:25:44+08:00",
+      "row_count": 100,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-20/rank.hot_stock_day/092544.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "value",
+        "raw_rate"
+      ]
+    },
+    {
+      "seq": 7,
+      "dataset": "auction_vratio",
+      "dataset_id": "auction.jjyd.vratio",
+      "dataset_label": "竞价异动/竞价爆量",
+      "source_path": "竞价/竞价异动/竞价爆量",
+      "source_url": "https://duanxianxia.com/data/getVratioData/11",
+      "fetched_at": "2026-07-20T09:25:45+08:00",
+      "row_count": 266,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-20/auction.jjyd.vratio/092545.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "free_float_mktcap_yi",
+        "seal_amount_wan",
+        "auction_change_pct",
+        "latest_change_pct",
+        "auction_turnover_wan",
+        "concept",
+        "auction_change_pct_text",
+        "auction_turnover_wan_text",
+        "yesterday_auction_turnover_wan",
+        "volume_ratio_multiple",
+        "turnover_rate_pct",
+        "raw"
+      ]
+    },
+    {
+      "seq": 8,
+      "dataset": "auction_qiangchou",
+      "dataset_id": "auction.jjyd.qiangchou",
+      "dataset_label": "竞价异动/竞价抢筹",
+      "source_path": "竞价/竞价异动/竞价抢筹",
+      "source_url": "https://duanxianxia.com/data/getQiangchouData/11",
+      "fetched_at": "2026-07-20T09:25:45+08:00",
+      "row_count": 193,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-20/auction.jjyd.qiangchou/092545.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "group",
+        "rank",
+        "code",
+        "name",
+        "free_float_mktcap_yi",
+        "seal_amount_wan",
+        "auction_change_pct",
+        "latest_change_pct",
+        "auction_turnover_wan",
+        "concept",
+        "auction_change_pct_text",
+        "auction_turnover_wan_text",
+        "yesterday_auction_turnover_wan",
+        "grab_strength",
+        "turnover_rate_pct",
+        "raw"
+      ]
+    },
+    {
+      "seq": 9,
+      "dataset": "auction_net_amount",
+      "dataset_id": "auction.jjyd.net_amount",
+      "dataset_label": "竞价异动/竞价净额",
+      "source_path": "竞价/竞价异动/竞价净额",
+      "source_url": "https://duanxianxia.com/vendor/stockdata/jjzhuli.json",
+      "fetched_at": "2026-07-20T09:25:46+08:00",
+      "row_count": 57,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-20/auction.jjyd.net_amount/092546.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "auction_change_pct",
+        "latest_change_pct",
+        "main_net_inflow_wan",
+        "auction_turnover_wan",
+        "free_float_mktcap_yi",
+        "concept",
+        "turnover_rate_pct",
+        "concept_1",
+        "concept_2",
+        "raw"
+      ]
+    },
+    {
+      "seq": 10,
+      "dataset": "auction_fengdan",
+      "dataset_id": "auction.jjlive.fengdan",
+      "dataset_label": "竞价封单/当日封单表",
+      "source_path": "竞价/竞价封单",
+      "source_url": "https://ds.duanxianxia.com/vendor/stockdata/jjlive.json",
+      "fetched_at": "2026-07-20T09:25:48+08:00",
+      "row_count": 91,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-20/auction.jjlive.fengdan/092548.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "section_date",
+        "section_kind",
+        "section_yizi_count",
+        "section_seal_total",
+        "section_t15_total",
+        "section_t20_total",
+        "section_t25_total",
+        "section_has_change_pct",
+        "rank",
+        "code",
+        "name",
+        "tag_1",
+        "tag_2",
+        "tag_3",
+        "board_label",
+        "amount_915",
+        "amount_920",
+        "amount_925",
+        "latest_change_pct",
+        "latest_change_pct_source",
+        "tags"
+      ]
+    },
+    {
+      "seq": 10,
+      "dataset": "auction_weimai",
+      "dataset_id": "auction.jjyd.weimai",
+      "dataset_label": "竞价异动/涨停委买",
+      "source_path": "竞价/竞价异动/涨停委买",
+      "source_url": "https://duanxianxia.com/vendor/stockdata/daban.json",
+      "fetched_at": "2026-07-20T09:25:49+08:00",
+      "row_count": 150,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-20/auction.jjyd.weimai/092549.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "price",
+        "latest_change_pct",
+        "latest_change_pct_text",
+        "seal_amount_wan_raw",
+        "seal_amount_wan_raw_wan",
+        "seal_amount_wan_raw_text",
+        "auction_change_pct",
+        "auction_change_pct_text",
+        "main_net_inflow",
+        "main_net_inflow_wan",
+        "main_net_inflow_text",
+        "turnover_rate_pct",
+        "turnover_rate_pct_text",
+        "auction_turnover",
+        "auction_amount",
+        "auction_amount_wan",
+        "auction_turnover_dup",
+        "concept",
+        "concept_1",
+        "concept_2",
+        "free_float_mktcap",
+        "free_float_mktcap_yi",
+        "free_float_mktcap_text",
+        "main_net_inflow_full",
+        "super_large_net_inflow",
+        "large_order_net_inflow",
+        "board_label",
+        "seal_amount_wan",
+        "seal_amount_text",
+        "raw"
+      ]
+    },
+    {
+      "seq": 16,
+      "dataset": "home_qxlive_plate_summary",
+      "dataset_id": "home.kaipan.plate.summary",
+      "dataset_label": "主页板块强度全主标签汇总表",
+      "source_path": "主页/qxlive/全主标签/主标签字段+子标签列表",
+      "source_url": "https://duanxianxia.com/web/qxlive",
+      "fetched_at": "2026-07-20T09:27:50+08:00",
+      "row_count": 5,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-20/home.kaipan.plate.summary/092750.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "主标签序号",
+        "主标签名称",
+        "主标签代码",
+        "板块强度",
+        "板块强度原值",
+        "主力流入",
+        "主力流入原值",
+        "主力流入真实金额",
+        "涨停数量",
+        "子标签数量",
+        "子标签列表"
+      ]
+    },
+    {
+      "seq": 17,
+      "dataset": "home_qxlive_top_metrics",
+      "dataset_id": "home.qxlive.top_metrics",
+      "dataset_label": "主页 qxlive 顶部指标按钮组",
+      "source_path": "主页/qxlive/顶部指标按钮组",
+      "source_url": "https://duanxianxia.com/web/qxlive",
+      "fetched_at": "2026-07-20T09:28:08+08:00",
+      "row_count": 12,
+      "capture_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-20/home.qxlive.top_metrics/092808.json",
+      "saved": true,
+      "success": true,
+      "complete": true,
+      "failed_items": [],
+      "missing_items": [],
+      "headers": [
+        "order",
+        "metric_key",
+        "metric_label",
+        "date",
+        "time_point",
+        "value",
+        "button_display_value",
+        "chart_tail_value",
+        "compare_value",
+        "source_series",
+        "display_series",
+        "compare_series",
+        "button_id",
+        "button_text",
+        "raw_value",
+        "raw_chart_tail_value",
+        "raw_compare_value"
+      ]
+    }
+  ],
+  "analysis": {
+    "enabled": true,
+    "version": "v4.2.1",
+    "candidate_count": 401,
+    "top_candidates": [],
+    "actionable_candidates": [],
+    "watch_candidates": [
+      {
+        "code": "603580",
+        "name": "艾艾精工",
+        "rank": 1,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": 12.645272396006698,
+        "action_reason": "一字封池排名#1；板数=7；Bonus +1",
+        "reasons": [
+          "一字封池排名#1",
+          "板数=7",
+          "Bonus +1"
+        ],
+        "risks": [
+          "HIGH_LEVEL"
+        ],
+        "source_hit_count": 0,
+        "pool": "一字封"
+      },
+      {
+        "code": "002677",
+        "name": "浙江美大",
+        "rank": 2,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": -999.0,
+        "action_reason": "一字封池排名#2；板数=4",
+        "reasons": [
+          "一字封池排名#2",
+          "板数=4"
+        ],
+        "risks": [
+          "HIGH_LEVEL"
+        ],
+        "source_hit_count": 0,
+        "pool": "一字封"
+      },
+      {
+        "code": "000722",
+        "name": "湖南发展",
+        "rank": 1,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": 55.835555705906394,
+        "action_reason": "换手封池排名#1；板数=2；Bonus +1",
+        "reasons": [
+          "换手封池排名#1",
+          "板数=2",
+          "Bonus +1"
+        ],
+        "risks": [],
+        "source_hit_count": 0,
+        "pool": "换手封"
+      },
+      {
+        "code": "001258",
+        "name": "立新能源",
+        "rank": 2,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": 93.29585444283666,
+        "action_reason": "换手封池排名#2；板数=2；Bonus +2",
+        "reasons": [
+          "换手封池排名#2",
+          "板数=2",
+          "Bonus +2"
+        ],
+        "risks": [],
+        "source_hit_count": 0,
+        "pool": "换手封"
+      },
+      {
+        "code": "000899",
+        "name": "赣能股份",
+        "rank": 3,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": 51.089792994041986,
+        "action_reason": "换手封池排名#3；板数=1",
+        "reasons": [
+          "换手封池排名#3",
+          "板数=1"
+        ],
+        "risks": [],
+        "source_hit_count": 0,
+        "pool": "换手封"
+      },
+      {
+        "code": "002632",
+        "name": "道明光学",
+        "rank": 1,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": -999.0,
+        "action_reason": "分歧封池排名#1；板数=2；Bonus +1",
+        "reasons": [
+          "分歧封池排名#1",
+          "板数=2",
+          "Bonus +1"
+        ],
+        "risks": [],
+        "source_hit_count": 0,
+        "pool": "分歧封"
+      },
+      {
+        "code": "300577",
+        "name": "开润股份",
+        "rank": 2,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": -999.0,
+        "action_reason": "分歧封池排名#2；板数=1",
+        "reasons": [
+          "分歧封池排名#2",
+          "板数=1"
+        ],
+        "risks": [],
+        "source_hit_count": 0,
+        "pool": "分歧封"
+      },
+      {
+        "code": "688200",
+        "name": "华峰测控",
+        "rank": 1,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": 100.0,
+        "action_reason": "非板池排名#1；板数=0；Bonus +1",
+        "reasons": [
+          "非板池排名#1",
+          "板数=0",
+          "Bonus +1"
+        ],
+        "risks": [],
+        "source_hit_count": 0,
+        "pool": "非板"
+      },
+      {
+        "code": "688328",
+        "name": "深科达",
+        "rank": 2,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": 100.0,
+        "action_reason": "非板池排名#2；板数=0；Bonus +1",
+        "reasons": [
+          "非板池排名#2",
+          "板数=0",
+          "Bonus +1"
+        ],
+        "risks": [],
+        "source_hit_count": 0,
+        "pool": "非板"
+      },
+      {
+        "code": "300308",
+        "name": "中际旭创",
+        "rank": 3,
+        "action_type": "WATCH",
+        "pre_gate_action_type": "WATCH",
+        "score": 100.0,
+        "action_reason": "非板池排名#3；板数=0；Bonus +2",
+        "reasons": [
+          "非板池排名#3",
+          "板数=0",
+          "Bonus +2"
+        ],
+        "risks": [],
+        "source_hit_count": 0,
+        "pool": "非板"
+      }
+    ],
+    "buy_gate": {
+      "regime": "数据不足",
+      "selected": 0,
+      "emotion_state": "数据不足",
+      "phase": "UNKNOWN",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "buy_mode": "observe_only",
+      "t0_impulse": false,
+      "profit_collapse": false
+    },
+    "meta": {
+      "engine": "premarket_v4_2",
+      "emotion": {
+        "phase": "UNKNOWN",
+        "phase_label": "数据不足",
+        "level": "LOW",
+        "level_score": 0.2,
+        "direction": "UNKNOWN",
+        "risk_tier": "WARNING",
+        "position_cap": 0.1,
+        "buy_mode": "observe_only",
+        "relay_health": 23.09,
+        "jinji_1_2": 14.71,
+        "jinji_2_3": 33.33,
+        "ztbx_925": 1.7,
+        "lbbx_925": -2.11,
+        "advance_share": 0.6844,
+        "dt_925": 14,
+        "hard_veto": false,
+        "profit_collapse": false,
+        "breadth_panic": false,
+        "kqxy_t1": 26.0,
+        "kqxy_t2": 8.0,
+        "loss_level": "HIGH",
+        "loss_direction": "EXPANDING",
+        "loss_overlay": "NONE",
+        "qx_925": 43.0,
+        "qx_stats": {
+          "pre_qx": {
+            "median": 24.0,
+            "std": 6.6678,
+            "band1_low": 17.3322,
+            "band1_high": 30.6678,
+            "band2_low": 10.6643,
+            "band2_high": 37.3357,
+            "n": 20
+          },
+          "close_qx": {
+            "median": 57.5,
+            "std": 16.7077,
+            "band1_low": 40.7923,
+            "band1_high": 74.2077,
+            "band2_low": 24.0846,
+            "band2_high": 90.9154,
+            "n": 20
+          },
+          "today_position": "WITHIN_1SIGMA"
+        },
+        "pool_enabled": {
+          "一字封": false,
+          "换手封": false,
+          "分歧封": false,
+          "非板": false
+        },
+        "pool_mult": {
+          "一字封": 1.0,
+          "换手封": 1.0,
+          "分歧封": 1.0,
+          "非板": 1.0
+        },
+        "phase_confidence": 1.0,
+        "data_quality": {
+          "profit_family": "VALID",
+          "breadth_family": "VALID",
+          "relay_family": "VALID"
+        },
+        "profit_level": 0.2,
+        "breadth_level": 0.0,
+        "relay_level": 0.7308,
+        "profit_delta": null,
+        "breadth_delta": null,
+        "relay_delta": 0.0108,
+        "height_preference": "LOW",
+        "fenqi_priority": "DISABLED",
+        "auction_buy_enabled": false,
+        "close_level_score": 0.2,
+        "pre_level_score": 0.3148,
+        "level_source": "CLOSE",
+        "ztbx_close": -1.27,
+        "lbbx_close": 0.54,
+        "advance_share_close": 0.0784,
+        "dt_close": 192,
+        "warnings": [],
+        "diagnostics": {
+          "pbbx_raw": {
+            "PBBX_2_3": {
+              "rate": 29.0,
+              "promoted": 2,
+              "eligible": 7,
+              "ladder": "2进3"
+            },
+            "PBBX_1_2": {
+              "rate": 13.0,
+              "promoted": 4,
+              "eligible": 32,
+              "ladder": "1进2"
+            }
+          },
+          "ztbx_t1": null,
+          "lbbx_t1": null,
+          "sz_925": 3261.0,
+          "xd_925": 1504.0,
+          "use_close_pctile": true,
+          "use_pre_pctile": false,
+          "level_source": "CLOSE",
+          "history_days": 26,
+          "history_close_days": 26,
+          "valid_families": 3,
+          "data_quality_level": "GOOD",
+          "level_score": 0.2,
+          "close_level_score": 0.2,
+          "pre_level_score": 0.3148,
+          "ice_stage": null,
+          "retreat_stage": null,
+          "hard_veto": false,
+          "prev_phase": null,
+          "loss_overlay": "NONE",
+          "loss_level": "HIGH",
+          "loss_direction": "EXPANDING",
+          "kqxy_from_history": true,
+          "ztbx_close": -1.27,
+          "lbbx_close": 0.54,
+          "advance_share_close": 0.0784,
+          "dt_close": 192,
+          "version": "v4.0-dual-timeslice"
+        }
+      },
+      "buy_gate": {
+        "regime": "数据不足",
+        "selected": 0,
+        "emotion_state": "数据不足",
+        "phase": "UNKNOWN",
+        "risk_tier": "WARNING",
+        "position_cap": 0.1,
+        "buy_mode": "observe_only",
+        "t0_impulse": false,
+        "profit_collapse": false
+      }
+    },
+    "v4_2_raw": {
+      "emotion": {
+        "phase": "UNKNOWN",
+        "phase_label": "数据不足",
+        "level": "LOW",
+        "level_score": 0.2,
+        "direction": "UNKNOWN",
+        "risk_tier": "WARNING",
+        "position_cap": 0.1,
+        "buy_mode": "observe_only",
+        "relay_health": 23.09,
+        "jinji_1_2": 14.71,
+        "jinji_2_3": 33.33,
+        "ztbx_925": 1.7,
+        "lbbx_925": -2.11,
+        "advance_share": 0.6844,
+        "dt_925": 14,
+        "hard_veto": false,
+        "profit_collapse": false,
+        "breadth_panic": false,
+        "kqxy_t1": 26.0,
+        "kqxy_t2": 8.0,
+        "loss_level": "HIGH",
+        "loss_direction": "EXPANDING",
+        "loss_overlay": "NONE",
+        "qx_925": 43.0,
+        "qx_stats": {
+          "pre_qx": {
+            "median": 24.0,
+            "std": 6.6678,
+            "band1_low": 17.3322,
+            "band1_high": 30.6678,
+            "band2_low": 10.6643,
+            "band2_high": 37.3357,
+            "n": 20
+          },
+          "close_qx": {
+            "median": 57.5,
+            "std": 16.7077,
+            "band1_low": 40.7923,
+            "band1_high": 74.2077,
+            "band2_low": 24.0846,
+            "band2_high": 90.9154,
+            "n": 20
+          },
+          "today_position": "WITHIN_1SIGMA"
+        },
+        "pool_enabled": {
+          "一字封": false,
+          "换手封": false,
+          "分歧封": false,
+          "非板": false
+        },
+        "pool_mult": {
+          "一字封": 1.0,
+          "换手封": 1.0,
+          "分歧封": 1.0,
+          "非板": 1.0
+        },
+        "phase_confidence": 1.0,
+        "data_quality": {
+          "profit_family": "VALID",
+          "breadth_family": "VALID",
+          "relay_family": "VALID"
+        },
+        "profit_level": 0.2,
+        "breadth_level": 0.0,
+        "relay_level": 0.7308,
+        "profit_delta": null,
+        "breadth_delta": null,
+        "relay_delta": 0.0108,
+        "height_preference": "LOW",
+        "fenqi_priority": "DISABLED",
+        "auction_buy_enabled": false,
+        "close_level_score": 0.2,
+        "pre_level_score": 0.3148,
+        "level_source": "CLOSE",
+        "ztbx_close": -1.27,
+        "lbbx_close": 0.54,
+        "advance_share_close": 0.0784,
+        "dt_close": 192,
+        "warnings": [],
+        "diagnostics": {
+          "pbbx_raw": {
+            "PBBX_2_3": {
+              "rate": 29.0,
+              "promoted": 2,
+              "eligible": 7,
+              "ladder": "2进3"
+            },
+            "PBBX_1_2": {
+              "rate": 13.0,
+              "promoted": 4,
+              "eligible": 32,
+              "ladder": "1进2"
+            }
+          },
+          "ztbx_t1": null,
+          "lbbx_t1": null,
+          "sz_925": 3261.0,
+          "xd_925": 1504.0,
+          "use_close_pctile": true,
+          "use_pre_pctile": false,
+          "level_source": "CLOSE",
+          "history_days": 26,
+          "history_close_days": 26,
+          "valid_families": 3,
+          "data_quality_level": "GOOD",
+          "level_score": 0.2,
+          "close_level_score": 0.2,
+          "pre_level_score": 0.3148,
+          "ice_stage": null,
+          "retreat_stage": null,
+          "hard_veto": false,
+          "prev_phase": null,
+          "loss_overlay": "NONE",
+          "loss_level": "HIGH",
+          "loss_direction": "EXPANDING",
+          "kqxy_from_history": true,
+          "ztbx_close": -1.27,
+          "lbbx_close": 0.54,
+          "advance_share_close": 0.0784,
+          "dt_close": 192,
+          "version": "v4.0-dual-timeslice"
+        }
+      },
+      "pools": {
+        "一字封": {
+          "n_total": 2,
+          "n_filtered": 0,
+          "top_n": [
+            {
+              "code": "603580",
+              "name": "艾艾精工",
+              "rank": 1,
+              "score_primary": 12.645272396006698,
+              "score_secondary": 5.759463310170905,
+              "bonus_applied": 1,
+              "routed": {
+                "board_height": 7,
+                "open_num": 0,
+                "height_multiplier": 0.3,
+                "risk_tags": [
+                  "HIGH_LEVEL"
+                ]
+              }
+            },
+            {
+              "code": "002677",
+              "name": "浙江美大",
+              "rank": 2,
+              "score_primary": -999.0,
+              "score_secondary": 90.67357512953367,
+              "bonus_applied": 0,
+              "routed": {
+                "board_height": 4,
+                "open_num": 0,
+                "height_multiplier": 0.7,
+                "risk_tags": [
+                  "HIGH_LEVEL"
+                ]
+              }
+            }
+          ]
+        },
+        "换手封": {
+          "n_total": 3,
+          "n_filtered": 3,
+          "top_n": [
+            {
+              "code": "000722",
+              "name": "湖南发展",
+              "rank": 1,
+              "score_primary": 55.835555705906394,
+              "score_secondary": -999.0,
+              "bonus_applied": 1,
+              "routed": {
+                "board_height": 2,
+                "open_num": 0,
+                "height_multiplier": 0.85,
+                "risk_tags": []
+              }
+            },
+            {
+              "code": "001258",
+              "name": "立新能源",
+              "rank": 2,
+              "score_primary": 93.29585444283666,
+              "score_secondary": -999.0,
+              "bonus_applied": 2,
+              "routed": {
+                "board_height": 2,
+                "open_num": 1,
+                "height_multiplier": 0.85,
+                "risk_tags": []
+              }
+            },
+            {
+              "code": "000899",
+              "name": "赣能股份",
+              "rank": 3,
+              "score_primary": 51.089792994041986,
+              "score_secondary": -999.0,
+              "bonus_applied": 0,
+              "routed": {
+                "board_height": 1,
+                "open_num": 0,
+                "height_multiplier": 1.0,
+                "risk_tags": []
+              }
+            }
+          ]
+        },
+        "分歧封": {
+          "n_total": 2,
+          "n_filtered": 2,
+          "top_n": [
+            {
+              "code": "002632",
+              "name": "道明光学",
+              "rank": 1,
+              "score_primary": -999.0,
+              "score_secondary": 1.51,
+              "bonus_applied": 1,
+              "routed": {
+                "board_height": 2,
+                "open_num": 2,
+                "height_multiplier": 0.85,
+                "risk_tags": []
+              }
+            },
+            {
+              "code": "300577",
+              "name": "开润股份",
+              "rank": 2,
+              "score_primary": -999.0,
+              "score_secondary": 1.29,
+              "bonus_applied": 0,
+              "routed": {
+                "board_height": 1,
+                "open_num": 2,
+                "height_multiplier": 1.0,
+                "risk_tags": []
+              }
+            }
+          ]
+        },
+        "非板": {
+          "n_total": 394,
+          "n_filtered": 91,
+          "top_n": [
+            {
+              "code": "688200",
+              "name": "华峰测控",
+              "rank": 1,
+              "score_primary": 100.0,
+              "score_secondary": -999.0,
+              "bonus_applied": 1,
+              "routed": {
+                "board_height": 0,
+                "open_num": 0,
+                "height_multiplier": 1.0,
+                "risk_tags": []
+              }
+            },
+            {
+              "code": "688328",
+              "name": "深科达",
+              "rank": 2,
+              "score_primary": 100.0,
+              "score_secondary": -999.0,
+              "bonus_applied": 1,
+              "routed": {
+                "board_height": 0,
+                "open_num": 0,
+                "height_multiplier": 1.0,
+                "risk_tags": []
+              }
+            },
+            {
+              "code": "300308",
+              "name": "中际旭创",
+              "rank": 3,
+              "score_primary": 100.0,
+              "score_secondary": 2.0,
+              "bonus_applied": 2,
+              "routed": {
+                "board_height": 0,
+                "open_num": 0,
+                "height_multiplier": 1.0,
+                "risk_tags": []
+              }
+            }
+          ]
+        }
+      },
+      "warnings": [
+        "missing_or_empty: home.qxlive.top_metrics t1",
+        "一字封池被 D6 禁用",
+        "换手封池被 D6 禁用",
+        "非板池被 D6 禁用",
+        "分歧封池被 D6 禁用"
+      ],
+      "diagnostics": {
+        "feature_table": {
+          "n_features": 497,
+          "n_fengdan_merged": 48,
+          "coverage": {
+            "auction.jjyd.vratio": {
+              "rows_in": 266,
+              "canonical_ok": 266,
+              "canonical_error": 0
+            },
+            "auction.jjyd.qiangchou": {
+              "rows_in": 193,
+              "canonical_ok": 193,
+              "canonical_error": 0
+            },
+            "auction.jjyd.net_amount": {
+              "rows_in": 57,
+              "canonical_ok": 57,
+              "canonical_error": 0
+            },
+            "auction.jjyd.weimai": {
+              "rows_in": 150,
+              "canonical_ok": 150,
+              "canonical_error": 0
+            },
+            "auction.jjlive.fengdan": {
+              "rows_in": 91,
+              "canonical_ok": 91,
+              "canonical_error": 0
+            }
+          }
+        },
+        "review_plate": {
+          "n_rows": 32
+        },
+        "ztpool_t1": {
+          "n_rows": 76
+        },
+        "rank_data": {
+          "n_hot_rank": 100,
+          "n_rocket_rank": 100
+        },
+        "routing": {
+          "pool_counts": {
+            "一字封": 2,
+            "换手封": 6,
+            "分歧封": 4,
+            "非板": 485
+          }
+        },
+        "ranking": {
+          "一字封": {
+            "n_total": 2,
+            "n_passed": 2,
+            "n_filtered": 0,
+            "n_ranked": 2,
+            "n_top": 2,
+            "pool_median_turnover": 1.9300000000000002,
+            "pool_median_bid_amount": 41276324.0
+          },
+          "换手封": {
+            "n_total": 6,
+            "n_passed": 3,
+            "n_filtered": 3,
+            "n_ranked": 3,
+            "n_top": 3,
+            "pool_median_turnover": 1.1800000000000002,
+            "pool_median_bid_amount": 28388675.5
+          },
+          "分歧封": {
+            "n_total": 4,
+            "n_passed": 2,
+            "n_filtered": 2,
+            "n_ranked": 2,
+            "n_top": 2,
+            "pool_median_turnover": 1.105,
+            "pool_median_bid_amount": 47279785.5
+          },
+          "非板": {
+            "n_total": 485,
+            "n_passed": 394,
+            "n_filtered": 91,
+            "n_ranked": 394,
+            "n_top": 3,
+            "pool_median_turnover": 0.06,
+            "pool_median_bid_amount": 6700000
+          }
+        }
+      }
+    }
+  },
+  "bitable_sync": {
+    "enabled": false,
+    "meta_name": "duanxianxia_review",
+    "created_count": 0,
+    "skipped_existing_count": 0,
+    "records": [],
+    "reason": "no supported analysis records"
+  },
+  "_webhook_url": "https://open.feishu.cn/open-apis/bot/v2/hook/def0c70f-a064-4f84-ace5-5df4e7c1d1fd",
+  "report_path": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-07-20/premarket/092814.json",
+  "webhook": {
+    "enabled": true,
+    "status": "ok",
+    "success": true,
+    "http_status": 200,
+    "response_excerpt": "{\"StatusCode\":0,\"StatusMessage\":\"success\",\"code\":0,\"data\":{},\"msg\":\"success\"}",
+    "sent_messages": 11
+  }
+}

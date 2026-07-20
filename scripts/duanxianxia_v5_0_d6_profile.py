@@ -424,7 +424,6 @@ def _check_extreme_veto(
 
 def _calc_pool_multipliers(
     bottleneck_name: str,
-    bottleneck_pct: float,
     heat: float,
     divergence: float,
 ) -> Dict[str, float]:
@@ -500,13 +499,12 @@ def _calc_pool_multipliers(
     for k in mults:
         mults[k] *= div_penalty
 
-    # --- 瓶颈严重度惩罚 ---
-    # bottleneck_pct 越低, 惩罚越重
-    if bottleneck_pct < 0.15:
+    # --- 整体温度严重度惩罚 (heat 越低惩罚越重) ---
+    if heat < 0.15:
         severity = 0.5
-    elif bottleneck_pct < 0.25:
+    elif heat < 0.25:
         severity = 0.7
-    elif bottleneck_pct < 0.35:
+    elif heat < 0.35:
         severity = 0.85
     else:
         severity = 1.0
@@ -524,20 +522,22 @@ def _calc_pool_multipliers(
 # 买点模式
 # ============================================================================
 
-def _calc_buy_mode(heat: float, divergence: float, bottleneck_pct: float) -> str:
+def _calc_buy_mode(heat: float, divergence: float) -> str:
     """
     从 heat × divergence 推导买点模式。
 
-    连续映射, 无阈值枚举:
+    heat 是整体温度(均值), 驱动决策; bottleneck 是诊断标签, 不驱动决策。
+
+    连续映射:
+      - 整体极寒 (heat<0.10): 空仓
+      - 整体偏冷 (heat<0.20): 仅观察
       - 高共识看多 (heat>0.6, divergence<0.2): 竞价+排板
       - 温和看多 (heat>0.4): 排板为主
-      - 谨慎 (heat>0.2): 排板为主
-      - 危机 (bottleneck<0.10): 空仓
-      - 近危机 (bottleneck<0.20): 仅观察
+      - 默认: 排板为主
     """
-    if bottleneck_pct < 0.10:
+    if heat < 0.10:
         return "empty"
-    if bottleneck_pct < 0.20:
+    if heat < 0.20:
         return "observe_only"
     if heat > 0.60 and divergence < 0.20:
         return "auction_and_board"
@@ -743,16 +743,17 @@ def calculate_profile(
         pool_mults = {"yizi": 0.0, "huanshou": 0.0, "fenqi": 0.0, "feiban": 0.0}
         buy_mode = "empty"
     else:
-        # Position = bottleneck × (1 - divergence)
-        # bottleneck 0-1, divergence max ~0.5
-        position = round(bottleneck * (1.0 - divergence), 4)
+        # Position = heat × (1 - divergence)
+        # heat 是整体温度(均值), divergence 是分歧度(标准差)
+        # bottleneck 是诊断标签(最弱维度), 不直接决定仓位
+        position = round(heat * (1.0 - divergence), 4)
         position = max(0.0, min(1.0, position))
 
         # Pool multipliers
-        pool_mults = _calc_pool_multipliers(bottleneck_name, bottleneck, heat, divergence)
+        pool_mults = _calc_pool_multipliers(bottleneck_name, heat, divergence)
 
         # Buy mode
-        buy_mode = _calc_buy_mode(heat, divergence, bottleneck)
+        buy_mode = _calc_buy_mode(heat, divergence)
 
     # 池启用状态
     yizi_enabled = pool_mults["yizi"] > 0.05
@@ -1022,9 +1023,9 @@ def _self_test() -> bool:
     print("  [PASS] 测试 5: 历史数据不足回退")
 
     # 测试 6: 池乘子计算
-    mults_normal = _calc_pool_multipliers("ztbx", 0.5, 0.6, 0.15)
+    mults_normal = _calc_pool_multipliers("ztbx", 0.6, 0.15)
     assert mults_normal["huanshou"] > mults_normal["yizi"], "ZTBX瓶颈时换手封应优于一字封"
-    mults_panic = _calc_pool_multipliers("kqxy", 0.1, 0.2, 0.3)
+    mults_panic = _calc_pool_multipliers("kqxy", 0.2, 0.3)
     assert mults_panic["yizi"] < 0.3, "KQXY瓶颈时一字封应大幅降仓"
     print("  [PASS] 测试 6: 池乘子计算")
 

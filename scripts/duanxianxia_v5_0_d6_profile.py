@@ -280,7 +280,7 @@ class MarketProfile:
     # === 7 个指标剖面 ===
     indicators: Dict[str, IndicatorProfile] = field(default_factory=dict)
 
-    # === 4 个统计量 (从 close 分位数计算) ===
+    # === 4 个统计量 (从 12 个数据点计算: 5双截面×2 + 2单截面) ===
     bottleneck: float = 0.5          # min(close分位数), 木桶短板
     bottleneck_name: str = ""        # 瓶颈维度名称
     heat: float = 0.5                # mean(close分位数), 市场温度
@@ -291,7 +291,7 @@ class MarketProfile:
     direction_summary: float = 0.0   # mean(方向), 竞价整体偏离度 (正=竞价强于盘后)
 
     # === 决策量 (连续映射, 无阈值) ===
-    position: float = 0.5            # bottleneck × (1 - divergence), 总仓位系数
+    position: float = 0.5            # heat × (1 - divergence), 总仓位系数
     pool_multipliers: Dict[str, float] = field(default_factory=lambda: {
         "yizi": 1.0, "huanshou": 1.0, "fenqi": 1.0, "feiban": 1.0,
     })
@@ -442,22 +442,25 @@ def _calc_pool_multipliers(
     """
     mults = {"yizi": 1.0, "huanshou": 1.0, "fenqi": 1.0, "feiban": 1.0}
 
+    # strip @section suffix for indicator key matching
+    bn_key = bottleneck_name.split("@")[0] if "@" in bottleneck_name else bottleneck_name
+
     # --- 瓶颈维度结构偏好 ---
-    if bottleneck_name == "advance_share":
+    if bn_key == "advance_share":
         # 广度恐慌: 涨跌比极端, 市场普跌, 只有真金白银接力的换手封和分歧修复值得关注
         mults["yizi"] = 0.5
         mults["huanshou"] = 1.1
         mults["fenqi"] = 1.3
         mults["feiban"] = 1.0
 
-    elif bottleneck_name == "dt":
+    elif bn_key == "dt":
         # DT 飙升: 恐慌蔓延, 全面收缩
         mults["yizi"] = 0.4
         mults["huanshou"] = 0.6
         mults["fenqi"] = 0.7
         mults["feiban"] = 0.6
 
-    elif bottleneck_name in ("ztbx", "lbbx"):
+    elif bn_key in ("ztbx", "lbbx"):
         # 强势股裂化: 昨日涨停股表现差, 接力信心不足
         # 一字封的封单逻辑最脆弱, 换手封是真金白银更有韧性
         mults["yizi"] = 0.4
@@ -465,7 +468,7 @@ def _calc_pool_multipliers(
         mults["fenqi"] = 0.8
         mults["feiban"] = 0.9
 
-    elif bottleneck_name == "relay":
+    elif bn_key == "relay":
         # 接力断裂: 晋级率低, 高位股风险大
         # 非板 (新周期萌芽) 优先级最高, 一字封/换手封依赖接力生态
         mults["yizi"] = 0.4
@@ -473,14 +476,14 @@ def _calc_pool_multipliers(
         mults["fenqi"] = 0.8
         mults["feiban"] = 1.3
 
-    elif bottleneck_name == "kqxy":
+    elif bn_key == "kqxy":
         # 亏钱效应扩散: 最危险的信号, 全面激进减仓
         mults["yizi"] = 0.2
         mults["huanshou"] = 0.4
         mults["fenqi"] = 0.5
         mults["feiban"] = 0.4
 
-    elif bottleneck_name == "qx":
+    elif bn_key == "qx":
         # 综合情绪弱: 等比减仓
         mults["yizi"] = 0.6
         mults["huanshou"] = 0.7
@@ -657,18 +660,19 @@ def calculate_profile(
     # ========================================================================
 
     # 收集分位数用于计算统计量
-    # 关键: 双截面指标用 pre_pct (9:25实时数据), 单截面指标用 close_pct
-    # 因为 pre_pct 才是 T0 交易决策依据, close_pct 是 T-1 历史数据
+    # 双时间截面: 5个双截面指标各贡献2个独立数据点(close_pct + pre_pct)
+    # 单截面指标贡献1个数据点(close_pct)
+    # 总计 5×2 + 2 = 12 个独立数据点
     pct_values_for_stats: List[Tuple[str, float]] = []
     for key, ip in profiles.items():
         if ip.is_dual_section:
-            # 双截面: 优先用 pre_pct, 没有则回退 close_pct
+            # 双截面: close 和 pre 各作为一个独立数据点
+            if ip.close_pct is not None:
+                pct_values_for_stats.append((f"{key}@close", ip.close_pct))
             if ip.pre_pct is not None:
-                pct_values_for_stats.append((key, ip.pre_pct))
-            elif ip.close_pct is not None:
-                pct_values_for_stats.append((key, ip.close_pct))
+                pct_values_for_stats.append((f"{key}@pre", ip.pre_pct))
         else:
-            # 单截面: 用 close_pct
+            # 单截面: 仅 close
             if ip.close_pct is not None:
                 pct_values_for_stats.append((key, ip.close_pct))
 
@@ -690,15 +694,19 @@ def calculate_profile(
             divergence = 0.0
 
         # Tilt: 瓶颈维度描述
-        bottleneck_label = INDICATOR_DEFS[bottleneck_name]["label"]
+        # bottleneck_name 格式为 "key@close" 或 "key@pre", 提取 key 查 INDICATOR_DEFS
+        bottleneck_key = bottleneck_name.split("@")[0] if "@" in bottleneck_name else bottleneck_name
+        bottleneck_section = bottleneck_name.split("@")[1] if "@" in bottleneck_name else "close"
+        bottleneck_label = INDICATOR_DEFS[bottleneck_key]["label"]
+        section_label = "盘前" if bottleneck_section == "pre" else "收盘"
         if bottleneck < 0.15:
-            tilt = f"{bottleneck_label}极度承压"
+            tilt = f"{bottleneck_label}({section_label})极度承压"
         elif bottleneck < 0.30:
-            tilt = f"{bottleneck_label}显著偏弱"
+            tilt = f"{bottleneck_label}({section_label})显著偏弱"
         elif bottleneck < 0.45:
-            tilt = f"{bottleneck_label}略弱"
+            tilt = f"{bottleneck_label}({section_label})略弱"
         else:
-            tilt = f"{bottleneck_label}正常"
+            tilt = f"{bottleneck_label}({section_label})正常"
     else:
         bottleneck = 0.5
         bottleneck_name = ""
@@ -829,8 +837,9 @@ def format_profile(profile: MarketProfile) -> str:
         pre_str = f"{ip.pre_pct:.3f}" if ip.pre_pct is not None else "N/A"
         dir_str = f"{ip.direction:+.3f}" if ip.direction is not None else "N/A"
         raw_str = f"{ip.close_raw}" if ip.close_raw is not None else "N/A"
-        # 标记瓶颈
-        marker = " ◀ 瓶颈" if key == profile.bottleneck_name else ""
+        # 标记瓶颈 (bottleneck_name 格式为 "key@close" 或 "key@pre")
+        bn_key = profile.bottleneck_name.split("@")[0] if "@" in profile.bottleneck_name else profile.bottleneck_name
+        marker = " ◀ 瓶颈" if key == bn_key else ""
         lines.append(f"  {ip.label:<10} {close_str:>10} {pre_str:>10} {dir_str:>10} {raw_str:>12}{marker}")
 
     # --- 决策量 ---

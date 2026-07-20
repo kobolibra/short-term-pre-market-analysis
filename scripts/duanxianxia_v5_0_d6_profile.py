@@ -28,7 +28,7 @@ v5.0 统计剖面框架:
   │    Divergence = std(close分位数)  — 指标间分歧度                   │
   │    Tilt       = 瓶颈维度名称      — 风险来源定位                   │
   │  Direction   = mean(pre分位 - close分位) — 竞价偏离度              │
-  │  Position    = bottleneck × (1 - divergence)  — 连续仓位映射       │
+  │  Position    = heat × (1 - divergence)  — 连续仓位映射       │
   │  无主观阈值, 无黑盒评分, 全链路可追溯                              │
   └─────────────────────────────────────────────────────────────────┘
 
@@ -488,8 +488,16 @@ def _calc_pool_multipliers(
         mults["feiban"] = 0.7
 
     # --- Heat 调制: 温度越高, 仓位越积极 ---
-    # heat 0→1 映射到 heat_factor 0.5→1.5
-    heat_factor = 0.5 + heat
+    # heat 0→1 映射到 heat_factor 0.5→1.5, 同时承担 severity 惩罚
+    # 合并为单次连续映射, 避免双重打折
+    if heat < 0.15:
+        heat_factor = 0.5 + heat * 0.5   # heat=0.10 → 0.55
+    elif heat < 0.25:
+        heat_factor = 0.5 + heat * 0.8   # heat=0.20 → 0.66
+    elif heat < 0.35:
+        heat_factor = 0.5 + heat * 1.0   # heat=0.30 → 0.80
+    else:
+        heat_factor = 0.5 + heat          # heat=0.50 → 1.0, heat=1.0 → 1.5
     for k in mults:
         mults[k] *= heat_factor
 
@@ -498,18 +506,6 @@ def _calc_pool_multipliers(
     div_penalty = 1.0 - divergence * 0.6
     for k in mults:
         mults[k] *= div_penalty
-
-    # --- 整体温度严重度惩罚 (heat 越低惩罚越重) ---
-    if heat < 0.15:
-        severity = 0.5
-    elif heat < 0.25:
-        severity = 0.7
-    elif heat < 0.35:
-        severity = 0.85
-    else:
-        severity = 1.0
-    for k in mults:
-        mults[k] *= severity
 
     # --- 钳位 ---
     for k in mults:
@@ -543,6 +539,7 @@ def _calc_buy_mode(heat: float, divergence: float) -> str:
         return "auction_and_board"
     if heat > 0.40:
         return "board_only"
+    # heat ∈ [0.20, 0.40]: 温和偏冷, 排板为主
     return "board_only"
 
 

@@ -16,7 +16,7 @@ v5.0:
   - 消费 MarketProfile → 统计量直接连续映射
   - 池乘子由瓶颈维度类型 + heat + divergence 连续推导
   - 仓位公式: base × height × risk × position × pool_mult
-  - position 是连续的 bottleneck×(1-divergence)
+  - position 是连续的 heat×(1-divergence)
   - 无查表, 无硬编码 Phase
 
 ============================================================================
@@ -137,7 +137,7 @@ def _calc_final_position(
       - base: 池基础仓位 (与 v4.2 一致)
       - height_mult: 高度乘子 (D7 路由产出)
       - risk_mult: 风险标签乘子 (D7 路由产出)
-      - profile_position: MarketProfile.position (bottleneck×(1-divergence))
+      - profile_position: MarketProfile.position (heat×(1-divergence))
       - pool_mult: 该池的瓶颈维度乘子 (MarketProfile.pool_multipliers)
     """
     key = POOL_TYPE_TO_KEY.get(pool_type, "feiban")
@@ -223,7 +223,7 @@ def build_execution_plan(
     if profile.position <= 0 or profile.buy_mode == "empty":
         plan.pool_summary = {
             "decision": "空仓",
-            "reason": f"瓶颈维度 {profile.bottleneck_name} 分位={profile.bottleneck:.4f}, position=0, 禁止买入",
+            "reason": f"buy_mode={profile.buy_mode}, position=0, 禁止买入",
         }
         plan.allocated_position = 0.0
         plan.warnings.append("空仓: bottleneck=0, 所有仓位归零")

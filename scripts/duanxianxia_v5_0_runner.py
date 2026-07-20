@@ -395,7 +395,7 @@ def run_v5_0_pipeline(
 
 def _load_rank_data(
     bundle: PremarketDataBundle,
-    premarket_auction_cutoff: str = "092900",
+    premarket_auction_cutoff: str = "093000",
 ) -> Tuple[Dict[str, int], Dict[str, int]]:
     """从 premarket bundle 中加载热度榜和飙升榜排名数据。"""
     hot_rank_map: Dict[str, int] = {}

@@ -1,0 +1,19 @@
+{
+  "id": "0062_net_amount_deepdive_v52_20260627",
+  "script": "scripts/0062_net_amount_deepdive_v52_20260627.py",
+  "args": [],
+  "queued_file": "0062_net_amount_deepdive_v52_20260627.json",
+  "note": "表⑤ auction.jjyd.net_amount IC+归一化+分桶+交互 v52修复版",
+  "worker_time": "2026-06-27T20:40:01+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "Total date dirs: 22\n",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/0062_net_amount_deepdive_v52_20260627.py\", line 76, in <module>\n    d_obj = Daily(str(PROJECT_ROOT), dd.name)\nTypeError: Daily.__init__() takes 2 positional arguments but 3 were given\n",
+  "started": "2026-06-27T20:40:01+08:00",
+  "ended": "2026-06-27T20:40:01+08:00",
+  "duration_s": 0.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0062_net_amount_deepdive_v52_20260627.py"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "m1_feature_builder_probe_20260630",
+  "script": "scripts/duanxianxia_feature_builder_probe_20260630.py",
+  "args": [],
+  "queued_file": "m1_feature_builder_probe_20260630.json",
+  "note": "v11 M1 gate: run the canonical-first duanxianxia_feature_builder on the latest REAL premarket captures. Importing the probe imports duanxianxia_feature_builder (runs its _self_test on the 0089 samples), then builds the T0 feature table from captures/<latest date>/auction.* and prints a JSON summary: per-dataset coverage (rows_in/canonical_ok/canonical_error), an on-disk row-schema peek (row0_keys / row0_has_raw / row0_raw_len) that empirically settles whether persisted rows carry raw[], capture_meta (chosen file + any post-09:29 files skipped by time-isolation), checks (no auction_volume_ratio mislabel leak, all FF caliber, canonical_error_total, n_multi_source), and the top merged feature rows with v10 primitives (bidAmount/bidStrength/volumeRatio/grabStrength/changeRate/mainNetInflow/sealAmount/boardLabel + _field_sources). rc=0 = builder is correct on live data. READ-ONLY, no writes, no push.",
+  "worker_time": "2026-06-30T16:00:12+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_feature_builder_probe_20260630.py\", line 24, in <module>\n    import duanxianxia_feature_builder as FB\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_feature_builder.py\", line 433, in <module>\n    _self_test()\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_feature_builder.py\", line 391, in _self_test\n    assert a[\"_field_sources\"][\"bidAmount\"] == \"vratio\"\nKeyError: 'bidAmount'\n",
+  "started": "2026-06-30T16:00:12+08:00",
+  "ended": "2026-06-30T16:00:14+08:00",
+  "duration_s": 1.4,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_feature_builder_probe_20260630.py"
+  ]
+}

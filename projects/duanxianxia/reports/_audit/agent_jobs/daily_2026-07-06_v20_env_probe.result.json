@@ -1,0 +1,19 @@
+{
+  "id": "daily_2026-07-06_v20_env_probe",
+  "script": "scripts/v20_env_probe.py",
+  "args": [],
+  "queued_file": "daily_2026-07-06_v20_env_probe.json",
+  "note": "daily auto-refresh 2026-07-06",
+  "worker_time": "2026-07-06T03:26:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"libraries\": {\n    \"numpy\": \"2.2.6\",\n    \"pandas\": \"2.2.3\",\n    \"scipy\": \"MISSING (ModuleNotFoundError)\",\n    \"sklearn\": \"MISSING (ModuleNotFoundError)\",\n    \"lightgbm\": \"MISSING (ModuleNotFoundError)\",\n    \"xgboost\": \"MISSING (ModuleNotFoundError)\",\n    \"statsmodels\": \"MISSING (ModuleNotFoundError)\",\n    \"torch\": \"2.11.0+cpu\",\n    \"joblib\": \"MISSING (ModuleNotFoundError)\",\n    \"sympy\": \"1.14.0\"\n  },\n  \"data\": {\n    \"capture_days\": 21,\n    \"capture_date_range\": [\n      \"2026-05-20\",\n      \"2026-07-03\"\n    ],\n    \"capture_dates\": [\n      \"2026-05-20\",\n      \"2026-05-21\",\n      \"2026-06-01\",\n      \"2026-06-02\",\n      \"2026-06-04\",\n      \"2026-06-05\",\n      \"2026-06-08\",\n      \"2026-06-09\",\n      \"2026-06-10\",\n      \"2026-06-11\",\n      \"2026-06-15\",\n      \"2026-06-16\",\n      \"2026-06-18\",\n      \"2026-06-23\",\n      \"2026-06-24\",\n      \"2026-06-26\",\n      \"2026-06-29\",\n      \"2026-06-30\",\n      \"2026-07-01\",\n      \"2026-07-02\",\n      \"2026-07-03\"\n    ],\n    \"total_candidate_rows_raw\": 6840,\n    \"dailyline_csv_files\": 3326,\n    \"trainable_days\": 20,\n    \"trainable_rows\": 6557,\n    \"trainable_dates\": [\n      \"2026-05-21\",\n      \"2026-06-01\",\n      \"2026-06-02\",\n      \"2026-06-04\",\n      \"2026-06-05\",\n      \"2026-06-08\",\n      \"2026-06-09\",\n      \"2026-06-10\",\n      \"2026-06-11\",\n      \"2026-06-15\",\n      \"2026-06-16\",\n      \"2026-06-18\",\n      \"2026-06-23\",\n      \"2026-06-24\",\n      \"2026-06-26\",\n      \"2026-06-29\",\n      \"2026-06-30\",\n      \"2026-07-01\",\n      \"2026-07-02\",\n      \"2026-07-03\"\n    ]\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-06T03:26:04+08:00",
+  "ended": "2026-07-06T03:55:14+08:00",
+  "duration_s": 1750.6,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v20_env_probe.py"
+  ]
+}

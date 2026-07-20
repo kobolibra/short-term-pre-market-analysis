@@ -1,0 +1,206 @@
+{
+  "generated_at": "2026-06-27T09:50:12",
+  "job": "fengdan_deepdive_v45",
+  "dataset": "auction.jjlive.fengdan",
+  "n_dates": 18,
+  "coverage": {
+    "amount_915": {
+      "present": 1355,
+      "total": 1375,
+      "pct": 0.985
+    },
+    "amount_920": {
+      "present": 172,
+      "total": 1375,
+      "pct": 0.125
+    },
+    "amount_925": {
+      "present": 102,
+      "total": 1375,
+      "pct": 0.074
+    }
+  },
+  "field_ic": [
+    {
+      "field": "amount_915",
+      "mean_ic": -0.0654,
+      "icir": -0.524,
+      "n_days": 18
+    },
+    {
+      "field": "amount_920",
+      "mean_ic": -0.077,
+      "icir": -0.203,
+      "n_days": 12
+    },
+    {
+      "field": "amount_925",
+      "mean_ic": -0.0494,
+      "icir": -0.159,
+      "n_days": 3
+    },
+    {
+      "field": "latest_change_pct",
+      "mean_ic": 0.0482,
+      "icir": 0.16,
+      "n_days": 18
+    },
+    {
+      "field": "r920_over_915",
+      "mean_ic": -0.0464,
+      "icir": -0.154,
+      "n_days": 12
+    },
+    {
+      "field": "r925_over_915",
+      "mean_ic": 0.3085,
+      "icir": 5.055,
+      "n_days": 2
+    }
+  ],
+  "board_coarse": [
+    {
+      "label": "none",
+      "n": 667,
+      "mean_excess": -0.2,
+      "mean_excess_demeaned": 0.014
+    },
+    {
+      "label": "yest_board",
+      "n": 607,
+      "mean_excess": -0.013,
+      "mean_excess_demeaned": 0.183
+    },
+    {
+      "label": "today_multi",
+      "n": 52,
+      "mean_excess": -1.326,
+      "mean_excess_demeaned": -0.898
+    },
+    {
+      "label": "today_1st",
+      "n": 49,
+      "mean_excess": -2.059,
+      "mean_excess_demeaned": -1.514
+    }
+  ],
+  "board_raw": [
+    {
+      "label": "(empty)",
+      "n": 667,
+      "mean_excess": -0.2,
+      "mean_excess_demeaned": 0.014
+    },
+    {
+      "label": "昨首板",
+      "n": 476,
+      "mean_excess": -0.173,
+      "mean_excess_demeaned": 0.008
+    },
+    {
+      "label": "昨2板",
+      "n": 92,
+      "mean_excess": 0.634,
+      "mean_excess_demeaned": 0.843
+    },
+    {
+      "label": "首板",
+      "n": 49,
+      "mean_excess": -2.059,
+      "mean_excess_demeaned": -1.514
+    },
+    {
+      "label": "昨3板",
+      "n": 27,
+      "mean_excess": 1.389,
+      "mean_excess_demeaned": 1.76
+    },
+    {
+      "label": "2板",
+      "n": 25,
+      "mean_excess": -1.442,
+      "mean_excess_demeaned": -1.233
+    },
+    {
+      "label": "3板",
+      "n": 17,
+      "mean_excess": -1.213,
+      "mean_excess_demeaned": -0.905
+    },
+    {
+      "label": "昨4板",
+      "n": 7,
+      "mean_excess": -2.658,
+      "mean_excess_demeaned": -2.028
+    },
+    {
+      "label": "4板",
+      "n": 5,
+      "mean_excess": -2.455,
+      "mean_excess_demeaned": -1.647
+    },
+    {
+      "label": "昨5板",
+      "n": 3,
+      "mean_excess": -0.821,
+      "mean_excess_demeaned": -1.218
+    },
+    {
+      "label": "5板",
+      "n": 2,
+      "mean_excess": 0.0,
+      "mean_excess_demeaned": 0.026
+    },
+    {
+      "label": "6板",
+      "n": 2,
+      "mean_excess": 0.0,
+      "mean_excess_demeaned": 1.677
+    },
+    {
+      "label": "昨6板",
+      "n": 1,
+      "mean_excess": 0.06,
+      "mean_excess_demeaned": -1.368
+    },
+    {
+      "label": "昨7板",
+      "n": 1,
+      "mean_excess": 0.0,
+      "mean_excess_demeaned": 1.409
+    },
+    {
+      "label": "7板",
+      "n": 1,
+      "mean_excess": 0.0,
+      "mean_excess_demeaned": 4.364
+    }
+  ],
+  "section_sentiment_timing": [
+    {
+      "metric": "seal_total",
+      "spearman_vs_mkt_excess": -0.441,
+      "n_days": 18
+    },
+    {
+      "metric": "yizi_count",
+      "spearman_vs_mkt_excess": -0.368,
+      "n_days": 18
+    },
+    {
+      "metric": "t15",
+      "spearman_vs_mkt_excess": -0.224,
+      "n_days": 18
+    },
+    {
+      "metric": "t20",
+      "spearman_vs_mkt_excess": -0.35,
+      "n_days": 18
+    },
+    {
+      "metric": "t25",
+      "spearman_vs_mkt_excess": -0.484,
+      "n_days": 18
+    }
+  ]
+}

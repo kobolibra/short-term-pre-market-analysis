@@ -1,0 +1,359 @@
+{
+  "generated_at": "2026-06-24T23:20:05+08:00",
+  "url": "https://stock.9fzt.com/dataCenter/stockApply.html",
+  "direct": {
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "len": 50568,
+    "tr_count": 3,
+    "code_count": 14
+  },
+  "direct_contexts": [
+    {
+      "term": "申购日期",
+      "pos": 33189,
+      "context": "ps://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div>申购上限<br/>(万股)</div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>发行价(元)</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>首日收盘<br/>价(元)</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>申购日期</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-reverse-order.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>中签率<br/>公告日</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>网上申购<br/>缴款日期</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>上市日期</span><im"
+    },
+    {
+      "term": "上市日期",
+      "pos": 33979,
+      "context": "pp\"><span>申购日期</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-reverse-order.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>中签率<br/>公告日</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>网上申购<br/>缴款日期</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>上市日期</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>筹集资金<br/>(万元)</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>实际<br/>筹集资金</span><img class=\"dataCenter_icon-table-sort__1xcPb\" src=\"https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets/dzjy/icon-flat-sequence.png\"/></div></th><th class=\"ant-table-cell\" style=\"text-align:right\"><div class=\"dataCenter_flex__1Lrpp\"><span>发行市盈率</span><i"
+    },
+    {
+      "term": "__NEXT_DATA__",
+      "pos": 47823,
+      "context": "r('.global-new-footer-wrap .wzba').innerHTML = '沪ICP备18014860号-20';\n    document.querySelector('.global-new-header-wrap .new-header-menu-wrap .download').style.display = 'none';\n    document.querySelector('.global-new-footer-wrap .circle.wap').style.display = 'none';\n    document.querySelector('.global-new-footer-wrap .circle.pc').style.display = 'none';\n  } else if (location.hostname.indexOf('9fzt.com.cn') > -1) {\n    document.querySelector('.global-new-footer-wrap .wzba').innerHTML = '沪ICP备18014860号-21';\n  }\n</script>\n\n\n  <script src=\"https://upload.9fzt.com/production/jfztgw/js/tingyun.js\"></script>\n\n      </div></body><script src=\"https://stock.9fzt.com/server/static/echarts.min.js\"></script><script src=\"https://hm.baidu.com/hm.js?6e2ca337a699e09c7012d6d8e8c27630\"></script><script id=\"__NEXT_DATA__\" type=\"application/json\">{\"props\":{\"pageProps\":{},\"__N_SSP\":true},\"page\":\"/dataCenter/stockApply.html\",\"query\":{},\"buildId\":\"dFsSqdUqGo0KD2vjhHpAt\",\"isFallback\":false,\"gssp\":true}</script><script nomodule=\"\" src=\"/_next/static/chunks/polyfills-2bcdbfd05ba0d5ff0f0d.js\"></script><script src=\"/_next/static/chunks/main-46793b6200d7a3b82e90.js\" async=\"\"></script><script src=\"/_next/static/chunks/webpack-578bd7ac7abbf8ed5895.js\" async=\"\"></script><script src=\"/_next/static/chunks/framework.aa5133d8da296023f716.js\" async=\"\"></script><script src=\"/_next/static/chunks/1903a724.306880b126c1e8a0528e.js\" async=\"\"></script><script src=\"/_next/static/chunks/b45d07d6757450b3a0d021d76fd2a333a9695677.2e294bca1d865e285553.js\" async=\"\"></script><script src=\"/_next/static/chunks/f6078781a05fe1bcb0902d23dbbb2"
+    },
+    {
+      "term": "stockApply",
+      "pos": 3085,
+      "context": "href=\"/_next/static/chunks/b96031948643c1f5958931f7d125251c297dd7be.4cd1854889d15e4d0f80.js\" as=\"script\"/><link rel=\"preload\" href=\"/_next/static/chunks/80265448225167b296e0f60cb50fa5f5c7095d80.fa75f16e513451b28c6e.js\" as=\"script\"/><link rel=\"preload\" href=\"/_next/static/chunks/ed09edb74d920ee62dc8039337c431d87cac7d54.25c138d7c95b072ed3a1.js\" as=\"script\"/><link rel=\"preload\" href=\"/_next/static/chunks/cd82629a7060093aab1c2ea578ef9aabcd3c0df9.8b87cb69d7a14e46c47e.js\" as=\"script\"/><link rel=\"preload\" href=\"/_next/static/chunks/6156bbab0d794c3f9f5ca993fbf2cdedbc758d36.e985cfe87ee523bc111b.js\" as=\"script\"/><link rel=\"preload\" href=\"/_next/static/chunks/cd592ad928dfdb26299ca34f5f9919693ea0755f.689d45b23d01fd250955.js\" as=\"script\"/><link rel=\"preload\" href=\"/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js\" as=\"script\"/><style id=\"__jsx-3322574892\">tbody td{background:#ffffff !important;}.ant-table-thead,.ant-table-header,.ant-table-thead>tr{background:#F2F5F8 !important;height:52px;}.ant-table-row{height:40px;}.ant-table-thead>tr>th{background:#F2F5F8 !important;color:#666666;font-weight:400;}.ant-table-tbody>tr.ant-table-row:hover>td{background:#F8F9FB !important;}.ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan]):before{content:none;}.ant-table-tbody>tr>td,.ant-table-thead>tr>th{border-bottom:none;}.ant-table-tbody>tr>td,.ant-table-thead>tr>th,.ant-table tfoot>tr>td,.ant-table tfoot>tr>th{padding:0px;}.ant-table,.ant-table a{color:#333333;}</style></head><body noad=\"\"><div>\n          <d"
+    },
+    {
+      "term": "stockApply",
+      "pos": 28632,
+      "context": "ick', 'click_DataCenter_priceParity'])})()\" target=\"_self\" href=\"https://www.9fzt.com/priceParity/index.html\" class=\"quote-item\">比价数据</a>\n      <a navpointval=\"data,research_report\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_industryReport'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/report/company.html\" class=\"quote-item\">研报数据</a>\n      <a navpointval=\"data,notice\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_Notice_Entry_Nuggets_homepage'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/notice/index.html\" class=\"quote-item hidden-ggjj\">公告掘金</a>\n      <a navpointval=\"data,IPO\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_xgsg'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/dataCenter/stockApply.html\" class=\"quote-item quote-item-special\">新股申购</a>\n      <a navpointval=\"data,block_trading\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_dzjy'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/dzjy/index.html\" class=\"quote-item quote-item-special\">大宗交易</a>\n      <a navpointval=\"data,performance\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_yjsd'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/yjsd/index.html\" class=\"quote-item quote-item-special\">业绩速递</a>\n      <!-- <a navpointval=\"data,technology_index\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_kjlt'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/jfIndex/RH_GN1226.html\" class=\"quote-item quote-item-special mr-0\">科技龙头指数</a> "
+    },
+    {
+      "term": "stockApply",
+      "pos": 47923,
+      "context": "bal-new-header-wrap .new-header-menu-wrap .download').style.display = 'none';\n    document.querySelector('.global-new-footer-wrap .circle.wap').style.display = 'none';\n    document.querySelector('.global-new-footer-wrap .circle.pc').style.display = 'none';\n  } else if (location.hostname.indexOf('9fzt.com.cn') > -1) {\n    document.querySelector('.global-new-footer-wrap .wzba').innerHTML = '沪ICP备18014860号-21';\n  }\n</script>\n\n\n  <script src=\"https://upload.9fzt.com/production/jfztgw/js/tingyun.js\"></script>\n\n      </div></body><script src=\"https://stock.9fzt.com/server/static/echarts.min.js\"></script><script src=\"https://hm.baidu.com/hm.js?6e2ca337a699e09c7012d6d8e8c27630\"></script><script id=\"__NEXT_DATA__\" type=\"application/json\">{\"props\":{\"pageProps\":{},\"__N_SSP\":true},\"page\":\"/dataCenter/stockApply.html\",\"query\":{},\"buildId\":\"dFsSqdUqGo0KD2vjhHpAt\",\"isFallback\":false,\"gssp\":true}</script><script nomodule=\"\" src=\"/_next/static/chunks/polyfills-2bcdbfd05ba0d5ff0f0d.js\"></script><script src=\"/_next/static/chunks/main-46793b6200d7a3b82e90.js\" async=\"\"></script><script src=\"/_next/static/chunks/webpack-578bd7ac7abbf8ed5895.js\" async=\"\"></script><script src=\"/_next/static/chunks/framework.aa5133d8da296023f716.js\" async=\"\"></script><script src=\"/_next/static/chunks/1903a724.306880b126c1e8a0528e.js\" async=\"\"></script><script src=\"/_next/static/chunks/b45d07d6757450b3a0d021d76fd2a333a9695677.2e294bca1d865e285553.js\" async=\"\"></script><script src=\"/_next/static/chunks/f6078781a05fe1bcb0902d23dbbb2662c8d200b3.b386ae01924fd43485dc.js\" async=\"\"></script><script src=\"/_next/static/chunks/pages/_a"
+    },
+    {
+      "term": "stockApply",
+      "pos": 49774,
+      "context": "00531f63eab80245b1.js\" async=\"\"></script><script src=\"/_next/static/chunks/b96031948643c1f5958931f7d125251c297dd7be.4cd1854889d15e4d0f80.js\" async=\"\"></script><script src=\"/_next/static/chunks/80265448225167b296e0f60cb50fa5f5c7095d80.fa75f16e513451b28c6e.js\" async=\"\"></script><script src=\"/_next/static/chunks/ed09edb74d920ee62dc8039337c431d87cac7d54.25c138d7c95b072ed3a1.js\" async=\"\"></script><script src=\"/_next/static/chunks/cd82629a7060093aab1c2ea578ef9aabcd3c0df9.8b87cb69d7a14e46c47e.js\" async=\"\"></script><script src=\"/_next/static/chunks/6156bbab0d794c3f9f5ca993fbf2cdedbc758d36.e985cfe87ee523bc111b.js\" async=\"\"></script><script src=\"/_next/static/chunks/cd592ad928dfdb26299ca34f5f9919693ea0755f.689d45b23d01fd250955.js\" async=\"\"></script><script src=\"/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js\" async=\"\"></script><script src=\"/_next/static/dFsSqdUqGo0KD2vjhHpAt/_buildManifest.js\" async=\"\"></script><script src=\"/_next/static/dFsSqdUqGo0KD2vjhHpAt/_ssgManifest.js\" async=\"\"></script><div>\n                    <script>\n                        window.console = {\n                            log: function () {},\n                            info: function () {},\n                            error: function () {},\n                            warn: function () {},\n                            debug: function () {},\n                            dir: function () {},\n                            time: function () {},\n                            timeEnd: function () {}\n                        }\n                    </script>\n                </div></html>"
+    },
+    {
+      "term": "申购",
+      "pos": 124,
+      "context": "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta name=\"viewport\" content=\"width=device-width\"/><meta charSet=\"utf-8\"/><title>新股申购_新股发行_数据中心_九方智投</title><meta name=\"description\" content=\"九方智投新股申购中心为您提供全方位24小时新股申购,新股发行，新股行情的资金流向、市场分析、公告等实时新股行情信息\"/><meta name=\"keywords\" content=\"新股、新股申购、新股发行一览表\"/><link rel=\"shortcut icon\" href=\"https://stock.9fzt.com/server/jfzt_favicon.ico\"/><link rel=\"stylesheet\" type=\"text/css\" href=\"https://www.9fzt.com/css/common.css\"/><link rel=\"dns-prefetch\" href=\"//www.9fzt.com\"/><link rel=\"dns-prefetch\" href=\"//fund.9fzt.com\"/><script src=\"https://upload.9fzt.com/production/mqtt.min.js?_=1627455304518\"></script><script src=\"https://upload.9fzt.com/production/jquery.min.js\"></script><meta name=\"next-head-count\" content=\"11\"/><link rel=\"preload\" href=\"/_next/static/css/324910eca52d31407367.css\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/324910eca52d31407367.css\" data-n-g=\"\"/><lin"
+    },
+    {
+      "term": "申购",
+      "pos": 189,
+      "context": "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta name=\"viewport\" content=\"width=device-width\"/><meta charSet=\"utf-8\"/><title>新股申购_新股发行_数据中心_九方智投</title><meta name=\"description\" content=\"九方智投新股申购中心为您提供全方位24小时新股申购,新股发行，新股行情的资金流向、市场分析、公告等实时新股行情信息\"/><meta name=\"keywords\" content=\"新股、新股申购、新股发行一览表\"/><link rel=\"shortcut icon\" href=\"https://stock.9fzt.com/server/jfzt_favicon.ico\"/><link rel=\"stylesheet\" type=\"text/css\" href=\"https://www.9fzt.com/css/common.css\"/><link rel=\"dns-prefetch\" href=\"//www.9fzt.com\"/><link rel=\"dns-prefetch\" href=\"//fund.9fzt.com\"/><script src=\"https://upload.9fzt.com/production/mqtt.min.js?_=1627455304518\"></script><script src=\"https://upload.9fzt.com/production/jquery.min.js\"></script><meta name=\"next-head-count\" content=\"11\"/><link rel=\"preload\" href=\"/_next/static/css/324910eca52d31407367.css\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/324910eca52d31407367.css\" data-n-g=\"\"/><link rel=\"preload\" href=\"/_next/static/css/e6706724208725ee78e1.css\""
+    },
+    {
+      "term": "申购",
+      "pos": 206,
+      "context": "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta name=\"viewport\" content=\"width=device-width\"/><meta charSet=\"utf-8\"/><title>新股申购_新股发行_数据中心_九方智投</title><meta name=\"description\" content=\"九方智投新股申购中心为您提供全方位24小时新股申购,新股发行，新股行情的资金流向、市场分析、公告等实时新股行情信息\"/><meta name=\"keywords\" content=\"新股、新股申购、新股发行一览表\"/><link rel=\"shortcut icon\" href=\"https://stock.9fzt.com/server/jfzt_favicon.ico\"/><link rel=\"stylesheet\" type=\"text/css\" href=\"https://www.9fzt.com/css/common.css\"/><link rel=\"dns-prefetch\" href=\"//www.9fzt.com\"/><link rel=\"dns-prefetch\" href=\"//fund.9fzt.com\"/><script src=\"https://upload.9fzt.com/production/mqtt.min.js?_=1627455304518\"></script><script src=\"https://upload.9fzt.com/production/jquery.min.js\"></script><meta name=\"next-head-count\" content=\"11\"/><link rel=\"preload\" href=\"/_next/static/css/324910eca52d31407367.css\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/324910eca52d31407367.css\" data-n-g=\"\"/><link rel=\"preload\" href=\"/_next/static/css/e6706724208725ee78e1.css\" as=\"style\"/><lin"
+    },
+    {
+      "term": "申购",
+      "pos": 279,
+      "context": "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta name=\"viewport\" content=\"width=device-width\"/><meta charSet=\"utf-8\"/><title>新股申购_新股发行_数据中心_九方智投</title><meta name=\"description\" content=\"九方智投新股申购中心为您提供全方位24小时新股申购,新股发行，新股行情的资金流向、市场分析、公告等实时新股行情信息\"/><meta name=\"keywords\" content=\"新股、新股申购、新股发行一览表\"/><link rel=\"shortcut icon\" href=\"https://stock.9fzt.com/server/jfzt_favicon.ico\"/><link rel=\"stylesheet\" type=\"text/css\" href=\"https://www.9fzt.com/css/common.css\"/><link rel=\"dns-prefetch\" href=\"//www.9fzt.com\"/><link rel=\"dns-prefetch\" href=\"//fund.9fzt.com\"/><script src=\"https://upload.9fzt.com/production/mqtt.min.js?_=1627455304518\"></script><script src=\"https://upload.9fzt.com/production/jquery.min.js\"></script><meta name=\"next-head-count\" content=\"11\"/><link rel=\"preload\" href=\"/_next/static/css/324910eca52d31407367.css\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/324910eca52d31407367.css\" data-n-g=\"\"/><link rel=\"preload\" href=\"/_next/static/css/e6706724208725ee78e1.css\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/e6706724208725ee78e1.css\" data"
+    },
+    {
+      "term": "申购",
+      "pos": 28689,
+      "context": "\" href=\"https://www.9fzt.com/priceParity/index.html\" class=\"quote-item\">比价数据</a>\n      <a navpointval=\"data,research_report\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_industryReport'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/report/company.html\" class=\"quote-item\">研报数据</a>\n      <a navpointval=\"data,notice\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_Notice_Entry_Nuggets_homepage'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/notice/index.html\" class=\"quote-item hidden-ggjj\">公告掘金</a>\n      <a navpointval=\"data,IPO\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_xgsg'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/dataCenter/stockApply.html\" class=\"quote-item quote-item-special\">新股申购</a>\n      <a navpointval=\"data,block_trading\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_dzjy'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/dzjy/index.html\" class=\"quote-item quote-item-special\">大宗交易</a>\n      <a navpointval=\"data,performance\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_yjsd'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/yjsd/index.html\" class=\"quote-item quote-item-special\">业绩速递</a>\n      <!-- <a navpointval=\"data,technology_index\" onClick=\"(function(){_hmt.push(['_trackEvent', 'head_click', 'click_DataCenter_kjlt'])})()\" target=\"_self\" href=\"https://stock.9fzt.com/jfIndex/RH_GN1226.html\" class=\"quote-item quote-item-special mr-0\">科技龙头指数</a> -->\n  </div>\n</div>\n\n        </div><div id=\"__nex"
+    }
+  ],
+  "direct_scripts": [
+    {
+      "pos": 553,
+      "attrs": " src=\"https://upload.9fzt.com/production/mqtt.min.js?_=1627455304518\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 639,
+      "attrs": " src=\"https://upload.9fzt.com/production/jquery.min.js\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 11763,
+      "attrs": " src=\"//upload.9fzt.com/production/jfztgw/js/globalLogin.js\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 11843,
+      "attrs": " defer src=\"//upload.9fzt.com/production/jfztgw/js/extraLogic.js\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 11928,
+      "attrs": " src=\"https://upload.9fzt.com/production/jfnpm/sa-track/1.0.3/jftrack.min.js\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 21923,
+      "attrs": "",
+      "len": 278,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 24867,
+      "attrs": " src=\"//upload.9fzt.com/production/jfztgw/js/globalstockindex.js\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 46192,
+      "attrs": "",
+      "len": 1339,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 47553,
+      "attrs": " src=\"https://upload.9fzt.com/production/jfztgw/js/tingyun.js\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 47653,
+      "attrs": " src=\"https://stock.9fzt.com/server/static/echarts.min.js\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 47728,
+      "attrs": " src=\"https://hm.baidu.com/hm.js?6e2ca337a699e09c7012d6d8e8c27630\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 47811,
+      "attrs": " id=\"__NEXT_DATA__\" type=\"application/json\"",
+      "len": 154,
+      "has_code": false,
+      "has_apply": true,
+      "head": "{\"props\":{\"pageProps\":{},\"__N_SSP\":true},\"page\":\"/dataCenter/stockApply.html\",\"query\":{},\"buildId\":\"dFsSqdUqGo0KD2vjhHpAt\",\"isFallback\":false,\"gssp\":true}"
+    },
+    {
+      "pos": 48025,
+      "attrs": " nomodule=\"\" src=\"/_next/static/chunks/polyfills-2bcdbfd05ba0d5ff0f0d.js\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 48115,
+      "attrs": " src=\"/_next/static/chunks/main-46793b6200d7a3b82e90.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 48197,
+      "attrs": " src=\"/_next/static/chunks/webpack-578bd7ac7abbf8ed5895.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 48282,
+      "attrs": " src=\"/_next/static/chunks/framework.aa5133d8da296023f716.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 48369,
+      "attrs": " src=\"/_next/static/chunks/1903a724.306880b126c1e8a0528e.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 48455,
+      "attrs": " src=\"/_next/static/chunks/b45d07d6757450b3a0d021d76fd2a333a9695677.2e294bca1d865e285553.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 48573,
+      "attrs": " src=\"/_next/static/chunks/f6078781a05fe1bcb0902d23dbbb2662c8d200b3.b386ae01924fd43485dc.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 48691,
+      "attrs": " src=\"/_next/static/chunks/pages/_app-1ca0fb962a65272bdf73.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 48779,
+      "attrs": " src=\"/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 48897,
+      "attrs": " src=\"/_next/static/chunks/7f8cb945814df31fa6545e615457957a1662d596.d500531f63eab80245b1.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 49015,
+      "attrs": " src=\"/_next/static/chunks/b96031948643c1f5958931f7d125251c297dd7be.4cd1854889d15e4d0f80.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 49133,
+      "attrs": " src=\"/_next/static/chunks/80265448225167b296e0f60cb50fa5f5c7095d80.fa75f16e513451b28c6e.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 49251,
+      "attrs": " src=\"/_next/static/chunks/ed09edb74d920ee62dc8039337c431d87cac7d54.25c138d7c95b072ed3a1.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 49369,
+      "attrs": " src=\"/_next/static/chunks/cd82629a7060093aab1c2ea578ef9aabcd3c0df9.8b87cb69d7a14e46c47e.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 49487,
+      "attrs": " src=\"/_next/static/chunks/6156bbab0d794c3f9f5ca993fbf2cdedbc758d36.e985cfe87ee523bc111b.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 49605,
+      "attrs": " src=\"/_next/static/chunks/cd592ad928dfdb26299ca34f5f9919693ea0755f.689d45b23d01fd250955.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 49723,
+      "attrs": " src=\"/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 49833,
+      "attrs": " src=\"/_next/static/dFsSqdUqGo0KD2vjhHpAt/_buildManifest.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 49919,
+      "attrs": " src=\"/_next/static/dFsSqdUqGo0KD2vjhHpAt/_ssgManifest.js\" async=\"\"",
+      "len": 0,
+      "has_code": false,
+      "has_apply": false
+    },
+    {
+      "pos": 50029,
+      "attrs": "",
+      "len": 492,
+      "has_code": false,
+      "has_apply": false
+    }
+  ],
+  "direct_next_data": {
+    "found": true,
+    "len": 154,
+    "head": "{\"props\":{\"pageProps\":{},\"__N_SSP\":true},\"page\":\"/dataCenter/stockApply.html\",\"query\":{},\"buildId\":\"dFsSqdUqGo0KD2vjhHpAt\",\"isFallback\":false,\"gssp\":true}",
+    "top_keys": [
+      "props",
+      "page",
+      "query",
+      "buildId",
+      "isFallback",
+      "gssp"
+    ],
+    "hits": []
+  },
+  "render_debug": {
+    "attempts": [
+      {
+        "exe": "chromium",
+        "path": "/snap/bin/chromium"
+      },
+      {
+        "exe": "chromium",
+        "error": "TimeoutExpired(['/snap/bin/chromium', '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--virtual-time-budget=12000', '--run-all-compositor-stages-before-draw', '--dump-dom', 'https://stock.9fzt.com/dataCenter/stockApply.html'], 90)"
+      },
+      {
+        "exe": "chromium-browser",
+        "path": "/usr/bin/chromium-browser"
+      },
+      {
+        "exe": "chromium-browser",
+        "error": "TimeoutExpired(['/usr/bin/chromium-browser', '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--virtual-time-budget=12000', '--run-all-compositor-stages-before-draw', '--dump-dom', 'https://stock.9fzt.com/dataCenter/stockApply.html'], 90)"
+      },
+      {
+        "exe": "google-chrome",
+        "path": "/usr/bin/google-chrome"
+      },
+      {
+        "exe": "google-chrome",
+        "error": "TimeoutExpired(['/usr/bin/google-chrome', '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--virtual-time-budget=12000', '--run-all-compositor-stages-before-draw', '--dump-dom', 'https://stock.9fzt.com/dataCenter/stockApply.html'], 90)"
+      },
+      {
+        "exe": "google-chrome-stable",
+        "path": "/usr/bin/google-chrome-stable"
+      },
+      {
+        "exe": "google-chrome-stable",
+        "error": "TimeoutExpired(['/usr/bin/google-chrome-stable', '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--virtual-time-budget=12000', '--run-all-compositor-stages-before-draw', '--dump-dom', 'https://stock.9fzt.com/dataCenter/stockApply.html'], 90)"
+      },
+      {
+        "exe": "chrome",
+        "path": null
+      }
+    ]
+  },
+  "rendered": {
+    "len": 0,
+    "tr_count": 0,
+    "code_count": 0
+  }
+}

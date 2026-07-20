@@ -1,0 +1,19 @@
+{
+  "id": "0035_ipo_calendar_signed_fetch_retry_20260625",
+  "script": "scripts/ipo_calendar_signed_fetch.py",
+  "args": [],
+  "queued_file": "0035_ipo_calendar_signed_fetch_retry_20260625.json",
+  "note": "Retry of 0034 (which ran before the script was synced to main). Signed GET to api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list. signature=md5('sjdxfnqogbzoun13d971ckh8p'+sortedParamValues+ts), timestamp header. Output latest_9fzt_signed.json with first real IPO rows.",
+  "worker_time": "2026-06-25T19:20:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "wrote /home/investmentofficehku/.openclaw/workspace/projects/ipo_calendar/reports/_audit/latest_9fzt_signed.json n_tried 14 hit False\n",
+  "stderr_tail": "",
+  "started": "2026-06-25T19:20:04+08:00",
+  "ended": "2026-06-25T19:20:14+08:00",
+  "duration_s": 9.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_signed_fetch.py"
+  ]
+}

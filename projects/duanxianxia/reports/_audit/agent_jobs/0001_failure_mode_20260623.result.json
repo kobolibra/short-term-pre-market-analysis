@@ -1,0 +1,24 @@
+{
+  "id": "0001_failure_mode_20260623",
+  "script": "scripts/v11_failure_mode_backtest.py",
+  "args": [
+    "--high-open",
+    "3.0"
+  ],
+  "queued_file": "0001_failure_mode_20260623.json",
+  "note": "Backtest whether high-open + last_second grab + weak env is a systematic negative-excess failure mode (motivated by 000823 limit-down on 2026-06-23).",
+  "worker_time": "2026-06-23T15:50:08+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"generated_at\": \"2026-06-23T07:50:38\",\n  \"high_open_threshold\": 3.0,\n  \"n_days\": 12,\n  \"days\": [\n    \"2026-05-21\",\n    \"2026-06-01\",\n    \"2026-06-02\",\n    \"2026-06-04\",\n    \"2026-06-05\",\n    \"2026-06-08\",\n    \"2026-06-09\",\n    \"2026-06-10\",\n    \"2026-06-11\",\n    \"2026-06-15\",\n    \"2026-06-16\",\n    \"2026-06-18\"\n  ],\n  \"n_samples\": 3522,\n  \"subsets\": {\n    \"ALL\": {\n      \"n\": 3522,\n      \"mean_excess\": 0.253,\n      \"median_excess\": 0.0,\n      \"win_rate\": 0.494,\n      \"limitdown_rate\": 0.024\n    },\n    \"high_open\": {\n      \"n\": 745,\n      \"mean_excess\": 0.739,\n      \"median_excess\": 0.728,\n      \"win_rate\": 0.541,\n      \"limitdown_rate\": 0.036\n    },\n    \"last_second\": {\n      \"n\": 407,\n      \"mean_excess\": -0.151,\n      \"median_excess\": -0.617,\n      \"win_rate\": 0.459,\n      \"limitdown_rate\": 0.027\n    },\n    \"weak_env\": {\n      \"n\": 3123,\n      \"mean_excess\": 0.084,\n      \"median_excess\": 0.0,\n      \"win_rate\": 0.479,\n      \"limitdown_rate\": 0.026\n    },\n    \"high_open+last_second\": {\n      \"n\": 108,\n      \"mean_excess\": 1.292,\n      \"median_excess\": 0.789,\n      \"win_rate\": 0.574,\n      \"limitdown_rate\": 0.019\n    },\n    \"high_open+weak_env\": {\n      \"n\": 638,\n      \"mean_excess\": 0.483,\n      \"median_excess\": 0.467,\n      \"win_rate\": 0.527,\n      \"limitdown_rate\": 0.038\n    },\n    \"last_second+weak_env\": {\n      \"n\": 327,\n      \"mean_excess\": -0.355,\n      \"median_excess\": -0.93,\n      \"win_rate\": 0.437,\n      \"limitdown_rate\": 0.028\n    },\n    \"TRIPLE\": {\n      \"n\": 79,\n      \"mean_excess\": 1.221,\n      \"median_excess\": 0.56,\n      \"win_rate\": 0.57,\n      \"limitdown_rate\": 0.013\n    },\n    \"BUY_picks\": {\n      \"n\": 13,\n      \"mean_excess\": 5.083,\n      \"median_excess\": 5.179,\n      \"win_rate\": 0.923,\n      \"limitdown_rate\": 0.0\n    },\n    \"BUY_TRIPLE\": {\n      \"n\": 0\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-23T15:50:08+08:00",
+  "ended": "2026-06-23T15:50:39+08:00",
+  "duration_s": 30.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v11_failure_mode_backtest.py",
+    "--high-open",
+    "3.0"
+  ]
+}

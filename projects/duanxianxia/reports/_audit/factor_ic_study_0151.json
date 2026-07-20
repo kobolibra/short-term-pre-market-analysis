@@ -1,0 +1,455 @@
+{
+  "job": "0151_factor_ic_study",
+  "method": "daily cross-sectional Spearman rank-IC vs next-day excess; mean across days",
+  "n_days": 20,
+  "regime_days": {
+    "cold": 17,
+    "cold_to_warming": 3
+  },
+  "edge_score_ic": {
+    "n_days": 20,
+    "avg_cov": 1.0,
+    "mean_ic": 0.0639,
+    "ir": 0.425,
+    "pos_day_frac": 0.75
+  },
+  "edge_decile_mean_excess_all": [
+    -0.422,
+    0.144,
+    0.196,
+    0.194,
+    -0.254,
+    -0.084,
+    0.166,
+    0.753,
+    0.58,
+    1.46
+  ],
+  "edge_decile_by_regime": {
+    "cold": [
+      -0.553,
+      0.024,
+      0.086,
+      -0.002,
+      -0.307,
+      -0.233,
+      -0.16,
+      0.392,
+      0.371,
+      1.234
+    ],
+    "cold_to_warming": [
+      0.32,
+      0.827,
+      0.82,
+      1.303,
+      0.046,
+      0.759,
+      2.014,
+      2.802,
+      1.766,
+      2.739
+    ]
+  },
+  "factors": {
+    "auction_amount_wan": {
+      "n_days": 20,
+      "avg_cov": 0.57,
+      "mean_ic": 0.0815,
+      "ir": 0.445,
+      "pos_day_frac": 0.65
+    },
+    "auction_detail.auction_amount_wan": {
+      "n_days": 20,
+      "avg_cov": 0.57,
+      "mean_ic": 0.0815,
+      "ir": 0.445,
+      "pos_day_frac": 0.65
+    },
+    "auction_strength": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0749,
+      "ir": 0.586,
+      "pos_day_frac": 0.75
+    },
+    "auction_detail.auction_strength": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0749,
+      "ir": 0.586,
+      "pos_day_frac": 0.75
+    },
+    "auction_detail.auction_strength_v8": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0749,
+      "ir": 0.586,
+      "pos_day_frac": 0.75
+    },
+    "auction_detail.liquidity_multiplier": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0709,
+      "ir": 0.574,
+      "pos_day_frac": 0.7
+    },
+    "auction_detail.vratio_rank": {
+      "n_days": 18,
+      "avg_cov": 0.318,
+      "mean_ic": 0.07,
+      "ir": 0.487,
+      "pos_day_frac": 0.722
+    },
+    "auction_detail.liquidity_score": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0673,
+      "ir": 0.5,
+      "pos_day_frac": 0.75
+    },
+    "edge_score": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0639,
+      "ir": 0.425,
+      "pos_day_frac": 0.75
+    },
+    "edge_components.main_factor": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0639,
+      "ir": 0.656,
+      "pos_day_frac": 0.8
+    },
+    "edge_components.aux_factor": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.062,
+      "ir": 0.41,
+      "pos_day_frac": 0.65
+    },
+    "edge_components.risk_penalty": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": -0.0594,
+      "ir": -0.409,
+      "pos_day_frac": 0.3
+    },
+    "auction_detail.fengdan_amount_915_yi": {
+      "n_days": 19,
+      "avg_cov": 0.26,
+      "mean_ic": -0.056,
+      "ir": -0.544,
+      "pos_day_frac": 0.316
+    },
+    "auction_detail.fengdan_rank": {
+      "n_days": 19,
+      "avg_cov": 0.264,
+      "mean_ic": 0.0555,
+      "ir": 0.613,
+      "pos_day_frac": 0.737
+    },
+    "weimai_detail.super_large_net_inflow_wan": {
+      "n_days": 20,
+      "avg_cov": 0.454,
+      "mean_ic": 0.0546,
+      "ir": 0.291,
+      "pos_day_frac": 0.65
+    },
+    "auction_detail.auction_turnover_pct": {
+      "n_days": 20,
+      "avg_cov": 0.569,
+      "mean_ic": 0.0536,
+      "ir": 0.432,
+      "pos_day_frac": 0.7
+    },
+    "auction_detail.auction_alpha_score": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0516,
+      "ir": 0.474,
+      "pos_day_frac": 0.75
+    },
+    "auction_detail.fengdan_amount_925_yi": {
+      "n_days": 19,
+      "avg_cov": 0.264,
+      "mean_ic": -0.0493,
+      "ir": -0.562,
+      "pos_day_frac": 0.263
+    },
+    "auction_detail.auction_amount_pct": {
+      "n_days": 9,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0482,
+      "ir": 0.298,
+      "pos_day_frac": 0.556
+    },
+    "auction_detail.auction_amount_multiplier": {
+      "n_days": 18,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0468,
+      "ir": 0.431,
+      "pos_day_frac": 0.556
+    },
+    "auction_detail.money_intent_score": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0461,
+      "ir": 0.432,
+      "pos_day_frac": 0.75
+    },
+    "weimai_detail.big_order_share": {
+      "n_days": 20,
+      "avg_cov": 0.261,
+      "mean_ic": 0.0447,
+      "ir": 0.288,
+      "pos_day_frac": 0.55
+    },
+    "weimai_detail.large_order_net_inflow_wan": {
+      "n_days": 20,
+      "avg_cov": 0.454,
+      "mean_ic": -0.0436,
+      "ir": -0.239,
+      "pos_day_frac": 0.4
+    },
+    "auction_detail.risk_multiplier": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0373,
+      "ir": 0.458,
+      "pos_day_frac": 0.7
+    },
+    "weimai_detail.market_cap_wan": {
+      "n_days": 20,
+      "avg_cov": 0.454,
+      "mean_ic": 0.0369,
+      "ir": 0.187,
+      "pos_day_frac": 0.6
+    },
+    "auction_detail.orderbook_quality_score": {
+      "n_days": 19,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0352,
+      "ir": 0.458,
+      "pos_day_frac": 0.684
+    },
+    "context_detail.cashflow_net_today_wan": {
+      "n_days": 20,
+      "avg_cov": 0.134,
+      "mean_ic": -0.0316,
+      "ir": -0.166,
+      "pos_day_frac": 0.45
+    },
+    "context_detail.cashflow_net_10day_wan": {
+      "n_days": 20,
+      "avg_cov": 0.139,
+      "mean_ic": 0.0296,
+      "ir": 0.162,
+      "pos_day_frac": 0.35
+    },
+    "weimai_detail.main_net_inflow_wan": {
+      "n_days": 20,
+      "avg_cov": 0.454,
+      "mean_ic": 0.0282,
+      "ir": 0.256,
+      "pos_day_frac": 0.55
+    },
+    "weimai_detail.net_inflow_pct": {
+      "n_days": 20,
+      "avg_cov": 0.454,
+      "mean_ic": 0.0282,
+      "ir": 0.256,
+      "pos_day_frac": 0.55
+    },
+    "auction_detail.fengdan_ratio_920_915": {
+      "n_days": 19,
+      "avg_cov": 0.26,
+      "mean_ic": -0.0281,
+      "ir": -0.335,
+      "pos_day_frac": 0.421
+    },
+    "auction_detail.tradability_multiplier": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0278,
+      "ir": 0.256,
+      "pos_day_frac": 0.65
+    },
+    "context_detail.cashflow_positive_streak": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0272,
+      "ir": 0.232,
+      "pos_day_frac": 0.55
+    },
+    "risk_detail.high_open_cost": {
+      "n_days": 10,
+      "avg_cov": 0.072,
+      "mean_ic": -0.027,
+      "ir": -0.09,
+      "pos_day_frac": 0.5
+    },
+    "context_detail.cashflow_net_5day_wan": {
+      "n_days": 20,
+      "avg_cov": 0.149,
+      "mean_ic": -0.0262,
+      "ir": -0.185,
+      "pos_day_frac": 0.5
+    },
+    "auction_detail.qiangchou_last_second_rank": {
+      "n_days": 14,
+      "avg_cov": 0.149,
+      "mean_ic": 0.0238,
+      "ir": 0.123,
+      "pos_day_frac": 0.571
+    },
+    "auction_detail.qiangchou_grab_rank": {
+      "n_days": 14,
+      "avg_cov": 0.149,
+      "mean_ic": 0.0238,
+      "ir": 0.123,
+      "pos_day_frac": 0.571
+    },
+    "auction_detail.net_pressure": {
+      "n_days": 20,
+      "avg_cov": 0.241,
+      "mean_ic": -0.0218,
+      "ir": -0.12,
+      "pos_day_frac": 0.45
+    },
+    "weimai_detail.net_pressure": {
+      "n_days": 19,
+      "avg_cov": 0.448,
+      "mean_ic": -0.021,
+      "ir": -0.209,
+      "pos_day_frac": 0.316
+    },
+    "auction_detail.price_intent_score": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0196,
+      "ir": 0.093,
+      "pos_day_frac": 0.5
+    },
+    "weimai_detail.latest_change_pct": {
+      "n_days": 20,
+      "avg_cov": 0.454,
+      "mean_ic": 0.0167,
+      "ir": 0.074,
+      "pos_day_frac": 0.55
+    },
+    "auction_detail.latest_change_pct": {
+      "n_days": 20,
+      "avg_cov": 0.988,
+      "mean_ic": 0.0162,
+      "ir": 0.071,
+      "pos_day_frac": 0.5
+    },
+    "auction_pct": {
+      "n_days": 20,
+      "avg_cov": 0.988,
+      "mean_ic": 0.0162,
+      "ir": 0.071,
+      "pos_day_frac": 0.5
+    },
+    "weimai_detail.weimai_strength": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0158,
+      "ir": 0.15,
+      "pos_day_frac": 0.5
+    },
+    "auction_detail.qiangchou_rank": {
+      "n_days": 17,
+      "avg_cov": 0.15,
+      "mean_ic": -0.0135,
+      "ir": -0.076,
+      "pos_day_frac": 0.412
+    },
+    "auction_detail.weimai_rank": {
+      "n_days": 20,
+      "avg_cov": 0.462,
+      "mean_ic": -0.0132,
+      "ir": -0.145,
+      "pos_day_frac": 0.5
+    },
+    "edge_components.background_factor": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0116,
+      "ir": 0.157,
+      "pos_day_frac": 0.65
+    },
+    "auction_detail.top_rank_family_count": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": -0.0083,
+      "ir": -0.156,
+      "pos_day_frac": 0.35
+    },
+    "risk_detail.low_liquidity": {
+      "n_days": 18,
+      "avg_cov": 0.672,
+      "mean_ic": 0.0078,
+      "ir": 0.074,
+      "pos_day_frac": 0.389
+    },
+    "auction_detail.net_amount_rank": {
+      "n_days": 20,
+      "avg_cov": 0.241,
+      "mean_ic": 0.0051,
+      "ir": 0.043,
+      "pos_day_frac": 0.55
+    },
+    "context_detail.cashflow_net_3day_wan": {
+      "n_days": 18,
+      "avg_cov": 0.162,
+      "mean_ic": 0.0049,
+      "ir": 0.031,
+      "pos_day_frac": 0.5
+    },
+    "auction_detail.legacy_max_base": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0034,
+      "ir": 0.052,
+      "pos_day_frac": 0.55
+    },
+    "auction_detail.source_evidence_score": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0028,
+      "ir": 0.043,
+      "pos_day_frac": 0.5
+    },
+    "auction_detail.source_family_count": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0027,
+      "ir": 0.042,
+      "pos_day_frac": 0.5
+    },
+    "auction_detail.hits_count": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0027,
+      "ir": 0.042,
+      "pos_day_frac": 0.5
+    },
+    "auction_detail.amount_pressure": {
+      "n_days": 20,
+      "avg_cov": 0.241,
+      "mean_ic": 0.0026,
+      "ir": 0.014,
+      "pos_day_frac": 0.5
+    },
+    "auction_detail.resonance_score": {
+      "n_days": 20,
+      "avg_cov": 1.0,
+      "mean_ic": 0.0003,
+      "ir": 0.005,
+      "pos_day_frac": 0.5
+    }
+  }
+}

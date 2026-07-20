@@ -1,0 +1,48 @@
+{
+  "probe": "0096_orthocomp_prodpath",
+  "generated_at": "2026-06-30T15:30:52",
+  "lambda": 0.4,
+  "cmp_days": 15,
+  "median_with_comp": 326,
+  "topk": [
+    10,
+    20,
+    30
+  ],
+  "baseline_edge": {
+    "mean_ic": 0.0791,
+    "icir": 0.499,
+    "mean_excess_at": {
+      "me10": 0.336,
+      "me20": 0.561,
+      "me30": 1.231
+    }
+  },
+  "prodpath_blend": {
+    "mean_ic": 0.0968,
+    "icir": 0.683,
+    "mean_excess_at": {
+      "me10": 2.317,
+      "me20": 1.717,
+      "me30": 1.441
+    },
+    "days_beat_ic": "7/15",
+    "days_beat_me10": "9/15"
+  },
+  "field_mapping_equivalence": {
+    "turnover_corr_prod_vs_raw": 1.0,
+    "gap_corr_prod_vs_raw": 1.0000000000000002,
+    "turnover_match": {
+      "both": 740,
+      "prod_only": 1994,
+      "raw_only": 1
+    },
+    "gap_match": {
+      "both": 741,
+      "prod_only": 4033,
+      "raw_only": 0
+    }
+  },
+  "recommendation": "PRODUCTION_PATH_CONFIRMED",
+  "note": "生产路径验证: import compute_auction_strengths 跑真实 captures(cutoff 092900,earliest_before)取 auction_turnover_pct/latest_change_pct 复现已接入的 BC@lam0.4 混合; 闸门须 IC>baseline 且 me10>=baseline 且 ICIR>=baseline 且过半天 me10 胜 且字段映射 corr>=0.9; 不达标 => 建议 edge_orthocomp_lambda 默认置 0 禁用。"
+}

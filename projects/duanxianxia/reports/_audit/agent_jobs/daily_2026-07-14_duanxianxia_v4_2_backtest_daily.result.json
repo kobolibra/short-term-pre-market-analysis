@@ -1,0 +1,19 @@
+{
+  "id": "daily_2026-07-14_duanxianxia_v4_2_backtest_daily",
+  "script": "scripts/duanxianxia_v4_2_backtest_daily.py",
+  "args": [],
+  "queued_file": "daily_2026-07-14_duanxianxia_v4_2_backtest_daily.json",
+  "note": "daily auto-refresh 2026-07-14",
+  "worker_time": "2026-07-14T00:00:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "v4.2 backtest: overwriting existing /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/v4_2_backtest/2026-07-13.json (re-run with fixes)\nv4.2 backtest done: 5 days → /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/v4_2_backtest/2026-07-13.json\n",
+  "stderr_tail": "[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-07 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-06 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-07 <= 093300; refusing after-cutoff fallback to avoid lookahead\n",
+  "started": "2026-07-14T00:00:07+08:00",
+  "ended": "2026-07-14T00:00:08+08:00",
+  "duration_s": 1.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v4_2_backtest_daily.py"
+  ]
+}

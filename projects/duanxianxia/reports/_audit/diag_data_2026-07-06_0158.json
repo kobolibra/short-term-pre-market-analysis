@@ -1,0 +1,33 @@
+{
+  "date": "2026-07-06",
+  "root": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia",
+  "root_listing": [
+    "README.md",
+    "_all_candidates_flat_v11.csv",
+    "captures",
+    "config",
+    "dailyline",
+    "docs",
+    "reports"
+  ],
+  "captures_date_datasets": {
+    "cashflow.stock.10day": 1,
+    "cashflow.stock.3day": 1,
+    "cashflow.stock.5day": 1,
+    "cashflow.stock.today": 1,
+    "home.qxlive.top_metrics": 1,
+    "pool.hot": 1,
+    "pool.surge": 1,
+    "rank.hot_stock_day": 1,
+    "rank.rocket": 1
+  },
+  "reports_date_exists": true,
+  "reports_date_files": [
+    {
+      "path": "intraday_cashflow/102340.json",
+      "size": 15277
+    }
+  ],
+  "analysis_v9_files": [],
+  "analysis_sample": null
+}

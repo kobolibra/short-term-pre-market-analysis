@@ -1,0 +1,19 @@
+{
+  "id": "0152",
+  "script": "scripts/duanxianxia_edge_weight_sweep.py",
+  "args": [],
+  "queued_file": "0152_edge_weight_sweep_20260704.json",
+  "note": "Task 0152: edge weight A/B sweep (baseline vs 4 IC-informed re-weightings) on full candidate universe; edge IC + decile monotonicity",
+  "worker_time": "2026-07-05T01:20:47+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "n_days=20 regime_days={'cold': 17, 'cold_to_warming': 3}\nvariant            mean_ic   ir      posd    cold_ic   ctw_ic   topDec   botDec   spread\nbaseline          +0.0636  0.481   0.8    +0.0396  0.1997   1.473   -0.263  1.736\nic_prop           +0.0602  0.473   0.8    +0.0338  0.2098   1.341   -0.102  1.443\nauction_heavy     +0.0609  0.493   0.8    +0.0351  0.207    1.334   -0.14   1.474\nfull_cov          +0.0638  0.53    0.8    +0.0388  0.2053   0.88    -0.254  1.134\ndrop_dead         +0.0641  0.532   0.8    +0.0397  0.2024   0.86    -0.244  1.104\nbaseline_decile=[-0.263, 0.111, -0.129, -0.014, 0.313, 0.168, -0.058, 0.318, 0.808, 1.473]\nbest_by_spread=baseline\n",
+  "stderr_tail": "",
+  "started": "2026-07-05T01:20:47+08:00",
+  "ended": "2026-07-05T01:26:02+08:00",
+  "duration_s": 314.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_edge_weight_sweep.py"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "0030_ipo_calendar_cdp_probe_20260625",
+  "script": "scripts/ipo_calendar_cdp_probe.py",
+  "args": [],
+  "queued_file": "0030_ipo_calendar_cdp_probe_20260625.json",
+  "note": "Launch provided 9fzt URL in headless browser briefly and inspect netlog/API URLs for stockApply data.",
+  "worker_time": "2026-06-25T01:35:30+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\"generated_at\": \"2026-06-25T01:35:30+08:00\", \"interesting_urls\": 68, \"api_tries\": 34, \"error\": null}\n",
+  "stderr_tail": "",
+  "started": "2026-06-25T01:35:30+08:00",
+  "ended": "2026-06-25T01:36:28+08:00",
+  "duration_s": 58.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cdp_probe.py"
+  ]
+}

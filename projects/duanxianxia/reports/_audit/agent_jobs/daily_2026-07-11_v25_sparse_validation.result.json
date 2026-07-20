@@ -1,0 +1,25 @@
+{
+  "id": "daily_2026-07-11_v25_sparse_validation",
+  "script": "scripts/v25_sparse_validation.py",
+  "args": [
+    "--min-train",
+    "5"
+  ],
+  "queued_file": "daily_2026-07-11_v25_sparse_validation.json",
+  "note": "daily auto-refresh 2026-07-11",
+  "worker_time": "2026-07-11T06:18:23+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "timeout after 2400s",
+  "stdout_tail": "",
+  "stderr_tail": "",
+  "started": "2026-07-11T06:18:23+08:00",
+  "ended": "2026-07-11T06:58:26+08:00",
+  "duration_s": 2402.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v25_sparse_validation.py",
+    "--min-train",
+    "5"
+  ]
+}

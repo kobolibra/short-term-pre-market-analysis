@@ -1,0 +1,32 @@
+{
+  "id": "0162",
+  "script": "scripts/duanxianxia_fetch_retry.py",
+  "args": [
+    "--backfill",
+    "auction_vratio",
+    "auction_qiangchou",
+    "auction_net_amount",
+    "auction_weimai",
+    "auction_fengdan"
+  ],
+  "queued_file": "0162_backfill_today_auction_20260706.json",
+  "note": "User-requested: backfill TODAY's premarket auction capture (5 datasets). Uses retry-patched fetcher + persist_capture into captures/<today>.",
+  "worker_time": "2026-07-06T15:10:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"task\": \"capture_retry_backfill\",\n  \"filled\": [\n    {\n      \"kind\": \"auction_vratio\",\n      \"dataset_id\": \"auction.jjyd.vratio\",\n      \"rows\": 175,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-06/auction.jjyd.vratio/151017.json\"\n    },\n    {\n      \"kind\": \"auction_qiangchou\",\n      \"dataset_id\": \"auction.jjyd.qiangchou\",\n      \"rows\": 70,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-06/auction.jjyd.qiangchou/151018.json\"\n    },\n    {\n      \"kind\": \"auction_net_amount\",\n      \"dataset_id\": \"auction.jjyd.net_amount\",\n      \"rows\": 49,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-06/auction.jjyd.net_amount/151018.json\"\n    },\n    {\n      \"kind\": \"auction_weimai\",\n      \"dataset_id\": \"auction.jjyd.weimai\",\n      \"rows\": 150,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-06/auction.jjyd.weimai/151019.json\"\n    },\n    {\n      \"kind\": \"auction_fengdan\",\n      \"dataset_id\": \"auction.jjlive.fengdan\",\n      \"rows\": 113,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-06/auction.jjlive.fengdan/151022.json\"\n    }\n  ],\n  \"failed\": []\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-06T15:10:05+08:00",
+  "ended": "2026-07-06T15:10:24+08:00",
+  "duration_s": 19.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_fetch_retry.py",
+    "--backfill",
+    "auction_vratio",
+    "auction_qiangchou",
+    "auction_net_amount",
+    "auction_weimai",
+    "auction_fengdan"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "daily_2026-07-05_v21_feature_export",
+  "script": "scripts/v21_feature_export.py",
+  "args": [],
+  "queued_file": "daily_2026-07-05_v21_feature_export.json",
+  "note": "daily auto-refresh 2026-07-05",
+  "worker_time": "2026-07-05T02:52:02+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "timeout after 2400s",
+  "stdout_tail": "",
+  "stderr_tail": "",
+  "started": "2026-07-05T02:52:04+08:00",
+  "ended": "2026-07-05T03:32:18+08:00",
+  "duration_s": 2414.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v21_feature_export.py"
+  ]
+}

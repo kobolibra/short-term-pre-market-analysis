@@ -1,0 +1,25 @@
+{
+  "id": "daily_2026-07-21_v14_horizon",
+  "script": "scripts/v14_horizon.py",
+  "args": [
+    "--top-n",
+    "30"
+  ],
+  "queued_file": "daily_2026-07-21_v14_horizon.json",
+  "note": "daily auto-refresh 2026-07-21",
+  "worker_time": "2026-07-21T00:20:21+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "timeout after 2400s",
+  "stdout_tail": "",
+  "stderr_tail": "",
+  "started": "2026-07-21T00:20:21+08:00",
+  "ended": "2026-07-21T01:01:23+08:00",
+  "duration_s": 2467.6,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v14_horizon.py",
+    "--top-n",
+    "30"
+  ]
+}

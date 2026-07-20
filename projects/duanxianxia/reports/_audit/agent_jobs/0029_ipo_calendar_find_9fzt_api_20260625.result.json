@@ -1,0 +1,19 @@
+{
+  "id": "0029_ipo_calendar_find_9fzt_api_20260625",
+  "script": "scripts/ipo_calendar_find_9fzt_api.py",
+  "args": [],
+  "queued_file": "0029_ipo_calendar_find_9fzt_api_20260625.json",
+  "note": "Download the provided 9fzt page JS chunks on VM and identify the actual stockApply data API endpoint.",
+  "worker_time": "2026-06-25T01:35:03+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\"generated_at\": \"2026-06-25T01:35:04+08:00\", \"script_count\": 17, \"hit_chunks\": 14, \"error\": null}\n",
+  "stderr_tail": "",
+  "started": "2026-06-25T01:35:03+08:00",
+  "ended": "2026-06-25T01:35:30+08:00",
+  "duration_s": 26.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_find_9fzt_api.py"
+  ]
+}

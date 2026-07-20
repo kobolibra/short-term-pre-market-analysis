@@ -1,0 +1,24 @@
+{
+  "id": "daily_2026-06-26_v17_exit",
+  "script": "scripts/v17_exit.py",
+  "args": [
+    "--top-n",
+    "30"
+  ],
+  "queued_file": "daily_2026-06-26_v17_exit.json",
+  "note": "daily auto-refresh 2026-06-26",
+  "worker_time": "2026-06-26T00:12:59+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_eligible_days\": 14,\n  \"amt_baseline\": {\n    \"n\": 399,\n    \"mean\": 2.875,\n    \"median\": 2.186,\n    \"win_rate\": 0.596,\n    \"odds\": 1.47,\n    \"p90\": 15.73,\n    \"p10\": -9.12\n  },\n  \"amt_stops\": {\n    \"3.0\": {\n      \"n\": 399,\n      \"mean\": 2.017,\n      \"median\": -1.139,\n      \"win_rate\": 0.471,\n      \"odds\": 1.93,\n      \"p90\": 15.73,\n      \"p10\": -7.72\n    },\n    \"5.0\": {\n      \"n\": 399,\n      \"mean\": 2.118,\n      \"median\": 0.817,\n      \"win_rate\": 0.524,\n      \"odds\": 1.57,\n      \"p90\": 15.73,\n      \"p10\": -7.72\n    },\n    \"8.0\": {\n      \"n\": 399,\n      \"mean\": 2.281,\n      \"median\": 1.514,\n      \"win_rate\": 0.569,\n      \"odds\": 1.35,\n      \"p90\": 15.73,\n      \"p10\": -8.0\n    }\n  },\n  \"edge_baseline\": {\n    \"n\": 399,\n    \"mean\": 2.063,\n    \"median\": 1.636,\n    \"win_rate\": 0.571,\n    \"odds\": 1.36,\n    \"p90\": 13.34,\n    \"p10\": -8.42\n  },\n  \"edge_stops\": {\n    \"3.0\": {\n      \"n\": 399,\n      \"mean\": 1.336,\n      \"median\": -3.0,\n      \"win_rate\": 0.461,\n      \"odds\": 1.71,\n      \"p90\": 13.34,\n      \"p10\": -7.62\n    },\n    \"5.0\": {\n      \"n\": 399,\n      \"mean\": 1.347,\n      \"median\": 0.042,\n      \"win_rate\": 0.501,\n      \"odds\": 1.44,\n      \"p90\": 13.34,\n      \"p10\": -7.62\n    },\n    \"8.0\": {\n      \"n\": 399,\n      \"mean\": 1.484,\n      \"median\": 1.186,\n      \"win_rate\": 0.546,\n      \"odds\": 1.23,\n      \"p90\": 13.34,\n      \"p10\": -8.0\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-26T00:12:59+08:00",
+  "ended": "2026-06-26T00:13:24+08:00",
+  "duration_s": 25.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v17_exit.py",
+    "--top-n",
+    "30"
+  ]
+}

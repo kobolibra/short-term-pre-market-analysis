@@ -1,0 +1,22 @@
+{
+  "id": "0150",
+  "script": "scripts/duanxianxia_replay_current_code.py",
+  "args": [
+    "8"
+  ],
+  "queued_file": "0150_replay_v3_clean_window_20260704.json",
+  "note": "Task 0150: replay v3 on clean 8-day window (06-23~07-03, pct=100%); persisted pct first; definitive CURRENT vs STORED",
+  "worker_time": "2026-07-04T21:30:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_days\": 8,\n  \"days\": [\n    \"2026-06-23\",\n    \"2026-06-24\",\n    \"2026-06-26\",\n    \"2026-06-29\",\n    \"2026-06-30\",\n    \"2026-07-01\",\n    \"2026-07-02\",\n    \"2026-07-03\"\n  ],\n  \"CURRENT_overall\": {\n    \"n\": 8,\n    \"mean_excess\": 1.189,\n    \"win_rate\": 0.5,\n    \"avg_win\": 7.119,\n    \"avg_loss\": -4.742,\n    \"payoff\": 1.501\n  },\n  \"STORED_overall\": {\n    \"n\": 8,\n    \"mean_excess\": 2.039,\n    \"win_rate\": 0.5,\n    \"avg_win\": 10.479,\n    \"avg_loss\": -8.534,\n    \"payoff\": 1.228\n  },\n  \"CURRENT_by_regime\": {\n    \"cold\": {\n      \"n\": 8,\n      \"mean_excess\": 1.189,\n      \"win_rate\": 0.5,\n      \"avg_win\": 7.119,\n      \"avg_loss\": -4.742,\n      \"payoff\": 1.501\n    }\n  },\n  \"STORED_by_regime\": {\n    \"cold\": {\n      \"n\": 8,\n      \"mean_excess\": 2.039,\n      \"win_rate\": 0.5,\n      \"avg_win\": 10.479,\n      \"avg_loss\": -8.534,\n      \"payoff\": 1.228\n    }\n  },\n  \"ranking_quality\": {\n    \"top1\": {\n      \"n\": 8,\n      \"mean_excess\": 1.189,\n      \"win_rate\": 0.5,\n      \"avg_win\": 7.119,\n      \"avg_loss\": -4.742,\n      \"payoff\": 1.501\n    },\n    \"top3\": {\n      \"n\": 24,\n      \"mean_excess\": 0.865,\n      \"win_rate\": 0.458,\n      \"avg_win\": 5.946,\n      \"avg_loss\": -4.465,\n      \"payoff\": 1.332\n    },\n    \"top5\": {\n      \"n\": 40,\n      \"mean_excess\": 0.576,\n      \"win_rate\": 0.425,\n      \"avg_win\": 5.281,\n      \"avg_loss\": -3.926,\n      \"payoff\": 1.345\n    }\n  },\n  \"faithfulness\": {\n    \"pct_source\": {\n      \"persisted\": 2913,\n      \"recomputed\": 0,\n      \"default\": 0\n    },\n    \"persisted_frac\": 1.0,\n    \"recomputed_frac\": 0.0,\n    \"default_frac\": 0.0\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-04T21:30:04+08:00",
+  "ended": "2026-07-04T21:30:08+08:00",
+  "duration_s": 4.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_replay_current_code.py",
+    "8"
+  ]
+}

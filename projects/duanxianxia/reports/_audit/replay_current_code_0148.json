@@ -1,0 +1,337 @@
+{
+  "job": "0148_replay_current_code",
+  "mode": "feature-level replay; auction_amount_pct recomputed from daily cross-section",
+  "target": "excess = (close-open)/preclose*100",
+  "n_days": 20,
+  "days": [
+    "2026-05-21",
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-04",
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-18",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-26",
+    "2026-06-29",
+    "2026-06-30",
+    "2026-07-01",
+    "2026-07-02",
+    "2026-07-03"
+  ],
+  "CURRENT": {
+    "overall": {
+      "n": 26,
+      "mean_excess": 3.57,
+      "win_rate": 0.731,
+      "avg_win": 6.193,
+      "avg_loss": -3.549,
+      "payoff": 1.745
+    },
+    "by_regime": {
+      "cold": {
+        "n": 17,
+        "mean_excess": 3.015,
+        "win_rate": 0.647,
+        "avg_win": 6.819,
+        "avg_loss": -3.96,
+        "payoff": 1.722
+      },
+      "cold_to_warming": {
+        "n": 9,
+        "mean_excess": 4.62,
+        "win_rate": 0.889,
+        "avg_win": 5.332,
+        "avg_loss": -1.081,
+        "payoff": 4.933
+      }
+    }
+  },
+  "STORED": {
+    "overall": {
+      "n": 21,
+      "mean_excess": 3.924,
+      "win_rate": 0.762,
+      "avg_win": 7.031,
+      "avg_loss": -7.524,
+      "payoff": 0.934
+    },
+    "by_regime": {
+      "cold": {
+        "n": 12,
+        "mean_excess": 3.025,
+        "win_rate": 0.583,
+        "avg_win": 9.486,
+        "avg_loss": -7.524,
+        "payoff": 1.261
+      },
+      "cold_to_warming": {
+        "n": 9,
+        "mean_excess": 5.121,
+        "win_rate": 1.0,
+        "avg_win": 5.121,
+        "avg_loss": 0.0,
+        "payoff": null
+      }
+    }
+  },
+  "ranking_quality": {
+    "top1": {
+      "n": 20,
+      "mean_excess": 3.415,
+      "win_rate": 0.7,
+      "avg_win": 6.576,
+      "avg_loss": -3.96,
+      "payoff": 1.661
+    },
+    "top3": {
+      "n": 60,
+      "mean_excess": 1.321,
+      "win_rate": 0.533,
+      "avg_win": 6.091,
+      "avg_loss": -4.628,
+      "payoff": 1.316
+    },
+    "top5": {
+      "n": 100,
+      "mean_excess": 0.695,
+      "win_rate": 0.48,
+      "avg_win": 5.429,
+      "avg_loss": -4.342,
+      "payoff": 1.25
+    }
+  },
+  "faithfulness": {
+    "auction_amount_wan_coverage": 0.595,
+    "auction_amount_pct": "recomputed from daily auction_amount_wan cross-section (production-equivalent)",
+    "raw_capture_days_available": 0
+  },
+  "per_day": [
+    {
+      "date": "2026-05-21",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -4.492,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": -4.492,
+      "top1": "000100"
+    },
+    {
+      "date": "2026-06-01",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 11.446,
+      "sto_n_buys": 0,
+      "sto_scored": 0,
+      "sto_mean": null,
+      "top1": "000636"
+    },
+    {
+      "date": "2026-06-02",
+      "regime": "cold_to_warming",
+      "cur_n_buys": 3,
+      "cur_scored": 3,
+      "cur_mean": 5.764,
+      "sto_n_buys": 3,
+      "sto_scored": 3,
+      "sto_mean": 6.858,
+      "top1": "000636"
+    },
+    {
+      "date": "2026-06-04",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 0.31,
+      "sto_n_buys": 0,
+      "sto_scored": 0,
+      "sto_mean": null,
+      "top1": "300302"
+    },
+    {
+      "date": "2026-06-05",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -0.3,
+      "sto_n_buys": 0,
+      "sto_scored": 0,
+      "sto_mean": null,
+      "top1": "301123"
+    },
+    {
+      "date": "2026-06-08",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 5.83,
+      "sto_n_buys": 0,
+      "sto_scored": 0,
+      "sto_mean": null,
+      "top1": "002361"
+    },
+    {
+      "date": "2026-06-09",
+      "regime": "cold_to_warming",
+      "cur_n_buys": 3,
+      "cur_scored": 3,
+      "cur_mean": 3.161,
+      "sto_n_buys": 3,
+      "sto_scored": 3,
+      "sto_mean": 3.489,
+      "top1": "603629"
+    },
+    {
+      "date": "2026-06-10",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 7.32,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 7.32,
+      "top1": "002354"
+    },
+    {
+      "date": "2026-06-11",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 9.507,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 9.507,
+      "top1": "002636"
+    },
+    {
+      "date": "2026-06-15",
+      "regime": "cold_to_warming",
+      "cur_n_buys": 3,
+      "cur_scored": 3,
+      "cur_mean": 4.934,
+      "sto_n_buys": 3,
+      "sto_scored": 3,
+      "sto_mean": 5.016,
+      "top1": "600500"
+    },
+    {
+      "date": "2026-06-16",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 2.779,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 7.659,
+      "top1": "601958"
+    },
+    {
+      "date": "2026-06-18",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 9.338,
+      "sto_n_buys": 0,
+      "sto_scored": 0,
+      "sto_mean": null,
+      "top1": "300285"
+    },
+    {
+      "date": "2026-06-23",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -4.706,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": -13.889,
+      "top1": "002354"
+    },
+    {
+      "date": "2026-06-24",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 9.534,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 9.534,
+      "top1": "002167"
+    },
+    {
+      "date": "2026-06-26",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -8.663,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 8.588,
+      "top1": "002580"
+    },
+    {
+      "date": "2026-06-29",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -1.53,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": -8.209,
+      "top1": "605366"
+    },
+    {
+      "date": "2026-06-30",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 0.549,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 0.549,
+      "top1": "002354"
+    },
+    {
+      "date": "2026-07-01",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 11.954,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": -3.505,
+      "top1": "300720"
+    },
+    {
+      "date": "2026-07-02",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 6.44,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 23.244,
+      "top1": "600206"
+    },
+    {
+      "date": "2026-07-03",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -4.069,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 0.0,
+      "top1": "002167"
+    }
+  ]
+}

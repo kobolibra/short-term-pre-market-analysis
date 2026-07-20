@@ -1,0 +1,19 @@
+{
+  "id": "0083",
+  "script": "scripts/0083_fengdan_auction_seal_breadth_20260629.py",
+  "args": [],
+  "queued_file": "0083.json",
+  "note": "Dump fengdan section_t15/t20/t25_total + seal_total + yizi_count + amount_925 sealed/open counts to define premarket-auction limitUpSealRate.",
+  "worker_time": "2026-06-29T17:30:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "=== 0083 fengdan auction-seal breadth ===\ndate/dsid: 2026-06-29 auction.jjlive.fengdan n= 110\n   section_date = 2026-06-29\n   section_kind = live\n   section_yizi_count = 5\n   section_seal_total = 54.4亿\n   section_t15_total = 150.4亿\n   section_t20_total = 39.1亿\n   section_t25_total = 54.4亿\n   section_has_change_pct = True\n  board_label distribution: {'首板': 5, '昨6板': 1, '昨3板': 2, '': 71, '昨首板': 29, '昨2板': 2}\n  amount_925 numeric (sealed@9:25): 5\n  amount_925 == dash (not sealed@9:25): 105\n  distinct section_kind: {'live': 110}\n  distinct section_t15_total: {'150.4亿': 110}\n  distinct section_t20_total: {'39.1亿': 110}\n  distinct section_t25_total: {'54.4亿': 110}\n  distinct section_seal_total: {'54.4亿': 110}\n  distinct section_yizi_count: {'5': 110}\n=== END 0083 ===\n",
+  "stderr_tail": "",
+  "started": "2026-06-29T17:30:07+08:00",
+  "ended": "2026-06-29T17:30:07+08:00",
+  "duration_s": 0.6,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0083_fengdan_auction_seal_breadth_20260629.py"
+  ]
+}

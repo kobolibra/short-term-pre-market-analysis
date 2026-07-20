@@ -1,0 +1,19 @@
+{
+  "id": "0094_orthocomp_blend_20260630",
+  "script": "scripts/duanxianxia_0094_orthocomp_blend_probe_20260630.py",
+  "args": [],
+  "queued_file": "0094_orthocomp_blend_20260630.json",
+  "note": "Task 0094 正交复合 comp_SD(auction_turnover_wan+turnover_rate_pct+latest_change_pct) 在候选池内与 baseline edge 混合的增量验证; lam 网格 0/0.2/0.3/0.4/0.5/1.0; 只读, 决定是否把正交信号接入生产 edge。",
+  "worker_time": "2026-06-30T20:10:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"probe\": \"0094_orthocomp_blend\",\n  \"generated_at\": \"2026-06-30T12:11:21\",\n  \"n_eval_days\": 15,\n  \"cmp_days\": 15,\n  \"median_candidate_pool\": 43,\n  \"top_n\": 30,\n  \"composite\": {\n    \"members\": [\n      \"A_turnover\",\n      \"B_turnrate\",\n      \"C_gap\"\n    ],\n    \"source\": \"auction.jjyd.qiangchou\",\n    \"cutoff\": \"093000\"\n  },\n  \"comp_only_in_candidate_pool\": {\n    \"mean_ic\": 0.165,\n    \"icir\": 0.875,\n    \"n_days\": 15\n  },\n  \"baseline_edge\": {\n    \"mean_ic\": 0.1629,\n    \"icir\": 0.667,\n    \"capture_at_topn\": 0.6533\n  },\n  \"blends\": {\n    \"lambda_0.0\": {\n      \"mean_ic\": 0.1629,\n      \"icir\": 0.667,\n      \"n_days\": 15,\n      \"capture_at_topn\": 0.6533,\n      \"days_beat_baseline_ic\": null\n    },\n    \"lambda_0.2\": {\n      \"mean_ic\": 0.1755,\n      \"icir\": 0.749,\n      \"n_days\": 15,\n      \"capture_at_topn\": 0.65,\n      \"days_beat_baseline_ic\": \"10/15\"\n    },\n    \"lambda_0.3\": {\n      \"mean_ic\": 0.1774,\n      \"icir\": 0.771,\n      \"n_days\": 15,\n      \"capture_at_topn\": 0.6467,\n      \"days_beat_baseline_ic\": \"10/15\"\n    },\n    \"lambda_0.4\": {\n      \"mean_ic\": 0.1799,\n      \"icir\": 0.801,\n      \"n_days\": 15,\n      \"capture_at_topn\": 0.6467,\n      \"days_beat_baseline_ic\": \"11/15\"\n    },\n    \"lambda_0.5\": {\n      \"mean_ic\": 0.1819,\n      \"icir\": 0.864,\n      \"n_days\": 15,\n      \"capture_at_topn\": 0.6467,\n      \"days_beat_baseline_ic\": \"10/15\"\n    },\n    \"lambda_1.0\": {\n      \"mean_ic\": 0.165,\n      \"icir\": 0.875,\n      \"n_days\": 15,\n      \"capture_at_topn\": 0.6567,\n      \"days_beat_baseline_ic\": \"7/15\"\n    }\n  },\n  \"recommendation\": \"edge_only_no_change\",\n  \"note\": \"comp_only IC 是候选池内口径, 必然<=v44 全市场 0.179; 推荐整合需 IC>baseline 且 capture>=baseline 且 ICIR>=0.9*baseline 且过半天数胜.\"\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-30T20:10:05+08:00",
+  "ended": "2026-06-30T20:11:49+08:00",
+  "duration_s": 104.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0094_orthocomp_blend_probe_20260630.py"
+  ]
+}

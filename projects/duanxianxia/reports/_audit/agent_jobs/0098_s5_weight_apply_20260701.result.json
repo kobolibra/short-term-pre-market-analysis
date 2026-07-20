@@ -1,0 +1,19 @@
+{
+  "id": "0098_s5_weight_apply_20260701",
+  "script": "scripts/duanxianxia_0098_s5_weight_apply_20260701.py",
+  "args": [],
+  "queued_file": "0098_s5_weight_apply_20260701.json",
+  "note": "Task 0098: 将 0093 推荐的 S5_amt_liq_core 权重写入生产文件 duanxianxia_v9_edge.py (edge_core default params) 和 v10_optimize.py (V10AMT_W); 自验证后输出 JSON 摘要 rc=0.",
+  "worker_time": "2026-07-01T10:20:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "v9_edge _self_test passed\n{\n  \"probe\": \"0098_s5_weight_apply\",\n  \"generated_at\": \"2026-07-01T02:20:07\",\n  \"s5_weights\": {\n    \"amt_pct\": 0.3232,\n    \"auction_strength\": 0.0909,\n    \"liquidity\": 0.2424,\n    \"money\": 0.1616,\n    \"pressure_score\": 0.1414,\n    \"weimai_strength\": 0.0303,\n    \"orderbook\": 0.0202\n  },\n  \"s5_sum\": 1.01,\n  \"baseline_weights\": {\n    \"edge_w_amt\": 0.23,\n    \"edge_w_auction\": 0.19,\n    \"edge_w_liquidity\": 0.18,\n    \"edge_w_money\": 0.14,\n    \"edge_w_pressure\": 0.14,\n    \"edge_w_weimai\": 0.08,\n    \"edge_w_orderbook\": 0.05\n  },\n  \"patch_v9_edge\": {\n    \"file\": \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v9_edge.py\",\n    \"changed\": true,\n    \"changes\": [\n      {\n        \"param\": \"edge_w_amt\",\n        \"old\": 0.23,\n        \"new\": 0.3232,\n        \"occurrences\": 1\n      },\n      {\n        \"param\": \"edge_w_auction\",\n        \"old\": 0.19,\n        \"new\": 0.0909,\n        \"occurrences\": 1\n      },\n      {\n        \"param\": \"edge_w_liquidity\",\n        \"old\": 0.18,\n        \"new\": 0.2424,\n        \"occurrences\": 1\n      },\n      {\n        \"param\": \"edge_w_money\",\n        \"old\": 0.14,\n        \"new\": 0.1616,\n        \"occurrences\": 1\n      },\n      {\n        \"param\": \"edge_w_pressure\",\n        \"old\": 0.14,\n        \"new\": 0.1414,\n        \"occurrences\": 1\n      },\n      {\n        \"param\": \"edge_w_weimai\",\n        \"old\": 0.08,\n        \"new\": 0.0303,\n        \"occurrences\": 1\n      },\n      {\n        \"param\": \"edge_w_orderbook\",\n        \"old\": 0.05,\n        \"new\": 0.0202,\n        \"occurrences\": 1\n      }\n    ]\n  },\n  \"patch_v10_optimize\": {\n    \"file\": \"/home/investmentofficehku/.openclaw/workspace/scripts/v10_optimize.py\",\n    \"changed\": true,\n    \"occurrences\": 1,\n    \"new_V10AMT_W\": \"{\\\"amt_pct\\\": 0.3232, \\\"auction_strength\\\": 0.0909, \\\"liquidity\\\": 0.2424, \\\"money\\\": 0.1616, \\\"pressure_score\\\": 0.1414, \\\"weimai_strength\\\": 0.0303, \\\"orderbook\\\": 0.0202}\"\n  },\n  \"verify\": {\n    \"v9_edge\": {\n      \"ok\": true,\n      \"self_test\": \"passed\",\n      \"sample_edge_score\": 75.01,\n      \"sample_alpha_type\": \"AUCTION_ORDERFLOW\"\n    },\n    \"v10_optimize\": {\n      \"ok\": true,\n      \"V10AMT_W\": {\n        \"amt_pct\": 0.3232,\n        \"auction_strength\": 0.0909,\n        \"liquidity\": 0.2424,\n        \"money\": 0.1616,\n        \"pressure_score\": 0.1414,\n        \"weimai_strength\": 0.0303,\n        \"orderbook\": 0.0202\n      }\n    }\n  },\n  \"source\": \"0093 recommendation: S5_amt_liq_core, OOS IC 0.129 vs baseline 0.1278, beats 8/12 days\"\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-01T10:20:07+08:00",
+  "ended": "2026-07-01T10:20:07+08:00",
+  "duration_s": 0.7,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0098_s5_weight_apply_20260701.py"
+  ]
+}

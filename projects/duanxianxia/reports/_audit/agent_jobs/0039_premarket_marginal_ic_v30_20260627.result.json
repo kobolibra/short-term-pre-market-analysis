@@ -1,0 +1,19 @@
+{
+  "id": "0039_premarket_marginal_ic_v30_20260627",
+  "script": "scripts/v30_marginal_ic.py",
+  "args": [],
+  "queued_file": "0039_premarket_marginal_ic_v30_20260627.json",
+  "note": "Marginal incremental-IC test: does ANY non-core field add walk-forward OOS IC on top of v10_amt (base+lambda*z(field), lambda in {0.15,0.30})? If all negative, v10_amt is a linear local optimum given current data. Output reports/_audit/premarket_marginal_ic_v30.{json,md}.",
+  "worker_time": "2026-06-27T12:00:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"base_oos_ic\": 0.086,\n  \"verdict\": {\n    \"base_oos_ic\": 0.086,\n    \"base_icir\": 0.531,\n    \"base_days\": 15,\n    \"any_field_improves\": true,\n    \"robust_positive_fields\": [\n      \"auction_amount_wan\",\n      \"qiangchou_920_925_rank\"\n    ],\n    \"best_field\": \"auction_amount_wan\",\n    \"best_mean_delta\": 0.0036\n  },\n  \"top5_fields\": [\n    {\n      \"field\": \"auction_amount_wan\",\n      \"ic_lam0.15\": 0.0892,\n      \"icir_lam0.15\": 0.547,\n      \"delta_lam0.15\": 0.0032,\n      \"days_improved_lam0.15\": \"10/15\",\n      \"ic_lam0.3\": 0.0899,\n      \"icir_lam0.3\": 0.556,\n      \"delta_lam0.3\": 0.0039,\n      \"days_improved_lam0.3\": \"11/15\",\n      \"mean_delta\": 0.0036\n    },\n    {\n      \"field\": \"latest_change_pct\",\n      \"ic_lam0.15\": 0.0857,\n      \"icir_lam0.15\": 0.54,\n      \"delta_lam0.15\": -0.0003,\n      \"days_improved_lam0.15\": \"5/15\",\n      \"ic_lam0.3\": 0.0886,\n      \"icir_lam0.3\": 0.549,\n      \"delta_lam0.3\": 0.0026,\n      \"days_improved_lam0.3\": \"5/15\",\n      \"mean_delta\": 0.0011\n    },\n    {\n      \"field\": \"qiangchou_920_925_rank\",\n      \"ic_lam0.15\": 0.0864,\n      \"icir_lam0.15\": 0.533,\n      \"delta_lam0.15\": 0.0004,\n      \"days_improved_lam0.15\": \"5/15\",\n      \"ic_lam0.3\": 0.0869,\n      \"icir_lam0.3\": 0.537,\n      \"delta_lam0.3\": 0.0009,\n      \"days_improved_lam0.3\": \"5/15\",\n      \"mean_delta\": 0.0006\n    },\n    {\n      \"field\": \"net_amount_rank\",\n      \"ic_lam0.15\": 0.086,\n      \"icir_lam0.15\": 0.53,\n      \"delta_lam0.15\": 0.0,\n      \"days_improved_lam0.15\": \"7/15\",\n      \"ic_lam0.3\": 0.0865,\n      \"icir_lam0.3\": 0.532,\n      \"delta_lam0.3\": 0.0005,\n      \"days_improved_lam0.3\": \"9/15\",\n      \"mean_delta\": 0.0003\n    },\n    {\n      \"field\": \"theme_strength_t0\",\n      \"ic_lam0.15\": 0.086,\n      \"icir_lam0.15\": 0.531,\n      \"delta_lam0.15\": 0.0,\n      \"days_improved_lam0.15\": \"0/15\",\n      \"ic_lam0.3\": 0.086,\n      \"icir_lam0.3\": 0.531,\n      \"delta_lam0.3\": 0.0,\n      \"days_improved_lam0.3\": \"0/15\",\n      \"mean_delta\": 0.0\n    }\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-27T12:00:02+08:00",
+  "ended": "2026-06-27T12:00:47+08:00",
+  "duration_s": 45.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v30_marginal_ic.py"
+  ]
+}

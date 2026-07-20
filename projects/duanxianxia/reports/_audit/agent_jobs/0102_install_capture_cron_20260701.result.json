@@ -1,0 +1,19 @@
+{
+  "id": "0102_install_capture_cron_20260701",
+  "script": "scripts/duanxianxia_0102_install_capture_cron_20260701.py",
+  "args": [],
+  "queued_file": "0102_install_capture_cron_20260701.json",
+  "note": "0102 FIX: (re)install missing duanxianxia capture crons premarket 25 9 / intraday 1 10 / postmarket 20 17 into live crontab. Idempotent + additive; preserves analysis (agent_job_runner) and IPO crons. Root cause of no premarket download.",
+  "worker_time": "2026-07-01T15:00:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"job\": \"0102_install_capture_cron\",\n  \"generated_at\": \"2026-07-01T15:00:07+08:00\",\n  \"ok\": true,\n  \"missing_runners\": [],\n  \"previous_crontab\": [\n    \"*/10 * * * * /usr/bin/flock -n /tmp/dxx_agent_job.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/agent_job_runner.sh\",\n    \"0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh\"\n  ],\n  \"installed_lines\": [\n    \"25 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_premarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh premarket\",\n    \"1 10 * * 1-5 /usr/bin/flock -n /tmp/dxx_intraday.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh intraday_cashflow\",\n    \"20 17 * * 1-5 /usr/bin/flock -n /tmp/dxx_postmarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_postmarket_chain_runner.sh\"\n  ],\n  \"final_crontab\": [\n    \"*/10 * * * * /usr/bin/flock -n /tmp/dxx_agent_job.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/agent_job_runner.sh\",\n    \"0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh\",\n    \"25 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_premarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh premarket\",\n    \"1 10 * * 1-5 /usr/bin/flock -n /tmp/dxx_intraday.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh intraday_cashflow\",\n    \"20 17 * * 1-5 /usr/bin/flock -n /tmp/dxx_postmarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_postmarket_chain_runner.sh\"\n  ],\n  \"write_stderr\": \"\"\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-01T15:00:07+08:00",
+  "ended": "2026-07-01T15:00:07+08:00",
+  "duration_s": 0.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0102_install_capture_cron_20260701.py"
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "generated_at": "2026-06-23T07:50:38",
+  "high_open_threshold": 3.0,
+  "n_days": 12,
+  "days": [
+    "2026-05-21",
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-04",
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-18"
+  ],
+  "n_samples": 3522,
+  "subsets": {
+    "ALL": {
+      "n": 3522,
+      "mean_excess": 0.253,
+      "median_excess": 0.0,
+      "win_rate": 0.494,
+      "limitdown_rate": 0.024
+    },
+    "high_open": {
+      "n": 745,
+      "mean_excess": 0.739,
+      "median_excess": 0.728,
+      "win_rate": 0.541,
+      "limitdown_rate": 0.036
+    },
+    "last_second": {
+      "n": 407,
+      "mean_excess": -0.151,
+      "median_excess": -0.617,
+      "win_rate": 0.459,
+      "limitdown_rate": 0.027
+    },
+    "weak_env": {
+      "n": 3123,
+      "mean_excess": 0.084,
+      "median_excess": 0.0,
+      "win_rate": 0.479,
+      "limitdown_rate": 0.026
+    },
+    "high_open+last_second": {
+      "n": 108,
+      "mean_excess": 1.292,
+      "median_excess": 0.789,
+      "win_rate": 0.574,
+      "limitdown_rate": 0.019
+    },
+    "high_open+weak_env": {
+      "n": 638,
+      "mean_excess": 0.483,
+      "median_excess": 0.467,
+      "win_rate": 0.527,
+      "limitdown_rate": 0.038
+    },
+    "last_second+weak_env": {
+      "n": 327,
+      "mean_excess": -0.355,
+      "median_excess": -0.93,
+      "win_rate": 0.437,
+      "limitdown_rate": 0.028
+    },
+    "TRIPLE": {
+      "n": 79,
+      "mean_excess": 1.221,
+      "median_excess": 0.56,
+      "win_rate": 0.57,
+      "limitdown_rate": 0.013
+    },
+    "BUY_picks": {
+      "n": 13,
+      "mean_excess": 5.083,
+      "median_excess": 5.179,
+      "win_rate": 0.923,
+      "limitdown_rate": 0.0
+    },
+    "BUY_TRIPLE": {
+      "n": 0
+    }
+  }
+}

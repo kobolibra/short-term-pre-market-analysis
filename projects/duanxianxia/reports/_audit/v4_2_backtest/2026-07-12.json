@@ -1,0 +1,55 @@
+{
+  "version": "v4.2.0",
+  "days": [
+    "2026-07-06",
+    "2026-07-07",
+    "2026-07-08",
+    "2026-07-09",
+    "2026-07-10"
+  ],
+  "results": [
+    {
+      "date": "2026-07-06",
+      "status": "error",
+      "error": "数据加载失败: No auction.jjyd.vratio capture at 2026-07-06 <= 092900; refusing after-cutoff fallback to avoid lookahead"
+    },
+    {
+      "date": "2026-07-07",
+      "status": "error",
+      "error": "数据加载失败: No auction.jjyd.vratio capture at 2026-07-07 <= 092900; refusing after-cutoff fallback to avoid lookahead"
+    },
+    {
+      "date": "2026-07-08",
+      "status": "ok",
+      "emotion": "NORMAL",
+      "position_cap": 1.0,
+      "jinji_mean": null,
+      "ztbx_925": 1.96,
+      "t0_downgraded": false,
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-07-09",
+      "status": "ok",
+      "emotion": "WARNING",
+      "position_cap": 0.6,
+      "jinji_mean": null,
+      "ztbx_925": 0.68,
+      "t0_downgraded": true,
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-07-10",
+      "status": "ok",
+      "emotion": "NORMAL",
+      "position_cap": 1.0,
+      "jinji_mean": null,
+      "ztbx_925": 3.29,
+      "t0_downgraded": false,
+      "n_orders": 0,
+      "orders": []
+    }
+  ]
+}

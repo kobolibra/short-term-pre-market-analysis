@@ -1,0 +1,503 @@
+{
+  "generated_at": "2026-06-27T08:30:36",
+  "job": "0050_premarket_clean_ic_v39",
+  "preopen_cutoff_hhmmss": 93000,
+  "n_days": 18,
+  "dataset_preopen_days": {
+    "auction.jjyd.vratio": 16,
+    "auction.jjyd.qiangchou": 16,
+    "auction.jjyd.net_amount": 18,
+    "auction.jjlive.fengdan": 18,
+    "auction.jjyd.weimai": 18,
+    "rank.rocket": 17,
+    "rank.hot_stock_day": 17,
+    "cashflow.stock.today": 0,
+    "cashflow.stock.3day": 0,
+    "cashflow.stock.5day": 0,
+    "cashflow.stock.10day": 0,
+    "pool.hot": 0,
+    "pool.surge": 0
+  },
+  "dataset_anyfile_days": {
+    "auction.jjyd.vratio": 18,
+    "auction.jjyd.qiangchou": 18,
+    "auction.jjyd.net_amount": 18,
+    "auction.jjlive.fengdan": 18,
+    "auction.jjyd.weimai": 18,
+    "rank.rocket": 21,
+    "rank.hot_stock_day": 21,
+    "cashflow.stock.today": 20,
+    "cashflow.stock.3day": 18,
+    "cashflow.stock.5day": 20,
+    "cashflow.stock.10day": 20,
+    "pool.hot": 17,
+    "pool.surge": 17
+  },
+  "post_open_excluded_datasets": [
+    "cashflow.stock.today",
+    "cashflow.stock.3day",
+    "cashflow.stock.5day",
+    "cashflow.stock.10day",
+    "pool.hot",
+    "pool.surge"
+  ],
+  "n_fields_tested": 57,
+  "field_ic": [
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "seal_amount_text",
+      "mean_ic": -0.1895,
+      "icir": -1.16,
+      "n_days": 3,
+      "numeric_rows": 105
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "auction_turnover_wan_text",
+      "mean_ic": 0.1629,
+      "icir": 0.665,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "auction_turnover_wan",
+      "mean_ic": 0.1629,
+      "icir": 0.665,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "turnover_rate_pct",
+      "mean_ic": 0.1349,
+      "icir": 0.731,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "latest_change_pct",
+      "mean_ic": 0.1295,
+      "icir": 0.357,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "latest_change_pct",
+      "mean_ic": 0.119,
+      "icir": 0.369,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "main_net_inflow_full",
+      "mean_ic": 0.1034,
+      "icir": 0.554,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "price",
+      "mean_ic": 0.1006,
+      "icir": 0.414,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "super_large_net_inflow",
+      "mean_ic": 0.0937,
+      "icir": 0.548,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "auction_turnover_wan_text",
+      "mean_ic": 0.0928,
+      "icir": 0.487,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "auction_turnover_wan",
+      "mean_ic": 0.0928,
+      "icir": 0.487,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "yesterday_auction_turnover_wan",
+      "mean_ic": 0.0884,
+      "icir": 0.495,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "amount_920",
+      "mean_ic": -0.077,
+      "icir": -0.203,
+      "n_days": 12,
+      "numeric_rows": 183
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "market_cap",
+      "mean_ic": 0.0692,
+      "icir": 0.377,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "market_cap_yi",
+      "mean_ic": 0.0692,
+      "icir": 0.377,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "large_order_net_inflow",
+      "mean_ic": -0.0681,
+      "icir": -0.445,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "auction_volume_ratio",
+      "mean_ic": 0.068,
+      "icir": 0.228,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "auction_change_pct",
+      "mean_ic": -0.0679,
+      "icir": -0.429,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "amount_915",
+      "mean_ic": -0.0654,
+      "icir": -0.524,
+      "n_days": 18,
+      "numeric_rows": 1521
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "market_cap_text",
+      "mean_ic": 0.065,
+      "icir": 0.365,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "seal_volume_again",
+      "mean_ic": 0.0644,
+      "icir": 0.397,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "seal_volume",
+      "mean_ic": 0.0644,
+      "icir": 0.397,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "rank",
+      "mean_ic": 0.0616,
+      "icir": 0.548,
+      "n_days": 18,
+      "numeric_rows": 1542
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "market_cap_yi",
+      "mean_ic": 0.0591,
+      "icir": 0.295,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "auction_volume_ratio",
+      "mean_ic": 0.0583,
+      "icir": 0.335,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "amount_925",
+      "mean_ic": -0.0494,
+      "icir": -0.159,
+      "n_days": 3,
+      "numeric_rows": 105
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "latest_change_pct",
+      "mean_ic": 0.0482,
+      "icir": 0.16,
+      "n_days": 18,
+      "numeric_rows": 1542
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "main_net_inflow_wan",
+      "mean_ic": 0.0434,
+      "icir": 0.411,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "main_net_inflow",
+      "mean_ic": 0.0434,
+      "icir": 0.411,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "main_net_inflow_text",
+      "mean_ic": 0.0417,
+      "icir": 0.425,
+      "n_days": 18,
+      "numeric_rows": 2671
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "turnover_rate_pct",
+      "mean_ic": -0.0411,
+      "icir": -0.208,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "turnover_rate_pct",
+      "mean_ic": 0.0406,
+      "icir": 0.239,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "auction_turnover_wan",
+      "mean_ic": 0.0395,
+      "icir": 0.323,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "latest_change_pct",
+      "mean_ic": 0.0347,
+      "icir": 0.125,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "seal_amount_wan",
+      "mean_ic": 0.0329,
+      "icir": 0.073,
+      "n_days": 12,
+      "numeric_rows": 170
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "rank",
+      "mean_ic": 0.0287,
+      "icir": 0.268,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "volume_ratio_multiple",
+      "mean_ic": -0.0282,
+      "icir": -0.264,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "rank",
+      "mean_ic": -0.0273,
+      "icir": -0.149,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "grab_strength",
+      "mean_ic": 0.0271,
+      "icir": 0.15,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "rank.hot_stock_day",
+      "field": "rank",
+      "mean_ic": -0.0227,
+      "icir": -0.204,
+      "n_days": 17,
+      "numeric_rows": 1700
+    },
+    {
+      "dataset": "rank.hot_stock_day",
+      "field": "raw_rate",
+      "mean_ic": 0.0227,
+      "icir": 0.204,
+      "n_days": 17,
+      "numeric_rows": 1700
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "auction_change_pct_text",
+      "mean_ic": 0.0218,
+      "icir": 0.102,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "turnover_rate_pct_text",
+      "mean_ic": -0.0191,
+      "icir": -0.129,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "turnover_rate_pct",
+      "mean_ic": -0.0191,
+      "icir": -0.129,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_amount_wan",
+      "mean_ic": 0.0184,
+      "icir": 0.189,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_amount",
+      "mean_ic": 0.0184,
+      "icir": 0.189,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_turnover_text",
+      "mean_ic": -0.0173,
+      "icir": -0.26,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "latest_change_pct",
+      "mean_ic": 0.015,
+      "icir": 0.052,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "latest_change_pct_text",
+      "mean_ic": 0.015,
+      "icir": 0.052,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "rank.rocket",
+      "field": "rank",
+      "mean_ic": 0.0146,
+      "icir": 0.163,
+      "n_days": 17,
+      "numeric_rows": 1700
+    },
+    {
+      "dataset": "rank.rocket",
+      "field": "raw_rate",
+      "mean_ic": -0.0146,
+      "icir": -0.164,
+      "n_days": 17,
+      "numeric_rows": 1700
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_turnover",
+      "mean_ic": -0.0145,
+      "icir": -0.195,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "rank",
+      "mean_ic": 0.0145,
+      "icir": 0.195,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_turnover_wan",
+      "mean_ic": -0.0145,
+      "icir": -0.195,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "auction_change_pct_text",
+      "mean_ic": 0.0076,
+      "icir": 0.048,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "rank",
+      "mean_ic": -0.0019,
+      "icir": -0.017,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "main_net_inflow_wan",
+      "mean_ic": 0.0017,
+      "icir": 0.015,
+      "n_days": 18,
+      "numeric_rows": 1105
+    }
+  ]
+}

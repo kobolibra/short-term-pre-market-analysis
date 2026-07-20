@@ -1,0 +1,12 @@
+{
+  "id": "0045_premarket_raw_capture_audit_v36_20260627",
+  "script": null,
+  "args": [],
+  "queued_file": "0045_premarket_raw_capture_audit_v36_20260627.json",
+  "note": null,
+  "worker_time": "2026-06-27T15:40:02+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "script not allowed (must be scripts/*.py): ",
+  "ended": "2026-06-27T15:40:02+08:00"
+}

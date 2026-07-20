@@ -1,0 +1,19 @@
+{
+  "id": "0048_premarket_rocket_overlay_v37_20260627",
+  "script": "scripts/v37_rocket_overlay_combo.py",
+  "args": [],
+  "queued_file": "0048_premarket_rocket_overlay_v37_20260627.json",
+  "note": "v36 audit found rocket_rank (飙升榜排名) is the strongest single factor (IC 0.222, ICIR 1.03) yet production edge ignores it. This job blends rocket attention percentile (BLEND=0.30) into the production edge score per day and walk-forward compares daily cross-sectional Spearman IC and Top3 cumulative excess vs the production baseline. Read-only validation, does not touch production. Output reports/_audit/premarket_rocket_overlay_v37.{json,md}.",
+  "worker_time": "2026-06-27T16:10:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"ic_baseline\": {\n    \"mean_ic\": 0.067,\n    \"icir\": 0.408,\n    \"n_days\": 15\n  },\n  \"ic_composite\": {\n    \"mean_ic\": 0.0725,\n    \"icir\": 0.443,\n    \"n_days\": 15\n  },\n  \"top3_cum\": {\n    \"baseline\": 22.82,\n    \"composite\": 19.21,\n    \"mean_base\": 1.522,\n    \"mean_comp\": 1.28\n  },\n  \"n_days\": 15\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-27T16:10:05+08:00",
+  "ended": "2026-06-27T16:10:45+08:00",
+  "duration_s": 39.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v37_rocket_overlay_combo.py"
+  ]
+}

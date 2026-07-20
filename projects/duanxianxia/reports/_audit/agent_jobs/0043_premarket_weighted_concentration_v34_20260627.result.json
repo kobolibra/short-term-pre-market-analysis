@@ -1,0 +1,19 @@
+{
+  "id": "0043_premarket_weighted_concentration_v34_20260627",
+  "script": "scripts/v34_weighted_concentration.py",
+  "args": [],
+  "queued_file": "0043_premarket_weighted_concentration_v34_20260627.json",
+  "note": "Answer the operational worry that equal-weight Top1/Top2 (best per 0041/0042) is too few names (single-name blowup, capacity, slippage). Root cause: v10_amt signal is strongest at the very top and decays fast, so equal-weighting deeper names dilutes the top-of-book alpha. This job freezes the v10_amt ranking and tests whether holding ENOUGH names (Top5/8/10) but tilting weights to the top recovers most of the concentration alpha. Schemes per k in {3,5,8,10}: equal (1/k), rank (linear k-i), score (softmax of (score-max)/std). Reports per-scheme cumulative/mean/info_ratio/win/worst plus effective number of names (1/sum w^2) so diversification is explicit, with equal_top1/top2 as reference. Verdict: best diversified (k>=5, non-equal) scheme by info_ratio and by cumulative, and whether weighted Top8/10 approaches equal_top2 return/IR while holding more names. Output reports/_audit/premarket_weighted_concentration_v34.{json,md}.",
+  "worker_time": "2026-06-27T14:30:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"verdict\": {\n    \"frozen_ranking\": \"v10_amt: score(CORE,V10AMT_W) - risk_penalty\",\n    \"reference_equal_top2\": {\n      \"cumulative\": 34.2,\n      \"info_ratio\": 0.48,\n      \"worst_day\": -9.297,\n      \"eff_n_names\": 2.0\n    },\n    \"best_diversified_by_info_ratio\": {\n      \"name\": \"rank_top5\",\n      \"n_days\": 15,\n      \"mean_daily\": 1.562,\n      \"median_daily\": 2.143,\n      \"std_daily\": 3.561,\n      \"info_ratio\": 0.439,\n      \"cumulative\": 23.432,\n      \"win_rate_days\": 0.6,\n      \"worst_day\": -5.565,\n      \"best_day\": 5.995,\n      \"eff_n_names\": 4.09\n    },\n    \"best_diversified_by_cumulative\": {\n      \"name\": \"score_top5\",\n      \"n_days\": 15,\n      \"mean_daily\": 1.868,\n      \"median_daily\": 2.47,\n      \"std_daily\": 4.498,\n      \"info_ratio\": 0.415,\n      \"cumulative\": 28.021,\n      \"win_rate_days\": 0.8,\n      \"worst_day\": -10.187,\n      \"best_day\": 8.578,\n      \"eff_n_names\": 2.47\n    },\n    \"weighting_recovers_topofbook\": {\n      \"vs_equal_top5\": {\n        \"equal\": 15.931,\n        \"rank\": 23.432,\n        \"score\": 28.021\n      },\n      \"vs_equal_top10\": {\n        \"equal\": 8.419,\n        \"rank\": 13.053,\n        \"score\": 18.563\n      }\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-27T14:30:07+08:00",
+  "ended": "2026-06-27T14:30:34+08:00",
+  "duration_s": 26.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v34_weighted_concentration.py"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "0052_v5_0_premarket_0720",
+  "script": "scripts/duanxianxia_v5_0_premarket_daily.py",
+  "args": [
+    "--date",
+    "2026-07-20"
+  ],
+  "queued_file": "0052_v5_0_premarket_0720.json",
+  "note": "v5.0 重跑 7/20 盘前分析 — 用 v5.0 统计剖面框架重新分析今天盘前选股",
+  "worker_time": "2026-07-20T09:57:51+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "v5.0 premarket analysis: running for 2026-07-20...\nv5.0 premarket: using report /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-07-20/premarket/092814.json\nv5.0 premarket: history close_days=27, pre_days=28\nv5.0 premarket done: /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/v5_0_premarket/2026-07-20.json\n",
+  "stderr_tail": "[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-17 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-06-03 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-06-05 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-01 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-03 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-06 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-07 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-17 <= 093300; refusing after-cutoff fallback to avoid lookahead\n",
+  "started": "2026-07-20T09:57:51+08:00",
+  "ended": "2026-07-20T09:57:56+08:00",
+  "duration_s": 5.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v5_0_premarket_daily.py",
+    "--date",
+    "2026-07-20"
+  ]
+}

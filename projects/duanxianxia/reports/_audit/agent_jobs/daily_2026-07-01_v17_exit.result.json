@@ -1,0 +1,25 @@
+{
+  "id": "daily_2026-07-01_v17_exit",
+  "script": "scripts/v17_exit.py",
+  "args": [
+    "--top-n",
+    "30"
+  ],
+  "queued_file": "daily_2026-07-01_v17_exit.json",
+  "note": "daily auto-refresh 2026-07-01",
+  "worker_time": "2026-07-01T01:12:37+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "timeout after 2400s",
+  "stdout_tail": "",
+  "stderr_tail": "",
+  "started": "2026-07-01T01:12:38+08:00",
+  "ended": "2026-07-01T01:52:43+08:00",
+  "duration_s": 2405.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v17_exit.py",
+    "--top-n",
+    "30"
+  ]
+}

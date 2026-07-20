@@ -1,0 +1,139 @@
+{
+  "generated_at": "2026-06-22T12:34:54",
+  "n_days": 11,
+  "days_used": [
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-04",
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-18"
+  ],
+  "baseline_target": {
+    "edge_score_excess_ic": 0.0724,
+    "final_score_excess_ic": 0.0689
+  },
+  "note": "比 edge_stored 高且更稳(icir)的变体才值得 port 进 compute_edge_v9.py。amt_pct=当日竞价成交额横截面百分位,缺失=50。",
+  "variants": {
+    "edge_stored": {
+      "excess_ret": {
+        "mean_daily_ic": 0.0724,
+        "ic_std": 0.1343,
+        "icir": 0.539,
+        "pooled_ic": 0.0702,
+        "n_days": 11
+      },
+      "day_pct": {
+        "mean_daily_ic": 0.0559,
+        "ic_std": 0.1127,
+        "icir": 0.497,
+        "pooled_ic": 0.0725,
+        "n_days": 11
+      },
+      "next_day_pct": {
+        "mean_daily_ic": 0.0468,
+        "ic_std": 0.1323,
+        "icir": 0.354,
+        "pooled_ic": 0.0518,
+        "n_days": 11
+      }
+    },
+    "final_stored": {
+      "excess_ret": {
+        "mean_daily_ic": 0.0689,
+        "ic_std": 0.0627,
+        "icir": 1.1,
+        "pooled_ic": 0.0797,
+        "n_days": 11
+      },
+      "day_pct": {
+        "mean_daily_ic": 0.1028,
+        "ic_std": 0.0772,
+        "icir": 1.331,
+        "pooled_ic": 0.1221,
+        "n_days": 11
+      },
+      "next_day_pct": {
+        "mean_daily_ic": -0.011,
+        "ic_std": 0.1445,
+        "icir": -0.076,
+        "pooled_ic": 0.0191,
+        "n_days": 11
+      }
+    },
+    "baseline_recon": {
+      "excess_ret": {
+        "mean_daily_ic": 0.0725,
+        "ic_std": 0.1342,
+        "icir": 0.54,
+        "pooled_ic": 0.0703,
+        "n_days": 11
+      },
+      "day_pct": {
+        "mean_daily_ic": 0.056,
+        "ic_std": 0.1126,
+        "icir": 0.497,
+        "pooled_ic": 0.0725,
+        "n_days": 11
+      },
+      "next_day_pct": {
+        "mean_daily_ic": 0.0468,
+        "ic_std": 0.1323,
+        "icir": 0.353,
+        "pooled_ic": 0.0518,
+        "n_days": 11
+      }
+    },
+    "v10_icw": {
+      "excess_ret": {
+        "mean_daily_ic": 0.0828,
+        "ic_std": 0.1078,
+        "icir": 0.768,
+        "pooled_ic": 0.0694,
+        "n_days": 11
+      },
+      "day_pct": {
+        "mean_daily_ic": 0.1056,
+        "ic_std": 0.1253,
+        "icir": 0.843,
+        "pooled_ic": 0.084,
+        "n_days": 11
+      },
+      "next_day_pct": {
+        "mean_daily_ic": 0.059,
+        "ic_std": 0.1553,
+        "icir": 0.38,
+        "pooled_ic": 0.0915,
+        "n_days": 11
+      }
+    },
+    "v10_amt": {
+      "excess_ret": {
+        "mean_daily_ic": 0.1014,
+        "ic_std": 0.1266,
+        "icir": 0.8,
+        "pooled_ic": 0.0916,
+        "n_days": 11
+      },
+      "day_pct": {
+        "mean_daily_ic": 0.059,
+        "ic_std": 0.158,
+        "icir": 0.374,
+        "pooled_ic": 0.0455,
+        "n_days": 11
+      },
+      "next_day_pct": {
+        "mean_daily_ic": 0.0587,
+        "ic_std": 0.1701,
+        "icir": 0.345,
+        "pooled_ic": 0.0854,
+        "n_days": 11
+      }
+    }
+  }
+}

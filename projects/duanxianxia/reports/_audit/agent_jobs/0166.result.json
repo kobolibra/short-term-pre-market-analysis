@@ -1,0 +1,22 @@
+{
+  "id": "0166",
+  "script": "scripts/duanxianxia_indicator_listing_0166.py",
+  "args": [
+    "2026-07-06"
+  ],
+  "queued_file": "0166_indicator_rebuild_verify_20260706.json",
+  "note": "VERIFY: fengdan接入 feature_builder_v12 + D1-D6重建 indicator_builder_v13 后, 列出真实capture的D1-D6指标(真封单/承接/资金占比/分歧), 校验 import self-test 已绿 + 覆盖率",
+  "worker_time": "2026-07-06T21:00:18+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "[0166] project_root=/home/investmentofficehku/.openclaw/workspace/scripts\n[0166] capture_dir=/home/investmentofficehku/.openclaw/workspace/scripts/captures/2026-07-06 exists=False\n[0166] feature_version=feature_builder_v12.0 indicator_version=indicator_builder_v13.0\n[0166] date=2026-07-06 cutoff=09:29 n_rows=0 n_fengdan_merged=0\n[0166] indicator_keys=['d1_auction_change_pct', 'd2_bid_amount', 'd2_bid_strength', 'd2_volume_ratio', 'd2_turnover_rate', 'd2_grab_strength', 'd3_main_net_inflow', 'd3_fund_ratio', 'd4_true_seal', 'd4_seal_ratio', 'd4_fengdan_925', 'd5_fill_ratio', 'd5_time_divergence']\ncode\tname\tboard\tD1涨%\tD2竞价额\tD2量比\tD2抢筹\tD3主力\tD3资占\tD4真封单\tD4承接\tD4f925\tD5成/委\tD5时间分歧\n[0166] RECAP n_rows=0 fengdan_hit=0/0 coverage_warn(>20%_missing)=[]\n[0166] DONE\n",
+  "stderr_tail": "",
+  "started": "2026-07-06T21:00:18+08:00",
+  "ended": "2026-07-06T21:00:19+08:00",
+  "duration_s": 1.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_indicator_listing_0166.py",
+    "2026-07-06"
+  ]
+}

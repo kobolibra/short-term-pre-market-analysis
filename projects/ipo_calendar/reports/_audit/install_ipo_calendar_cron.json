@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-06-24T22:00:07+08:00",
+  "ok": true,
+  "cron_line": "0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh",
+  "stdout": "",
+  "stderr": "",
+  "previous_count": 1,
+  "new_count": 2
+}

@@ -1,0 +1,19 @@
+{
+  "id": "0161",
+  "script": "scripts/duanxianxia_0161_install_auction_selfcheck_cron.py",
+  "args": [],
+  "queued_file": "0161_install_auction_selfcheck_cron_20260706.json",
+  "note": "Install trading-day 09:30 auction premarket self-check cron (idempotent; preserves all existing crons).",
+  "worker_time": "2026-07-06T15:00:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"job\": \"0161_install_auction_selfcheck_cron\",\n  \"generated_at\": \"2026-07-06T15:00:06+08:00\",\n  \"ok\": true,\n  \"missing_script\": [],\n  \"previous_crontab\": [\n    \"*/10 * * * * /usr/bin/flock -n /tmp/dxx_agent_job.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/agent_job_runner.sh\",\n    \"0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh\",\n    \"25 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_premarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh premarket\",\n    \"1 10 * * 1-5 /usr/bin/flock -n /tmp/dxx_intraday.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh intraday_cashflow\",\n    \"20 17 * * 1-5 /usr/bin/flock -n /tmp/dxx_postmarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_postmarket_chain_runner.sh\"\n  ],\n  \"installed_line\": \"30 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_auction_selfcheck.lock bash -lc 'cd /home/investmentofficehku/.openclaw/workspace && /usr/bin/python3 /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_auction_selfcheck.py'\",\n  \"final_crontab\": [\n    \"*/10 * * * * /usr/bin/flock -n /tmp/dxx_agent_job.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/agent_job_runner.sh\",\n    \"0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh\",\n    \"25 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_premarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh premarket\",\n    \"1 10 * * 1-5 /usr/bin/flock -n /tmp/dxx_intraday.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh intraday_cashflow\",\n    \"20 17 * * 1-5 /usr/bin/flock -n /tmp/dxx_postmarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_postmarket_chain_runner.sh\",\n    \"30 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_auction_selfcheck.lock bash -lc 'cd /home/investmentofficehku/.openclaw/workspace && /usr/bin/python3 /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_auction_selfcheck.py'\"\n  ],\n  \"write_stderr\": \"\"\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-06T15:00:06+08:00",
+  "ended": "2026-07-06T15:00:06+08:00",
+  "duration_s": 0.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0161_install_auction_selfcheck_cron.py"
+  ]
+}

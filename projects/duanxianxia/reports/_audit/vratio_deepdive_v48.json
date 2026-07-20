@@ -1,0 +1,164 @@
+{
+  "generated_at": "2026-06-27T10:50:12",
+  "job": "vratio_deepdive_v48",
+  "dataset": "auction.jjyd.vratio",
+  "n_dates": 16,
+  "coverage": {
+    "yesterday_auction_turnover_wan": {
+      "present": 1364,
+      "total": 1364,
+      "pct": 1.0
+    },
+    "seal_amount_wan": {
+      "present": 46,
+      "total": 1364,
+      "pct": 0.034
+    },
+    "volume_ratio_multiple": {
+      "present": 1364,
+      "total": 1364,
+      "pct": 1.0
+    }
+  },
+  "field_ic": [
+    {
+      "field": "latest_change_pct",
+      "mean_ic": 0.119,
+      "icir": 0.369,
+      "n_days": 16
+    },
+    {
+      "field": "auction_turnover_wan",
+      "mean_ic": 0.0928,
+      "icir": 0.487,
+      "n_days": 16
+    },
+    {
+      "field": "auction_volume_ratio",
+      "mean_ic": 0.0583,
+      "icir": 0.335,
+      "n_days": 16
+    },
+    {
+      "field": "turnover_rate_pct",
+      "mean_ic": 0.0406,
+      "icir": 0.239,
+      "n_days": 16
+    },
+    {
+      "field": "auction_change_pct",
+      "mean_ic": -0.0256,
+      "icir": -0.231,
+      "n_days": 6
+    },
+    {
+      "field": "volume_ratio_multiple",
+      "mean_ic": -0.0282,
+      "icir": -0.264,
+      "n_days": 16
+    }
+  ],
+  "today_over_yesterday_turnover_ic": {
+    "mean_ic": -0.0291,
+    "icir": -0.271,
+    "n_days": 16
+  },
+  "pairwise_redundancy": [
+    {
+      "pair": "auction_change_pct ~ latest_change_pct",
+      "avg_spearman": 0.787,
+      "n_days": 6
+    },
+    {
+      "pair": "auction_turnover_wan ~ auction_volume_ratio",
+      "avg_spearman": 0.634,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_turnover_wan ~ turnover_rate_pct",
+      "avg_spearman": 0.58,
+      "n_days": 16
+    },
+    {
+      "pair": "turnover_rate_pct ~ auction_change_pct",
+      "avg_spearman": 0.539,
+      "n_days": 6
+    },
+    {
+      "pair": "turnover_rate_pct ~ latest_change_pct",
+      "avg_spearman": 0.467,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_turnover_wan ~ auction_change_pct",
+      "avg_spearman": 0.381,
+      "n_days": 6
+    },
+    {
+      "pair": "auction_turnover_wan ~ latest_change_pct",
+      "avg_spearman": 0.36,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_change_pct ~ volume_ratio_multiple",
+      "avg_spearman": 0.317,
+      "n_days": 6
+    },
+    {
+      "pair": "auction_volume_ratio ~ volume_ratio_multiple",
+      "avg_spearman": -0.298,
+      "n_days": 16
+    },
+    {
+      "pair": "volume_ratio_multiple ~ latest_change_pct",
+      "avg_spearman": 0.278,
+      "n_days": 16
+    },
+    {
+      "pair": "turnover_rate_pct ~ volume_ratio_multiple",
+      "avg_spearman": 0.241,
+      "n_days": 16
+    },
+    {
+      "pair": "turnover_rate_pct ~ auction_volume_ratio",
+      "avg_spearman": -0.187,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_change_pct ~ auction_volume_ratio",
+      "avg_spearman": -0.076,
+      "n_days": 6
+    },
+    {
+      "pair": "auction_turnover_wan ~ volume_ratio_multiple",
+      "avg_spearman": -0.038,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_volume_ratio ~ latest_change_pct",
+      "avg_spearman": -0.012,
+      "n_days": 16
+    }
+  ],
+  "overlap_with_qiangchou": {
+    "n_days": 16,
+    "avg_n_vratio": 85.2,
+    "avg_n_qiangchou": 47.7,
+    "avg_n_overlap": 13.6,
+    "avg_vratio_in_qc_pct": 0.16
+  },
+  "bucket_in_qc_vs_vratio_only": [
+    {
+      "bucket": "vratio_only",
+      "n": 1146,
+      "mean_excess": -0.48,
+      "mean_excess_demeaned": 0.058
+    },
+    {
+      "bucket": "in_qiangchou",
+      "n": 218,
+      "mean_excess": -0.85,
+      "mean_excess_demeaned": -0.306
+    }
+  ]
+}

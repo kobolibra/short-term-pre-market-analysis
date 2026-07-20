@@ -1,0 +1,239 @@
+{
+  "version": "v4.2.0",
+  "date": "2026-07-15",
+  "status": "ok",
+  "phase": "HIGH_STAGNATION",
+  "phase_label": "高位钝化",
+  "level": "HIGH",
+  "level_score": 0.84,
+  "direction": "FLAT",
+  "risk_tier": "WARNING",
+  "position_cap": 0.3,
+  "buy_mode": "board_only",
+  "relay_health": 25.0,
+  "jinji_1_2": 25.0,
+  "jinji_2_3": 25.0,
+  "ztbx_925": 1.72,
+  "lbbx_925": 2.73,
+  "advance_share": 0.3951,
+  "dt_925": 10,
+  "hard_veto": false,
+  "profit_collapse": false,
+  "breadth_panic": false,
+  "kqxy_t1": 68.0,
+  "kqxy_t2": 68.0,
+  "loss_level": "HIGH",
+  "loss_direction": "FLAT",
+  "loss_overlay": "NONE",
+  "qx_925": 25.0,
+  "qx_stats": {
+    "pre_qx": {
+      "median": 27.0,
+      "std": 10.5521,
+      "band1_low": 16.4479,
+      "band1_high": 37.5521,
+      "band2_low": 5.8957,
+      "band2_high": 48.1043,
+      "n": 20
+    },
+    "close_qx": {
+      "median": 50.0,
+      "std": 12.9765,
+      "band1_low": 37.0235,
+      "band1_high": 62.9765,
+      "band2_low": 24.047,
+      "band2_high": 75.953,
+      "n": 20
+    },
+    "today_position": "BELOW_1SIGMA"
+  },
+  "profit_level": 0.9375,
+  "breadth_level": 0.1875,
+  "relay_level": 0.84,
+  "profit_delta": 0.2636,
+  "breadth_delta": -0.0384,
+  "relay_delta": 0.0,
+  "close_level_score": 0.84,
+  "pre_level_score": 0.7857,
+  "level_source": "CLOSE",
+  "ztbx_close": 3.24,
+  "lbbx_close": -1.3,
+  "advance_share_close": 0.7715,
+  "dt_close": 22,
+  "height_preference": "CORE_HIGH",
+  "fenqi_priority": "DISABLED",
+  "pool_enabled": {
+    "一字封": false,
+    "换手封": true,
+    "分歧封": false,
+    "非板": false
+  },
+  "pool_mult": {
+    "一字封": 1.0,
+    "换手封": 1.0,
+    "分歧封": 1.0,
+    "非板": 1.0
+  },
+  "phase_confidence": 1.0,
+  "data_quality": {
+    "profit_family": "VALID",
+    "breadth_family": "VALID",
+    "relay_family": "VALID"
+  },
+  "n_orders": 3,
+  "orders": [
+    {
+      "code": "000636",
+      "name": "风华高科",
+      "pool": "换手封",
+      "position_pct": 0.9,
+      "buy_strategy": "排板/扫板确认，不竞价买",
+      "height_mult": 1.0,
+      "risk_mult": 1.0
+    },
+    {
+      "code": "002432",
+      "name": "九安医疗",
+      "pool": "换手封",
+      "position_pct": 0.9,
+      "buy_strategy": "排板/扫板确认，不竞价买",
+      "height_mult": 1.0,
+      "risk_mult": 1.0
+    },
+    {
+      "code": "002536",
+      "name": "飞龙股份",
+      "pool": "换手封",
+      "position_pct": 0.9,
+      "buy_strategy": "排板/扫板确认，不竞价买",
+      "height_mult": 1.0,
+      "risk_mult": 1.0
+    }
+  ],
+  "allocated_position": 2.7,
+  "reserve_position": 97.3,
+  "pools": {
+    "一字封": {
+      "n_total": 2,
+      "n_filtered": 1
+    },
+    "换手封": {
+      "n_total": 17,
+      "n_filtered": 0
+    },
+    "分歧封": {
+      "n_total": 4,
+      "n_filtered": 2
+    },
+    "非板": {
+      "n_total": 325,
+      "n_filtered": 74
+    }
+  },
+  "warnings": [
+    "一字封池被 D6 禁用",
+    "非板池被 D6 禁用",
+    "分歧封池被 D6 禁用"
+  ],
+  "diagnostics": {
+    "feature_table": {
+      "n_features": 425,
+      "n_fengdan_merged": 65,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 265,
+          "canonical_ok": 265,
+          "canonical_error": 0
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 63,
+          "canonical_ok": 63,
+          "canonical_error": 0
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 57,
+          "canonical_ok": 57,
+          "canonical_error": 0
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "canonical_ok": 150,
+          "canonical_error": 0
+        },
+        "auction.jjlive.fengdan": {
+          "rows_in": 121,
+          "canonical_ok": 121,
+          "canonical_error": 0
+        }
+      }
+    },
+    "review_plate": {
+      "n_rows": 80
+    },
+    "ztpool_t1": {
+      "n_rows": 124
+    },
+    "rank_data": {
+      "n_hot_rank": 100,
+      "n_rocket_rank": 100
+    },
+    "routing": {
+      "pool_counts": {
+        "一字封": 3,
+        "换手封": 17,
+        "分歧封": 6,
+        "非板": 399
+      }
+    },
+    "ranking": {
+      "一字封": {
+        "n_total": 3,
+        "n_passed": 2,
+        "n_filtered": 1,
+        "n_ranked": 2,
+        "n_top": 2,
+        "pool_median_turnover": 1.06,
+        "pool_median_bid_amount": 46711836
+      },
+      "换手封": {
+        "n_total": 17,
+        "n_passed": 17,
+        "n_filtered": 0,
+        "n_ranked": 17,
+        "n_top": 3,
+        "pool_median_turnover": 0.18,
+        "pool_median_bid_amount": 42136561
+      },
+      "分歧封": {
+        "n_total": 6,
+        "n_passed": 4,
+        "n_filtered": 2,
+        "n_ranked": 4,
+        "n_top": 3,
+        "pool_median_turnover": 0.18,
+        "pool_median_bid_amount": 32599881.0
+      },
+      "非板": {
+        "n_total": 399,
+        "n_passed": 325,
+        "n_filtered": 74,
+        "n_ranked": 325,
+        "n_top": 3,
+        "pool_median_turnover": 0.08,
+        "pool_median_bid_amount": 8435853
+      }
+    }
+  },
+  "_history_diag": {
+    "ztbx_pre_days": 52,
+    "ztbx_close_days": 32,
+    "advance_share_pre_days": 28,
+    "advance_share_close_days": 32,
+    "relay_health_days": 25,
+    "dt_pre_days": 28,
+    "dt_close_days": 32,
+    "kqxy_days": 27,
+    "close_qx_days": 31,
+    "pre_qx_days": 26
+  }
+}

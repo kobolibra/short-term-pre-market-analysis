@@ -1,0 +1,19 @@
+{
+  "id": "0085",
+  "script": "scripts/0085_qxlive_pb_series_recover_20260629.py",
+  "args": [],
+  "queued_file": "0085.json",
+  "note": "Can we recover 9:25 PB from existing QX-live capture? Dump PB *_series arrays + meta + fetched_at; list all qxlive captures' time_point to see if any premarket/9:25 snapshot exists.",
+  "worker_time": "2026-06-29T18:10:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "=== 0085 qxlive PB series recover ===\n\n--- all qxlive captures: fetched_at + PB time_point/value ---\n2026-06-22 172020.json fetched_at=2026-06-22T17:20:20+08:00 pb_tp=None pb_val=83.5\n2026-06-23 172053.json fetched_at=2026-06-23T17:20:53+08:00 pb_tp=None pb_val=66.2\n2026-06-23 092827.json fetched_at=2026-06-23T09:28:27+08:00 pb_tp=09:29 pb_val=100.0%\n2026-06-23 100333.json fetched_at=2026-06-23T10:03:33+08:00 pb_tp=10:04 pb_val=66.3%\n2026-06-24 092903.json fetched_at=2026-06-24T09:29:03+08:00 pb_tp=09:29 pb_val=100.0%\n2026-06-24 100645.json fetched_at=2026-06-24T10:06:45+08:00 pb_tp=10:06 pb_val=85.1%\n2026-06-25 172032.json fetched_at=2026-06-25T17:20:32+08:00 pb_tp=None pb_val=73.3\n2026-06-26 172045.json fetched_at=2026-06-26T17:20:45+08:00 pb_tp=None pb_val=63.8\n2026-06-26 092841.json fetched_at=2026-06-26T09:28:41+08:00 pb_tp=09:29 pb_val=100.0%\n2026-06-26 100312.json fetched_at=2026-06-26T10:03:12+08:00 pb_tp=10:04 pb_val=68.4%\n2026-06-29 092744.json fetched_at=2026-06-29T09:27:44+08:00 pb_tp=09:28 pb_val=100.0%\n2026-06-29 100430.json fetched_at=2026-06-29T10:04:30+08:00 pb_tp=10:04 pb_val=63.0%\n\n--- newest capture deep dump ---\nfile: /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-06-29/home.qxlive.top_metrics/100430.json\nfetched_at: 2026-06-29T10:04:30+08:00 | utc: 2026-06-29T02:04:30Z\nsource_path: 主页/qxlive/顶部指标按钮组\nsource_url: https://duanxianxia.com/web/qxlive\nmeta: {\"source\": \"https://duanxianxia.com/web/qxlive\", \"field\": \"/vendor/stockdata/platechart1.json(qxlive.series) + /api/getLastQxlive(qxlast) + button.chart\", \"count\": 12, \"date\": \"2026-06-29\", \"time_point\": \"10:04\", \"time_point_raw\": \"1004\", \"button_count\": 12, \"available_series_keys\": [\"DT\", \"HSLN\", \"JRLN\", \"KQXY\", \"LBBX\", \"LBGD\", \"PB\", \"PBBX\", \"QX\", \"SZ\", \"XD\", \"ZT\", \"ZTBX\"], \"available_last_keys\": [\"DT\", \"HSLN\", \"KQXY\", \"LBBX\", \"LBGD\", \"PB\", \"PBBX\", \"QX\", \"SZ\", \"XD\", \"ZRLN\", \"ZT\", \"ZTBX\"], \"mapping_notes\": {\"PBBX\": \"主页按钮 PBBX_btn 对应沪深5分钟量能，按钮显示值取 qxlast.PBBX，比对序列为 qxlive.series.JRLN 与 qxlast.ZRLN。\"}}\nheaders: [\"order\", \"metric_key\", \"metric_label\", \"date\", \"time_point\", \"value\", \"button_display_value\", \"chart_tail_value\", \"compare_value\", \"source_series\", \"display_series\", \"compare_series\", \"button_id\", \"button_text\", \"raw_value\", \"raw_chart_tail_value\", \"raw_compare_value\"]\n\nPB row FULL:\n{\"order\": 9, \"metric_key\": \"PB\", \"metric_label\": \"今日封板率\", \"date\": \"2026-06-29\", \"time_point\": \"10:04\", \"value\": \"63.0%\", \"button_display_value\": \"63.0%\", \"chart_tail_value\": \"63%\", \"compare_value\": \"\", \"source_series\": \"PB\", \"display_series\": \"PB\", \"compare_series\": \"\", \"button_id\": \"PB_btn\", \"button_text\": \"今日封板率：63.0%\", \"raw_value\": \"63.0%\", \"raw_chart_tail_value\": 63, \"raw_compare_value\": \"\"}\n  field source_series: type=str len=2 sample=\"PB\"\n  field display_series: type=str len=2 sample=\"PB\"\n  field compare_series: type=str len=0 (empty)\n  field raw_value: type=str len=5 sample=\"63.0%\"\n  field raw_chart_tail_value: type=int  sample=63\n  field raw_compare_value: type=str len=0 (empty)\n=== END 0085 ===\n",
+  "stderr_tail": "",
+  "started": "2026-06-29T18:10:07+08:00",
+  "ended": "2026-06-29T18:10:08+08:00",
+  "duration_s": 0.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0085_qxlive_pb_series_recover_20260629.py"
+  ]
+}

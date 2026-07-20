@@ -1,0 +1,24 @@
+{
+  "id": "daily_2026-06-28_v25_sparse_validation",
+  "script": "scripts/v25_sparse_validation.py",
+  "args": [
+    "--min-train",
+    "5"
+  ],
+  "queued_file": "daily_2026-06-28_v25_sparse_validation.json",
+  "note": "daily auto-refresh 2026-06-28",
+  "worker_time": "2026-06-28T01:13:25+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"oos_days\": 10,\n  \"ranked_oos_top5\": [\n    \"sparse_ic\",\n    \"v10_amt\",\n    \"blend50\",\n    \"blend70_sparse\",\n    \"blend70_amt\"\n  ],\n  \"oos_top5\": {\n    \"v10_amt\": {\n      \"n\": 10,\n      \"mean\": 1.1396,\n      \"median\": 1.933,\n      \"win_rate\": 0.6,\n      \"odds\": 1.508,\n      \"sum\": 11.3961,\n      \"p10\": -3.2418,\n      \"p90\": 4.3489\n    },\n    \"sparse_ic\": {\n      \"n\": 10,\n      \"mean\": 1.1497,\n      \"median\": 1.625,\n      \"win_rate\": 0.7,\n      \"odds\": 1.202,\n      \"sum\": 11.4974,\n      \"p10\": -2.3615,\n      \"p90\": 4.3489\n    },\n    \"blend70_amt\": {\n      \"n\": 10,\n      \"mean\": 0.7891,\n      \"median\": 1.8868,\n      \"win_rate\": 0.6,\n      \"odds\": 1.102,\n      \"sum\": 7.8908,\n      \"p10\": -4.9094,\n      \"p90\": 4.3489\n    },\n    \"blend50\": {\n      \"n\": 10,\n      \"mean\": 1.138,\n      \"median\": 1.8868,\n      \"win_rate\": 0.7,\n      \"odds\": 1.07,\n      \"sum\": 11.3795,\n      \"p10\": -3.2418,\n      \"p90\": 4.3489\n    },\n    \"blend70_sparse\": {\n      \"n\": 10,\n      \"mean\": 1.0606,\n      \"median\": 1.625,\n      \"win_rate\": 0.7,\n      \"odds\": 1.027,\n      \"sum\": 10.6059,\n      \"p10\": -3.2418,\n      \"p90\": 4.3489\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-28T01:13:25+08:00",
+  "ended": "2026-06-28T01:48:18+08:00",
+  "duration_s": 2093.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v25_sparse_validation.py",
+    "--min-train",
+    "5"
+  ]
+}

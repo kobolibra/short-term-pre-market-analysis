@@ -1,0 +1,19 @@
+{
+  "id": "0091",
+  "script": "scripts/duanxianxia_seal_amount_probe_20260630.py",
+  "args": [],
+  "queued_file": "0091.json",
+  "note": "Task 0091 gate: confirm weimai raw[17] seal_amount unit. Imports duanxianxia_canonical (runs its _self_test) then asserts canonical seal_amount == raw[17]*1e4 (万->元) on REAL 2026-06-30 decrypted live rows (多氟多/水晶光电/盛达资源/*ST东智/*ST瑞茂). rc=0 = the 0090 '元' bug is fixed and raw[17] is 万 (matches field-rename-map §4). READ-ONLY. 0091 backlog (separate jobs): route ALL parsing through the canonical layer; fix fetcher hot_stock_day->hot_stock_hour; pool.hot/pool.surge raw + board_state capture; commit a daily capture to agent-results; regen feature CSVs from canonical.",
+  "worker_time": "2026-06-30T13:00:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "seal_amount unit gate (2026-06-30 live weimai):\n  002407 多氟多    raw[17]=64230    -> seal_amount=642300000 yuan (6.42 yi)\n  002273 水晶光电   raw[17]=149266   -> seal_amount=1492660000 yuan (14.93 yi)\n  000603 盛达资源   raw[17]=34899    -> seal_amount=348990000 yuan (3.49 yi)\n  002175 *ST东智  raw[17]=12471    -> seal_amount=124710000 yuan (1.25 yi)\n  600180 *ST瑞茂  raw[17]=3027     -> seal_amount=30270000 yuan (0.30 yi)\nSEAL-AMOUNT GATE: PASS (raw[17] is wan; x1e4 -> yuan)\nduanxianxia_seal_amount_probe_20260630: PASS\n",
+  "stderr_tail": "",
+  "started": "2026-06-30T13:00:02+08:00",
+  "ended": "2026-06-30T13:00:02+08:00",
+  "duration_s": 0.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_seal_amount_probe_20260630.py"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "0037_ipo_calendar_fetch_real_20260626",
+  "script": "scripts/ipo_calendar_fetch_real.py",
+  "args": [],
+  "queued_file": "0037_ipo_calendar_fetch_real_20260626.json",
+  "note": "Use EXACT params read from JS getData(): listedSector=0, pageNum, pageSize=50, sortField=onlineStartDate, sortType=0. Dump count + ipoList rows + real field names to latest_9fzt_signed.json.",
+  "worker_time": "2026-06-26T17:00:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "wrote /home/investmentofficehku/.openclaw/workspace/projects/ipo_calendar/reports/_audit/latest_9fzt_signed.json total_rows 500 count 5550\nfields: ['PERAfterIssueCutNP', 'announcementLink', 'applyMaxOnline', 'averageStaticPE', 'firstClosePrice', 'ipoProceeds', 'ipoTitle', 'isIssuePrice', 'isPERatio', 'issuePrice', 'issueResultPublicDate', 'issueVol', 'listedDate', 'listedSector', 'lotRateOnline', 'market', 'olBefPutBack', 'onlineEndDate', 'onlineStartDate', 'payDateOnline', 'placingNumberLP', 'plannedProceeds', 'prodName', 'sharesOnline', 'symbol', 'timesBB', 'updateTime', 'willSubs']\n",
+  "stderr_tail": "",
+  "started": "2026-06-26T17:00:07+08:00",
+  "ended": "2026-06-26T17:00:14+08:00",
+  "duration_s": 7.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_fetch_real.py"
+  ]
+}

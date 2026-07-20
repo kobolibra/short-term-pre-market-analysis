@@ -1,0 +1,23 @@
+{
+  "job": "0102_install_capture_cron",
+  "generated_at": "2026-07-01T15:00:07+08:00",
+  "ok": true,
+  "missing_runners": [],
+  "previous_crontab": [
+    "*/10 * * * * /usr/bin/flock -n /tmp/dxx_agent_job.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/agent_job_runner.sh",
+    "0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh"
+  ],
+  "installed_lines": [
+    "25 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_premarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh premarket",
+    "1 10 * * 1-5 /usr/bin/flock -n /tmp/dxx_intraday.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh intraday_cashflow",
+    "20 17 * * 1-5 /usr/bin/flock -n /tmp/dxx_postmarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_postmarket_chain_runner.sh"
+  ],
+  "final_crontab": [
+    "*/10 * * * * /usr/bin/flock -n /tmp/dxx_agent_job.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/agent_job_runner.sh",
+    "0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh",
+    "25 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_premarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh premarket",
+    "1 10 * * 1-5 /usr/bin/flock -n /tmp/dxx_intraday.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh intraday_cashflow",
+    "20 17 * * 1-5 /usr/bin/flock -n /tmp/dxx_postmarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_postmarket_chain_runner.sh"
+  ],
+  "write_stderr": ""
+}

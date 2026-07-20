@@ -1,0 +1,19 @@
+{
+  "id": "0064_net_amount_v54_20260627",
+  "script": "scripts/0064_net_amount_v54_20260627.py",
+  "args": [],
+  "queued_file": "0064_net_amount_v54_20260627.json",
+  "note": "表⑥ auction.jjyd.net_amount IC+分桶+交互 v54修复 Daily(root)",
+  "worker_time": "2026-06-27T20:50:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "Total date dirs: 22\nTotal records: 1091\nDates: 18 -> ['2026-05-19', '2026-05-20', '2026-05-21', '2026-06-01', '2026-06-02', '2026-06-04', '2026-06-05', '2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-15', '2026-06-16', '2026-06-17', '2026-06-18', '2026-06-23', '2026-06-24', '2026-06-26']\n\n--- Coverage ---\n  main_wan: 1091/1091 = 100.0%\n  turnover_wan: 1091/1091 = 100.0%\n  turnover_rate: 1091/1091 = 100.0%\n  mktcap: 1091/1091 = 100.0%\n  gap: 1091/1091 = 100.0%\n  main_over_turnover: 1091/1091 = 100.0%\n  main_over_mktcap: 1091/1091 = 100.0%\n\n--- Per-date Spearman IC ---\nField                         n   mean_IC     ICIR\n  main_wan                   18     0.002    0.015\n  turnover_wan               18     0.039    0.323\n  turnover_rate              18    -0.041   -0.208\n  mktcap                     18     0.059    0.295\n  gap                        18    -0.068   -0.429\n  main_over_turnover         18    -0.036   -0.277\n  main_over_mktcap           18    -0.041   -0.218\n\n--- main_wan tercile buckets ---\n  top: n=357 mean=1.896\n  mid: n=377 mean=1.249\n  bot: n=357 mean=1.241\n\n--- main_over_turnover tercile buckets ---\n  top: n=357 mean=2.173\n  mid: n=377 mean=1.515\n  bot: n=357 mean=0.683\n\n--- gap sign bucket ---\n  pos: n=513 mean=1.143\n  neg: n=535 mean=1.771\n  zero: n=43 mean=1.327\n\n--- market_cap buckets ---\n  large(>=500yi): n=405 mean=1.482\n  mid(100-500yi): n=476 mean=2.230\n  small(<100yi): n=210 mean=-0.338\n\n--- Interaction: turnover_wan (H/L) x main_over_turnover (H/L) ---\n  HH: n=172 mean=4.198\n  HL: n=377 mean=0.683\n  LH: n=377 mean=0.882\n  LL: n=165 mean=1.689\n\n--- gap sign x main_over_turnover (H/L) ---\n  gap+_mot_H: n=268 mean=2.351\n  gap+_mot_L: n=245 mean=-0.179\n  gap-_mot_H: n=256 mean=1.525\n  gap-_mot_L: n=279 mean=1.997\n\n--- Per-date universe size ---\n  2026-05-19: n=42\n  2026-05-20: n=53\n  2026-05-21: n=55\n  2026-06-01: n=72\n  2026-06-02: n=60\n  2026-06-04: n=42\n  2026-06-05: n=44\n  2026-06-08: n=83\n  2026-06-09: n=31\n  2026-06-10: n=63\n  2026-06-11: n=56\n  2026-06-15: n=78\n  2026-06-16: n=61\n  2026-06-17: n=76\n  2026-06-18: n=68\n  2026-06-23: n=62\n  2026-06-24: n=83\n  2026-06-26: n=62\n\n[DONE]\n",
+  "stderr_tail": "",
+  "started": "2026-06-27T20:50:02+08:00",
+  "ended": "2026-06-27T20:50:08+08:00",
+  "duration_s": 5.4,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0064_net_amount_v54_20260627.py"
+  ]
+}

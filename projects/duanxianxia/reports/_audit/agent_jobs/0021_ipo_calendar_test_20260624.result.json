@@ -1,0 +1,28 @@
+{
+  "id": "0021_ipo_calendar_test_20260624",
+  "script": "scripts/ipo_calendar_notify.py",
+  "args": [
+    "--date",
+    "2026-06-24",
+    "--no-send",
+    "--run-weekends"
+  ],
+  "queued_file": "0021_ipo_calendar_test_20260624.json",
+  "note": "Test standalone 9fzt IPO calendar parser for 2026-06-24 without Feishu send; writes projects/ipo_calendar outputs.",
+  "worker_time": "2026-06-24T21:30:02+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py\", line 283, in <module>\n    raise SystemExit(main())\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py\", line 261, in main\n    raise RuntimeError(\"failed to parse any stockApply rows from 9fzt page\")\nRuntimeError: failed to parse any stockApply rows from 9fzt page\n",
+  "started": "2026-06-24T21:30:02+08:00",
+  "ended": "2026-06-24T21:30:04+08:00",
+  "duration_s": 2.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py",
+    "--date",
+    "2026-06-24",
+    "--no-send",
+    "--run-weekends"
+  ]
+}

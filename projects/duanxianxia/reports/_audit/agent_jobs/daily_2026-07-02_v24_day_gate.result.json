@@ -1,0 +1,24 @@
+{
+  "id": "daily_2026-07-02_v24_day_gate",
+  "script": "scripts/v24_day_gate.py",
+  "args": [
+    "--min-train",
+    "6"
+  ],
+  "queued_file": "daily_2026-07-02_v24_day_gate.json",
+  "note": "daily auto-refresh 2026-07-02",
+  "worker_time": "2026-07-02T04:29:33+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"baseline_top5\": {\n    \"n\": 12,\n    \"mean\": 6.845,\n    \"median\": 1.571,\n    \"win_rate\": 0.583,\n    \"odds\": 4.83,\n    \"sum\": 82.135,\n    \"p10\": -3.696,\n    \"p90\": 5.845\n  },\n  \"gated_top5\": {\n    \"n\": 12,\n    \"mean\": 1.808,\n    \"median\": 0.0,\n    \"win_rate\": 0.417,\n    \"odds\": 2.05,\n    \"sum\": 21.691,\n    \"p10\": -3.242,\n    \"p90\": 4.148\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-02T04:29:33+08:00",
+  "ended": "2026-07-02T04:31:30+08:00",
+  "duration_s": 117.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v24_day_gate.py",
+    "--min-train",
+    "6"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "0131",
+  "script": "scripts/duanxianxia_capture_datestamp_selfheal.py",
+  "args": [
+    "--all",
+    "--apply"
+  ],
+  "queued_file": "0131_datestamp_selfheal_20260703.json",
+  "note": "one-time: relocate all overnight-misplaced captures to correct content-trade-date folders (fix existing 6 review-table files @01:20)",
+  "worker_time": "2026-07-03T21:00:08+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n \"task\": \"capture_datestamp_selfheal\",\n \"captures_root\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures\",\n \"mode\": \"apply\",\n \"scanned_folders\": [\n  \"2026-05-19\",\n  \"2026-05-20\",\n  \"2026-05-21\",\n  \"2026-06-01\",\n  \"2026-06-02\",\n  \"2026-06-03\",\n  \"2026-06-04\",\n  \"2026-06-05\",\n  \"2026-06-08\",\n  \"2026-06-09\",\n  \"2026-06-10\",\n  \"2026-06-11\",\n  \"2026-06-12\",\n  \"2026-06-15\",\n  \"2026-06-16\",\n  \"2026-06-17\",\n  \"2026-06-18\",\n  \"2026-06-22\",\n  \"2026-06-23\",\n  \"2026-06-24\",\n  \"2026-06-25\",\n  \"2026-06-26\",\n  \"2026-06-29\",\n  \"2026-06-30\",\n  \"2026-07-01\",\n  \"2026-07-02\",\n  \"2026-07-03\"\n ],\n \"moved_count\": 6,\n \"collision_count\": 0,\n \"bad_json_count\": 0,\n \"moves\": [\n  {\n   \"dataset\": \"review.daily.top_metrics\",\n   \"file\": \"012029.json\",\n   \"from\": \"2026-07-02\",\n   \"to\": \"2026-07-01\",\n   \"src\": \"2026-07-02/review.daily.top_metrics/012029.json\"\n  },\n  {\n   \"dataset\": \"review.fupan.plate\",\n   \"file\": \"012033.json\",\n   \"from\": \"2026-07-02\",\n   \"to\": \"2026-07-01\",\n   \"src\": \"2026-07-02/review.fupan.plate/012033.json\"\n  },\n  {\n   \"dataset\": \"review.ltgd.range\",\n   \"file\": \"012032.json\",\n   \"from\": \"2026-07-02\",\n   \"to\": \"2026-07-01\",\n   \"src\": \"2026-07-02/review.ltgd.range/012032.json\"\n  },\n  {\n   \"dataset\": \"review.daily.top_metrics\",\n   \"file\": \"012028.json\",\n   \"from\": \"2026-07-03\",\n   \"to\": \"2026-07-02\",\n   \"src\": \"2026-07-03/review.daily.top_metrics/012028.json\"\n  },\n  {\n   \"dataset\": \"review.fupan.plate\",\n   \"file\": \"012032.json\",\n   \"from\": \"2026-07-03\",\n   \"to\": \"2026-07-02\",\n   \"src\": \"2026-07-03/review.fupan.plate/012032.json\"\n  },\n  {\n   \"dataset\": \"review.ltgd.range\",\n   \"file\": \"012031.json\",\n   \"from\": \"2026-07-03\",\n   \"to\": \"2026-07-02\",\n   \"src\": \"2026-07-03/review.ltgd.range/012031.json\"\n  }\n ],\n \"collisions\": [],\n \"bad_json\": []\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-03T21:00:08+08:00",
+  "ended": "2026-07-03T21:00:19+08:00",
+  "duration_s": 10.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_capture_datestamp_selfheal.py",
+    "--all",
+    "--apply"
+  ]
+}

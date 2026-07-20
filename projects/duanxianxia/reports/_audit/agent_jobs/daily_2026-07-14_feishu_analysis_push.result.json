@@ -1,0 +1,19 @@
+{
+  "id": "daily_2026-07-14_feishu_analysis_push",
+  "script": "scripts/duanxianxia_v4_2_premarket_feishu_rerun.py",
+  "args": [],
+  "queued_file": "daily_2026-07-14_feishu_analysis_push.json",
+  "note": "daily auto-refresh 2026-07-14 - 用最新代码重跑盘前分析+飞书推送(含D6情绪周期+选股)",
+  "worker_time": "2026-07-14T11:50:11+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "[feishu_rerun] using report: /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-07-14/premarket/093015.json\n[feishu_rerun] ERROR: DUANXIANXIA_WEBHOOK_URL not set\n",
+  "stderr_tail": "",
+  "started": "2026-07-14T11:50:11+08:00",
+  "ended": "2026-07-14T11:50:11+08:00",
+  "duration_s": 0.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v4_2_premarket_feishu_rerun.py"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "daily_2026-07-18_duanxianxia_v4_2_backtest_daily",
+  "script": "scripts/duanxianxia_v4_2_backtest_daily.py",
+  "args": [
+    "--today",
+    "2026-07-18"
+  ],
+  "queued_file": "daily_2026-07-18_duanxianxia_v4_2_backtest_daily.json",
+  "note": "daily auto-refresh 2026-07-18",
+  "worker_time": "2026-07-18T00:00:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "v4.2 backtest: loaded 16 history days from past results\nv4.2 backtest done: 5 days → /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/v4_2_backtest/2026-07-18.json\n",
+  "stderr_tail": "[data_loader WARN] No home.qxlive.top_metrics capture at 2026-06-03 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-06-05 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-01 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-03 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-06 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-07 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-17 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-17 <= 093300; refusing after-cutoff fallback to avoid lookahead\n",
+  "started": "2026-07-18T00:00:04+08:00",
+  "ended": "2026-07-18T00:00:14+08:00",
+  "duration_s": 10.7,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v4_2_backtest_daily.py",
+    "--today",
+    "2026-07-18"
+  ]
+}

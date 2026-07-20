@@ -1,0 +1,22 @@
+{
+  "id": "daily_2026-07-16_publish_premarket_report",
+  "script": "scripts/_publish_premarket_report.py",
+  "args": [
+    "2026-07-16"
+  ],
+  "queued_file": "daily_2026-07-16_publish_premarket_report.json",
+  "note": "把 9:25 cron 生成的盘前报告复制到 _audit/ 以便 publish_results 推送到 git",
+  "worker_time": "2026-07-16T11:00:27+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "OK: /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-07-16/premarket/093150.json -> /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/premarket_reports/2026-07-16.json (30112 bytes)\n",
+  "stderr_tail": "",
+  "started": "2026-07-16T11:00:27+08:00",
+  "ended": "2026-07-16T11:00:28+08:00",
+  "duration_s": 0.7,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/_publish_premarket_report.py",
+    "2026-07-16"
+  ]
+}

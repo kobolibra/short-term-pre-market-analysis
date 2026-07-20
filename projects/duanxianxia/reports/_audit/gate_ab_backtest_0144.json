@@ -1,0 +1,355 @@
+{
+  "job": "0144_gate_ab_backtest",
+  "target": "excess = (close-open)/preclose*100",
+  "n_days": 20,
+  "days": [
+    "2026-05-21",
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-04",
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-18",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-26",
+    "2026-06-29",
+    "2026-06-30",
+    "2026-07-01",
+    "2026-07-02",
+    "2026-07-03"
+  ],
+  "OLD_gate": {
+    "overall": {
+      "n": 22,
+      "mean_excess": 3.458,
+      "win_rate": 0.727
+    },
+    "by_regime": {
+      "cold": {
+        "n": 13,
+        "mean_excess": 2.308,
+        "win_rate": 0.538
+      },
+      "cold_to_warming": {
+        "n": 9,
+        "mean_excess": 5.121,
+        "win_rate": 1.0
+      }
+    },
+    "n_days": 20,
+    "n_days_with_buys": 16,
+    "total_buys": 22,
+    "per_day": [
+      {
+        "date": "2026-05-21",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": -4.492
+      },
+      {
+        "date": "2026-06-01",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": -6.308
+      },
+      {
+        "date": "2026-06-02",
+        "regime": "cold_to_warming",
+        "n_buys": 3,
+        "n_scored": 3,
+        "mean_excess": 6.858
+      },
+      {
+        "date": "2026-06-04",
+        "regime": "cold",
+        "n_buys": 0,
+        "n_scored": 0,
+        "mean_excess": null
+      },
+      {
+        "date": "2026-06-05",
+        "regime": "cold",
+        "n_buys": 0,
+        "n_scored": 0,
+        "mean_excess": null
+      },
+      {
+        "date": "2026-06-08",
+        "regime": "cold",
+        "n_buys": 0,
+        "n_scored": 0,
+        "mean_excess": null
+      },
+      {
+        "date": "2026-06-09",
+        "regime": "cold_to_warming",
+        "n_buys": 3,
+        "n_scored": 3,
+        "mean_excess": 3.489
+      },
+      {
+        "date": "2026-06-10",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": 7.32
+      },
+      {
+        "date": "2026-06-11",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": 9.507
+      },
+      {
+        "date": "2026-06-15",
+        "regime": "cold_to_warming",
+        "n_buys": 3,
+        "n_scored": 3,
+        "mean_excess": 5.016
+      },
+      {
+        "date": "2026-06-16",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": 7.659
+      },
+      {
+        "date": "2026-06-18",
+        "regime": "cold",
+        "n_buys": 0,
+        "n_scored": 0,
+        "mean_excess": null
+      },
+      {
+        "date": "2026-06-23",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": -13.889
+      },
+      {
+        "date": "2026-06-24",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": 9.534
+      },
+      {
+        "date": "2026-06-26",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": 8.588
+      },
+      {
+        "date": "2026-06-29",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": -8.209
+      },
+      {
+        "date": "2026-06-30",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": 0.549
+      },
+      {
+        "date": "2026-07-01",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": -3.505
+      },
+      {
+        "date": "2026-07-02",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": 23.244
+      },
+      {
+        "date": "2026-07-03",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": 0.0
+      }
+    ]
+  },
+  "NEW_gate": {
+    "overall": {
+      "n": 31,
+      "mean_excess": 2.11,
+      "win_rate": 0.613
+    },
+    "by_regime": {
+      "cold": {
+        "n": 25,
+        "mean_excess": 1.147,
+        "win_rate": 0.52
+      },
+      "cold_to_warming": {
+        "n": 6,
+        "mean_excess": 6.122,
+        "win_rate": 1.0
+      }
+    },
+    "n_days": 20,
+    "n_days_with_buys": 16,
+    "total_buys": 31,
+    "per_day": [
+      {
+        "date": "2026-05-21",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": -1.251
+      },
+      {
+        "date": "2026-06-01",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": -4.131
+      },
+      {
+        "date": "2026-06-02",
+        "regime": "cold_to_warming",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": 8.429
+      },
+      {
+        "date": "2026-06-04",
+        "regime": "cold",
+        "n_buys": 0,
+        "n_scored": 0,
+        "mean_excess": null
+      },
+      {
+        "date": "2026-06-05",
+        "regime": "cold",
+        "n_buys": 0,
+        "n_scored": 0,
+        "mean_excess": null
+      },
+      {
+        "date": "2026-06-08",
+        "regime": "cold",
+        "n_buys": 0,
+        "n_scored": 0,
+        "mean_excess": null
+      },
+      {
+        "date": "2026-06-09",
+        "regime": "cold_to_warming",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": 4.995
+      },
+      {
+        "date": "2026-06-10",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": 1.22
+      },
+      {
+        "date": "2026-06-11",
+        "regime": "cold",
+        "n_buys": 1,
+        "n_scored": 1,
+        "mean_excess": 9.507
+      },
+      {
+        "date": "2026-06-15",
+        "regime": "cold_to_warming",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": 4.942
+      },
+      {
+        "date": "2026-06-16",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": 5.219
+      },
+      {
+        "date": "2026-06-18",
+        "regime": "cold",
+        "n_buys": 0,
+        "n_scored": 0,
+        "mean_excess": null
+      },
+      {
+        "date": "2026-06-23",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": -9.297
+      },
+      {
+        "date": "2026-06-24",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": 6.242
+      },
+      {
+        "date": "2026-06-26",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": -0.038
+      },
+      {
+        "date": "2026-06-29",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": -4.104
+      },
+      {
+        "date": "2026-06-30",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": 2.512
+      },
+      {
+        "date": "2026-07-01",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": -0.216
+      },
+      {
+        "date": "2026-07-02",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": 13.431
+      },
+      {
+        "date": "2026-07-03",
+        "regime": "cold",
+        "n_buys": 2,
+        "n_scored": 2,
+        "mean_excess": 0.0
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "0132",
+  "script": "scripts/duanxianxia_fetch_retry.py",
+  "args": [
+    "--backfill",
+    "cashflow_3d",
+    "cashflow_5d",
+    "cashflow_10d",
+    "home_ztpool",
+    "rocket"
+  ],
+  "queued_file": "0132_capture_retry_backfill_20260703.json",
+  "note": "one-off backfill of 2026-07-03 tables that failed with transient network errors (cashflow 3/5/10day TimeoutError, home.ztpool TimeoutError, rank.rocket SSLError); re-fetch in-process with per-table retry+exponential backoff and persist",
+  "worker_time": "2026-07-03T21:50:09+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "{\n  \"task\": \"capture_retry_backfill\",\n  \"filled\": [\n    {\n      \"kind\": \"cashflow_3d\",\n      \"dataset_id\": \"cashflow.stock.3day\",\n      \"rows\": 150,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-03/cashflow.stock.3day/215227.json\"\n    },\n    {\n      \"kind\": \"cashflow_10d\",\n      \"dataset_id\": \"cashflow.stock.10day\",\n      \"rows\": 150,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-03/cashflow.stock.10day/220216.json\"\n    },\n    {\n      \"kind\": \"home_ztpool\",\n      \"dataset_id\": \"home.ztpool\",\n      \"rows\": 233,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-03/home.ztpool/220518.json\"\n    },\n    {\n      \"kind\": \"rocket\",\n      \"dataset_id\": \"rank.rocket\",\n      \"rows\": 100,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-03/rank.rocket/220534.json\"\n    }\n  ],\n  \"failed\": [\n    {\n      \"kind\": \"cashflow_5d\",\n      \"error\": \"TimeoutError: Timeout 15000ms exceeded.\"\n    }\n  ]\n}\n",
+  "stderr_tail": "[fetch_retry] fetch_cashflow_5d attempt 1/3 failed: TimeoutError: Timeout 15000ms exceeded.; backing off\n[fetch_retry] fetch_cashflow_5d attempt 2/3 failed: TimeoutError: Timeout 60000ms exceeded.; backing off\n",
+  "started": "2026-07-03T21:50:09+08:00",
+  "ended": "2026-07-03T22:05:59+08:00",
+  "duration_s": 950.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_fetch_retry.py",
+    "--backfill",
+    "cashflow_3d",
+    "cashflow_5d",
+    "cashflow_10d",
+    "home_ztpool",
+    "rocket"
+  ]
+}

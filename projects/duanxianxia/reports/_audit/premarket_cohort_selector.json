@@ -1,0 +1,196 @@
+{
+  "generated_at": "2026-07-18T17:45:05",
+  "top_n": 30,
+  "min_train": 5,
+  "low_open_max": 2.0,
+  "n_days": 23,
+  "oos_days": 18,
+  "oos_summary": {
+    "edge_stored": {
+      "oos_days": 18,
+      "capture": 0.1574,
+      "mean_excess": 2.1373,
+      "win_rate": 0.5315,
+      "t1_high_payoff": 6.5264
+    },
+    "v10_amt": {
+      "oos_days": 18,
+      "capture": 0.1537,
+      "mean_excess": 1.6521,
+      "win_rate": 0.4963,
+      "t1_high_payoff": 6.2986
+    },
+    "cohort": {
+      "oos_days": 18,
+      "capture": 0.1444,
+      "mean_excess": 1.4877,
+      "win_rate": 0.4815,
+      "t1_high_payoff": 5.8124
+    }
+  },
+  "per_day": [
+    {
+      "date": "2026-06-08",
+      "low_share": 0.6,
+      "n_low": 18,
+      "cap_edge": 0.167,
+      "cap_amt": 0.167,
+      "cap_cohort": 0.133
+    },
+    {
+      "date": "2026-06-09",
+      "low_share": 0.65,
+      "n_low": 20,
+      "cap_edge": 0.133,
+      "cap_amt": 0.133,
+      "cap_cohort": 0.067
+    },
+    {
+      "date": "2026-06-10",
+      "low_share": 0.619,
+      "n_low": 19,
+      "cap_edge": 0.2,
+      "cap_amt": 0.167,
+      "cap_cohort": 0.133
+    },
+    {
+      "date": "2026-06-11",
+      "low_share": 0.617,
+      "n_low": 18,
+      "cap_edge": 0.2,
+      "cap_amt": 0.167,
+      "cap_cohort": 0.2
+    },
+    {
+      "date": "2026-06-15",
+      "low_share": 0.619,
+      "n_low": 19,
+      "cap_edge": 0.1,
+      "cap_amt": 0.133,
+      "cap_cohort": 0.1
+    },
+    {
+      "date": "2026-06-16",
+      "low_share": 0.603,
+      "n_low": 18,
+      "cap_edge": 0.133,
+      "cap_amt": 0.2,
+      "cap_cohort": 0.167
+    },
+    {
+      "date": "2026-06-18",
+      "low_share": 0.609,
+      "n_low": 18,
+      "cap_edge": 0.167,
+      "cap_amt": 0.133,
+      "cap_cohort": 0.133
+    },
+    {
+      "date": "2026-06-23",
+      "low_share": 0.611,
+      "n_low": 18,
+      "cap_edge": 0.1,
+      "cap_amt": 0.033,
+      "cap_cohort": 0.067
+    },
+    {
+      "date": "2026-06-24",
+      "low_share": 0.603,
+      "n_low": 18,
+      "cap_edge": 0.233,
+      "cap_amt": 0.233,
+      "cap_cohort": 0.2
+    },
+    {
+      "date": "2026-06-26",
+      "low_share": 0.619,
+      "n_low": 19,
+      "cap_edge": 0.233,
+      "cap_amt": 0.167,
+      "cap_cohort": 0.167
+    },
+    {
+      "date": "2026-06-29",
+      "low_share": 0.618,
+      "n_low": 19,
+      "cap_edge": 0.067,
+      "cap_amt": 0.0,
+      "cap_cohort": 0.0
+    },
+    {
+      "date": "2026-06-30",
+      "low_share": 0.615,
+      "n_low": 18,
+      "cap_edge": 0.167,
+      "cap_amt": 0.167,
+      "cap_cohort": 0.167
+    },
+    {
+      "date": "2026-07-01",
+      "low_share": 0.618,
+      "n_low": 19,
+      "cap_edge": 0.233,
+      "cap_amt": 0.233,
+      "cap_cohort": 0.233
+    },
+    {
+      "date": "2026-07-02",
+      "low_share": 0.607,
+      "n_low": 18,
+      "cap_edge": 0.167,
+      "cap_amt": 0.167,
+      "cap_cohort": 0.167
+    },
+    {
+      "date": "2026-07-03",
+      "low_share": 0.614,
+      "n_low": 18,
+      "cap_edge": 0.033,
+      "cap_amt": 0.033,
+      "cap_cohort": 0.033
+    },
+    {
+      "date": "2026-07-08",
+      "low_share": 0.615,
+      "n_low": 18,
+      "cap_edge": 0.1,
+      "cap_amt": 0.133,
+      "cap_cohort": 0.167
+    },
+    {
+      "date": "2026-07-09",
+      "low_share": 0.614,
+      "n_low": 18,
+      "cap_edge": 0.133,
+      "cap_amt": 0.233,
+      "cap_cohort": 0.2
+    },
+    {
+      "date": "2026-07-10",
+      "low_share": 0.611,
+      "n_low": 18,
+      "cap_edge": 0.267,
+      "cap_amt": 0.267,
+      "cap_cohort": 0.267
+    }
+  ],
+  "fullsample_low_share": 0.613,
+  "fullsample_weights_low": {
+    "auction_strength": 0.2116,
+    "liquidity": 0.1878,
+    "money": 0.0911,
+    "pressure_score": 0.1667,
+    "weimai_strength": 0.0472,
+    "orderbook": 0.1742,
+    "amt_pct": 0.1214
+  },
+  "fullsample_weights_high": {
+    "auction_strength": 0.2071,
+    "liquidity": 0.1876,
+    "money": 0.1431,
+    "pressure_score": 0.1611,
+    "weimai_strength": 0.0367,
+    "orderbook": 0.0947,
+    "amt_pct": 0.1697
+  }
+}

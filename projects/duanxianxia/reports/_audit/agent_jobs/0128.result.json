@@ -1,0 +1,19 @@
+{
+  "id": "0128",
+  "script": "scripts/duanxianxia_topN_present_0128.py",
+  "args": [],
+  "queued_file": "0128_topN_present_20260703.json",
+  "note": "Final corrected Top5: baoliang volume_ratio + qiangchou grab/qiangchou split, auction_change_pct joined (post Fix B+C).",
+  "worker_time": "2026-07-03T18:41:15+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "=== TOP5 PRESENT 0128 ===\n{\n \"task\": \"0128_topN_present\",\n \"ok\": true,\n \"errors\": [],\n \"date_dir\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-03\",\n \"baoliang_volume_ratio_top5\": [\n  {\n   \"code\": \"002292\",\n   \"name\": \"奥飞娱乐\",\n   \"volume_ratio\": 93.0,\n   \"auction_change_pct\": 9.96,\n   \"latest_change_pct\": 9.96\n  },\n  {\n   \"code\": \"300543\",\n   \"name\": \"朗科智能\",\n   \"volume_ratio\": 64.8,\n   \"auction_change_pct\": 11.22,\n   \"latest_change_pct\": 11.22\n  },\n  {\n   \"code\": \"600376\",\n   \"name\": \"首开股份\",\n   \"volume_ratio\": 41.2,\n   \"auction_change_pct\": 10.12,\n   \"latest_change_pct\": 10.12\n  },\n  {\n   \"code\": \"002066\",\n   \"name\": \"瑞泰科技\",\n   \"volume_ratio\": 40.0,\n   \"auction_change_pct\": 6.84,\n   \"latest_change_pct\": 6.84\n  },\n  {\n   \"code\": \"301503\",\n   \"name\": \"智迪科技\",\n   \"volume_ratio\": 38.7,\n   \"auction_change_pct\": 1.49,\n   \"latest_change_pct\": 1.49\n  }\n ],\n \"qiangchou_grab_top5\": [\n  {\n   \"code\": \"300666\",\n   \"name\": \"江丰电子\",\n   \"grab_strength\": 7.47,\n   \"auction_change_pct\": 1.73,\n   \"latest_change_pct\": 1.73\n  },\n  {\n   \"code\": \"300543\",\n   \"name\": \"朗科智能\",\n   \"grab_strength\": 7.06,\n   \"auction_change_pct\": 11.22,\n   \"latest_change_pct\": 11.22\n  },\n  {\n   \"code\": \"300918\",\n   \"name\": \"南山智尚\",\n   \"grab_strength\": 6.62,\n   \"auction_change_pct\": 1.18,\n   \"latest_change_pct\": 1.18\n  },\n  {\n   \"code\": \"300751\",\n   \"name\": \"迈为股份\",\n   \"grab_strength\": 6.25,\n   \"auction_change_pct\": 2.0,\n   \"latest_change_pct\": null\n  },\n  {\n   \"code\": \"301165\",\n   \"name\": \"锐捷网络\",\n   \"grab_strength\": 6.22,\n   \"auction_change_pct\": 20.0,\n   \"latest_change_pct\": 20.0\n  }\n ],\n \"qiangchou_qiangchou_top5\": [\n  {\n   \"code\": \"300543\",\n   \"name\": \"朗科智能\",\n   \"grab_strength_qiangchou\": 7.34,\n   \"auction_change_pct\": 11.22,\n   \"latest_change_pct\": 11.22\n  },\n  {\n   \"code\": \"920790\",\n   \"name\": \"联迪信息\",\n   \"grab_strength_qiangchou\": 6.94,\n   \"auction_change_pct\": 7.46,\n   \"latest_change_pct\": null\n  },\n  {\n   \"code\": \"688513\",\n   \"name\": \"苑东生物\",\n   \"grab_strength_qiangchou\": 5.56,\n   \"auction_change_pct\": 5.06,\n   \"latest_change_pct\": null\n  },\n  {\n   \"code\": \"688702\",\n   \"name\": \"盛科通信-U\",\n   \"grab_strength_qiangchou\": 5.38,\n   \"auction_change_pct\": 8.2,\n   \"latest_change_pct\": null\n  }\n ],\n \"n_codes\": 608,\n \"coverage\": {\n  \"volume_ratio\": 22.7,\n  \"grab_strength\": 12.2,\n  \"grab_strength_qiangchou\": 0.7,\n  \"auction_change_pct\": 40.1\n }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-03T18:41:15+08:00",
+  "ended": "2026-07-03T18:41:18+08:00",
+  "duration_s": 3.7,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_topN_present_0128.py"
+  ]
+}

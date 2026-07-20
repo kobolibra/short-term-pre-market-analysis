@@ -1,0 +1,19 @@
+{
+  "id": "0084",
+  "script": "scripts/0084_auction_sealrate_source_20260629.py",
+  "args": [],
+  "queued_file": "0084.json",
+  "note": "Locate count-based premarket-auction 封板率 source: qxlive top_metrics PB + review_daily getChartByQingxu series time points (is there a 9:25 auction sample?).",
+  "worker_time": "2026-06-29T17:40:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "=== 0084 auction sealrate source ===\nWS: /home/investmentofficehku/.openclaw/workspace\n\n### qxlive.top_metrics 2026-06-29 home.qxlive.top_metrics n= 12\ncap keys: ['project', 'dataset_kind', 'dataset_id', 'dataset_label', 'source_path', 'source_url', 'fetched_at', 'fetched_at_utc', 'timezone', 'row_count', 'headers', 'rows', 'meta']\nrow0 keys: ['order', 'metric_key', 'metric_label', 'date', 'time_point', 'value', 'button_display_value', 'chart_tail_value', 'compare_value', 'source_series', 'display_series', 'compare_series', 'button_id', 'button_text', 'raw_value', 'raw_chart_tail_value', 'raw_compare_value']\nrow0: {\"order\": 1, \"metric_key\": \"QX\", \"metric_label\": \"情绪指标\", \"date\": \"2026-06-29\", \"time_point\": \"10:04\", \"value\": \"38\", \"button_display_value\": \"38\", \"chart_tail_value\": \"39\", \"compare_value\": \"\", \"source_series\": \"QX\", \"display_series\": \"QX\", \"compare_series\": \"\", \"button_id\": \"QX_btn\", \"button_text\": \"情绪指标：38\", \"raw_value\": \"38\", \"raw_chart_tail_value\": \"39\", \"raw_compare_value\": \"\"}\ndistinct time_point: {'10:04': 12}\nrows mentioning 封板: 1\n    {\"order\": 9, \"metric_key\": \"PB\", \"metric_label\": \"今日封板率\", \"date\": \"2026-06-29\", \"time_point\": \"10:04\", \"value\": \"63.0%\", \"button_display_value\": \"63.0%\", \"chart_tail_value\": \"63%\", \"compare_value\": \"\", \"source_series\": \"PB\", \"display_series\": \"PB\", \"compare_series\": \"\", \"button_id\": \"PB_btn\", \"button_text\": \"今日封板率：63.0%\", \"raw_value\": \"63.0%\", \"raw_chart_tail_value\": 63, \"raw_compare_value\": \"\"}\n\n### review_daily -> none\n\n### review_daily_core11 -> none\n\n--- (c) broad scan for 封板率 + time field ---\n=== END 0084 ===\n",
+  "stderr_tail": "",
+  "started": "2026-06-29T17:40:05+08:00",
+  "ended": "2026-06-29T17:40:06+08:00",
+  "duration_s": 1.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0084_auction_sealrate_source_20260629.py"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "daily_2026-07-16_v16_strategy",
+  "script": "scripts/v16_strategy.py",
+  "args": [
+    "--top-n",
+    "30",
+    "--min-train",
+    "5"
+  ],
+  "queued_file": "daily_2026-07-16_v16_strategy.json",
+  "note": "daily auto-refresh 2026-07-16",
+  "worker_time": "2026-07-16T02:10:31+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "timeout after 2400s",
+  "stdout_tail": "",
+  "stderr_tail": "",
+  "started": "2026-07-16T02:10:31+08:00",
+  "ended": "2026-07-16T02:50:35+08:00",
+  "duration_s": 2404.4,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v16_strategy.py",
+    "--top-n",
+    "30",
+    "--min-train",
+    "5"
+  ]
+}

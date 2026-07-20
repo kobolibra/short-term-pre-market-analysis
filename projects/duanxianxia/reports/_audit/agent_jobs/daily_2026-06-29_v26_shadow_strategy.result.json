@@ -1,0 +1,19 @@
+{
+  "id": "daily_2026-06-29_v26_shadow_strategy",
+  "script": "scripts/v26_shadow_strategy.py",
+  "args": [],
+  "queued_file": "daily_2026-06-29_v26_shadow_strategy.json",
+  "note": "daily auto-refresh 2026-06-29",
+  "worker_time": "2026-06-29T01:28:53+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"date\": \"2026-06-26\",\n  \"n_candidates\": 333,\n  \"same_day_sparse_top5\": [\n    \"600973\",\n    \"301392\",\n    \"000823\",\n    \"002008\",\n    \"002141\"\n  ],\n  \"aggressive_v10_top3\": [\n    \"000823\",\n    \"600973\",\n    \"301392\"\n  ],\n  \"overlap_sparse5_v10top30\": [\n    \"000823\",\n    \"002008\",\n    \"002141\",\n    \"301392\",\n    \"600973\"\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-29T01:28:53+08:00",
+  "ended": "2026-06-29T01:28:56+08:00",
+  "duration_s": 3.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v26_shadow_strategy.py"
+  ]
+}

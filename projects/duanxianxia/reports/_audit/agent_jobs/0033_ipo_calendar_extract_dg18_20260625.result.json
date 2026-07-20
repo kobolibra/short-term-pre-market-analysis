@@ -1,0 +1,19 @@
+{
+  "id": "0033_ipo_calendar_extract_dg18_20260625",
+  "script": "scripts/ipo_calendar_extract_dg18.py",
+  "args": [],
+  "queued_file": "0033_ipo_calendar_extract_dg18_20260625.json",
+  "note": "Host confirmed api-hq.chongnengjihua.com, path /api/1/stock/a/ipo/list returns 200 but code 20001 系统异常 because sign:true required. Extract DG18 request builder, domain map, apiServer usage and sign algorithm from all JS chunks. Output projects/ipo_calendar/reports/_audit/latest_9fzt_dg18.json",
+  "worker_time": "2026-06-25T12:30:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "wrote /home/investmentofficehku/.openclaw/workspace/projects/ipo_calendar/reports/_audit/latest_9fzt_dg18.json chunks 26 dg18 1 domain_map 21 sign 8\n",
+  "stderr_tail": "",
+  "started": "2026-06-25T12:30:04+08:00",
+  "ended": "2026-06-25T12:30:33+08:00",
+  "duration_s": 28.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_extract_dg18.py"
+  ]
+}

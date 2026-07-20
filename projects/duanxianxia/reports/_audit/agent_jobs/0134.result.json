@@ -1,0 +1,24 @@
+{
+  "id": "0134",
+  "script": "scripts/duanxianxia_fetch_retry.py",
+  "args": [
+    "--backfill",
+    "cashflow_5d"
+  ],
+  "queued_file": "0134_cashflow5d_rebackfill_20260703.json",
+  "note": "Re-backfill cashflow.stock.5day which still failed in job 0132 (Timeout at both 15000ms and 60000ms; upstream 9fzt 5day tab unresponsive at ~22:00). Retry+backoff and the 60s Playwright wait-timeout floor are now in place; try again at a fresh time point.",
+  "worker_time": "2026-07-03T23:10:09+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"task\": \"capture_retry_backfill\",\n  \"filled\": [\n    {\n      \"kind\": \"cashflow_5d\",\n      \"dataset_id\": \"cashflow.stock.5day\",\n      \"rows\": 150,\n      \"path\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-03/cashflow.stock.5day/231216.json\"\n    }\n  ],\n  \"failed\": []\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-03T23:10:09+08:00",
+  "ended": "2026-07-03T23:12:23+08:00",
+  "duration_s": 134.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_fetch_retry.py",
+    "--backfill",
+    "cashflow_5d"
+  ]
+}

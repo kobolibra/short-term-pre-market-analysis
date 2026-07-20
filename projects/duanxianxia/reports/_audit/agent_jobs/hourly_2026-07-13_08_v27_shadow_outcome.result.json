@@ -1,0 +1,19 @@
+{
+  "id": "hourly_2026-07-13_08_v27_shadow_outcome",
+  "script": "scripts/v27_shadow_outcome.py",
+  "args": [],
+  "queued_file": "hourly_2026-07-13_08_v27_shadow_outcome.json",
+  "note": "hourly retry 2026-07-13 08:00 for pending-safe shadow outcome labels",
+  "worker_time": "2026-07-13T08:00:14+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"date\": \"2026-07-10\",\n  \"sparse_top5_excess\": {\n    \"n\": 5,\n    \"mean\": -3.725,\n    \"median\": -2.724,\n    \"win_rate\": 0.0,\n    \"odds\": 0.0,\n    \"sum\": -18.6248,\n    \"min\": -8.3936,\n    \"max\": 0.0\n  },\n  \"v10_top3_excess\": {\n    \"n\": 3,\n    \"mean\": -2.5024,\n    \"median\": -2.3724,\n    \"win_rate\": 0.0,\n    \"odds\": 0.0,\n    \"sum\": -7.5072,\n    \"min\": -5.1349,\n    \"max\": 0.0\n  },\n  \"v10_top30_excess\": {\n    \"n\": 30,\n    \"mean\": 2.2709,\n    \"median\": -0.4125,\n    \"win_rate\": 0.4333,\n    \"odds\": 2.075,\n    \"sum\": 68.1267,\n    \"min\": -16.4719,\n    \"max\": 58.8496\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-13T08:00:14+08:00",
+  "ended": "2026-07-13T08:00:20+08:00",
+  "duration_s": 6.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v27_shadow_outcome.py"
+  ]
+}

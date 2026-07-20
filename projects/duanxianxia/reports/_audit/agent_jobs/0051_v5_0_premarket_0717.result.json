@@ -1,0 +1,24 @@
+{
+  "id": "0051_v5_0_premarket_0717",
+  "script": "scripts/duanxianxia_v5_0_premarket_daily.py",
+  "args": [
+    "--date",
+    "2026-07-17"
+  ],
+  "queued_file": "0051_v5_0_premarket_0717.json",
+  "note": "v5.0 回测 7/17 — 用最新 v5.0 统计剖面框架重新分析 7/17 盘前选股",
+  "worker_time": "2026-07-20T00:51:41+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "v5.0 premarket analysis: running for 2026-07-17...\nv5.0 premarket: using report /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-07-17/premarket/auction_capture_selfcheck.json\n",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v5_0_premarket_daily.py\", line 497, in <module>\n    sys.exit(main())\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v5_0_premarket_daily.py\", line 388, in main\n    bundle = _build_bundle_from_report(report_data, PROJECT_ROOT, today)\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v5_0_runner.py\", line 474, in _build_bundle_from_report\n    return _load_bundle(trade_date, str(project_root),\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v7_1_data_loader.py\", line 198, in load_premarket_bundle\n    auction_vratio = _t0(DS_AUCTION_VRATIO)\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v7_1_data_loader.py\", line 196, in _t0\n    return _extract_rows(load_capture_at_time(project_root, date_t0, ds, max_hhmmss=premarket_auction_cutoff, pick=\"earliest_before\", raise_if_missing=True))\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v7_1_data_loader.py\", line 86, in load_capture_at_time\n    raise CaptureNotFoundError(msg)\nduanxianxia_v7_1_data_loader.CaptureNotFoundError: No auction.jjyd.vratio capture at 2026-07-17 <= 092900; refusing after-cutoff fallback to avoid lookahead\n",
+  "started": "2026-07-20T00:51:41+08:00",
+  "ended": "2026-07-20T00:51:51+08:00",
+  "duration_s": 10.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v5_0_premarket_daily.py",
+    "--date",
+    "2026-07-17"
+  ]
+}

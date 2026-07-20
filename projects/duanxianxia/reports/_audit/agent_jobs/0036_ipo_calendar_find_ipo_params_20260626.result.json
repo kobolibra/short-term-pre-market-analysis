@@ -1,0 +1,19 @@
+{
+  "id": "0036_ipo_calendar_find_ipo_params_20260626",
+  "script": "scripts/ipo_calendar_find_ipo_params.py",
+  "args": [],
+  "queued_file": "0036_ipo_calendar_find_ipo_params_20260626.json",
+  "note": "Signature accepted (/news returns 参数非法). Extract getIpoList call site from stockApply JS + brute-force date/type param sets against /news/api/1/stock/a/ipo/list. Output latest_9fzt_ipo_params.json with the param set that returns real rows.",
+  "worker_time": "2026-06-26T14:10:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "wrote /home/investmentofficehku/.openclaw/workspace/projects/ipo_calendar/reports/_audit/latest_9fzt_ipo_params.json probes 20 hit False\n",
+  "stderr_tail": "",
+  "started": "2026-06-26T14:10:02+08:00",
+  "ended": "2026-06-26T14:10:16+08:00",
+  "duration_s": 14.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_find_ipo_params.py"
+  ]
+}

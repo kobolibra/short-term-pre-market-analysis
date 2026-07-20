@@ -1,0 +1,28 @@
+{
+  "id": "daily_2026-06-26_v23_restricted_rerank",
+  "script": "scripts/v23_restricted_rerank.py",
+  "args": [
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ],
+  "queued_file": "daily_2026-06-26_v23_restricted_rerank.json",
+  "note": "daily auto-refresh 2026-06-26",
+  "worker_time": "2026-06-26T00:25:53+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"oos_days\": 9,\n  \"ranked_by_top5\": [\n    [\n      \"sparse\",\n      {\n        \"top3\": 0.7441,\n        \"top5\": 1.5399,\n        \"top10\": 4.8052,\n        \"cap3\": 0.037,\n        \"cap5\": 0.0222,\n        \"cap10\": 0.0667\n      }\n    ],\n    [\n      \"amt\",\n      {\n        \"top3\": 1.5143,\n        \"top5\": 1.4153,\n        \"top10\": 4.0133,\n        \"cap3\": 0.037,\n        \"cap5\": 0.0222,\n        \"cap10\": 0.0444\n      }\n    ],\n    [\n      \"amtTop30_mlp\",\n      {\n        \"top3\": 0.147,\n        \"top5\": 1.2931,\n        \"top10\": -0.9245,\n        \"cap3\": 0.0,\n        \"cap5\": 0.0667,\n        \"cap10\": 0.0556\n      }\n    ],\n    [\n      \"amtTop20_mlp\",\n      {\n        \"top3\": 1.5465,\n        \"top5\": 1.2661,\n        \"top10\": -0.571,\n        \"cap3\": 0.037,\n        \"cap5\": 0.0667,\n        \"cap10\": 0.0667\n      }\n    ],\n    [\n      \"amtTop10_mlp\",\n      {\n        \"top3\": 1.0745,\n        \"top5\": 1.0485,\n        \"top10\": 4.0133,\n        \"cap3\": 0.037,\n        \"cap5\": 0.0222,\n        \"cap10\": 0.0444\n      }\n    ],\n    [\n      \"mlp_all\",\n      {\n        \"top3\": 0.2124,\n        \"top5\": 0.7158,\n        \"top10\": -1.237,\n        \"cap3\": 0.0,\n        \"cap5\": 0.0667,\n        \"cap10\": 0.0444\n      }\n    ]\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-26T00:25:53+08:00",
+  "ended": "2026-06-26T00:29:46+08:00",
+  "duration_s": 232.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v23_restricted_rerank.py",
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ]
+}

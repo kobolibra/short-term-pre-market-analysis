@@ -1,0 +1,278 @@
+{
+  "generated_at": "2026-06-27T04:50:59",
+  "job": "0041_premarket_decision_concentration_v32",
+  "n_days": 15,
+  "days": [
+    "2026-05-21",
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-04",
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-18",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-26"
+  ],
+  "n_samples": 4603,
+  "ks": [
+    1,
+    2,
+    3,
+    5,
+    10
+  ],
+  "summary": {
+    "top1": {
+      "k": 1,
+      "risk_gated": false,
+      "used_days": 15,
+      "daily": {
+        "n_days": 15,
+        "mean_daily": 3.511,
+        "median_daily": 4.409,
+        "std_daily": 7.151,
+        "info_ratio": 0.491,
+        "win_rate_days": 0.733,
+        "worst_day": -13.889,
+        "best_day": 11.68
+      },
+      "pooled": {
+        "n": 15,
+        "mean_excess": 3.511,
+        "median_excess": 4.409,
+        "win_rate": 0.733,
+        "limitdown_rate": 0.067
+      }
+    },
+    "top1_riskgated": {
+      "k": 1,
+      "risk_gated": true,
+      "used_days": 6,
+      "daily": {
+        "n_days": 6,
+        "mean_daily": 7.258,
+        "median_daily": 6.971,
+        "std_daily": 3.722,
+        "info_ratio": 1.95,
+        "win_rate_days": 1.0,
+        "worst_day": 2.779,
+        "best_day": 11.68
+      },
+      "pooled": {
+        "n": 6,
+        "mean_excess": 7.258,
+        "median_excess": 6.971,
+        "win_rate": 1.0,
+        "limitdown_rate": 0.0
+      }
+    },
+    "top2": {
+      "k": 2,
+      "risk_gated": false,
+      "used_days": 15,
+      "daily": {
+        "n_days": 15,
+        "mean_daily": 2.28,
+        "median_daily": 2.569,
+        "std_daily": 4.748,
+        "info_ratio": 0.48,
+        "win_rate_days": 0.667,
+        "worst_day": -9.297,
+        "best_day": 8.429
+      },
+      "pooled": {
+        "n": 30,
+        "mean_excess": 2.28,
+        "median_excess": 3.326,
+        "win_rate": 0.633,
+        "limitdown_rate": 0.033
+      }
+    },
+    "top2_riskgated": {
+      "k": 2,
+      "risk_gated": true,
+      "used_days": 6,
+      "daily": {
+        "n_days": 6,
+        "mean_daily": 5.671,
+        "median_daily": 5.731,
+        "std_daily": 1.839,
+        "info_ratio": 3.084,
+        "win_rate_days": 1.0,
+        "worst_day": 2.569,
+        "best_day": 8.429
+      },
+      "pooled": {
+        "n": 12,
+        "mean_excess": 5.671,
+        "median_excess": 5.048,
+        "win_rate": 0.917,
+        "limitdown_rate": 0.0
+      }
+    },
+    "top3": {
+      "k": 3,
+      "risk_gated": false,
+      "used_days": 15,
+      "daily": {
+        "n_days": 15,
+        "mean_daily": 1.56,
+        "median_daily": 2.834,
+        "std_daily": 3.998,
+        "info_ratio": 0.39,
+        "win_rate_days": 0.6,
+        "worst_day": -4.728,
+        "best_day": 7.592
+      },
+      "pooled": {
+        "n": 45,
+        "mean_excess": 1.56,
+        "median_excess": 2.779,
+        "win_rate": 0.6,
+        "limitdown_rate": 0.044
+      }
+    },
+    "top3_riskgated": {
+      "k": 3,
+      "risk_gated": true,
+      "used_days": 6,
+      "daily": {
+        "n_days": 6,
+        "mean_daily": 4.785,
+        "median_daily": 5.057,
+        "std_daily": 0.927,
+        "info_ratio": 5.162,
+        "win_rate_days": 1.0,
+        "worst_day": 2.834,
+        "best_day": 5.764
+      },
+      "pooled": {
+        "n": 18,
+        "mean_excess": 4.785,
+        "median_excess": 4.664,
+        "win_rate": 0.889,
+        "limitdown_rate": 0.0
+      }
+    },
+    "top5": {
+      "k": 5,
+      "risk_gated": false,
+      "used_days": 15,
+      "daily": {
+        "n_days": 15,
+        "mean_daily": 1.062,
+        "median_daily": 2.298,
+        "std_daily": 3.356,
+        "info_ratio": 0.316,
+        "win_rate_days": 0.667,
+        "worst_day": -4.154,
+        "best_day": 4.678
+      },
+      "pooled": {
+        "n": 75,
+        "mean_excess": 1.062,
+        "median_excess": 0.462,
+        "win_rate": 0.547,
+        "limitdown_rate": 0.04
+      }
+    },
+    "top5_riskgated": {
+      "k": 5,
+      "risk_gated": true,
+      "used_days": 6,
+      "daily": {
+        "n_days": 6,
+        "mean_daily": 3.44,
+        "median_daily": 3.793,
+        "std_daily": 1.3,
+        "info_ratio": 2.647,
+        "win_rate_days": 1.0,
+        "worst_day": 0.78,
+        "best_day": 4.678
+      },
+      "pooled": {
+        "n": 30,
+        "mean_excess": 3.44,
+        "median_excess": 3.33,
+        "win_rate": 0.767,
+        "limitdown_rate": 0.0
+      }
+    },
+    "top10": {
+      "k": 10,
+      "risk_gated": false,
+      "used_days": 15,
+      "daily": {
+        "n_days": 15,
+        "mean_daily": 0.561,
+        "median_daily": 1.017,
+        "std_daily": 2.733,
+        "info_ratio": 0.205,
+        "win_rate_days": 0.6,
+        "worst_day": -3.493,
+        "best_day": 4.408
+      },
+      "pooled": {
+        "n": 150,
+        "mean_excess": 0.561,
+        "median_excess": 0.0,
+        "win_rate": 0.48,
+        "limitdown_rate": 0.04
+      }
+    },
+    "top10_riskgated": {
+      "k": 10,
+      "risk_gated": true,
+      "used_days": 6,
+      "daily": {
+        "n_days": 6,
+        "mean_daily": 2.944,
+        "median_daily": 3.32,
+        "std_daily": 1.255,
+        "info_ratio": 2.346,
+        "win_rate_days": 1.0,
+        "worst_day": 0.907,
+        "best_day": 4.685
+      },
+      "pooled": {
+        "n": 60,
+        "mean_excess": 2.944,
+        "median_excess": 2.794,
+        "win_rate": 0.683,
+        "limitdown_rate": 0.0
+      }
+    }
+  },
+  "verdict": {
+    "frozen_ranking": "v10_amt: score(CORE,V10AMT_W) - risk_penalty",
+    "best_concentration_by_info_ratio": "top1",
+    "best_concentration_by_mean_daily": "top1",
+    "production_top3": {
+      "n_days": 15,
+      "mean_daily": 1.56,
+      "median_daily": 2.834,
+      "std_daily": 3.998,
+      "info_ratio": 0.39,
+      "win_rate_days": 0.6,
+      "worst_day": -4.728,
+      "best_day": 7.592
+    },
+    "production_top3_vs_best_ir": {
+      "top3_info_ratio": 0.39,
+      "best_info_ratio": 0.491
+    },
+    "risk_gating_helps": {
+      "top1": true,
+      "top2": true,
+      "top3": true,
+      "top5": true,
+      "top10": true
+    }
+  }
+}

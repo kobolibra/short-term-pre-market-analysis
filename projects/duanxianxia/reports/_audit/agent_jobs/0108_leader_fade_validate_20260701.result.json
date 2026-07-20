@@ -1,0 +1,19 @@
+{
+  "id": "0108_leader_fade_validate_20260701",
+  "script": "scripts/duanxianxia_0108_leader_fade_validate_20260701.py",
+  "args": [],
+  "queued_file": "0108_leader_fade_validate_20260701.json",
+  "note": "0108: validate 高位龙头褪色(leader_fade) gate. review.ltgd.range 个股级(在梯队+区间涨幅>=30%+未在当日涨停池) 接进 0105 闸门。重跑 v9 --date 2026-07-01 --json --no-write (NO webhook/bitable), 跑 v9_edge self-test, dump 002674 全行+context_detail(t1_ltgd_*), 证明 002674 由 STILL_BUY 转 VETOED_OR_DOWNGRADED。Read-only wrt production output.",
+  "worker_time": "2026-07-02T14:40:08+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "[0108] running v9_edge self-test ...\n[0108] edge self-test stdout:\nv9_edge _self_test passed\nv9_edge high-position risk gate _self_test passed\nv9_edge leader-fade (0108) risk gate _self_test passed\n\n[0108] running v9 runner --date 2026-07-01 --json --no-write ...\n[0108] v9 runner stderr (tail):\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-01 <= 093300; refusing after-cutoff fallback to avoid lookahead\n===SUMMARY_JSON_BEGIN===\n{\n  \"job\": \"0108_leader_fade_validate\",\n  \"date\": \"2026-07-01\",\n  \"target\": \"002674\",\n  \"edge_self_test_rc\": 0,\n  \"runner_rc\": 0,\n  \"runner_json_parsed\": true,\n  \"candidate_count\": 400,\n  \"top_count\": 1,\n  \"target_action_type\": \"WATCH\",\n  \"target_edge_score\": 59.71,\n  \"target_score\": null,\n  \"target_risk_flag\": true,\n  \"target_risk_detail\": {\n    \"leader_fade\": {\n      \"ltgd_rank\": 17,\n      \"range_gain_pct\": 45.0,\n      \"in_ztpool\": false\n    },\n    \"hard_veto\": true\n  },\n  \"context_detail\": {\n    \"t1_zt_board_label\": null,\n    \"t1_in_ztpool\": null,\n    \"ztpool_raw\": null,\n    \"market_longtou_height\": null,\n    \"cashflow_continuity\": null,\n    \"t1_ltgd_leader\": null,\n    \"t1_ltgd_rank\": null,\n    \"t1_ltgd_range_gain_pct\": null\n  },\n  \"leader_fade_fired\": true,\n  \"verdict\": \"VETOED_OR_DOWNGRADED\",\n  \"ok\": true,\n  \"pass\": true\n}\n===SUMMARY_JSON_END===\n",
+  "stderr_tail": "",
+  "started": "2026-07-02T14:40:08+08:00",
+  "ended": "2026-07-02T14:40:13+08:00",
+  "duration_s": 5.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0108_leader_fade_validate_20260701.py"
+  ]
+}

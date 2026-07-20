@@ -1,0 +1,234 @@
+{
+  "generated_at": "2026-06-27T06:30:33",
+  "job": "0043_premarket_weighted_concentration_v34",
+  "n_days": 15,
+  "n_samples": 4603,
+  "schemes": [
+    "equal",
+    "rank",
+    "score"
+  ],
+  "ks": [
+    3,
+    5,
+    8,
+    10
+  ],
+  "summary": {
+    "equal_top1": {
+      "n_days": 15,
+      "mean_daily": 3.511,
+      "median_daily": 4.409,
+      "std_daily": 7.151,
+      "info_ratio": 0.491,
+      "cumulative": 52.661,
+      "win_rate_days": 0.733,
+      "worst_day": -13.889,
+      "best_day": 11.68,
+      "eff_n_names": 1.0
+    },
+    "equal_top2": {
+      "n_days": 15,
+      "mean_daily": 2.28,
+      "median_daily": 2.569,
+      "std_daily": 4.748,
+      "info_ratio": 0.48,
+      "cumulative": 34.2,
+      "win_rate_days": 0.667,
+      "worst_day": -9.297,
+      "best_day": 8.429,
+      "eff_n_names": 2.0
+    },
+    "equal_top3": {
+      "n_days": 15,
+      "mean_daily": 1.56,
+      "median_daily": 2.834,
+      "std_daily": 3.998,
+      "info_ratio": 0.39,
+      "cumulative": 23.396,
+      "win_rate_days": 0.6,
+      "worst_day": -4.728,
+      "best_day": 7.592,
+      "eff_n_names": 3.0
+    },
+    "rank_top3": {
+      "n_days": 15,
+      "mean_daily": 2.125,
+      "median_daily": 3.62,
+      "std_daily": 4.314,
+      "info_ratio": 0.493,
+      "cumulative": 31.875,
+      "win_rate_days": 0.667,
+      "worst_day": -7.55,
+      "best_day": 7.639,
+      "eff_n_names": 2.57
+    },
+    "score_top3": {
+      "n_days": 15,
+      "mean_daily": 2.397,
+      "median_daily": 3.924,
+      "std_daily": 5.175,
+      "info_ratio": 0.463,
+      "cumulative": 35.954,
+      "win_rate_days": 0.733,
+      "worst_day": -11.15,
+      "best_day": 9.996,
+      "eff_n_names": 1.74
+    },
+    "equal_top5": {
+      "n_days": 15,
+      "mean_daily": 1.062,
+      "median_daily": 2.298,
+      "std_daily": 3.356,
+      "info_ratio": 0.316,
+      "cumulative": 15.931,
+      "win_rate_days": 0.667,
+      "worst_day": -4.154,
+      "best_day": 4.678,
+      "eff_n_names": 5.0
+    },
+    "rank_top5": {
+      "n_days": 15,
+      "mean_daily": 1.562,
+      "median_daily": 2.143,
+      "std_daily": 3.561,
+      "info_ratio": 0.439,
+      "cumulative": 23.432,
+      "win_rate_days": 0.6,
+      "worst_day": -5.565,
+      "best_day": 5.995,
+      "eff_n_names": 4.09
+    },
+    "score_top5": {
+      "n_days": 15,
+      "mean_daily": 1.868,
+      "median_daily": 2.47,
+      "std_daily": 4.498,
+      "info_ratio": 0.415,
+      "cumulative": 28.021,
+      "win_rate_days": 0.8,
+      "worst_day": -10.187,
+      "best_day": 8.578,
+      "eff_n_names": 2.47
+    },
+    "equal_top8": {
+      "n_days": 15,
+      "mean_daily": 0.67,
+      "median_daily": 1.82,
+      "std_daily": 2.859,
+      "info_ratio": 0.234,
+      "cumulative": 10.055,
+      "win_rate_days": 0.6,
+      "worst_day": -4.194,
+      "best_day": 4.519,
+      "eff_n_names": 8.0
+    },
+    "rank_top8": {
+      "n_days": 15,
+      "mean_daily": 1.032,
+      "median_daily": 2.269,
+      "std_daily": 3.163,
+      "info_ratio": 0.326,
+      "cumulative": 15.477,
+      "win_rate_days": 0.6,
+      "worst_day": -4.966,
+      "best_day": 4.686,
+      "eff_n_names": 6.35
+    },
+    "score_top8": {
+      "n_days": 15,
+      "mean_daily": 1.451,
+      "median_daily": 1.959,
+      "std_daily": 4.288,
+      "info_ratio": 0.338,
+      "cumulative": 21.764,
+      "win_rate_days": 0.733,
+      "worst_day": -9.345,
+      "best_day": 8.005,
+      "eff_n_names": 3.76
+    },
+    "equal_top10": {
+      "n_days": 15,
+      "mean_daily": 0.561,
+      "median_daily": 1.017,
+      "std_daily": 2.733,
+      "info_ratio": 0.205,
+      "cumulative": 8.419,
+      "win_rate_days": 0.6,
+      "worst_day": -3.493,
+      "best_day": 4.408,
+      "eff_n_names": 10.0
+    },
+    "rank_top10": {
+      "n_days": 15,
+      "mean_daily": 0.87,
+      "median_daily": 2.447,
+      "std_daily": 3.001,
+      "info_ratio": 0.29,
+      "cumulative": 13.053,
+      "win_rate_days": 0.6,
+      "worst_day": -4.558,
+      "best_day": 4.327,
+      "eff_n_names": 7.86
+    },
+    "score_top10": {
+      "n_days": 15,
+      "mean_daily": 1.238,
+      "median_daily": 2.115,
+      "std_daily": 4.053,
+      "info_ratio": 0.305,
+      "cumulative": 18.563,
+      "win_rate_days": 0.667,
+      "worst_day": -8.822,
+      "best_day": 6.998,
+      "eff_n_names": 4.49
+    }
+  },
+  "verdict": {
+    "frozen_ranking": "v10_amt: score(CORE,V10AMT_W) - risk_penalty",
+    "reference_equal_top2": {
+      "cumulative": 34.2,
+      "info_ratio": 0.48,
+      "worst_day": -9.297,
+      "eff_n_names": 2.0
+    },
+    "best_diversified_by_info_ratio": {
+      "name": "rank_top5",
+      "n_days": 15,
+      "mean_daily": 1.562,
+      "median_daily": 2.143,
+      "std_daily": 3.561,
+      "info_ratio": 0.439,
+      "cumulative": 23.432,
+      "win_rate_days": 0.6,
+      "worst_day": -5.565,
+      "best_day": 5.995,
+      "eff_n_names": 4.09
+    },
+    "best_diversified_by_cumulative": {
+      "name": "score_top5",
+      "n_days": 15,
+      "mean_daily": 1.868,
+      "median_daily": 2.47,
+      "std_daily": 4.498,
+      "info_ratio": 0.415,
+      "cumulative": 28.021,
+      "win_rate_days": 0.8,
+      "worst_day": -10.187,
+      "best_day": 8.578,
+      "eff_n_names": 2.47
+    },
+    "weighting_recovers_topofbook": {
+      "vs_equal_top5": {
+        "equal": 15.931,
+        "rank": 23.432,
+        "score": 28.021
+      },
+      "vs_equal_top10": {
+        "equal": 8.419,
+        "rank": 13.053,
+        "score": 18.563
+      }
+    }
+  }
+}

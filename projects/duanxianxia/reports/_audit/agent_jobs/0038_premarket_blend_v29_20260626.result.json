@@ -1,0 +1,28 @@
+{
+  "id": "0038_premarket_blend_v29_20260626",
+  "script": "scripts/v29_blend_optimize.py",
+  "args": [
+    "--top-n",
+    "30",
+    "--min-train",
+    "5"
+  ],
+  "queued_file": "0038_premarket_blend_v29_20260626.json",
+  "note": "Walk-forward compare 5 premarket ranking strategies. Hypothesis: blending high-ICIR derivs (deriv.amt_x_auc 0.531, deriv.money_x_liq 0.437 — omitted by v10_amt) lifts both OOS IC and decision-relevant Top5/Top3 actual excess. Output reports/_audit/premarket_blend_v29.{json,md}.",
+  "worker_time": "2026-06-26T23:50:06+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_days\": 15,\n  \"n_samples\": 4603,\n  \"summary\": {\n    \"v10_amt_raw\": {\n      \"oos_days\": 10,\n      \"mean_ic\": 0.1263,\n      \"icir\": 0.824,\n      \"capture_at_n\": 0.18,\n      \"top5_pooled\": {\n        \"n\": 50,\n        \"mean_excess\": 0.683,\n        \"median_excess\": 0.202,\n        \"win_rate\": 0.5,\n        \"limitdown_rate\": 0.06\n      },\n      \"top3_pooled\": {\n        \"n\": 30,\n        \"mean_excess\": 1.246,\n        \"median_excess\": 3.098,\n        \"win_rate\": 0.6,\n        \"limitdown_rate\": 0.067\n      },\n      \"top5_daily_mean_excess\": 0.683,\n      \"top3_daily_mean_excess\": 1.246\n    },\n    \"v10_amt_pctl\": {\n      \"oos_days\": 10,\n      \"mean_ic\": 0.0886,\n      \"icir\": 0.77,\n      \"capture_at_n\": 0.137,\n      \"top5_pooled\": {\n        \"n\": 50,\n        \"mean_excess\": 1.246,\n        \"median_excess\": 0.0,\n        \"win_rate\": 0.48,\n        \"limitdown_rate\": 0.04\n      },\n      \"top3_pooled\": {\n        \"n\": 30,\n        \"mean_excess\": 1.133,\n        \"median_excess\": 0.0,\n        \"win_rate\": 0.367,\n        \"limitdown_rate\": 0.067\n      },\n      \"top5_daily_mean_excess\": 1.246,\n      \"top3_daily_mean_excess\": 1.133\n    },\n    \"sparse_ic\": {\n      \"oos_days\": 10,\n      \"mean_ic\": 0.0829,\n      \"icir\": 0.79,\n      \"capture_at_n\": 0.153,\n      \"top5_pooled\": {\n        \"n\": 50,\n        \"mean_excess\": 1.15,\n        \"median_excess\": 0.0,\n        \"win_rate\": 0.46,\n        \"limitdown_rate\": 0.06\n      },\n      \"top3_pooled\": {\n        \"n\": 30,\n        \"mean_excess\": 0.357,\n        \"median_excess\": 0.0,\n        \"win_rate\": 0.333,\n        \"limitdown_rate\": 0.033\n      },\n      \"top5_daily_mean_excess\": 1.15,\n      \"top3_daily_mean_excess\": 0.357\n    },\n    \"ext_fixed\": {\n      \"oos_days\": 10,\n      \"mean_ic\": 0.0848,\n      \"icir\": 0.773,\n      \"capture_at_n\": 0.143,\n      \"top5_pooled\": {\n        \"n\": 50,\n        \"mean_excess\": 1.105,\n        \"median_excess\": 0.0,\n        \"win_rate\": 0.46,\n        \"limitdown_rate\": 0.06\n      },\n      \"top3_pooled\": {\n        \"n\": 30,\n        \"mean_excess\": 0.85,\n        \"median_excess\": 0.0,\n        \"win_rate\": 0.333,\n        \"limitdown_rate\": 0.067\n      },\n      \"top5_daily_mean_excess\": 1.105,\n      \"top3_daily_mean_excess\": 0.85\n    },\n    \"ext_learned\": {\n      \"oos_days\": 10,\n      \"mean_ic\": 0.082,\n      \"icir\": 0.718,\n      \"capture_at_n\": 0.14,\n      \"top5_pooled\": {\n        \"n\": 50,\n        \"mean_excess\": 1.072,\n        \"median_excess\": 0.0,\n        \"win_rate\": 0.44,\n        \"limitdown_rate\": 0.06\n      },\n      \"top3_pooled\": {\n        \"n\": 30,\n        \"mean_excess\": 0.722,\n        \"median_excess\": 0.0,\n        \"win_rate\": 0.367,\n        \"limitdown_rate\": 0.067\n      },\n      \"top5_daily_mean_excess\": 1.072,\n      \"top3_daily_mean_excess\": 0.722\n    }\n  },\n  \"verdict\": {\n    \"best_by_ic\": \"v10_amt_raw\",\n    \"best_by_top5\": \"v10_amt_pctl\",\n    \"best_by_top3\": \"v10_amt_raw\",\n    \"ext_learned_beats_v10_ic\": false,\n    \"ext_fixed_beats_v10_ic\": false,\n    \"ext_learned_beats_v10_top5\": true,\n    \"ext_fixed_beats_v10_top5\": true\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-26T23:50:06+08:00",
+  "ended": "2026-06-26T23:51:20+08:00",
+  "duration_s": 73.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v29_blend_optimize.py",
+    "--top-n",
+    "30",
+    "--min-train",
+    "5"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "0066",
+  "script": "scripts/0066_rocket_hotstock_v56_20260628.py",
+  "args": [],
+  "queued_file": "0066.json",
+  "note": "表⑦ rank.rocket + rank.hot_stock_day 盘前雷达混收 v56; 修复泄漏(只取<=093000文件); 动态字段探测; 干净盘前 IC<0.065待复核",
+  "worker_time": "2026-06-28T11:50:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "Total date dirs: 22\n\n============================================================\nDataset: rank.rocket\n============================================================\nSample keys: ['rank', 'code', 'name', 'value', 'raw_rate']\nFirst row: {'rank': 1, 'code': '002208', 'name': '合肥城建', 'value': '+75w', 'raw_rate': '746056'}\nTotal records: 1650\nDates: 17 -> ['2026-05-19', '2026-05-20', '2026-06-01', '2026-06-02', '2026-06-04', '2026-06-05', '2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-15', '2026-06-16', '2026-06-17', '2026-06-18', '2026-06-23', '2026-06-24', '2026-06-26']\n\n--- Coverage ---\n  rank                           1650/1650 = 100.0%\n  value                          58/1650 = 3.5%\n  dyn_raw_rate                   1650/1650 = 100.0%\n\n--- Per-date Spearman IC ---\nField                             n   mean_IC     ICIR\n  rank                           17     0.015    0.163\n  value                           1    -0.042    0.000\n  dyn_raw_rate                   17    -0.015   -0.164\n\n--- value/score tercile buckets (raw excess) ---\n  top: n=19 mean=-2.444\n  mid: n=20 mean=-1.019\n  bot: n=19 mean=-1.417\n\n--- rank buckets (raw excess) ---\n  top10: n=170 mean=2.665\n  r11_30: n=335 mean=0.048\n  r31plus: n=1145 mean=0.854\n\n--- Per-date universe size ---\n  2026-05-19: n=90\n  2026-05-20: n=86\n  2026-06-01: n=94\n  2026-06-02: n=92\n  2026-06-04: n=98\n  2026-06-05: n=99\n  2026-06-08: n=100\n  2026-06-09: n=100\n  2026-06-10: n=100\n  2026-06-11: n=99\n  2026-06-15: n=100\n  2026-06-16: n=99\n  2026-06-17: n=96\n  2026-06-18: n=100\n  2026-06-23: n=99\n  2026-06-24: n=99\n  2026-06-26: n=99\n\n============================================================\nDataset: rank.hot_stock_day\n============================================================\nSample keys: ['rank', 'code', 'name', 'value', 'raw_rate']\nFirst row: {'rank': 1, 'code': '601991', 'name': '大唐发电', 'value': '5460w', 'raw_rate': '54598574'}\nTotal records: 1680\nDates: 17 -> ['2026-05-19', '2026-05-20', '2026-06-01', '2026-06-02', '2026-06-04', '2026-06-05', '2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-15', '2026-06-16', '2026-06-17', '2026-06-18', '2026-06-23', '2026-06-24', '2026-06-26']\n\n--- Coverage ---\n  rank                           1680/1680 = 100.0%\n  dyn_raw_rate                   1680/1680 = 100.0%\n\n--- Per-date Spearman IC ---\nField                             n   mean_IC     ICIR\n  rank                           17    -0.023   -0.204\n  dyn_raw_rate                   17     0.023    0.204\n\n--- rank buckets (raw excess) ---\n  top10: n=170 mean=1.011\n  r11_30: n=339 mean=1.251\n  r31plus: n=1171 mean=1.130\n\n--- Per-date universe size ---\n  2026-05-19: n=94\n  2026-05-20: n=95\n  2026-06-01: n=96\n  2026-06-02: n=98\n  2026-06-04: n=98\n  2026-06-05: n=100\n  2026-06-08: n=99\n  2026-06-09: n=100\n  2026-06-10: n=100\n  2026-06-11: n=100\n  2026-06-15: n=100\n  2026-06-16: n=100\n  2026-06-17: n=100\n  2026-06-18: n=100\n  2026-06-23: n=100\n  2026-06-24: n=100\n  2026-06-26: n=100\n\n[DONE]\n",
+  "stderr_tail": "",
+  "started": "2026-06-28T11:50:07+08:00",
+  "ended": "2026-06-28T11:50:13+08:00",
+  "duration_s": 6.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0066_rocket_hotstock_v56_20260628.py"
+  ]
+}

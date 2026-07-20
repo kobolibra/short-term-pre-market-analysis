@@ -1,0 +1,19 @@
+{
+  "id": "daily_2026-07-14_rerun12_feishu_analysis_push",
+  "script": "scripts/duanxianxia_v4_2_premarket_feishu_rerun.py",
+  "args": [],
+  "queued_file": "daily_2026-07-14_rerun12_feishu_analysis_push.json",
+  "note": "worker环境变量传递修复: DUANXIANXIA_WEBHOOK_URL传给子进程",
+  "worker_time": "2026-07-14T17:30:41+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "[feishu_rerun] using report: /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-07-14/premarket/173019.json\n[feishu_rerun] webhook URL found, pushing...\n**duanxianxia｜盘前批量下载回执**\n\n- 状态：**成功**\n- 完整性：**完整**\n- 预期表数：9\n- 成功表数：9\n- 失败表数：0\n- 遗漏表数：0\n\n**逐表结果**\n- 1. 飙升榜\n  - 状态：成功\n  - 完整性：完整\n  - 行数：100\n  - 保存：是\n- 4. 热度榜（日）\n  - 状态：成功\n  - 完整性：完整\n  - 行数：100\n  - 保存：是\n- 7. 竞价异动/竞价爆量\n  - 状态：成功\n  - 完整性：完整\n  - 行数：104\n  - 保存：是\n- 8. 竞价异动/竞价抢筹\n  - 状态：成功\n  - 完整性：完整\n  - 行数：93\n  - 保存：是\n- 9. 竞价异动/竞价净额\n  - 状态：成功\n  - 完整性：完整\n  - 行数：43\n  - 保存：是\n- 10. 竞价封单/当日封单表\n  - 状态：成功\n  - 完整性：完整\n  - 行数：116\n  - 保存：是\n- 10. 竞价异动/涨停委买\n  - 状态：成功\n  - 完整性：完整\n  - 行数：150\n  - 保存：是\n- 16. 主页板块强度全主标签汇总表\n  - 状态：成功\n  - 完整性：完整\n  - 行数：5\n  - 保存：是\n- 17. 主页 qxlive 顶部指标按钮组\n  - 状态：成功\n  - 完整性：完整\n  - 行数：12\n  - 保存：是\n\n- failed_items：无\n- incomplete_items：无\n- missing_items：无\n\n**【D6 情绪周期】**\n- 周期相位：数据不足\n- 风险等级：WARNING\n- 仓位上限：10%\n- 已选：0只\n- ZTBX@9:25：0.91%\n- 上涨占比：43.94%\n- 接力健康度：21.0%\n",
+  "stderr_tail": "",
+  "started": "2026-07-14T17:30:41+08:00",
+  "ended": "2026-07-14T17:31:12+08:00",
+  "duration_s": 31.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v4_2_premarket_feishu_rerun.py"
+  ]
+}

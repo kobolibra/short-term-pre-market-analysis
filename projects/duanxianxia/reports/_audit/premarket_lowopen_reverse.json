@@ -1,0 +1,322 @@
+{
+  "generated_at": "2026-07-20T16:05:58",
+  "low_open_max": 2.0,
+  "top_n": 30,
+  "n_days": 23,
+  "days": [
+    "2026-05-21",
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-04",
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-18",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-26",
+    "2026-06-29",
+    "2026-06-30",
+    "2026-07-01",
+    "2026-07-02",
+    "2026-07-03",
+    "2026-07-08",
+    "2026-07-09",
+    "2026-07-10"
+  ],
+  "cohort_open": {
+    "low_open": {
+      "n": 4871,
+      "mean": -0.154,
+      "median": -0.485,
+      "win_rate": 0.455,
+      "p90": 6.84,
+      "limitup_rate": 0.039
+    },
+    "high_open": {
+      "n": 2834,
+      "mean": 0.306,
+      "median": 0.0,
+      "win_rate": 0.489,
+      "p90": 6.82,
+      "limitup_rate": 0.04
+    }
+  },
+  "cohort_risk": {
+    "risk_true": {
+      "n": 6441,
+      "mean": -0.155,
+      "median": -0.27,
+      "win_rate": 0.449,
+      "p90": 6.56,
+      "limitup_rate": 0.033
+    },
+    "risk_false": {
+      "n": 1264,
+      "mean": 0.882,
+      "median": 1.157,
+      "win_rate": 0.56,
+      "p90": 8.0,
+      "limitup_rate": 0.07
+    }
+  },
+  "winner_lowopen_share_mean": 0.613,
+  "winner_risk_share_mean": 0.799,
+  "lowopen_field_ic": [
+    {
+      "field": "qiangchou_920_925_rank",
+      "mean_ic": 0.1542,
+      "icir": 0.925,
+      "n_days": 5
+    },
+    {
+      "field": "net_pressure",
+      "mean_ic": -0.0543,
+      "icir": -0.302,
+      "n_days": 23
+    },
+    {
+      "field": "auction_strength",
+      "mean_ic": 0.0439,
+      "icir": 0.312,
+      "n_days": 23
+    },
+    {
+      "field": "deriv.amt_x_auc",
+      "mean_ic": 0.04,
+      "icir": 0.283,
+      "n_days": 23
+    },
+    {
+      "field": "liquidity",
+      "mean_ic": 0.0395,
+      "icir": 0.259,
+      "n_days": 23
+    },
+    {
+      "field": "orderbook",
+      "mean_ic": 0.0362,
+      "icir": 0.431,
+      "n_days": 22
+    },
+    {
+      "field": "pressure_score",
+      "mean_ic": 0.0356,
+      "icir": 0.248,
+      "n_days": 23
+    },
+    {
+      "field": "net_amount_rank",
+      "mean_ic": 0.03,
+      "icir": 0.255,
+      "n_days": 23
+    },
+    {
+      "field": "qiangchou_last_second_rank",
+      "mean_ic": -0.0294,
+      "icir": -0.199,
+      "n_days": 14
+    },
+    {
+      "field": "amt_pct",
+      "mean_ic": 0.0239,
+      "icir": 0.157,
+      "n_days": 23
+    },
+    {
+      "field": "source_evidence_score",
+      "mean_ic": 0.0226,
+      "icir": 0.254,
+      "n_days": 23
+    },
+    {
+      "field": "auction_amount_wan",
+      "mean_ic": 0.0223,
+      "icir": 0.106,
+      "n_days": 23
+    },
+    {
+      "field": "deriv.money_x_liq",
+      "mean_ic": 0.0208,
+      "icir": 0.157,
+      "n_days": 23
+    },
+    {
+      "field": "money",
+      "mean_ic": 0.0195,
+      "icir": 0.149,
+      "n_days": 23
+    },
+    {
+      "field": "weimai_strength",
+      "mean_ic": 0.0099,
+      "icir": 0.069,
+      "n_days": 23
+    },
+    {
+      "field": "low_cost",
+      "mean_ic": 0.0088,
+      "icir": 0.04,
+      "n_days": 23
+    },
+    {
+      "field": "cashflow_continuity_score",
+      "mean_ic": 0.0074,
+      "icir": 0.098,
+      "n_days": 23
+    }
+  ],
+  "lowopen_winner_reverse": [
+    {
+      "field": "net_pressure",
+      "mean_sep": 8.5,
+      "days_positive": 18,
+      "n_days": 23,
+      "hit_rate": 0.198
+    },
+    {
+      "field": "qiangchou_920_925_rank",
+      "mean_sep": 5.3,
+      "days_positive": 2,
+      "n_days": 2,
+      "hit_rate": 0.093
+    },
+    {
+      "field": "auction_strength",
+      "mean_sep": 3.53,
+      "days_positive": 17,
+      "n_days": 23,
+      "hit_rate": 0.192
+    },
+    {
+      "field": "deriv.amt_x_auc",
+      "mean_sep": 3.49,
+      "days_positive": 19,
+      "n_days": 23,
+      "hit_rate": 0.182
+    },
+    {
+      "field": "liquidity",
+      "mean_sep": 3.46,
+      "days_positive": 17,
+      "n_days": 23,
+      "hit_rate": 0.198
+    },
+    {
+      "field": "theme_strength_t0",
+      "mean_sep": -3.3,
+      "days_positive": 6,
+      "n_days": 23,
+      "hit_rate": 0.195
+    },
+    {
+      "field": "market_env_score",
+      "mean_sep": -3.3,
+      "days_positive": 6,
+      "n_days": 23,
+      "hit_rate": 0.195
+    },
+    {
+      "field": "longtou_score",
+      "mean_sep": -3.3,
+      "days_positive": 6,
+      "n_days": 23,
+      "hit_rate": 0.195
+    },
+    {
+      "field": "auction_amount_wan",
+      "mean_sep": 3.17,
+      "days_positive": 16,
+      "n_days": 23,
+      "hit_rate": 0.171
+    },
+    {
+      "field": "orderbook",
+      "mean_sep": -2.66,
+      "days_positive": 7,
+      "n_days": 23,
+      "hit_rate": 0.195
+    },
+    {
+      "field": "amt_pct",
+      "mean_sep": 2.5,
+      "days_positive": 13,
+      "n_days": 23,
+      "hit_rate": 0.169
+    },
+    {
+      "field": "deriv.money_x_liq",
+      "mean_sep": 2.07,
+      "days_positive": 15,
+      "n_days": 23,
+      "hit_rate": 0.197
+    },
+    {
+      "field": "pressure_score",
+      "mean_sep": 1.89,
+      "days_positive": 14,
+      "n_days": 23,
+      "hit_rate": 0.203
+    },
+    {
+      "field": "money",
+      "mean_sep": 1.87,
+      "days_positive": 15,
+      "n_days": 23,
+      "hit_rate": 0.204
+    },
+    {
+      "field": "low_cost",
+      "mean_sep": -1.7,
+      "days_positive": 9,
+      "n_days": 23,
+      "hit_rate": 0.138
+    },
+    {
+      "field": "source_evidence_score",
+      "mean_sep": -0.91,
+      "days_positive": 8,
+      "n_days": 23,
+      "hit_rate": 0.159
+    },
+    {
+      "field": "qiangchou_last_second_rank",
+      "mean_sep": -0.87,
+      "days_positive": 5,
+      "n_days": 8,
+      "hit_rate": 0.082
+    },
+    {
+      "field": "weimai_strength",
+      "mean_sep": 0.77,
+      "days_positive": 11,
+      "n_days": 23,
+      "hit_rate": 0.163
+    },
+    {
+      "field": "net_amount_rank",
+      "mean_sep": 0.62,
+      "days_positive": 14,
+      "n_days": 23,
+      "hit_rate": 0.155
+    },
+    {
+      "field": "cashflow_continuity_score",
+      "mean_sep": -0.11,
+      "days_positive": 10,
+      "n_days": 23,
+      "hit_rate": 0.178
+    }
+  ],
+  "selector_top_fields": [
+    "net_pressure",
+    "qiangchou_920_925_rank",
+    "auction_strength"
+  ],
+  "selector_capture_at_n": 0.191,
+  "edge_capture_at_n_lowopen": 0.196
+}

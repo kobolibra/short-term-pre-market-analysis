@@ -1,0 +1,28 @@
+{
+  "id": "0012_torch_ranker_v22_20260623",
+  "script": "scripts/v22_torch_ranker.py",
+  "args": [
+    "--min-train",
+    "5",
+    "--epochs",
+    "120"
+  ],
+  "queued_file": "0012_torch_ranker_v22_20260623.json",
+  "note": "Rebuild step 2: torch pairwise cross-sectional ranker, walk-forward OOS vs v10_amt (cap5/cap30/IC/top5).",
+  "worker_time": "2026-06-23T21:30:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"oos_days\": 8,\n  \"torch_error\": null,\n  \"oos_summary\": {\n    \"linear\": {\n      \"cap5\": 0.025,\n      \"cap30\": 0.1292,\n      \"ic\": 0.0039,\n      \"top5\": -4.0733,\n      \"top30\": 0.3078\n    },\n    \"mlp\": {\n      \"cap5\": 0.0,\n      \"cap30\": 0.125,\n      \"ic\": 0.0168,\n      \"top5\": 1.7399,\n      \"top30\": 0.5256\n    },\n    \"amt\": {\n      \"cap5\": 0.025,\n      \"cap30\": 0.15,\n      \"ic\": 0.0864,\n      \"top5\": 1.3396,\n      \"top30\": 0.2821\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-23T21:30:05+08:00",
+  "ended": "2026-06-23T21:34:00+08:00",
+  "duration_s": 236.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v22_torch_ranker.py",
+    "--min-train",
+    "5",
+    "--epochs",
+    "120"
+  ]
+}

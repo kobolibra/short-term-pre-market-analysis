@@ -1,0 +1,56 @@
+{
+  "source_url": "https://stock.9fzt.com/dataCenter/stockApply.html",
+  "stages": [
+    {
+      "stage": "direct_http",
+      "page_len": 50568,
+      "rows": 0,
+      "tr_count": 3,
+      "code_count": 14,
+      "has_next_data": true,
+      "snippet": "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta name=\"viewport\" content=\"width=device-width\"/><meta charSet=\"utf-8\"/><title>新股申购_新股发行_数据中心_九方智投</title><meta name=\"description\" content=\"九方智投新股申购中心为您提供全方位24小时新股申购,新股发行，新股行情的资金流向、市场分析、公告等实时新股行情信息\"/><meta name=\"keywords\" content=\"新股、新股申购、新股发行一览表\"/><link rel=\"shortcut icon\" href=\"https://stock.9fzt.com/server/jfzt_favicon.ico\"/><link rel=\"stylesheet\" type=\"text/css\" href=\"https://www.9fzt.com/css/common.css\"/><link rel=\"dns-prefetch\" href=\"//www.9fzt.com\"/><link rel=\"dns-prefetch\" href=\"//fund.9fzt.com\"/><script src=\"https://upload.9fzt.com/production/mqtt.min.js?_=1627455304518\"></script><script src=\"https://upload.9fzt.com/production/jquery.min.js\"></script><meta name=\"next-head-count\" content=\"11\"/><link rel=\"preload\" href=\"/_next/static/css/32"
+    },
+    {
+      "stage": "headless_render",
+      "method": "chromium_dump_dom",
+      "attempts": [
+        {
+          "exe": "chromium",
+          "path": "/snap/bin/chromium"
+        },
+        {
+          "exe": "chromium",
+          "error": "TimeoutExpired: Command '['/snap/bin/chromium', '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--virtual-time-budget=15000', '--run-all-compositor-stages-before-draw', '--dump-dom', 'https://stock.9fzt.com/dataCenter/stockApply.html']' timed out after 90 seconds"
+        },
+        {
+          "exe": "chromium-browser",
+          "path": "/usr/bin/chromium-browser"
+        },
+        {
+          "exe": "chromium-browser",
+          "error": "TimeoutExpired: Command '['/usr/bin/chromium-browser', '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--virtual-time-budget=15000', '--run-all-compositor-stages-before-draw', '--dump-dom', 'https://stock.9fzt.com/dataCenter/stockApply.html']' timed out after 90 seconds"
+        },
+        {
+          "exe": "google-chrome",
+          "path": "/usr/bin/google-chrome"
+        },
+        {
+          "exe": "google-chrome",
+          "error": "TimeoutExpired: Command '['/usr/bin/google-chrome', '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--virtual-time-budget=15000', '--run-all-compositor-stages-before-draw', '--dump-dom', 'https://stock.9fzt.com/dataCenter/stockApply.html']' timed out after 90 seconds"
+        },
+        {
+          "exe": "google-chrome-stable",
+          "path": "/usr/bin/google-chrome-stable"
+        },
+        {
+          "exe": "google-chrome-stable",
+          "error": "TimeoutExpired: Command '['/usr/bin/google-chrome-stable', '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage', '--virtual-time-budget=15000', '--run-all-compositor-stages-before-draw', '--dump-dom', 'https://stock.9fzt.com/dataCenter/stockApply.html']' timed out after 90 seconds"
+        },
+        {
+          "exe": "chrome",
+          "path": null
+        }
+      ]
+    }
+  ]
+}

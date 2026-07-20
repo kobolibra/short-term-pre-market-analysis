@@ -1,0 +1,19 @@
+{
+  "id": "0155",
+  "script": "scripts/duanxianxia_risk_strictness_sweep.py",
+  "args": [],
+  "queued_file": "0155_risk_strictness_sweep_20260705.json",
+  "note": "Task 0155: risk-strictness sensitivity sweep (0154 follow-up) — baseline vs risk_strict vs risk_penalty thresholds (>=10/20/30/45) vs per-category drop (veto/lowliq/highboard/highopen); buy-level win/payoff/drawdown, overall+cold+ctw",
+  "worker_time": "2026-07-05T16:30:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "n_days=20 regime_days={'cold': 17, 'cold_to_warming': 3}\nvariant         scope            n    mean_ex  win    avg_win  avg_loss  payoff\nbaseline        overall         26   2.538    0.615  6.429    -3.686    1.744\nbaseline        cold            17   1.498    0.529  6.567    -4.204    1.562\nbaseline        cold_to_warming 9    4.503    0.778  6.251    -1.614    3.874\nrisk_strict     overall         13   4.625    0.769  6.904    -2.973    2.322\nrisk_strict     cold            6    3.643    0.667  7.424    -3.919    1.894\nrisk_strict     cold_to_warming 7    5.466    0.857  6.557    -1.081    6.066\npen_ge_10       overall         24   2.655    0.625  6.563    -3.857    1.701\npen_ge_10       cold            17   1.498    0.529  6.567    -4.204    1.562\npen_ge_10       cold_to_warming 7    5.466    0.857  6.557    -1.081    6.066\npen_ge_20       overall         26   2.538    0.615  6.429    -3.686    1.744\npen_ge_20       cold            17   1.498    0.529  6.567    -4.204    1.562\npen_ge_20       cold_to_warming 9    4.503    0.778  6.251    -1.614    3.874\npen_ge_30       overall         26   2.538    0.615  6.429    -3.686    1.744\npen_ge_30       cold            17   1.498    0.529  6.567    -4.204    1.562\npen_ge_30       cold_to_warming 9    4.503    0.778  6.251    -1.614    3.874\npen_ge_45       overall         26   2.538    0.615  6.429    -3.686    1.744\npen_ge_45       cold            17   1.498    0.529  6.567    -4.204    1.562\npen_ge_45       cold_to_warming 9    4.503    0.778  6.251    -1.614    3.874\nveto_only       overall         26   2.538    0.615  6.429    -3.686    1.744\nveto_only       cold            17   1.498    0.529  6.567    -4.204    1.562\nveto_only       cold_to_warming 9    4.503    0.778  6.251    -1.614    3.874\ndrop_lowliq     overall         24   2.655    0.625  6.563    -3.857    1.701\ndrop_lowliq     cold            17   1.498    0.529  6.567    -4.204    1.562\ndrop_lowliq     cold_to_warming 7    5.466    0.857  6.557    -1.081    6.066\ndrop_highboard  overall         26   2.538    0.615  6.429    -3.686    1.744\ndrop_highboard  cold            17   1.498    0.529  6.567    -4.204    1.562\ndrop_highboard  cold_to_warming 9    4.503    0.778  6.251    -1.614    3.874\ndrop_highopen   overall         26   2.538    0.615  6.429    -3.686    1.744\ndrop_highopen   cold            17   1.498    0.529  6.567    -4.204    1.562\ndrop_highopen   cold_to_warming 9    4.503    0.778  6.251    -1.614    3.874\n",
+  "stderr_tail": "",
+  "started": "2026-07-05T16:30:05+08:00",
+  "ended": "2026-07-05T16:32:28+08:00",
+  "duration_s": 142.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_risk_strictness_sweep.py"
+  ]
+}

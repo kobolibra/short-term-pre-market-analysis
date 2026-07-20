@@ -1,0 +1,19 @@
+{
+  "id": "daily_2026-07-01_v19_topk_robust",
+  "script": "scripts/v19_topk_robust.py",
+  "args": [],
+  "queued_file": "daily_2026-07-01_v19_topk_robust.json",
+  "note": "daily auto-refresh 2026-07-01",
+  "worker_time": "2026-07-01T02:29:36+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_eligible_days\": 17,\n  \"same_day_excess_decay\": {\n    \"3\": {\n      \"n\": 17,\n      \"mean\": 0.761,\n      \"median\": 1.169,\n      \"win_rate\": 0.588,\n      \"odds\": 1.1,\n      \"p90\": 4.94,\n      \"p10\": -4.88,\n      \"sum\": 12.93\n    },\n    \"5\": {\n      \"n\": 17,\n      \"mean\": 1.004,\n      \"median\": 2.02,\n      \"win_rate\": 0.588,\n      \"odds\": 1.35,\n      \"p90\": 4.35,\n      \"p10\": -3.24,\n      \"sum\": 17.07\n    },\n    \"7\": {\n      \"n\": 17,\n      \"mean\": 3.865,\n      \"median\": 2.111,\n      \"win_rate\": 0.647,\n      \"odds\": 2.47,\n      \"p90\": 4.68,\n      \"p10\": -3.85,\n      \"sum\": 65.7\n    },\n    \"8\": {\n      \"n\": 17,\n      \"mean\": 3.594,\n      \"median\": 1.82,\n      \"win_rate\": 0.647,\n      \"odds\": 2.64,\n      \"p90\": 4.72,\n      \"p10\": -2.95,\n      \"sum\": 61.1\n    },\n    \"10\": {\n      \"n\": 17,\n      \"mean\": 3.142,\n      \"median\": 1.407,\n      \"win_rate\": 0.706,\n      \"odds\": 2.52,\n      \"p90\": 4.65,\n      \"p10\": -2.89,\n      \"sum\": 53.42\n    },\n    \"12\": {\n      \"n\": 17,\n      \"mean\": 1.819,\n      \"median\": 1.105,\n      \"win_rate\": 0.588,\n      \"odds\": 1.55,\n      \"p90\": 4.7,\n      \"p10\": -4.29,\n      \"sum\": 30.92\n    },\n    \"15\": {\n      \"n\": 17,\n      \"mean\": 1.79,\n      \"median\": 1.546,\n      \"win_rate\": 0.588,\n      \"odds\": 1.64,\n      \"p90\": 4.97,\n      \"p10\": -4.0,\n      \"sum\": 30.43\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-01T02:29:36+08:00",
+  "ended": "2026-07-01T02:30:47+08:00",
+  "duration_s": 71.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v19_topk_robust.py"
+  ]
+}

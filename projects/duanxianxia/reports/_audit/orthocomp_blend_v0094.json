@@ -1,0 +1,73 @@
+{
+  "probe": "0094_orthocomp_blend",
+  "generated_at": "2026-06-30T12:11:21",
+  "n_eval_days": 15,
+  "cmp_days": 15,
+  "median_candidate_pool": 43,
+  "top_n": 30,
+  "composite": {
+    "members": [
+      "A_turnover",
+      "B_turnrate",
+      "C_gap"
+    ],
+    "source": "auction.jjyd.qiangchou",
+    "cutoff": "093000"
+  },
+  "comp_only_in_candidate_pool": {
+    "mean_ic": 0.165,
+    "icir": 0.875,
+    "n_days": 15
+  },
+  "baseline_edge": {
+    "mean_ic": 0.1629,
+    "icir": 0.667,
+    "capture_at_topn": 0.6533
+  },
+  "blends": {
+    "lambda_0.0": {
+      "mean_ic": 0.1629,
+      "icir": 0.667,
+      "n_days": 15,
+      "capture_at_topn": 0.6533,
+      "days_beat_baseline_ic": null
+    },
+    "lambda_0.2": {
+      "mean_ic": 0.1755,
+      "icir": 0.749,
+      "n_days": 15,
+      "capture_at_topn": 0.65,
+      "days_beat_baseline_ic": "10/15"
+    },
+    "lambda_0.3": {
+      "mean_ic": 0.1774,
+      "icir": 0.771,
+      "n_days": 15,
+      "capture_at_topn": 0.6467,
+      "days_beat_baseline_ic": "10/15"
+    },
+    "lambda_0.4": {
+      "mean_ic": 0.1799,
+      "icir": 0.801,
+      "n_days": 15,
+      "capture_at_topn": 0.6467,
+      "days_beat_baseline_ic": "11/15"
+    },
+    "lambda_0.5": {
+      "mean_ic": 0.1819,
+      "icir": 0.864,
+      "n_days": 15,
+      "capture_at_topn": 0.6467,
+      "days_beat_baseline_ic": "10/15"
+    },
+    "lambda_1.0": {
+      "mean_ic": 0.165,
+      "icir": 0.875,
+      "n_days": 15,
+      "capture_at_topn": 0.6567,
+      "days_beat_baseline_ic": "7/15"
+    }
+  },
+  "recommendation": "edge_only_no_change",
+  "note": "comp_only IC 是候选池内口径, 必然<=v44 全市场 0.179; 推荐整合需 IC>baseline 且 capture>=baseline 且 ICIR>=0.9*baseline 且过半天数胜."
+}

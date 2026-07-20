@@ -1,0 +1,19 @@
+{
+  "id": "daily_2026-07-13_rerun5_duanxianxia_v4_2_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": [],
+  "queued_file": "daily_2026-07-13_rerun5_duanxianxia_v4_2_premarket_daily.json",
+  "note": "v4.2 PREMARKET: 修复晋级率提取 - 数据在rows(非meta.groups), 支持首板+均值回退",
+  "worker_time": "2026-07-13T16:30:14+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "v4.2 premarket analysis: running for 2026-07-13...\nv4.2 premarket done: /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/v4_2_premarket/2026-07-13.json\n",
+  "stderr_tail": "[data_loader WARN] No home.kaipan.plate.summary capture at 2026-07-13 <= 092900; refusing after-cutoff fallback to avoid lookahead\n",
+  "started": "2026-07-13T16:30:14+08:00",
+  "ended": "2026-07-13T16:30:15+08:00",
+  "duration_s": 0.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v4_2_premarket_daily.py"
+  ]
+}

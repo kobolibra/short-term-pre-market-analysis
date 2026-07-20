@@ -1,0 +1,24 @@
+{
+  "id": "daily_2026-06-28_v14_horizon",
+  "script": "scripts/v14_horizon.py",
+  "args": [
+    "--top-n",
+    "30"
+  ],
+  "queued_file": "daily_2026-06-28_v14_horizon.json",
+  "note": "daily auto-refresh 2026-06-28",
+  "worker_time": "2026-06-28T00:01:11+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_days_with_t1\": 14,\n  \"n_samples\": 3427,\n  \"edge_capture_at_n_hold\": 0.15,\n  \"pick_performance_by_action\": {\n    \"hold_open_t1close\": {\n      \"BUY\": {\n        \"n\": 15,\n        \"mean\": 3.722,\n        \"median\": 3.905,\n        \"win_rate\": 0.6,\n        \"p90\": 13.2,\n        \"p10\": -7.09\n      },\n      \"DROP\": {\n        \"n\": 2343,\n        \"mean\": 1.507,\n        \"median\": 0.678,\n        \"win_rate\": 0.534,\n        \"p90\": 11.65,\n        \"p10\": -7.19\n      },\n      \"UNKNOWN\": {\n        \"n\": 308,\n        \"mean\": 0.791,\n        \"median\": -0.128,\n        \"win_rate\": 0.494,\n        \"p90\": 10.49,\n        \"p10\": -7.14\n      },\n      \"WATCH\": {\n        \"n\": 761,\n        \"mean\": 2.657,\n        \"median\": 2.063,\n        \"win_rate\": 0.591,\n        \"p90\": 13.6,\n        \"p10\": -7.35\n      }\n    },\n    \"t1_close\": {\n      \"BUY\": {\n        \"n\": 15,\n        \"mean\": -0.308,\n        \"median\": 0.229,\n        \"win_rate\": 0.533,\n        \"p90\": 6.1,\n        \"p10\": -10.03\n      },\n      \"DROP\": {\n        \"n\": 2343,\n        \"mean\": 1.038,\n        \"median\": 0.486,\n        \"win_rate\": 0.542,\n        \"p90\": 9.95,\n        \"p10\": -5.52\n      },\n      \"UNKNOWN\": {\n        \"n\": 308,\n        \"mean\": 1.53,\n        \"median\": 0.902,\n        \"win_rate\": 0.581,\n        \"p90\": 8.83,\n        \"p10\": -4.1\n      },\n      \"WATCH\": {\n        \"n\": 761,\n        \"mean\": 1.739,\n        \"median\": 1.862,\n        \"win_rate\": 0.614,\n        \"p90\": 9.99,\n        \"p10\": -5.75\n      }\n    }\n  },\n  \"top_ic_hold\": [\n    {\n      \"field\": \"qiangchou_920_925_rank\",\n      \"mean_ic\": -0.45,\n      \"icir\": null,\n      \"n_days\": 1\n    },\n    {\n      \"field\": \"deriv.money_x_liq\",\n      \"mean_ic\": 0.075,\n      \"icir\": 0.663,\n      \"n_days\": 14\n    },\n    {\n      \"field\": \"money\",\n      \"mean_ic\": 0.0734,\n      \"icir\": 0.66,\n      \"n_days\": 14\n    },\n    {\n      \"field\": \"deriv.amt_x_auc\",\n      \"mean_ic\": 0.0702,\n      \"icir\": 0.638,\n      \"n_days\": 14\n    },\n    {\n      \"field\": \"liquidity\",\n      \"mean_ic\": 0.0667,\n      \"icir\": 0.54,\n      \"n_days\": 14\n    },\n    {\n      \"field\": \"auction_strength\",\n      \"mean_ic\": 0.0655,\n      \"icir\": 0.646,\n      \"n_days\": 14\n    }\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-28T00:01:11+08:00",
+  "ended": "2026-06-28T00:09:58+08:00",
+  "duration_s": 526.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v14_horizon.py",
+    "--top-n",
+    "30"
+  ]
+}

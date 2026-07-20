@@ -1,0 +1,19 @@
+{
+  "id": "0104_premarket_backfill_20260701",
+  "script": "scripts/duanxianxia_0104_premarket_backfill_20260701.py",
+  "args": [],
+  "queued_file": "0104_premarket_backfill_20260701.json",
+  "note": "0104: premarket backfill NOW with REAL push. No hard 9:25 gate in batch.py. v9 pipeline end-to-end: capture + selection + Feishu bitable + webhook. Prints compact summary.",
+  "worker_time": "2026-07-01T17:30:14+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "[0104] start 2026-07-01T17:30:14.755980+08:00\n[0104] runner rc=0\n[0104] stderr:\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-01 <= 093300; refusing after-cutoff fallback to avoid lookahead\n\n[0104] SUMMARY_JSON_BEGIN\n{\n  \"job\": \"0104_premarket_backfill\",\n  \"runner_rc\": 0,\n  \"report_file\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-07-01/premarket/173143.json\",\n  \"success\": true,\n  \"complete\": true,\n  \"failed_items\": [],\n  \"missing_items\": [],\n  \"webhook\": {\n    \"enabled\": true,\n    \"success\": true,\n    \"http_status\": 200,\n    \"response_excerpt\": \"{\\\"StatusCode\\\":0,\\\"StatusMessage\\\":\\\"success\\\",\\\"code\\\":0,\\\"data\\\":{},\\\"msg\\\":\\\"success\\\"}\"\n  },\n  \"bitable_sync\": {\n    \"enabled\": false,\n    \"created_count\": 0,\n    \"reason\": \"Meta file not found: /home/investmentofficehku/.openclaw/workspace/memory/feishu_bitable/duanxianxia_review.json\",\n    \"records\": []\n  },\n  \"analysis_version\": \"premarket_v9\",\n  \"candidate_count\": 1,\n  \"top_candidates\": [\n    {\n      \"rank\": 1,\n      \"code\": \"002674\",\n      \"name\": \"兴业科技\",\n      \"score\": 100.0,\n      \"reasons\": [\n        \"低开反包\",\n        \"竞价-6.5%\",\n        \"资金连续:unknown\"\n      ],\n      \"risks\": []\n    }\n  ]\n}\n[0104] SUMMARY_JSON_END\n",
+  "stderr_tail": "",
+  "started": "2026-07-01T17:30:14+08:00",
+  "ended": "2026-07-01T17:32:51+08:00",
+  "duration_s": 156.7,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0104_premarket_backfill_20260701.py"
+  ]
+}

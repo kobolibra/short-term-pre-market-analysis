@@ -1,0 +1,190 @@
+{
+  "scan_time": "2026-07-13",
+  "metric": "KQXY",
+  "source": "home.qxlive.top_metrics",
+  "cutoff": "093300",
+  "days": [
+    {
+      "date": "2026-05-19",
+      "capture_time": "092824",
+      "KQXY": 0.0,
+      "ZTBX": 1.74,
+      "LBBX": 4.08
+    },
+    {
+      "date": "2026-05-20",
+      "capture_time": "092936",
+      "KQXY": 0.0,
+      "ZTBX": 1.65,
+      "LBBX": 3.41
+    },
+    {
+      "date": "2026-06-01",
+      "capture_time": "093025",
+      "KQXY": 0.0,
+      "ZTBX": 1.53,
+      "LBBX": 1.55
+    },
+    {
+      "date": "2026-06-02",
+      "capture_time": "085601",
+      "KQXY": 9.0,
+      "ZTBX": 2.72,
+      "LBBX": 2.5
+    },
+    {
+      "date": "2026-06-04",
+      "capture_time": "092856",
+      "KQXY": 0.0,
+      "ZTBX": 1.3,
+      "LBBX": 2.36
+    },
+    {
+      "date": "2026-06-08",
+      "capture_time": "092922",
+      "KQXY": 0.0,
+      "ZTBX": -0.84,
+      "LBBX": 1.67
+    },
+    {
+      "date": "2026-06-09",
+      "capture_time": "092735",
+      "KQXY": 0.0,
+      "ZTBX": 2.16,
+      "LBBX": 1.33
+    },
+    {
+      "date": "2026-06-10",
+      "capture_time": "092942",
+      "KQXY": 0.0,
+      "ZTBX": 1.09,
+      "LBBX": 2.32
+    },
+    {
+      "date": "2026-06-11",
+      "capture_time": "092859",
+      "KQXY": 0.0,
+      "ZTBX": 0.94,
+      "LBBX": 2.34
+    },
+    {
+      "date": "2026-06-15",
+      "capture_time": "092951",
+      "KQXY": 0.0,
+      "ZTBX": 1.11,
+      "LBBX": 1.18
+    },
+    {
+      "date": "2026-06-16",
+      "capture_time": "093011",
+      "KQXY": 0.0,
+      "ZTBX": 2.87,
+      "LBBX": 4.26
+    },
+    {
+      "date": "2026-06-17",
+      "capture_time": "093216",
+      "KQXY": 0.0,
+      "ZTBX": 2.3,
+      "LBBX": 4.41
+    },
+    {
+      "date": "2026-06-18",
+      "capture_time": "092923",
+      "KQXY": 0.0,
+      "ZTBX": 1.2,
+      "LBBX": 1.55
+    },
+    {
+      "date": "2026-06-23",
+      "capture_time": "092827",
+      "KQXY": 0.0,
+      "ZTBX": 2.94,
+      "LBBX": 4.0
+    },
+    {
+      "date": "2026-06-24",
+      "capture_time": "092903",
+      "KQXY": 0.0,
+      "ZTBX": 0.45,
+      "LBBX": 0.25
+    },
+    {
+      "date": "2026-06-26",
+      "capture_time": "092841",
+      "KQXY": 0.0,
+      "ZTBX": 1.27,
+      "LBBX": 2.84
+    },
+    {
+      "date": "2026-06-29",
+      "capture_time": "092744",
+      "KQXY": 0.0,
+      "ZTBX": 2.01,
+      "LBBX": 2.46
+    },
+    {
+      "date": "2026-06-30",
+      "capture_time": "092835",
+      "KQXY": 0.0,
+      "ZTBX": 1.91,
+      "LBBX": 1.62
+    },
+    {
+      "date": "2026-07-02",
+      "capture_time": "092837",
+      "KQXY": 0.0,
+      "ZTBX": 1.38,
+      "LBBX": 1.23
+    },
+    {
+      "date": "2026-07-08",
+      "capture_time": "092957",
+      "KQXY": 0.0,
+      "ZTBX": 1.96,
+      "LBBX": 1.86
+    },
+    {
+      "date": "2026-07-09",
+      "capture_time": "092930",
+      "KQXY": 0.0,
+      "ZTBX": 0.68,
+      "LBBX": 0.35
+    },
+    {
+      "date": "2026-07-10",
+      "capture_time": "092910",
+      "KQXY": 0.0,
+      "ZTBX": 3.29,
+      "LBBX": 2.42
+    },
+    {
+      "date": "2026-07-13",
+      "capture_time": "093019",
+      "KQXY": 0.0,
+      "ZTBX": 0.58,
+      "LBBX": 2.25
+    }
+  ],
+  "stats": {
+    "n_days": 23,
+    "n_with_kqxy": 23,
+    "min": 0.0,
+    "max": 9.0,
+    "mean": 0.39,
+    "median": 0.0,
+    "p95": 0.0,
+    "p80": 0.0,
+    "p50": 0.0,
+    "p20": 0.0,
+    "distribution": {
+      "<=0": 22,
+      "0-5": 0,
+      "5-10": 1,
+      "10-20": 0,
+      "20-30": 0,
+      "30-50": 0,
+      ">50": 0
+    }
+  }
+}

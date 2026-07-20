@@ -1,0 +1,28 @@
+{
+  "id": "daily_2026-06-28_v23_restricted_rerank",
+  "script": "scripts/v23_restricted_rerank.py",
+  "args": [
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ],
+  "queued_file": "daily_2026-06-28_v23_restricted_rerank.json",
+  "note": "daily auto-refresh 2026-06-28",
+  "worker_time": "2026-06-28T01:07:51+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"oos_days\": 10,\n  \"ranked_by_top5\": [\n    [\n      \"amtTop10_mlp\",\n      {\n        \"top3\": 1.0449,\n        \"top5\": 6.7137,\n        \"top10\": 4.2926,\n        \"cap3\": 0.0333,\n        \"cap5\": 0.04,\n        \"cap10\": 0.06\n      }\n    ],\n    [\n      \"sparse\",\n      {\n        \"top3\": 0.3566,\n        \"top5\": 1.1497,\n        \"top10\": 4.1863,\n        \"cap3\": 0.0333,\n        \"cap5\": 0.02,\n        \"cap10\": 0.07\n      }\n    ],\n    [\n      \"amt\",\n      {\n        \"top3\": 1.0497,\n        \"top5\": 1.1396,\n        \"top10\": 4.2926,\n        \"cap3\": 0.0333,\n        \"cap5\": 0.02,\n        \"cap10\": 0.06\n      }\n    ],\n    [\n      \"amtTop20_mlp\",\n      {\n        \"top3\": -4.8245,\n        \"top5\": -2.3713,\n        \"top10\": 2.1846,\n        \"cap3\": 0.0,\n        \"cap5\": 0.02,\n        \"cap10\": 0.07\n      }\n    ],\n    [\n      \"mlp_all\",\n      {\n        \"top3\": -5.3325,\n        \"top5\": -2.6505,\n        \"top10\": 2.3498,\n        \"cap3\": 0.0,\n        \"cap5\": 0.02,\n        \"cap10\": 0.04\n      }\n    ],\n    [\n      \"amtTop30_mlp\",\n      {\n        \"top3\": -4.6082,\n        \"top5\": -2.689,\n        \"top10\": 2.4618,\n        \"cap3\": 0.0,\n        \"cap5\": 0.02,\n        \"cap10\": 0.05\n      }\n    ]\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-28T01:07:51+08:00",
+  "ended": "2026-06-28T01:12:14+08:00",
+  "duration_s": 262.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v23_restricted_rerank.py",
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ]
+}

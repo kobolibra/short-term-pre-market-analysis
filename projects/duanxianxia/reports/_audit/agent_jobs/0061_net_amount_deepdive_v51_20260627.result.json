@@ -1,0 +1,19 @@
+{
+  "id": "0061_net_amount_deepdive_v51_20260627",
+  "script": "scripts/0061_net_amount_deepdive_v51_20260627.py",
+  "args": [],
+  "queued_file": "0061_net_amount_deepdive_v51_20260627.json",
+  "note": "表⑤ auction.jjyd.net_amount 字段IC+归一化+分桶+交互分析",
+  "worker_time": "2026-06-27T20:30:03+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/0061_net_amount_deepdive_v51_20260627.py\", line 13, in <module>\n    from v10_optimize import Daily, mean, pearson, spearman, pctl, extract, load_days, DEFAULT_PROJECT_ROOT, CORE_FIELDS\nImportError: cannot import name 'mean' from 'v10_optimize' (/home/investmentofficehku/.openclaw/workspace/scripts/v10_optimize.py)\n",
+  "started": "2026-06-27T20:30:03+08:00",
+  "ended": "2026-06-27T20:30:04+08:00",
+  "duration_s": 1.6,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0061_net_amount_deepdive_v51_20260627.py"
+  ]
+}

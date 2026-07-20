@@ -1,0 +1,517 @@
+{
+  "status": "OK",
+  "run_at": "2026-07-01T10:10:27+08:00",
+  "version": "feature_builder_v11.0",
+  "n_dates_eligible": 21,
+  "n_dates_ok": 21,
+  "n_dates_error": 0,
+  "n_rows_total": 5910,
+  "total_canonical_errors": 0,
+  "out_csv": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/_all_candidates_flat_v11.csv",
+  "per_date": [
+    {
+      "date": "2026-05-19",
+      "status": "OK",
+      "n_features": 271,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 99,
+          "ok": 99
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 53,
+          "ok": 53
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 44,
+          "ok": 44
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-05-20",
+      "status": "OK",
+      "n_features": 237,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 74,
+          "ok": 74
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 35,
+          "ok": 35
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 56,
+          "ok": 56
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-05-21",
+      "status": "OK",
+      "n_features": 414,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 258,
+          "ok": 258
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 69,
+          "ok": 69
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 59,
+          "ok": 59
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-01",
+      "status": "OK",
+      "n_features": 345,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 155,
+          "ok": 155
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 59,
+          "ok": 59
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 75,
+          "ok": 75
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-02",
+      "status": "OK",
+      "n_features": 307,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 92,
+          "ok": 92
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 70,
+          "ok": 70
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 61,
+          "ok": 61
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-04",
+      "status": "OK",
+      "n_features": 161,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 0,
+          "ok": 0
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 0,
+          "ok": 0
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 42,
+          "ok": 42
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 141,
+          "ok": 141
+        }
+      }
+    },
+    {
+      "date": "2026-06-05",
+      "status": "OK",
+      "n_features": 289,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 133,
+          "ok": 133
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 36,
+          "ok": 36
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 44,
+          "ok": 44
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-08",
+      "status": "OK",
+      "n_features": 216,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 33,
+          "ok": 33
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 9,
+          "ok": 9
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 83,
+          "ok": 83
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-09",
+      "status": "OK",
+      "n_features": 342,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 81,
+          "ok": 81
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 162,
+          "ok": 162
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 31,
+          "ok": 31
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-10",
+      "status": "OK",
+      "n_features": 238,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 55,
+          "ok": 55
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 25,
+          "ok": 25
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 63,
+          "ok": 63
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-11",
+      "status": "OK",
+      "n_features": 259,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 89,
+          "ok": 89
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 33,
+          "ok": 33
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 56,
+          "ok": 56
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-15",
+      "status": "OK",
+      "n_features": 188,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 0,
+          "ok": 0
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 0,
+          "ok": 0
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 78,
+          "ok": 78
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-16",
+      "status": "OK",
+      "n_features": 301,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 121,
+          "ok": 121
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 47,
+          "ok": 47
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 61,
+          "ok": 61
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-17",
+      "status": "OK",
+      "n_features": 242,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 66,
+          "ok": 66
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 22,
+          "ok": 22
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 77,
+          "ok": 77
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-18",
+      "status": "OK",
+      "n_features": 268,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 97,
+          "ok": 97
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 30,
+          "ok": 30
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 68,
+          "ok": 68
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-23",
+      "status": "OK",
+      "n_features": 296,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 122,
+          "ok": 122
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 84,
+          "ok": 84
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 62,
+          "ok": 62
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-24",
+      "status": "OK",
+      "n_features": 283,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 86,
+          "ok": 86
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 25,
+          "ok": 25
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 83,
+          "ok": 83
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-26",
+      "status": "OK",
+      "n_features": 280,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 98,
+          "ok": 98
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 51,
+          "ok": 51
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 62,
+          "ok": 62
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-29",
+      "status": "OK",
+      "n_features": 342,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 155,
+          "ok": 155
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 79,
+          "ok": 79
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 73,
+          "ok": 73
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-06-30",
+      "status": "OK",
+      "n_features": 288,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 92,
+          "ok": 92
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 66,
+          "ok": 66
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 55,
+          "ok": 55
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    },
+    {
+      "date": "2026-07-01",
+      "status": "OK",
+      "n_features": 343,
+      "canonical_errors": 0,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 165,
+          "ok": 165
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 77,
+          "ok": 77
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 55,
+          "ok": 55
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "ok": 150
+        }
+      }
+    }
+  ]
+}

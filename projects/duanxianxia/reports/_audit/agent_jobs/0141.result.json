@@ -1,0 +1,19 @@
+{
+  "id": "0141",
+  "script": "scripts/duanxianxia_ltgd_multiwindow_probe.py",
+  "args": [],
+  "queued_file": "0141_ltgd_multiwindow_probe_20260704.json",
+  "note": "Item A evidence. 0139 proved the fetcher emits all 4 windows (5/10/20/50) with no range_expr. This probe reads a real review.ltgd.range capture and reports: raw 周期 distribution, per-code window coverage (does each code appear in 1 vs all 4 windows?), and proves the by_code last-wins collapse (rows lost, surviving range_period per code). Decides pivot design: dense range_return_5d/10d/20d/50d vs sparse best-window representation.",
+  "worker_time": "2026-07-04T12:10:08+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n \"task\": \"0141_ltgd_multiwindow_probe\",\n \"dataset\": \"review.ltgd.range\",\n \"captures_root\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures\",\n \"total_capture_files\": 31,\n \"recent_capture_files\": [\n  \"2026-06-30/review.ltgd.range/172050.json\",\n  \"2026-07-01/review.ltgd.range/012032.json\",\n  \"2026-07-01/review.ltgd.range/172029.json\",\n  \"2026-07-02/review.ltgd.range/012031.json\",\n  \"2026-07-03/review.ltgd.range/015939.json\",\n  \"2026-07-03/review.ltgd.range/172031.json\"\n ],\n \"chosen_capture\": \"2026-07-03/review.ltgd.range/172031.json\",\n \"raw_row_count\": 80,\n \"capture_meta_windows\": [\n  5,\n  10,\n  20,\n  50\n ],\n \"capture_meta_latest_date\": \"2026-07-03\",\n \"raw_period_distribution\": {\n  \"5日\": 20,\n  \"10日\": 20,\n  \"20日\": 20,\n  \"50日\": 20\n },\n \"distinct_codes\": 55,\n \"per_code_window_count_dist\": {\n  \"1\": 37,\n  \"2\": 12,\n  \"3\": 5,\n  \"4\": 1\n },\n \"sample_codes_windows\": {\n  \"000004\": [\n   \"5日\"\n  ],\n  \"002808\": [\n   \"5日\"\n  ],\n  \"605178\": [\n   \"10日\",\n   \"20日\",\n   \"5日\"\n  ],\n  \"688596\": [\n   \"10日\",\n   \"20日\",\n   \"5日\"\n  ],\n  \"300873\": [\n   \"10日\",\n   \"20日\",\n   \"5日\"\n  ],\n  \"688432\": [\n   \"10日\",\n   \"20日\",\n   \"50日\",\n   \"5日\"\n  ]\n },\n \"canonical_total_rows\": 80,\n \"bycode_survivor_count\": 55,\n \"bycode_survivor_period_dist\": {\n  \"5日\": 12,\n  \"20日\": 11,\n  \"50日\": 20,\n  \"10日\": 12\n },\n \"rows_lost_to_collapse\": 25,\n \"collapse_confirmed\": true\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-04T12:10:08+08:00",
+  "ended": "2026-07-04T12:10:08+08:00",
+  "duration_s": 0.4,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_ltgd_multiwindow_probe.py"
+  ]
+}

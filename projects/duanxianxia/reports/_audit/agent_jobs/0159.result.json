@@ -1,0 +1,19 @@
+{
+  "id": "0159",
+  "script": "scripts/duanxianxia_premarket_capture_probe_0159.py",
+  "args": [],
+  "queued_file": "0159_premarket_capture_probe_20260706.json",
+  "note": "Probe premarket capture-only to surface per-dataset auction.jjyd.* fetch errors; diagnose why premarket auction data stopped downloading.",
+  "worker_time": "2026-07-06T14:00:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\"rc\": -1, \"n_items\": 0, \"auction_items\": [], \"all_datasets\": [], \"stderr_tail\": \"TimeoutExpired(['python3', 'scripts/duanxianxia_batch.py', 'premarket', '--capture-only', '--json', '--webhook-url', ''], 800)\", \"out\": \"premarket_capture_probe_0159.json\"}\n",
+  "stderr_tail": "",
+  "started": "2026-07-06T14:00:04+08:00",
+  "ended": "2026-07-06T14:13:30+08:00",
+  "duration_s": 806.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_premarket_capture_probe_0159.py"
+  ]
+}

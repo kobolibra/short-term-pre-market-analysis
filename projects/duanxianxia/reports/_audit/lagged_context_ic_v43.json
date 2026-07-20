@@ -1,0 +1,539 @@
+{
+  "generated_at": "2026-06-27T09:10:38",
+  "job": "lagged_context_ic_v43",
+  "datasets": [
+    "pool.hot",
+    "pool.surge",
+    "cashflow.stock.today",
+    "cashflow.stock.3day",
+    "cashflow.stock.5day",
+    "cashflow.stock.10day",
+    "home.ztpool",
+    "review.daily.top_metrics",
+    "review.fupan.plate",
+    "review.ltgd.range"
+  ],
+  "n_dates": 22,
+  "fields": [
+    {
+      "dataset": "review.fupan.plate",
+      "field": "成交额",
+      "mean_ic": 0.1034,
+      "icir": 0.523,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "换手率",
+      "mean_ic": 0.0868,
+      "icir": 0.649,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "股价",
+      "mean_ic": 0.079,
+      "icir": 0.354,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "连板",
+      "mean_ic": 0.0764,
+      "icir": 0.573,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "实际流通",
+      "mean_ic": 0.0741,
+      "icir": 0.384,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "home.ztpool",
+      "field": "分组序号",
+      "mean_ic": -0.0725,
+      "icir": -0.619,
+      "n_days": 17,
+      "numeric_rows": 2655
+    },
+    {
+      "dataset": "home.ztpool",
+      "field": "晋级率",
+      "mean_ic": -0.0696,
+      "icir": -0.614,
+      "n_days": 17,
+      "numeric_rows": 2655
+    },
+    {
+      "dataset": "home.ztpool",
+      "field": "晋级数",
+      "mean_ic": -0.0696,
+      "icir": -0.613,
+      "n_days": 17,
+      "numeric_rows": 2655
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "最新价",
+      "mean_ic": 0.0649,
+      "icir": 0.24,
+      "n_days": 20,
+      "numeric_rows": 2068
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "流通市值",
+      "mean_ic": 0.0647,
+      "icir": 0.372,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "总市值",
+      "mean_ic": 0.0645,
+      "icir": 0.365,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "home.ztpool",
+      "field": "样本数",
+      "mean_ic": -0.0595,
+      "icir": -0.505,
+      "n_days": 17,
+      "numeric_rows": 2655
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "中单净流入",
+      "mean_ic": -0.057,
+      "icir": -0.592,
+      "n_days": 20,
+      "numeric_rows": 2855
+    },
+    {
+      "dataset": "home.ztpool",
+      "field": "涨幅",
+      "mean_ic": -0.0559,
+      "icir": -0.556,
+      "n_days": 17,
+      "numeric_rows": 2655
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "最新价",
+      "mean_ic": 0.0553,
+      "icir": 0.212,
+      "n_days": 20,
+      "numeric_rows": 2847
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "中单净流入",
+      "mean_ic": -0.0522,
+      "icir": -0.381,
+      "n_days": 20,
+      "numeric_rows": 2068
+    },
+    {
+      "dataset": "review.ltgd.range",
+      "field": "板块顺序",
+      "mean_ic": 0.0511,
+      "icir": 0.354,
+      "n_days": 17,
+      "numeric_rows": 784
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "开板",
+      "mean_ic": 0.0502,
+      "icir": 0.342,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "turnover_ratio",
+      "mean_ic": 0.0489,
+      "icir": 0.154,
+      "n_days": 19,
+      "numeric_rows": 237
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "change_pct",
+      "mean_ic": -0.0479,
+      "icir": -0.153,
+      "n_days": 19,
+      "numeric_rows": 237
+    },
+    {
+      "dataset": "review.ltgd.range",
+      "field": "区间涨幅",
+      "mean_ic": 0.0476,
+      "icir": 0.353,
+      "n_days": 17,
+      "numeric_rows": 784
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "最新价",
+      "mean_ic": 0.0471,
+      "icir": 0.186,
+      "n_days": 20,
+      "numeric_rows": 2833
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "rank",
+      "mean_ic": 0.0465,
+      "icir": 0.149,
+      "n_days": 19,
+      "numeric_rows": 237
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "大单净流入",
+      "mean_ic": 0.0462,
+      "icir": 0.416,
+      "n_days": 20,
+      "numeric_rows": 2068
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "小单净流入",
+      "mean_ic": 0.0421,
+      "icir": 0.387,
+      "n_days": 20,
+      "numeric_rows": 2855
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "最新价",
+      "mean_ic": 0.0409,
+      "icir": 0.156,
+      "n_days": 20,
+      "numeric_rows": 2855
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "中单净流入",
+      "mean_ic": -0.0405,
+      "icir": -0.551,
+      "n_days": 20,
+      "numeric_rows": 2833
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "主力净流入",
+      "mean_ic": 0.0356,
+      "icir": 0.293,
+      "n_days": 20,
+      "numeric_rows": 2068
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "排名",
+      "mean_ic": -0.0354,
+      "icir": -0.292,
+      "n_days": 20,
+      "numeric_rows": 2068
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "题材涨停数",
+      "mean_ic": 0.0325,
+      "icir": 0.208,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "题材股票数",
+      "mean_ic": 0.0325,
+      "icir": 0.208,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "流通",
+      "mean_ic": 0.0307,
+      "icir": 0.149,
+      "n_days": 20,
+      "numeric_rows": 599
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "涨幅",
+      "mean_ic": 0.0297,
+      "icir": 0.309,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "题材序号",
+      "mean_ic": -0.028,
+      "icir": -0.201,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "排名",
+      "mean_ic": -0.0279,
+      "icir": -0.272,
+      "n_days": 20,
+      "numeric_rows": 2833
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "主力净流入",
+      "mean_ic": 0.0278,
+      "icir": 0.272,
+      "n_days": 20,
+      "numeric_rows": 2833
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "中单净流入",
+      "mean_ic": -0.0266,
+      "icir": -0.197,
+      "n_days": 20,
+      "numeric_rows": 2847
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "特大单净流入",
+      "mean_ic": 0.0246,
+      "icir": 0.278,
+      "n_days": 20,
+      "numeric_rows": 2855
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "题材内序号",
+      "mean_ic": -0.024,
+      "icir": -0.168,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "小单净流入",
+      "mean_ic": 0.0236,
+      "icir": 0.298,
+      "n_days": 20,
+      "numeric_rows": 2833
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "大单净流入",
+      "mean_ic": 0.022,
+      "icir": 0.183,
+      "n_days": 20,
+      "numeric_rows": 2833
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "float_market_cap",
+      "mean_ic": -0.0205,
+      "icir": -0.054,
+      "n_days": 19,
+      "numeric_rows": 237
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "小单净流入",
+      "mean_ic": 0.0199,
+      "icir": 0.193,
+      "n_days": 20,
+      "numeric_rows": 2847
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "特大单净流入",
+      "mean_ic": 0.0196,
+      "icir": 0.19,
+      "n_days": 20,
+      "numeric_rows": 2833
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "涨跌幅",
+      "mean_ic": 0.0189,
+      "icir": 0.154,
+      "n_days": 20,
+      "numeric_rows": 2855
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "实际换手",
+      "mean_ic": -0.018,
+      "icir": -0.151,
+      "n_days": 20,
+      "numeric_rows": 599
+    },
+    {
+      "dataset": "review.fupan.plate",
+      "field": "封单额",
+      "mean_ic": -0.0161,
+      "icir": -0.187,
+      "n_days": 17,
+      "numeric_rows": 1217
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "特大单净流入",
+      "mean_ic": -0.0148,
+      "icir": -0.128,
+      "n_days": 20,
+      "numeric_rows": 2068
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "涨跌幅",
+      "mean_ic": -0.0147,
+      "icir": -0.149,
+      "n_days": 20,
+      "numeric_rows": 2847
+    },
+    {
+      "dataset": "home.ztpool",
+      "field": "组内序号",
+      "mean_ic": 0.0123,
+      "icir": 0.126,
+      "n_days": 17,
+      "numeric_rows": 2655
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "涨跌幅",
+      "mean_ic": 0.0113,
+      "icir": 0.081,
+      "n_days": 20,
+      "numeric_rows": 2833
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "涨幅",
+      "mean_ic": 0.0104,
+      "icir": 0.067,
+      "n_days": 20,
+      "numeric_rows": 599
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "主力",
+      "mean_ic": -0.0085,
+      "icir": -0.036,
+      "n_days": 20,
+      "numeric_rows": 599
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "成交",
+      "mean_ic": 0.0083,
+      "icir": 0.037,
+      "n_days": 20,
+      "numeric_rows": 599
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "特大单净流入",
+      "mean_ic": 0.0074,
+      "icir": 0.102,
+      "n_days": 20,
+      "numeric_rows": 2847
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "大单净流入",
+      "mean_ic": -0.0074,
+      "icir": -0.061,
+      "n_days": 20,
+      "numeric_rows": 2855
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "大单净流入",
+      "mean_ic": 0.0071,
+      "icir": 0.079,
+      "n_days": 20,
+      "numeric_rows": 2847
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "涨跌幅",
+      "mean_ic": -0.0058,
+      "icir": -0.038,
+      "n_days": 20,
+      "numeric_rows": 2068
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "小单净流入",
+      "mean_ic": -0.0028,
+      "icir": -0.026,
+      "n_days": 20,
+      "numeric_rows": 2068
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "主力净流入",
+      "mean_ic": 0.0025,
+      "icir": 0.018,
+      "n_days": 20,
+      "numeric_rows": 2847
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "排名",
+      "mean_ic": -0.0025,
+      "icir": -0.018,
+      "n_days": 20,
+      "numeric_rows": 2847
+    },
+    {
+      "dataset": "review.ltgd.range",
+      "field": "排名",
+      "mean_ic": -0.0016,
+      "icir": -0.009,
+      "n_days": 17,
+      "numeric_rows": 784
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "排名",
+      "mean_ic": -0.0012,
+      "icir": -0.012,
+      "n_days": 20,
+      "numeric_rows": 2855
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "主力净流入",
+      "mean_ic": 0.0011,
+      "icir": 0.011,
+      "n_days": 20,
+      "numeric_rows": 2855
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "amount",
+      "mean_ic": 0.001,
+      "icir": 0.003,
+      "n_days": 19,
+      "numeric_rows": 237
+    }
+  ]
+}

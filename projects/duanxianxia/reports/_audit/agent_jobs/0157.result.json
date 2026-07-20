@@ -1,0 +1,24 @@
+{
+  "id": "0157",
+  "script": "scripts/duanxianxia_indicator_listing_0157.py",
+  "args": [
+    "2026-07-06",
+    "30"
+  ],
+  "queued_file": "0157_indicator_listing_20260706.json",
+  "note": "Task 0157: list D1-D6 dimension indicators for 2026-07-06 premarket auction captures via feature_builder+indicator_builder.",
+  "worker_time": "2026-07-06T12:30:21+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "NO_FEATURES date=2026-07-06 date_dir_exists=True\ndate_dir_listing=[\"cashflow.stock.10day\", \"cashflow.stock.3day\", \"cashflow.stock.5day\", \"cashflow.stock.today\", \"home.qxlive.top_metrics\", \"pool.hot\", \"pool.surge\", \"rank.hot_stock_day\", \"rank.rocket\"]\ncaptures_root_tail=[\"2026-06-16\", \"2026-06-17\", \"2026-06-18\", \"2026-06-22\", \"2026-06-23\", \"2026-06-24\", \"2026-06-25\", \"2026-06-26\", \"2026-06-29\", \"2026-06-30\", \"2026-07-01\", \"2026-07-02\", \"2026-07-03\", \"2026-07-04\", \"2026-07-06\"]\n",
+  "stderr_tail": "",
+  "started": "2026-07-06T12:30:21+08:00",
+  "ended": "2026-07-06T12:30:23+08:00",
+  "duration_s": 2.6,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_indicator_listing_0157.py",
+    "2026-07-06",
+    "30"
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "version": "v4.2.0",
+  "date": "2026-07-14",
+  "status": "ok",
+  "phase": "UNKNOWN",
+  "phase_label": "数据不足",
+  "level": "MID",
+  "direction": "UNKNOWN",
+  "risk_tier": "WARNING",
+  "position_cap": 0.1,
+  "buy_mode": "observe_only",
+  "relay_health": 21.0,
+  "jinji_1_2": 8.43,
+  "jinji_2_3": 36.36,
+  "ztbx_925": 0.91,
+  "lbbx_925": -0.16,
+  "advance_share": 0.4394,
+  "dt_925": 7,
+  "t0_impulse": "NEGATIVE",
+  "ztbx_collapse": false,
+  "lbbx_collapse": true,
+  "breadth_shock": false,
+  "pool_enabled": {
+    "一字封": false,
+    "换手封": false,
+    "分歧封": false,
+    "非板": false
+  },
+  "pool_mult": {
+    "一字封": 0.5,
+    "换手封": 0.5,
+    "分歧封": 0.7,
+    "非板": 0.7
+  },
+  "phase_confidence": 1.0,
+  "transition_reason": [
+    "初始相位: 数据不足"
+  ],
+  "n_orders": 0,
+  "orders": [],
+  "allocated_position": 0,
+  "reserve_position": 100.0,
+  "pools": {
+    "一字封": {
+      "n_total": 1,
+      "n_filtered": 0
+    },
+    "换手封": {
+      "n_total": 3,
+      "n_filtered": 0
+    },
+    "分歧封": {
+      "n_total": 3,
+      "n_filtered": 2
+    },
+    "非板": {
+      "n_total": 243,
+      "n_filtered": 60
+    }
+  },
+  "warnings": [
+    "LBBX塌方: 连板溢价崩溃",
+    "一字封池被 D6 禁用",
+    "换手封池被 D6 禁用",
+    "非板池被 D6 禁用",
+    "分歧封池被 D6 禁用"
+  ],
+  "diagnostics": {
+    "feature_table": {
+      "n_features": 312,
+      "n_fengdan_merged": 53,
+      "coverage": {
+        "auction.jjyd.vratio": {
+          "rows_in": 104,
+          "canonical_ok": 104,
+          "canonical_error": 0
+        },
+        "auction.jjyd.qiangchou": {
+          "rows_in": 93,
+          "canonical_ok": 93,
+          "canonical_error": 0
+        },
+        "auction.jjyd.net_amount": {
+          "rows_in": 43,
+          "canonical_ok": 43,
+          "canonical_error": 0
+        },
+        "auction.jjyd.weimai": {
+          "rows_in": 150,
+          "canonical_ok": 150,
+          "canonical_error": 0
+        },
+        "auction.jjlive.fengdan": {
+          "rows_in": 116,
+          "canonical_ok": 116,
+          "canonical_error": 0
+        }
+      }
+    },
+    "review_plate": {
+      "n_rows": 27
+    },
+    "ztpool_t1": {
+      "n_rows": 123
+    },
+    "rank_data": {
+      "n_hot_rank": 100,
+      "n_rocket_rank": 100
+    },
+    "routing": {
+      "pool_counts": {
+        "一字封": 1,
+        "换手封": 3,
+        "分歧封": 5,
+        "非板": 303
+      }
+    },
+    "ranking": {
+      "一字封": {
+        "n_total": 1,
+        "n_passed": 1,
+        "n_filtered": 0,
+        "n_ranked": 1,
+        "n_top": 1,
+        "pool_median_turnover": 0.79,
+        "pool_median_bid_amount": 33484864
+      },
+      "换手封": {
+        "n_total": 3,
+        "n_passed": 3,
+        "n_filtered": 0,
+        "n_ranked": 3,
+        "n_top": 3,
+        "pool_median_turnover": 0.64,
+        "pool_median_bid_amount": 31070000
+      },
+      "分歧封": {
+        "n_total": 5,
+        "n_passed": 3,
+        "n_filtered": 2,
+        "n_ranked": 3,
+        "n_top": 3,
+        "pool_median_turnover": 0.63,
+        "pool_median_bid_amount": 14674400
+      },
+      "非板": {
+        "n_total": 303,
+        "n_passed": 243,
+        "n_filtered": 60,
+        "n_ranked": 243,
+        "n_top": 3,
+        "pool_median_turnover": 0.08,
+        "pool_median_bid_amount": 7440000
+      }
+    }
+  }
+}

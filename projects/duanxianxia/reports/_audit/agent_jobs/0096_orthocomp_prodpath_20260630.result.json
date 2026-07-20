@@ -1,0 +1,19 @@
+{
+  "id": "0096_orthocomp_prodpath_20260630",
+  "script": "scripts/duanxianxia_0096_orthocomp_prodpath_probe_20260630.py",
+  "args": [],
+  "queued_file": "0096_orthocomp_prodpath_20260630.json",
+  "note": "0095 后续: 生产路径验证。import compute_auction_strengths 跑真实 captures(cutoff 092900,earliest_before)取 auction_turnover_pct/latest_change_pct 复现已接入 assemble_v9 的 BC@lam0.4 混合, 测 IC/ICIR+me@{10,20,30} vs baseline 并检查与 0095 raw 的字段映射相关性; 不达标则将 edge_orthocomp_lambda 默认置 0 禁用。只读。",
+  "worker_time": "2026-06-30T23:30:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"probe\": \"0096_orthocomp_prodpath\",\n  \"generated_at\": \"2026-06-30T15:30:52\",\n  \"lambda\": 0.4,\n  \"cmp_days\": 15,\n  \"median_with_comp\": 326,\n  \"topk\": [\n    10,\n    20,\n    30\n  ],\n  \"baseline_edge\": {\n    \"mean_ic\": 0.0791,\n    \"icir\": 0.499,\n    \"mean_excess_at\": {\n      \"me10\": 0.336,\n      \"me20\": 0.561,\n      \"me30\": 1.231\n    }\n  },\n  \"prodpath_blend\": {\n    \"mean_ic\": 0.0968,\n    \"icir\": 0.683,\n    \"mean_excess_at\": {\n      \"me10\": 2.317,\n      \"me20\": 1.717,\n      \"me30\": 1.441\n    },\n    \"days_beat_ic\": \"7/15\",\n    \"days_beat_me10\": \"9/15\"\n  },\n  \"field_mapping_equivalence\": {\n    \"turnover_corr_prod_vs_raw\": 1.0,\n    \"gap_corr_prod_vs_raw\": 1.0000000000000002,\n    \"turnover_match\": {\n      \"both\": 740,\n      \"prod_only\": 1994,\n      \"raw_only\": 1\n    },\n    \"gap_match\": {\n      \"both\": 741,\n      \"prod_only\": 4033,\n      \"raw_only\": 0\n    }\n  },\n  \"recommendation\": \"PRODUCTION_PATH_CONFIRMED\",\n  \"note\": \"生产路径验证: import compute_auction_strengths 跑真实 captures(cutoff 092900,earliest_before)取 auction_turnover_pct/latest_change_pct 复现已接入的 BC@lam0.4 混合; 闸门须 IC>baseline 且 me10>=baseline 且 ICIR>=baseline 且过半天 me10 胜 且字段映射 corr>=0.9; 不达标 => 建议 edge_orthocomp_lambda 默认置 0 禁用。\"\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-30T23:30:02+08:00",
+  "ended": "2026-06-30T23:30:53+08:00",
+  "duration_s": 50.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0096_orthocomp_prodpath_probe_20260630.py"
+  ]
+}

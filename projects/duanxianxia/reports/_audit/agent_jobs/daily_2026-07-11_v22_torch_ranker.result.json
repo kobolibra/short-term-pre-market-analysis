@@ -1,0 +1,28 @@
+{
+  "id": "daily_2026-07-11_v22_torch_ranker",
+  "script": "scripts/v22_torch_ranker.py",
+  "args": [
+    "--min-train",
+    "5",
+    "--epochs",
+    "120"
+  ],
+  "queued_file": "daily_2026-07-11_v22_torch_ranker.json",
+  "note": "daily auto-refresh 2026-07-11",
+  "worker_time": "2026-07-11T05:23:27+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"oos_days\": 18,\n  \"torch_error\": null,\n  \"oos_summary\": {\n    \"linear\": {\n      \"cap5\": 0.0111,\n      \"cap30\": 0.1222,\n      \"ic\": 0.0299,\n      \"top5\": -0.5398,\n      \"top30\": 0.4177\n    },\n    \"mlp\": {\n      \"cap5\": 0.0222,\n      \"cap30\": 0.1204,\n      \"ic\": 0.0169,\n      \"top5\": -0.3908,\n      \"top30\": 0.3602\n    },\n    \"amt\": {\n      \"cap5\": 0.0556,\n      \"cap30\": 0.1574,\n      \"ic\": 0.0811,\n      \"top5\": 5.794,\n      \"top30\": 1.6695\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-11T05:23:27+08:00",
+  "ended": "2026-07-11T05:54:40+08:00",
+  "duration_s": 1872.6,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v22_torch_ranker.py",
+    "--min-train",
+    "5",
+    "--epochs",
+    "120"
+  ]
+}

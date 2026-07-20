@@ -1,0 +1,23 @@
+{
+  "job": "0161_install_auction_selfcheck_cron",
+  "generated_at": "2026-07-06T15:00:06+08:00",
+  "ok": true,
+  "missing_script": [],
+  "previous_crontab": [
+    "*/10 * * * * /usr/bin/flock -n /tmp/dxx_agent_job.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/agent_job_runner.sh",
+    "0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh",
+    "25 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_premarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh premarket",
+    "1 10 * * 1-5 /usr/bin/flock -n /tmp/dxx_intraday.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh intraday_cashflow",
+    "20 17 * * 1-5 /usr/bin/flock -n /tmp/dxx_postmarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_postmarket_chain_runner.sh"
+  ],
+  "installed_line": "30 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_auction_selfcheck.lock bash -lc 'cd /home/investmentofficehku/.openclaw/workspace && /usr/bin/python3 /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_auction_selfcheck.py'",
+  "final_crontab": [
+    "*/10 * * * * /usr/bin/flock -n /tmp/dxx_agent_job.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/agent_job_runner.sh",
+    "0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh",
+    "25 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_premarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh premarket",
+    "1 10 * * 1-5 /usr/bin/flock -n /tmp/dxx_intraday.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh intraday_cashflow",
+    "20 17 * * 1-5 /usr/bin/flock -n /tmp/dxx_postmarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_postmarket_chain_runner.sh",
+    "30 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_auction_selfcheck.lock bash -lc 'cd /home/investmentofficehku/.openclaw/workspace && /usr/bin/python3 /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_auction_selfcheck.py'"
+  ],
+  "write_stderr": ""
+}

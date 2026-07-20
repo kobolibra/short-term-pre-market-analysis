@@ -1,0 +1,19 @@
+{
+  "id": "0046_premarket_raw_capture_audit_v36_rerun_20260627",
+  "script": "scripts/v36_raw_capture_audit.py",
+  "args": [],
+  "queued_file": "0046_premarket_raw_capture_audit_v36_rerun_20260627.json",
+  "note": "RE-QUEUE of v36 (jobs 0044/0045 failed: wrong queue schema used 'command' instead of 'script', worker rejected with 'script not allowed'). First-principles full premarket data audit. Reads raw captures/<date>/<dataset_id>/ for all 9 premarket datasets directly (no v9 compression). (1) Emits each dataset's real schema (union of field keys + per-key coverage + sample row) so field names are learned empirically. (2) Reconstructs the buried/unused first-principles factors (竞价量比 volume_ratio_multiple, 竞价换手率 turnover_rate_pct, 竞额日增速 auction_amt_growth, 抢筹幅度 grab_strength, 主力净买/流通压强 net_inflow_pressure, 封单915/920/925 时序 fengdan_build_slope/late_change, 委买/封单比, 封单/流通比, 大单占比, 换手强度 turnover_intensity, 飙升/热度榜 rocket_rank/hot_rank) and computes each factor's daily cross-sectional Spearman IC/ICIR/coverage vs same-day excess=(close-open)/preclose*100. Pure read-only descriptive audit; does not touch production logic. Output reports/_audit/premarket_raw_capture_audit_v36.{json,md}.",
+  "worker_time": "2026-06-27T15:50:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_days\": 22,\n  \"n_samples\": 7472,\n  \"top_ic\": [\n    {\n      \"field\": \"rocket_rank\",\n      \"mean_ic\": 0.2219,\n      \"icir\": 1.027,\n      \"n_days\": 21,\n      \"coverage\": 0.231\n    },\n    {\n      \"field\": \"seal_to_mcap_ratio\",\n      \"mean_ic\": 0.1225,\n      \"icir\": 0.318,\n      \"n_days\": 12,\n      \"coverage\": 0.024\n    },\n    {\n      \"field\": \"big_order_share\",\n      \"mean_ic\": 0.1109,\n      \"icir\": 0.514,\n      \"n_days\": 18,\n      \"coverage\": 0.201\n    },\n    {\n      \"field\": \"turnover_rate_pct\",\n      \"mean_ic\": 0.0521,\n      \"icir\": 0.335,\n      \"n_days\": 18,\n      \"coverage\": 0.364\n    },\n    {\n      \"field\": \"net_inflow_pressure\",\n      \"mean_ic\": -0.0424,\n      \"icir\": -0.227,\n      \"n_days\": 18,\n      \"coverage\": 0.146\n    },\n    {\n      \"field\": \"hot_rank\",\n      \"mean_ic\": 0.0337,\n      \"icir\": 0.328,\n      \"n_days\": 21,\n      \"coverage\": 0.279\n    },\n    {\n      \"field\": \"turnover_intensity\",\n      \"mean_ic\": -0.0302,\n      \"icir\": -0.176,\n      \"n_days\": 18,\n      \"coverage\": 0.105\n    },\n    {\n      \"field\": \"auction_amt_growth\",\n      \"mean_ic\": -0.0291,\n      \"icir\": -0.271,\n      \"n_days\": 16,\n      \"coverage\": 0.183\n    }\n  ],\n  \"dataset_rows\": {\n    \"rank.rocket\": 2012,\n    \"rank.hot_stock_day\": 2100,\n    \"auction.jjyd.vratio\": 1659,\n    \"auction.jjyd.qiangchou\": 810,\n    \"auction.jjyd.net_amount\": 1105,\n    \"auction.jjlive.fengdan\": 1542,\n    \"auction.jjyd.weimai\": 2691,\n    \"home.kaipan.plate.summary\": 180,\n    \"home.qxlive.top_metrics\": 216\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-27T15:50:02+08:00",
+  "ended": "2026-06-27T15:52:18+08:00",
+  "duration_s": 136.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v36_raw_capture_audit.py"
+  ]
+}

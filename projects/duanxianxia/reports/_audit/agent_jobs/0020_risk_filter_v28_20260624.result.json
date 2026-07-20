@@ -1,0 +1,24 @@
+{
+  "id": "0020_risk_filter_v28_20260624",
+  "script": "scripts/v28_risk_filter_validation.py",
+  "args": [
+    "--min-train",
+    "5"
+  ],
+  "queued_file": "0020_risk_filter_v28_20260624.json",
+  "note": "Validate whether risk_flag/open-gap filters should be applied to sparse_ic Top5 after v27 showed risk=Y drag.",
+  "worker_time": "2026-06-24T20:50:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"oos_days\": 9,\n  \"ranked_oos\": [\n    \"sparse_top5_open_lt8\",\n    \"sparse_top5_no_risk\",\n    \"sparse_top5_no_risk_open_lt8\",\n    \"sparse_top5_all\",\n    \"v10_top3\",\n    \"v10_top5\",\n    \"sparse_top5_no_drop\"\n  ],\n  \"top\": {\n    \"sparse_top5_open_lt8\": {\n      \"n\": 9,\n      \"mean\": 1.7483,\n      \"median\": 2.753,\n      \"win_rate\": 0.6667,\n      \"odds\": 1.66,\n      \"sum\": 15.7349,\n      \"p10\": -3.2418,\n      \"p90\": 4.9998,\n      \"min\": -3.2418,\n      \"max\": 5.3539\n    },\n    \"sparse_top5_no_risk\": {\n      \"n\": 9,\n      \"mean\": 1.7126,\n      \"median\": 0.0,\n      \"win_rate\": 0.4444,\n      \"odds\": null,\n      \"sum\": 15.4135,\n      \"p10\": 0.0,\n      \"p90\": 4.9998,\n      \"min\": 0.0,\n      \"max\": 5.3539\n    },\n    \"sparse_top5_no_risk_open_lt8\": {\n      \"n\": 9,\n      \"mean\": 1.7126,\n      \"median\": 0.0,\n      \"win_rate\": 0.4444,\n      \"odds\": null,\n      \"sum\": 15.4135,\n      \"p10\": 0.0,\n      \"p90\": 4.9998,\n      \"min\": 0.0,\n      \"max\": 5.3539\n    },\n    \"sparse_top5_all\": {\n      \"n\": 9,\n      \"mean\": 1.5399,\n      \"median\": 1.9277,\n      \"win_rate\": 0.7778,\n      \"odds\": 1.272,\n      \"sum\": 13.859,\n      \"p10\": -2.019,\n      \"p90\": 4.3489,\n      \"min\": -2.019,\n      \"max\": 4.7496\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-24T20:50:02+08:00",
+  "ended": "2026-06-24T20:51:05+08:00",
+  "duration_s": 62.6,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v28_risk_filter_validation.py",
+    "--min-train",
+    "5"
+  ]
+}

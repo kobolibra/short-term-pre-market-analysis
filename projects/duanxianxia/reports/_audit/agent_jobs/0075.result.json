@@ -1,0 +1,19 @@
+{
+  "id": "0075",
+  "script": "scripts/0075_premktfactor_firstprinciples_v65_20260628.py",
+  "args": [],
+  "queued_file": "0075.json",
+  "note": "first-principles validation v65: (1) turnover orthogonalized residual IC vs auction-amount + collinearity; (2) gap nonlinearity/turning-point bin curve + regime split; (3) sentiment-regime direction (does core alpha select better on cold days? is hot-aggressive gate backwards?); (4) small-cap effect robustness after winsorization and outlier-day removal.",
+  "worker_time": "2026-06-28T21:10:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "================================================================\nJob 0075 first-principles v65 | days=15 qx_med=29.0\n================================================================\n\n[Q1] 换手率 vs 成交额 正交分解\n  ic_amount                          ic=0.1341 icir=0.596 n=15\n  ic_turnrate                        ic=0.1216 icir=0.664 n=15\n  corr_amount_turnrate               ic=0.6274 icir=5.332 n=15\n  ic_turnrate_resid_after_amount     ic=0.0583 icir=0.302 n=15\n  ic_amount_resid_after_turnrate     ic=0.0414 icir=0.167 n=15\n  ic_composite_amt_plus_turn         ic=0.1364 icir=0.764 n=15\n\n[Q2] gap 非线性 (分 5 档, demeaned excess)\n  ic_all=0.1683 ic_hot=0.0438 ic_cold=0.2726\n  bin0 pooled_dm=-0.5792 perday=-1.1008 icir=-0.385 n=138\n  bin1 pooled_dm=-0.5305 perday=-0.637 icir=-0.342 n=131\n  bin2 pooled_dm=-0.2916 perday=-0.2065 icir=-0.137 n=135\n  bin3 pooled_dm=-0.0071 perday=0.2143 icir=0.103 n=130\n  bin4 pooled_dm=1.3649 perday=1.427 icir=0.454 n=139\n  monotonic(top-bot)=2.5278 hump(mid-ends)=-0.3696\n\n[Q3] 情绪 regime 方向 (核心 alpha comp_SD top5)\n  core_ic hot=0.1323 cold=0.2568\n  top5_raw_excess hot=0.43 cold=3.2477\n  top5_demeaned   hot=1.1299 cold=2.2715\n  breadth(day mean ex) hot=-0.6999 cold=0.9762\n  corr(QX,top5raw)=-0.15244185832977605 corr(QX,coreIC)=-0.024390697332764166  [neg=>cold better]\n\n[Q4] 小盘效应稳健性 (cap代理=成交额/换手率, demeaned excess; neg=小盘差)\n  ic_cap raw=0.0445 winsor=0.0444  [neg ic => 小市值 excess 更高]\n  tercile demeaned raw: small=0.131 mid=-0.1905 large=0.0561\n  small tercile: raw=0.131 winsor=0.1246 ex_outlier=0.2615 (n=221)\n  abs<100亿 : raw=0.1097 winsor=0.1145 ex_outlier=0.1769 (n=423)\n  outlier days excluded: ['2026-06-17', '2026-06-18']\n\n================================================================\nFINAL VERDICTS (数据结论摘要)\n================================================================\nQ1 换手率独立信息: corr(amt,turn)=0.6274 ; 去掉amt后 turn 残余IC=0.0583 ; 去掉turn后 amt 残余IC=0.0414 ; 合成IC=0.1364 vs 单amt=0.1341\nQ2 gap: ic_all=0.1683 monotonic=2.5278 hump=-0.3696 (hump>0 且 |mono| 小 => 驼峰/拐点, 不能当线性正因子)\nQ3 regime: corr(QX,top5raw)=-0.15244185832977605 (neg=>冷市选股更赚, 现行热市激进 gate 可能反了)\nQ4 小盘: small tercile raw=0.131 -> winsor=0.1246 -> ex_outlier=0.2615 (若去异常/缩尾后接近0 => 小盘惩罚是肥尾伪象)\n\n[DONE]\n",
+  "stderr_tail": "",
+  "started": "2026-06-28T21:10:05+08:00",
+  "ended": "2026-06-28T21:10:13+08:00",
+  "duration_s": 7.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0075_premktfactor_firstprinciples_v65_20260628.py"
+  ]
+}

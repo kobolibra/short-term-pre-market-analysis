@@ -1,0 +1,28 @@
+{
+  "id": "daily_2026-07-18_v23_restricted_rerank",
+  "script": "scripts/v23_restricted_rerank.py",
+  "args": [
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ],
+  "queued_file": "daily_2026-07-18_v23_restricted_rerank.json",
+  "note": "daily auto-refresh 2026-07-18",
+  "worker_time": "2026-07-18T07:00:27+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"oos_days\": 18,\n  \"ranked_by_top5\": [\n    [\n      \"amt\",\n      {\n        \"top3\": 0.8193,\n        \"top5\": 5.794,\n        \"top10\": 3.1368,\n        \"cap3\": 0.0185,\n        \"cap5\": 0.0556,\n        \"cap10\": 0.0556\n      }\n    ],\n    [\n      \"amtTop10_mlp\",\n      {\n        \"top3\": 0.1892,\n        \"top5\": 3.7107,\n        \"top10\": 3.1368,\n        \"cap3\": 0.037,\n        \"cap5\": 0.0333,\n        \"cap10\": 0.0556\n      }\n    ],\n    [\n      \"sparse\",\n      {\n        \"top3\": 1.0149,\n        \"top5\": 1.2291,\n        \"top10\": 2.9545,\n        \"cap3\": 0.0185,\n        \"cap5\": 0.0111,\n        \"cap10\": 0.0611\n      }\n    ],\n    [\n      \"amtTop20_mlp\",\n      {\n        \"top3\": -3.515,\n        \"top5\": -1.6327,\n        \"top10\": 1.6494,\n        \"cap3\": 0.0185,\n        \"cap5\": 0.0667,\n        \"cap10\": 0.0833\n      }\n    ],\n    [\n      \"amtTop30_mlp\",\n      {\n        \"top3\": -3.9355,\n        \"top5\": -1.7654,\n        \"top10\": 0.0274,\n        \"cap3\": 0.0,\n        \"cap5\": 0.0333,\n        \"cap10\": 0.0833\n      }\n    ],\n    [\n      \"mlp_all\",\n      {\n        \"top3\": -3.4284,\n        \"top5\": -1.9549,\n        \"top10\": -0.8467,\n        \"cap3\": 0.0185,\n        \"cap5\": 0.0333,\n        \"cap10\": 0.0444\n      }\n    ]\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-18T07:00:27+08:00",
+  "ended": "2026-07-18T07:16:31+08:00",
+  "duration_s": 964.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v23_restricted_rerank.py",
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ]
+}

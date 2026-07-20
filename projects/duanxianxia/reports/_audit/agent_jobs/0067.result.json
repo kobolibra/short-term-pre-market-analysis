@@ -1,0 +1,19 @@
+{
+  "id": "0067",
+  "script": "scripts/0067_qxlive_topmetrics_v57_20260628.py",
+  "args": [],
+  "queued_file": "0067.json",
+  "note": "表⑧ home.qxlive.top_metrics 市场级指标; 字段探测 + 择时测试(市场指标 vs 当日平均excess)",
+  "worker_time": "2026-06-28T12:20:08+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "Total date dirs: 22\n\n============================================================\nSTEP 1: Field discovery\n============================================================\nSample keys: ['order', 'metric_key', 'metric_label', 'date', 'time_point', 'value', 'button_display_value', 'chart_tail_value', 'compare_value', 'source_series', 'display_series', 'compare_series', 'button_id', 'button_text', 'raw_value', 'raw_chart_tail_value', 'raw_compare_value']\nRow 0 : {'order': 1.0, 'metric_key': 'QX', 'metric_label': '情绪指标', 'date': '2026-05-19', 'time_point': '09:28', 'value': 32.0, 'button_display_value': 32.0, 'chart_tail_value': 32.0, 'compare_value': '', 'source_series': 'QX', 'display_series': 'QX', 'compare_series': '', 'button_id': 'QX_btn', 'button_text': '情绪指标：32', 'raw_value': 32.0}\nRow 1 : {'order': 2.0, 'metric_key': 'ZT', 'metric_label': '涨停家数', 'date': '2026-05-19', 'time_point': '09:28', 'value': 5.0, 'button_display_value': 5.0, 'chart_tail_value': 5.0, 'compare_value': '', 'source_series': 'ZT', 'display_series': 'ZT', 'compare_series': '', 'button_id': 'ZT_btn', 'button_text': '涨停家数：5', 'raw_value': 5.0}\n\n============================================================\nSTEP 2: Load all days -> market-level metrics\n============================================================\nMarket days loaded: 13\nMarket fields: ['mkt_order', 'mkt_value', 'mkt_button_display_value', 'mkt_chart_tail_value', 'mkt_raw_value', 'mkt_raw_chart_tail_value']\n\n============================================================\nSTEP 3: Per-day mean excess from qiangchou universe\n============================================================\nDays with mean excess: 16\n  2026-05-19: mean_excess=-0.053\n  2026-05-20: mean_excess=-1.300\n  2026-05-21: mean_excess=-4.698\n  2026-06-01: mean_excess=-2.350\n  2026-06-02: mean_excess=0.726\n  2026-06-05: mean_excess=-0.827\n  2026-06-08: mean_excess=1.633\n  2026-06-09: mean_excess=0.170\n  2026-06-10: mean_excess=1.640\n  2026-06-11: mean_excess=0.202\n  2026-06-16: mean_excess=1.523\n  2026-06-17: mean_excess=5.330\n  2026-06-18: mean_excess=1.543\n  2026-06-23: mean_excess=-2.477\n  2026-06-24: mean_excess=2.858\n  2026-06-26: mean_excess=-1.834\n\n============================================================\nSTEP 4: Market indicators vs day-mean excess\n============================================================\n",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/0067_qxlive_topmetrics_v57_20260628.py\", line 179, in <module>\n    print(\"  {:40s} n={:3d} IC={:.3f}\".format(mf, len(pairs), ic))\nTypeError: unsupported format string passed to NoneType.__format__\n",
+  "started": "2026-06-28T12:20:08+08:00",
+  "ended": "2026-06-28T12:20:18+08:00",
+  "duration_s": 9.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0067_qxlive_topmetrics_v57_20260628.py"
+  ]
+}

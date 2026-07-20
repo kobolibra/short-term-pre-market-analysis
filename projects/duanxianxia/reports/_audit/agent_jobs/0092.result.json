@@ -1,0 +1,19 @@
+{
+  "id": "0092",
+  "script": "scripts/duanxianxia_canonical_routing.py",
+  "args": [],
+  "queued_file": "0092.json",
+  "note": "Task 0092: verify the Task 0091 canonical routing entry-point against the LIVE canonical on the worker. Running the module imports duanxianxia_canonical (runs its _self_test) then executes duanxianxia_canonical_routing._self_test(): asserts dataset_id_for_kind maps every fetcher kind (auction_vratio/qiangchou/net_amount/weimai, surge, hot); canonicalize_rows() canonicalises positional rows from their stored raw[] (weimai seal_amount==raw[17]*1e4 万->元, FF from raw[12]; vratio FF from raw[2]亿 with the legacy auction_volume_ratio label IGNORED) and pool.hot from named cn-strings ('182亿'->FF 1.82e10); a row missing raw[] yields an explicit _canonical_error marker (no silent drop); an unknown kind raises. rc=0 = the single canonical entry point is wired and correct. READ-ONLY, no writes, no push.",
+  "worker_time": "2026-06-30T15:00:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "duanxianxia_canonical_routing self-test: PASS\nkinds: auction_vratio, auction_qiangchou, auction_net_amount, auction_weimai, surge, hot\n",
+  "stderr_tail": "",
+  "started": "2026-06-30T15:00:04+08:00",
+  "ended": "2026-06-30T15:00:04+08:00",
+  "duration_s": 0.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_canonical_routing.py"
+  ]
+}

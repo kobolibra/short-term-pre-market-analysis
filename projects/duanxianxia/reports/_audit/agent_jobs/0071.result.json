@@ -1,0 +1,19 @@
+{
+  "id": "0071",
+  "script": "scripts/0071_pool_surge_hot_schema_probe_v61_20260628.py",
+  "args": [],
+  "queued_file": "0071.json",
+  "note": "dump pool.surge/pool.hot raw schema + flexible code/value parse + QX regime + qiangchou overlap",
+  "worker_time": "2026-06-28T15:30:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "\n============================================================\nSCHEMA DUMP: pool.surge\n============================================================\n  NO FILES FOUND\n\n============================================================\nSCHEMA DUMP: pool.hot\n============================================================\n  NO FILES FOUND\n\n============================================================\nSTEP B: flexible-parse regime analysis\nQX dates: 13 median: 27.0\n============================================================\n\n----- analysis: pool.surge -----\ndates: 0 | code_cov=0/0 | rank_key: None\n  still no usable rows\n\n----- analysis: pool.hot -----\ndates: 0 | code_cov=0/0 | rank_key: None\n  still no usable rows\n\n[DONE]\n",
+  "stderr_tail": "",
+  "started": "2026-06-28T15:30:02+08:00",
+  "ended": "2026-06-28T15:30:05+08:00",
+  "duration_s": 2.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0071_pool_surge_hot_schema_probe_v61_20260628.py"
+  ]
+}

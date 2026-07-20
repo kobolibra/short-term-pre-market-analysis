@@ -1,0 +1,19 @@
+{
+  "id": "hourly_2026-07-08_14_v27_shadow_outcome",
+  "script": "scripts/v27_shadow_outcome.py",
+  "args": [],
+  "queued_file": "hourly_2026-07-08_14_v27_shadow_outcome.json",
+  "note": "hourly retry 2026-07-08 14:00 for pending-safe shadow outcome labels",
+  "worker_time": "2026-07-08T14:00:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"date\": \"2026-07-08\",\n  \"sparse_top5_excess\": {\n    \"n\": 0,\n    \"status\": \"pending\"\n  },\n  \"v10_top3_excess\": {\n    \"n\": 0,\n    \"status\": \"pending\"\n  },\n  \"v10_top30_excess\": {\n    \"n\": 0,\n    \"status\": \"pending\"\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-08T14:00:04+08:00",
+  "ended": "2026-07-08T14:00:34+08:00",
+  "duration_s": 29.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v27_shadow_outcome.py"
+  ]
+}

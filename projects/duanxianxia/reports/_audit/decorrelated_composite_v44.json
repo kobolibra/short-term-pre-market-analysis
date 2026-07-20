@@ -1,0 +1,184 @@
+{
+  "generated_at": "2026-06-27T09:40:16",
+  "job": "decorrelated_composite_v44",
+  "single_best_reference": {
+    "factor": "A_turnover",
+    "mean_ic": 0.1629
+  },
+  "factors": [
+    {
+      "factor": "A_turnover",
+      "mean_ic": 0.1629,
+      "icir": 0.665,
+      "n_days": 16
+    },
+    {
+      "factor": "B_turnrate",
+      "mean_ic": 0.1349,
+      "icir": 0.731,
+      "n_days": 16
+    },
+    {
+      "factor": "C_gap",
+      "mean_ic": 0.1295,
+      "icir": 0.357,
+      "n_days": 16
+    },
+    {
+      "factor": "D_fp_amount",
+      "mean_ic": 0.1034,
+      "icir": 0.523,
+      "n_days": 17
+    },
+    {
+      "factor": "E_fp_turnrate",
+      "mean_ic": 0.0868,
+      "icir": 0.649,
+      "n_days": 17
+    },
+    {
+      "factor": "F_ztpool_promo",
+      "mean_ic": -0.0696,
+      "icir": -0.614,
+      "n_days": 17
+    }
+  ],
+  "composites": [
+    {
+      "composite": "comp_SD",
+      "members": [
+        "A_turnover",
+        "B_turnrate",
+        "C_gap"
+      ],
+      "mean_ic": 0.179,
+      "icir": 0.926,
+      "n_days": 16
+    },
+    {
+      "composite": "comp_SD_FP",
+      "members": [
+        "A_turnover",
+        "B_turnrate",
+        "C_gap",
+        "D_fp_amount",
+        "E_fp_turnrate"
+      ],
+      "mean_ic": 0.1448,
+      "icir": 0.877,
+      "n_days": 22
+    },
+    {
+      "composite": "comp_ALL",
+      "members": [
+        "A_turnover",
+        "B_turnrate",
+        "C_gap",
+        "D_fp_amount",
+        "E_fp_turnrate",
+        "F_ztpool_promo"
+      ],
+      "mean_ic": 0.1268,
+      "icir": 0.829,
+      "n_days": 22
+    },
+    {
+      "composite": "comp_AB_D",
+      "members": [
+        "A_turnover",
+        "B_turnrate",
+        "D_fp_amount"
+      ],
+      "mean_ic": 0.1176,
+      "icir": 0.716,
+      "n_days": 22
+    },
+    {
+      "composite": "comp_A_D",
+      "members": [
+        "A_turnover",
+        "D_fp_amount"
+      ],
+      "mean_ic": 0.1013,
+      "icir": 0.58,
+      "n_days": 22
+    }
+  ],
+  "pairwise_correlation": [
+    {
+      "pair": "A_turnover ~ D_fp_amount",
+      "avg_spearman": 0.75,
+      "n_days": 2
+    },
+    {
+      "pair": "B_turnrate ~ E_fp_turnrate",
+      "avg_spearman": 0.618,
+      "n_days": 2
+    },
+    {
+      "pair": "A_turnover ~ B_turnrate",
+      "avg_spearman": 0.608,
+      "n_days": 16
+    },
+    {
+      "pair": "D_fp_amount ~ E_fp_turnrate",
+      "avg_spearman": 0.535,
+      "n_days": 17
+    },
+    {
+      "pair": "C_gap ~ E_fp_turnrate",
+      "avg_spearman": -0.259,
+      "n_days": 2
+    },
+    {
+      "pair": "B_turnrate ~ C_gap",
+      "avg_spearman": 0.21,
+      "n_days": 16
+    },
+    {
+      "pair": "B_turnrate ~ D_fp_amount",
+      "avg_spearman": 0.194,
+      "n_days": 2
+    },
+    {
+      "pair": "A_turnover ~ F_ztpool_promo",
+      "avg_spearman": 0.144,
+      "n_days": 6
+    },
+    {
+      "pair": "C_gap ~ F_ztpool_promo",
+      "avg_spearman": 0.12,
+      "n_days": 6
+    },
+    {
+      "pair": "A_turnover ~ C_gap",
+      "avg_spearman": 0.114,
+      "n_days": 16
+    },
+    {
+      "pair": "D_fp_amount ~ F_ztpool_promo",
+      "avg_spearman": -0.107,
+      "n_days": 17
+    },
+    {
+      "pair": "E_fp_turnrate ~ F_ztpool_promo",
+      "avg_spearman": -0.106,
+      "n_days": 17
+    },
+    {
+      "pair": "C_gap ~ D_fp_amount",
+      "avg_spearman": 0.079,
+      "n_days": 2
+    },
+    {
+      "pair": "A_turnover ~ E_fp_turnrate",
+      "avg_spearman": 0.059,
+      "n_days": 2
+    },
+    {
+      "pair": "B_turnrate ~ F_ztpool_promo",
+      "avg_spearman": 0.0,
+      "n_days": 6
+    }
+  ]
+}

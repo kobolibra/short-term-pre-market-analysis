@@ -1,0 +1,248 @@
+{
+  "job": "0109_regime_playstyle_backtest",
+  "generated_at": "2026-07-02T11:00:08",
+  "data_regen": {
+    "attempted": true,
+    "succeeded": [],
+    "failed": [
+      {
+        "date": "2026-05-19",
+        "err": "CaptureNotFoundError: No capture for home.kaipan.plate.summary at 2026-05-18"
+      },
+      {
+        "date": "2026-06-03",
+        "err": "CaptureNotFoundError: No capture for auction.jjyd.vratio at 2026-06-03"
+      },
+      {
+        "date": "2026-06-12",
+        "err": "CaptureNotFoundError: No capture for auction.jjyd.vratio at 2026-06-12"
+      },
+      {
+        "date": "2026-06-17",
+        "err": "CaptureNotFoundError: No auction.jjyd.vratio capture at 2026-06-17 <= 092900; refusing after-cutoff fallback to avoid lookahead"
+      },
+      {
+        "date": "2026-06-22",
+        "err": "CaptureNotFoundError: No capture for auction.jjyd.vratio at 2026-06-22"
+      },
+      {
+        "date": "2026-06-25",
+        "err": "CaptureNotFoundError: No capture for auction.jjyd.vratio at 2026-06-25"
+      }
+    ],
+    "skipped_existing": 20
+  },
+  "n_days": 19,
+  "days_used": [
+    "2026-05-21",
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-04",
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-18",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-26",
+    "2026-06-29",
+    "2026-06-30",
+    "2026-07-01",
+    "2026-07-02"
+  ],
+  "regime_days": {
+    "cold": 16,
+    "cold_to_warming": 3
+  },
+  "regimes": [
+    "cold",
+    "cold_to_warming"
+  ],
+  "matrix": [
+    {
+      "regime": "ALL",
+      "style": "BASELINE_v9_BUY",
+      "style_label": "baseline(v9 BUY)",
+      "n_days": 14,
+      "top3_excess": 3.691,
+      "top5_excess": 3.691,
+      "win_rate": 0.8,
+      "limitdown_rate": 0.15,
+      "n_picks_pool": 20
+    },
+    {
+      "regime": "ALL",
+      "style": "S1_first_board",
+      "style_label": "S1首板打板",
+      "n_days": 19,
+      "top3_excess": 8.618,
+      "top5_excess": 4.544,
+      "win_rate": 0.474,
+      "limitdown_rate": 0.0,
+      "n_picks_pool": 95
+    },
+    {
+      "regime": "ALL",
+      "style": "S2_low_relay",
+      "style_label": "S2低位连板接力",
+      "n_days": 19,
+      "top3_excess": -2.544,
+      "top5_excess": -2.409,
+      "win_rate": 0.211,
+      "limitdown_rate": 0.07,
+      "n_picks_pool": 57
+    },
+    {
+      "regime": "ALL",
+      "style": "S3_dip_buy",
+      "style_label": "S3低吸反弹",
+      "n_days": 19,
+      "top3_excess": 0.475,
+      "top5_excess": 0.505,
+      "win_rate": 0.526,
+      "limitdown_rate": 0.053,
+      "n_picks_pool": 95
+    },
+    {
+      "regime": "ALL",
+      "style": "S4_high_leader",
+      "style_label": "S4高标龙头",
+      "n_days": 8,
+      "top3_excess": -0.378,
+      "top5_excess": -0.038,
+      "win_rate": 0.308,
+      "limitdown_rate": 0.077,
+      "n_picks_pool": 13
+    },
+    {
+      "regime": "cold",
+      "style": "BASELINE_v9_BUY",
+      "style_label": "baseline(v9 BUY)",
+      "n_days": 11,
+      "top3_excess": 3.301,
+      "top5_excess": 3.301,
+      "win_rate": 0.636,
+      "limitdown_rate": 0.273,
+      "n_picks_pool": 11
+    },
+    {
+      "regime": "cold",
+      "style": "S1_first_board",
+      "style_label": "S1首板打板",
+      "n_days": 16,
+      "top3_excess": 9.394,
+      "top5_excess": 4.66,
+      "win_rate": 0.4,
+      "limitdown_rate": 0.0,
+      "n_picks_pool": 80
+    },
+    {
+      "regime": "cold",
+      "style": "S2_low_relay",
+      "style_label": "S2低位连板接力",
+      "n_days": 16,
+      "top3_excess": -2.827,
+      "top5_excess": -2.667,
+      "win_rate": 0.192,
+      "limitdown_rate": 0.077,
+      "n_picks_pool": 52
+    },
+    {
+      "regime": "cold",
+      "style": "S3_dip_buy",
+      "style_label": "S3低吸反弹",
+      "n_days": 16,
+      "top3_excess": -0.13,
+      "top5_excess": -0.055,
+      "win_rate": 0.463,
+      "limitdown_rate": 0.062,
+      "n_picks_pool": 80
+    },
+    {
+      "regime": "cold",
+      "style": "S4_high_leader",
+      "style_label": "S4高标龙头",
+      "n_days": 7,
+      "top3_excess": 0.179,
+      "top5_excess": 0.567,
+      "win_rate": 0.333,
+      "limitdown_rate": 0.083,
+      "n_picks_pool": 12
+    },
+    {
+      "regime": "cold_to_warming",
+      "style": "BASELINE_v9_BUY",
+      "style_label": "baseline(v9 BUY)",
+      "n_days": 3,
+      "top3_excess": 5.121,
+      "top5_excess": 5.121,
+      "win_rate": 1.0,
+      "limitdown_rate": 0.0,
+      "n_picks_pool": 9
+    },
+    {
+      "regime": "cold_to_warming",
+      "style": "S1_first_board",
+      "style_label": "S1首板打板",
+      "n_days": 3,
+      "top3_excess": 4.474,
+      "top5_excess": 3.924,
+      "win_rate": 0.867,
+      "limitdown_rate": 0.0,
+      "n_picks_pool": 15
+    },
+    {
+      "regime": "cold_to_warming",
+      "style": "S2_low_relay",
+      "style_label": "S2低位连板接力",
+      "n_days": 3,
+      "top3_excess": -1.034,
+      "top5_excess": -1.034,
+      "win_rate": 0.4,
+      "limitdown_rate": 0.0,
+      "n_picks_pool": 5
+    },
+    {
+      "regime": "cold_to_warming",
+      "style": "S3_dip_buy",
+      "style_label": "S3低吸反弹",
+      "n_days": 3,
+      "top3_excess": 3.702,
+      "top5_excess": 3.493,
+      "win_rate": 0.867,
+      "limitdown_rate": 0.0,
+      "n_picks_pool": 15
+    },
+    {
+      "regime": "cold_to_warming",
+      "style": "S4_high_leader",
+      "style_label": "S4高标龙头",
+      "n_days": 1,
+      "top3_excess": -4.274,
+      "top5_excess": -4.274,
+      "win_rate": 0.0,
+      "limitdown_rate": 0.0,
+      "n_picks_pool": 1
+    }
+  ],
+  "best_style_per_regime": {
+    "cold": {
+      "style": "S1_first_board",
+      "style_label": "S1首板打板",
+      "top5_excess": 4.66,
+      "limitdown_rate": 0.0
+    },
+    "cold_to_warming": {
+      "style": "S1_first_board",
+      "style_label": "S1首板打板",
+      "top5_excess": 3.924,
+      "limitdown_rate": 0.0
+    }
+  },
+  "ok": true,
+  "note_return_caliber": "excess=(close-open)/preclose*100 当日日内; regime=v9 已标定标签; 打法内按 auction_amount_wan 排序; pool 为各日 Top5 汇总"
+}

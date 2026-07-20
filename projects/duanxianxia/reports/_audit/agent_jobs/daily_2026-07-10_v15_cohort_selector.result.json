@@ -1,0 +1,33 @@
+{
+  "id": "daily_2026-07-10_v15_cohort_selector",
+  "script": "scripts/v15_cohort_selector.py",
+  "args": [
+    "--top-n",
+    "30",
+    "--min-train",
+    "5",
+    "--low-open-max",
+    "2.0"
+  ],
+  "queued_file": "daily_2026-07-10_v15_cohort_selector.json",
+  "note": "daily auto-refresh 2026-07-10",
+  "worker_time": "2026-07-10T00:45:27+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "timeout after 2400s",
+  "stdout_tail": "",
+  "stderr_tail": "",
+  "started": "2026-07-10T00:45:29+08:00",
+  "ended": "2026-07-10T01:26:18+08:00",
+  "duration_s": 2453.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v15_cohort_selector.py",
+    "--top-n",
+    "30",
+    "--min-train",
+    "5",
+    "--low-open-max",
+    "2.0"
+  ]
+}

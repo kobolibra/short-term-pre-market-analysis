@@ -1,0 +1,588 @@
+{
+  "generated_at": "2026-06-27T05:50:31",
+  "job": "0042_premarket_daygate_validation_v33",
+  "n_days": 15,
+  "n_samples": 4603,
+  "per_day": [
+    {
+      "date": "2026-05-21",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=27.0, dt=4.0, kqxy=0.0, breadth=0.21292460646230324",
+        "qx_t0": 27.0,
+        "qx_t1": 32.0,
+        "dt_t0": 4.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 1028.0,
+        "xd_t0": 3800.0,
+        "breadth_t0": 0.21292460646230324,
+        "lbbx_t0": 3.41,
+        "lbbx_t1": 4.08,
+        "ztbx_t0": 1.65,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 362,
+      "n_clean": 0,
+      "n_risky": 362,
+      "all_top3": -2.875455618549683,
+      "all_top1": -4.4917257683215,
+      "clean_top3": null,
+      "clean_top1": null
+    },
+    {
+      "date": "2026-06-01",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=27.0, dt=4.0, kqxy=0.0, breadth=0.21292460646230324",
+        "qx_t0": 27.0,
+        "qx_t1": 32.0,
+        "dt_t0": 4.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 1028.0,
+        "xd_t0": 3800.0,
+        "breadth_t0": 0.21292460646230324,
+        "lbbx_t0": 3.41,
+        "lbbx_t1": 4.08,
+        "ztbx_t0": 1.65,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 308,
+      "n_clean": 98,
+      "n_risky": 210,
+      "all_top3": 5.178931681171065,
+      "all_top1": 11.446351122006412,
+      "clean_top3": 5.178931681171065,
+      "clean_top1": 11.446351122006412
+    },
+    {
+      "date": "2026-06-02",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=29.0, dt=4.0, kqxy=0.0, breadth=0.4950917626973965",
+        "qx_t0": 29.0,
+        "qx_t1": 29.0,
+        "dt_t0": 4.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 2320.0,
+        "xd_t0": 2366.0,
+        "breadth_t0": 0.4950917626973965,
+        "lbbx_t0": 2.17,
+        "lbbx_t1": 1.55,
+        "ztbx_t0": 1.88,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 270,
+      "n_clean": 92,
+      "n_risky": 178,
+      "all_top3": 5.764343142499106,
+      "all_top1": 11.680290644868302,
+      "clean_top3": 5.764343142499106,
+      "clean_top1": 11.680290644868302
+    },
+    {
+      "date": "2026-06-04",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=20.0, dt=0.0, kqxy=0.0, breadth=0.1421753827798767",
+        "qx_t0": 20.0,
+        "qx_t1": 69.0,
+        "dt_t0": 0.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 715.0,
+        "xd_t0": 4314.0,
+        "breadth_t0": 0.1421753827798767,
+        "lbbx_t0": 2.36,
+        "lbbx_t1": 2.5,
+        "ztbx_t0": 1.3,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 186,
+      "n_clean": 0,
+      "n_risky": 186,
+      "all_top3": 7.591966544300488,
+      "all_top1": 0.31016237912789946,
+      "clean_top3": null,
+      "clean_top1": null
+    },
+    {
+      "date": "2026-06-05",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=20.0, dt=0.0, kqxy=0.0, breadth=0.1421753827798767",
+        "qx_t0": 20.0,
+        "qx_t1": 69.0,
+        "dt_t0": 0.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 715.0,
+        "xd_t0": 4314.0,
+        "breadth_t0": 0.1421753827798767,
+        "lbbx_t0": 2.36,
+        "lbbx_t1": 2.5,
+        "ztbx_t0": 1.3,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 317,
+      "n_clean": 0,
+      "n_risky": 317,
+      "all_top3": -4.728323795038389,
+      "all_top1": -5.505617977528092,
+      "clean_top3": null,
+      "clean_top1": null
+    },
+    {
+      "date": "2026-06-08",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=7.0, dt=7.0, kqxy=0.0, breadth=0.03913605316595902",
+        "qx_t0": 7.0,
+        "qx_t1": null,
+        "dt_t0": 7.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 212.0,
+        "xd_t0": 5205.0,
+        "breadth_t0": 0.03913605316595902,
+        "lbbx_t0": 1.67,
+        "lbbx_t1": null,
+        "ztbx_t0": -0.84,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 258,
+      "n_clean": 0,
+      "n_risky": 258,
+      "all_top3": 0.8023607754694461,
+      "all_top1": -2.064631956912032,
+      "clean_top3": null,
+      "clean_top1": null
+    },
+    {
+      "date": "2026-06-09",
+      "regime": {
+        "label": "cold_to_warming",
+        "reason": "qx 7.0→42.0",
+        "qx_t0": 42.0,
+        "qx_t1": 7.0,
+        "dt_t0": 1.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 4143.0,
+        "xd_t0": 858.0,
+        "breadth_t0": 0.8284343131373725,
+        "lbbx_t0": 1.33,
+        "lbbx_t1": 1.67,
+        "ztbx_t0": 2.16,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 390,
+      "n_clean": 60,
+      "n_risky": 330,
+      "all_top3": 4.755319080181802,
+      "all_top1": 3.701923076923075,
+      "clean_top3": 4.755319080181802,
+      "clean_top1": 3.701923076923075
+    },
+    {
+      "date": "2026-06-10",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=19.0, dt=0.0, kqxy=0.0, breadth=0.13453973249409915",
+        "qx_t0": 19.0,
+        "qx_t1": 42.0,
+        "dt_t0": 0.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 684.0,
+        "xd_t0": 4400.0,
+        "breadth_t0": 0.13453973249409915,
+        "lbbx_t0": 2.32,
+        "lbbx_t1": 1.33,
+        "ztbx_t0": 1.09,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 271,
+      "n_clean": 0,
+      "n_risky": 271,
+      "all_top3": -3.0162935906835373,
+      "all_top1": 7.320099255583125,
+      "clean_top3": null,
+      "clean_top1": null
+    },
+    {
+      "date": "2026-06-11",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=21.0, dt=1.0, kqxy=0.0, breadth=0.16581632653061223",
+        "qx_t0": 21.0,
+        "qx_t1": 19.0,
+        "dt_t0": 1.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 845.0,
+        "xd_t0": 4251.0,
+        "breadth_t0": 0.16581632653061223,
+        "lbbx_t0": 2.34,
+        "lbbx_t1": 2.32,
+        "ztbx_t0": 0.94,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 296,
+      "n_clean": 0,
+      "n_risky": 296,
+      "all_top3": -1.5628391801570316,
+      "all_top1": 9.506587445104623,
+      "clean_top3": null,
+      "clean_top1": null
+    },
+    {
+      "date": "2026-06-15",
+      "regime": {
+        "label": "cold_to_warming",
+        "reason": "qx 21.0→37.0",
+        "qx_t0": 37.0,
+        "qx_t1": 21.0,
+        "dt_t0": 1.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 3625.0,
+        "xd_t0": 1244.0,
+        "breadth_t0": 0.7445060587389608,
+        "lbbx_t0": 1.18,
+        "lbbx_t1": 2.34,
+        "ztbx_t0": 1.11,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 282,
+      "n_clean": 70,
+      "n_risky": 212,
+      "all_top3": 4.93426611861313,
+      "all_top1": 4.409171075837743,
+      "clean_top3": 4.93426611861313,
+      "clean_top1": 4.409171075837743
+    },
+    {
+      "date": "2026-06-16",
+      "regime": {
+        "label": "cold_to_warming",
+        "reason": "qx 21.0→37.0",
+        "qx_t0": 37.0,
+        "qx_t1": 21.0,
+        "dt_t0": 1.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 3625.0,
+        "xd_t0": 1244.0,
+        "breadth_t0": 0.7445060587389608,
+        "lbbx_t0": 1.18,
+        "lbbx_t1": 2.34,
+        "ztbx_t0": 1.11,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 335,
+      "n_clean": 84,
+      "n_risky": 251,
+      "all_top3": 2.833600951348271,
+      "all_top1": 2.778767367296037,
+      "clean_top3": 2.833600951348271,
+      "clean_top1": 2.778767367296037
+    },
+    {
+      "date": "2026-06-18",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=20.0, dt=1.0, kqxy=0.0, breadth=0.2528356362136523",
+        "qx_t0": 20.0,
+        "qx_t1": 27.0,
+        "dt_t0": 1.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 1226.0,
+        "xd_t0": 3623.0,
+        "breadth_t0": 0.2528356362136523,
+        "lbbx_t0": 1.55,
+        "lbbx_t1": 4.41,
+        "ztbx_t0": 1.2,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 322,
+      "n_clean": 0,
+      "n_risky": 322,
+      "all_top3": 3.7459654918009084,
+      "all_top1": 9.337579617834393,
+      "clean_top3": null,
+      "clean_top1": null
+    },
+    {
+      "date": "2026-06-23",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=32.0, dt=4.0, kqxy=0.0, breadth=0.24561403508771928",
+        "qx_t0": 32.0,
+        "qx_t1": 20.0,
+        "dt_t0": 4.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 1218.0,
+        "xd_t0": 3741.0,
+        "breadth_t0": 0.24561403508771928,
+        "lbbx_t0": 4.0,
+        "lbbx_t1": 1.55,
+        "ztbx_t0": 2.94,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 344,
+      "n_clean": 0,
+      "n_risky": 344,
+      "all_top3": -4.2723311546841,
+      "all_top1": -13.888888888888893,
+      "clean_top3": null,
+      "clean_top1": null
+    },
+    {
+      "date": "2026-06-24",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=26.0, dt=2.0, kqxy=0.0, breadth=0.33802225488137727",
+        "qx_t0": 26.0,
+        "qx_t1": 32.0,
+        "dt_t0": 2.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 1610.0,
+        "xd_t0": 3153.0,
+        "breadth_t0": 0.33802225488137727,
+        "lbbx_t0": 0.25,
+        "lbbx_t1": 4.0,
+        "ztbx_t0": 0.45,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 331,
+      "n_clean": 98,
+      "n_risky": 233,
+      "all_top3": 5.242989499579158,
+      "all_top1": 9.533572526909273,
+      "clean_top3": 5.242989499579158,
+      "clean_top1": 9.533572526909273
+    },
+    {
+      "date": "2026-06-26",
+      "regime": {
+        "label": "cold",
+        "reason": "qx=29.0, dt=0.0, kqxy=0.0, breadth=0.2550091074681239",
+        "qx_t0": 29.0,
+        "qx_t1": 26.0,
+        "dt_t0": 0.0,
+        "kqxy_t0": 0.0,
+        "sz_t0": 1260.0,
+        "xd_t0": 3681.0,
+        "breadth_t0": 0.2550091074681239,
+        "lbbx_t0": 2.84,
+        "lbbx_t1": 0.25,
+        "ztbx_t0": 1.27,
+        "promo_t0": null,
+        "ignored_metrics": [
+          "HSLN",
+          "PB",
+          "PBBX"
+        ]
+      },
+      "n": 331,
+      "n_clean": 0,
+      "n_risky": 331,
+      "all_top3": -0.9987726424701039,
+      "all_top1": 8.587786259541987,
+      "clean_top3": null,
+      "clean_top1": null
+    }
+  ],
+  "strategies": {
+    "always_top1": {
+      "n_total_days": 15,
+      "n_traded": 15,
+      "mean_daily_all": 3.511,
+      "std_daily_all": 7.151,
+      "info_ratio_all": 0.491,
+      "cumulative": 52.661,
+      "win_rate_all_days": 0.733,
+      "worst_day": -13.889,
+      "best_day": 11.68,
+      "mean_traded_only": 3.511
+    },
+    "daygate_top1": {
+      "n_total_days": 15,
+      "n_traded": 6,
+      "mean_daily_all": 2.903,
+      "std_daily_all": 4.264,
+      "info_ratio_all": 0.681,
+      "cumulative": 43.55,
+      "win_rate_all_days": 0.4,
+      "worst_day": 0.0,
+      "best_day": 11.68,
+      "mean_traded_only": 7.258
+    },
+    "always_top2": {
+      "n_total_days": 15,
+      "n_traded": 15,
+      "mean_daily_all": 2.28,
+      "std_daily_all": 4.748,
+      "info_ratio_all": 0.48,
+      "cumulative": 34.2,
+      "win_rate_all_days": 0.667,
+      "worst_day": -9.297,
+      "best_day": 8.429,
+      "mean_traded_only": 2.28
+    },
+    "daygate_top2": {
+      "n_total_days": 15,
+      "n_traded": 6,
+      "mean_daily_all": 2.268,
+      "std_daily_all": 3.012,
+      "info_ratio_all": 0.753,
+      "cumulative": 34.025,
+      "win_rate_all_days": 0.4,
+      "worst_day": 0.0,
+      "best_day": 8.429,
+      "mean_traded_only": 5.671
+    },
+    "always_top3": {
+      "n_total_days": 15,
+      "n_traded": 15,
+      "mean_daily_all": 1.56,
+      "std_daily_all": 3.998,
+      "info_ratio_all": 0.39,
+      "cumulative": 23.396,
+      "win_rate_all_days": 0.6,
+      "worst_day": -4.728,
+      "best_day": 7.592,
+      "mean_traded_only": 1.56
+    },
+    "daygate_top3": {
+      "n_total_days": 15,
+      "n_traded": 6,
+      "mean_daily_all": 1.914,
+      "std_daily_all": 2.416,
+      "info_ratio_all": 0.792,
+      "cumulative": 28.709,
+      "win_rate_all_days": 0.4,
+      "worst_day": 0.0,
+      "best_day": 5.764,
+      "mean_traded_only": 4.785
+    }
+  },
+  "verdict": {
+    "frozen_ranking": "v10_amt: score(CORE,V10AMT_W) - risk_penalty",
+    "n_days": 15,
+    "n_satout_days(clean<3)": 9,
+    "n_fully_flagged_days(clean==0)": 9,
+    "fully_flagged_dates": [
+      "2026-05-21",
+      "2026-06-04",
+      "2026-06-05",
+      "2026-06-08",
+      "2026-06-10",
+      "2026-06-11",
+      "2026-06-18",
+      "2026-06-23",
+      "2026-06-26"
+    ],
+    "risk_flag_is_effectively_daylevel": true,
+    "avoided_days_always_top3": {
+      "n": 9,
+      "sum_excess": -5.314,
+      "mean_excess": -0.59,
+      "n_negative": 6
+    },
+    "traded_days_always_top3": {
+      "n": 6,
+      "mean_excess": 4.785
+    },
+    "always_top3": {
+      "n_total_days": 15,
+      "n_traded": 15,
+      "mean_daily_all": 1.56,
+      "std_daily_all": 3.998,
+      "info_ratio_all": 0.39,
+      "cumulative": 23.396,
+      "win_rate_all_days": 0.6,
+      "worst_day": -4.728,
+      "best_day": 7.592,
+      "mean_traded_only": 1.56
+    },
+    "daygate_top3": {
+      "n_total_days": 15,
+      "n_traded": 6,
+      "mean_daily_all": 1.914,
+      "std_daily_all": 2.416,
+      "info_ratio_all": 0.792,
+      "cumulative": 28.709,
+      "win_rate_all_days": 0.4,
+      "worst_day": 0.0,
+      "best_day": 5.764,
+      "mean_traded_only": 4.785
+    },
+    "daygate_beats_always_top3": {
+      "by_cumulative": true,
+      "by_info_ratio_all": true
+    }
+  }
+}

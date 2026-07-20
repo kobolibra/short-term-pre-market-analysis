@@ -1,0 +1,24 @@
+{
+  "id": "daily_2026-07-15_rerun3_kqxy_overlay",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": [
+    "--date",
+    "2026-07-15"
+  ],
+  "queued_file": "daily_2026-07-15_rerun3_kqxy_overlay.json",
+  "note": "rerun3: KQXY亏钱效应覆盖层",
+  "worker_time": "2026-07-15T12:30:29+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "v4.2 premarket analysis: running for 2026-07-15...\nv4.2 premarket: using report /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/2026-07-15/premarket/093005.json\nv4.2 premarket: history days = 17\nv4.2 premarket done: /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/v4_2_premarket/2026-07-15.json\n",
+  "stderr_tail": "[data_loader WARN] No home.qxlive.top_metrics capture at 2026-06-03 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-06-05 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-01 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-03 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-06 <= 093300; refusing after-cutoff fallback to avoid lookahead\n[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-07 <= 093300; refusing after-cutoff fallback to avoid lookahead\n",
+  "started": "2026-07-15T12:30:29+08:00",
+  "ended": "2026-07-15T12:30:37+08:00",
+  "duration_s": 8.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v4_2_premarket_daily.py",
+    "--date",
+    "2026-07-15"
+  ]
+}

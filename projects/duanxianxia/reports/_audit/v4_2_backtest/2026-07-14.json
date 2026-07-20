@@ -1,0 +1,561 @@
+{
+  "version": "v4.2.0",
+  "days": [
+    "2026-06-16",
+    "2026-06-17",
+    "2026-06-18",
+    "2026-06-19",
+    "2026-06-22",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-25",
+    "2026-06-26",
+    "2026-06-29",
+    "2026-06-30",
+    "2026-07-01",
+    "2026-07-02",
+    "2026-07-03",
+    "2026-07-06",
+    "2026-07-07",
+    "2026-07-08",
+    "2026-07-09",
+    "2026-07-10",
+    "2026-07-13"
+  ],
+  "results": [
+    {
+      "date": "2026-06-16",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": null,
+      "ztbx_925": 2.87,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-06-17",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": null,
+      "ztbx_925": 2.3,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-06-18",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": 24.95,
+      "ztbx_925": 1.2,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-06-19",
+      "status": "error",
+      "error": "数据加载失败: No capture for auction.jjyd.vratio at 2026-06-19"
+    },
+    {
+      "date": "2026-06-22",
+      "status": "error",
+      "error": "数据加载失败: No capture for auction.jjyd.vratio at 2026-06-22"
+    },
+    {
+      "date": "2026-06-23",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": 25.6,
+      "ztbx_925": 2.94,
+      "t0_impulse": "NEGATIVE",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-06-24",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": 24.01,
+      "ztbx_925": 0.45,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-06-25",
+      "status": "error",
+      "error": "数据加载失败: No capture for auction.jjyd.vratio at 2026-06-25"
+    },
+    {
+      "date": "2026-06-26",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": null,
+      "ztbx_925": 1.27,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-06-29",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": 21.49,
+      "ztbx_925": 2.01,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-06-30",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": null,
+      "ztbx_925": 1.91,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-07-01",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": 21.86,
+      "ztbx_925": null,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-07-02",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": 20.68,
+      "ztbx_925": 1.38,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-07-03",
+      "status": "ok",
+      "phase": "发酵主升",
+      "risk_tier": "NORMAL",
+      "position_cap": 0.1,
+      "jinji_weighted": null,
+      "ztbx_925": null,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 12,
+      "orders": [
+        {
+          "code": "603137",
+          "name": "恒尚节能",
+          "pool": "一字封",
+          "position_pct": 0.34
+        },
+        {
+          "code": "000656",
+          "name": "金科股份",
+          "pool": "一字封",
+          "position_pct": 0.4
+        },
+        {
+          "code": "002979",
+          "name": "雷赛智能",
+          "pool": "一字封",
+          "position_pct": 0.4
+        },
+        {
+          "code": "000700",
+          "name": "模塑科技",
+          "pool": "换手封",
+          "position_pct": 0.3
+        },
+        {
+          "code": "300163",
+          "name": "先锋新材",
+          "pool": "换手封",
+          "position_pct": 0.3
+        },
+        {
+          "code": "002580",
+          "name": "圣阳股份",
+          "pool": "换手封",
+          "position_pct": 0.3
+        },
+        {
+          "code": "600547",
+          "name": "山东黄金",
+          "pool": "非板",
+          "position_pct": 0.3
+        },
+        {
+          "code": "603979",
+          "name": "金诚信",
+          "pool": "非板",
+          "position_pct": 0.3
+        },
+        {
+          "code": "301191",
+          "name": "菲菱科思",
+          "pool": "非板",
+          "position_pct": 0.3
+        },
+        {
+          "code": "002826",
+          "name": "易明医药",
+          "pool": "分歧封",
+          "position_pct": 0.09
+        },
+        {
+          "code": "002674",
+          "name": "兴业科技",
+          "pool": "分歧封",
+          "position_pct": 0.03
+        },
+        {
+          "code": "002971",
+          "name": "和远气体",
+          "pool": "分歧封",
+          "position_pct": 0.09
+        }
+      ]
+    },
+    {
+      "date": "2026-07-06",
+      "status": "error",
+      "error": "数据加载失败: No auction.jjyd.vratio capture at 2026-07-06 <= 100000; refusing after-cutoff fallback to avoid lookahead"
+    },
+    {
+      "date": "2026-07-07",
+      "status": "error",
+      "error": "数据加载失败: No auction.jjyd.vratio capture at 2026-07-07 <= 100000; refusing after-cutoff fallback to avoid lookahead"
+    },
+    {
+      "date": "2026-07-08",
+      "status": "ok",
+      "phase": "发酵主升",
+      "risk_tier": "NORMAL",
+      "position_cap": 0.8,
+      "jinji_weighted": 16.94,
+      "ztbx_925": 1.96,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 12,
+      "orders": [
+        {
+          "code": "002497",
+          "name": "雅化集团",
+          "pool": "一字封",
+          "position_pct": 3.2
+        },
+        {
+          "code": "002841",
+          "name": "视源股份",
+          "pool": "一字封",
+          "position_pct": 3.2
+        },
+        {
+          "code": "301251",
+          "name": "威尔高",
+          "pool": "一字封",
+          "position_pct": 3.2
+        },
+        {
+          "code": "001229",
+          "name": "魅视科技",
+          "pool": "换手封",
+          "position_pct": 2.4
+        },
+        {
+          "code": "002951",
+          "name": "金时科技",
+          "pool": "换手封",
+          "position_pct": 2.4
+        },
+        {
+          "code": "002129",
+          "name": "TCL中环",
+          "pool": "换手封",
+          "position_pct": 2.4
+        },
+        {
+          "code": "603221",
+          "name": "爱丽家居",
+          "pool": "非板",
+          "position_pct": 2.4
+        },
+        {
+          "code": "688691",
+          "name": "灿芯股份",
+          "pool": "非板",
+          "position_pct": 2.4
+        },
+        {
+          "code": "603893",
+          "name": "瑞芯微",
+          "pool": "非板",
+          "position_pct": 2.4
+        },
+        {
+          "code": "002185",
+          "name": "华天科技",
+          "pool": "分歧封",
+          "position_pct": 0.84
+        },
+        {
+          "code": "002137",
+          "name": "实益达",
+          "pool": "分歧封",
+          "position_pct": 0.84
+        },
+        {
+          "code": "000973",
+          "name": "佛塑科技",
+          "pool": "分歧封",
+          "position_pct": 0.84
+        }
+      ]
+    },
+    {
+      "date": "2026-07-09",
+      "status": "ok",
+      "phase": "发酵主升",
+      "risk_tier": "NORMAL",
+      "position_cap": 0.4,
+      "jinji_weighted": 32.43,
+      "ztbx_925": 0.68,
+      "t0_impulse": "NEGATIVE",
+      "n_orders": 10,
+      "orders": [
+        {
+          "code": "001229",
+          "name": "魅视科技",
+          "pool": "一字封",
+          "position_pct": 1.12
+        },
+        {
+          "code": "000977",
+          "name": "浪潮信息",
+          "pool": "一字封",
+          "position_pct": 1.6
+        },
+        {
+          "code": "000524",
+          "name": "岭南控股",
+          "pool": "一字封",
+          "position_pct": 1.6
+        },
+        {
+          "code": "002674",
+          "name": "兴业科技",
+          "pool": "换手封",
+          "position_pct": 0.36
+        },
+        {
+          "code": "002396",
+          "name": "星网锐捷",
+          "pool": "换手封",
+          "position_pct": 0.6
+        },
+        {
+          "code": "300017",
+          "name": "网宿科技",
+          "pool": "换手封",
+          "position_pct": 1.2
+        },
+        {
+          "code": "603986",
+          "name": "兆易创新",
+          "pool": "非板",
+          "position_pct": 1.2
+        },
+        {
+          "code": "688233",
+          "name": "神工股份",
+          "pool": "非板",
+          "position_pct": 1.2
+        },
+        {
+          "code": "300990",
+          "name": "同飞股份",
+          "pool": "非板",
+          "position_pct": 1.2
+        },
+        {
+          "code": "002546",
+          "name": "新联电子",
+          "pool": "分歧封",
+          "position_pct": 0.42
+        }
+      ]
+    },
+    {
+      "date": "2026-07-10",
+      "status": "ok",
+      "phase": "震荡混沌",
+      "risk_tier": "WARNING",
+      "position_cap": 0.3,
+      "jinji_weighted": 20.7,
+      "ztbx_925": 3.29,
+      "t0_impulse": "NEUTRAL",
+      "n_orders": 11,
+      "orders": [
+        {
+          "code": "002414",
+          "name": "高德红外",
+          "pool": "一字封",
+          "position_pct": 1.2
+        },
+        {
+          "code": "001395",
+          "name": "亚联机械",
+          "pool": "一字封",
+          "position_pct": 1.2
+        },
+        {
+          "code": "000021",
+          "name": "深科技",
+          "pool": "换手封",
+          "position_pct": 0.9
+        },
+        {
+          "code": "002552",
+          "name": "宝鼎科技",
+          "pool": "换手封",
+          "position_pct": 0.9
+        },
+        {
+          "code": "002829",
+          "name": "星网宇达",
+          "pool": "换手封",
+          "position_pct": 0.9
+        },
+        {
+          "code": "002709",
+          "name": "天赐材料",
+          "pool": "非板",
+          "position_pct": 0.9
+        },
+        {
+          "code": "301321",
+          "name": "翰博高新",
+          "pool": "非板",
+          "position_pct": 0.9
+        },
+        {
+          "code": "688323",
+          "name": "瑞华泰",
+          "pool": "非板",
+          "position_pct": 0.9
+        },
+        {
+          "code": "002364",
+          "name": "中恒电气",
+          "pool": "分歧封",
+          "position_pct": 0.31
+        },
+        {
+          "code": "000977",
+          "name": "浪潮信息",
+          "pool": "分歧封",
+          "position_pct": 0.38
+        },
+        {
+          "code": "002851",
+          "name": "麦格米特",
+          "pool": "分歧封",
+          "position_pct": 0.45
+        }
+      ]
+    },
+    {
+      "date": "2026-07-13",
+      "status": "ok",
+      "phase": "冰点修复",
+      "risk_tier": "WARNING",
+      "position_cap": 0.3,
+      "jinji_weighted": null,
+      "ztbx_925": 0.58,
+      "t0_impulse": "NEGATIVE",
+      "n_orders": 9,
+      "orders": [
+        {
+          "code": "601608",
+          "name": "中信重工",
+          "pool": "换手封",
+          "position_pct": 0.9
+        },
+        {
+          "code": "002479",
+          "name": "富春环保",
+          "pool": "换手封",
+          "position_pct": 0.9
+        },
+        {
+          "code": "600992",
+          "name": "贵绳股份",
+          "pool": "换手封",
+          "position_pct": 0.76
+        },
+        {
+          "code": "688585",
+          "name": "上纬新材",
+          "pool": "非板",
+          "position_pct": 0.9
+        },
+        {
+          "code": "600409",
+          "name": "三友化工",
+          "pool": "非板",
+          "position_pct": 0.9
+        },
+        {
+          "code": "300903",
+          "name": "科翔股份",
+          "pool": "非板",
+          "position_pct": 0.9
+        },
+        {
+          "code": "605090",
+          "name": "九丰能源",
+          "pool": "分歧封",
+          "position_pct": 0.31
+        },
+        {
+          "code": "601698",
+          "name": "中国卫通",
+          "pool": "分歧封",
+          "position_pct": 0.45
+        },
+        {
+          "code": "301117",
+          "name": "佳缘科技",
+          "pool": "分歧封",
+          "position_pct": 0.31
+        }
+      ]
+    }
+  ]
+}

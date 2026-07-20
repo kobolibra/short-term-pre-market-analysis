@@ -1,0 +1,202 @@
+=== 2026-06-25T08:00:01+00:00 ipo calendar run ===
+git synced to 2d3c0ac
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-06-25T08:06:22+00:00 ===
+=== 2026-06-26T08:00:02+00:00 ipo calendar run ===
+git synced to b35ae7a
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-06-26T08:06:35+00:00 ===
+=== 2026-06-29T08:00:01+00:00 ipo calendar run ===
+git synced to 767e3fd
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-06-29T08:07:05+00:00 ===
+=== 2026-06-30T08:00:01+00:00 ipo calendar run ===
+error: cannot lock ref 'refs/remotes/origin/main': is at 27eb041cee5798d6187f74bf3b6e95be5a9fb652 but expected aaae147bb0df88dfbf55548515a0c409289951b0
+git sync FAILED (continue with local code)
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-06-30T08:06:39+00:00 ===
+=== 2026-07-01T08:00:01+00:00 ipo calendar run ===
+git synced to e7538fd
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-01T08:07:13+00:00 ===
+=== 2026-07-02T08:00:02+00:00 ipo calendar run ===
+git synced to d0bff30
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-02T08:07:02+00:00 ===
+=== 2026-07-03T08:00:02+00:00 ipo calendar run ===
+git synced to 33596a8
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-03T08:07:37+00:00 ===
+=== 2026-07-06T08:00:01+00:00 ipo calendar run ===
+git synced to 1ae96082
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-06T08:06:23+00:00 ===
+=== 2026-07-07T08:00:02+00:00 ipo calendar run ===
+git synced to 9362ed79
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-07T08:06:26+00:00 ===
+=== 2026-07-08T08:00:03+00:00 ipo calendar run ===
+git synced to 9362ed79
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-08T08:06:28+00:00 ===
+=== 2026-07-09T08:00:23+00:00 ipo calendar run ===
+git synced to 9362ed79
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-09T08:07:14+00:00 ===
+=== 2026-07-10T08:00:02+00:00 ipo calendar run ===
+fatal: Unable to create '/home/investmentofficehku/.openclaw/workspace/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+git sync FAILED (continue with local code)
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-10T08:07:14+00:00 ===
+=== 2026-07-13T08:00:02+00:00 ipo calendar run ===
+git synced to f85dc5fb
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-13T08:06:41+00:00 ===
+=== 2026-07-14T08:00:02+00:00 ipo calendar run ===
+git synced to 6ffcc1c5
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-14T08:06:45+00:00 ===
+=== 2026-07-15T08:00:01+00:00 ipo calendar run ===
+git synced to e916a05f
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-15T08:07:10+00:00 ===
+=== 2026-07-16T08:00:02+00:00 ipo calendar run ===
+git synced to 78029b8c
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-16T08:06:44+00:00 ===
+=== 2026-07-17T08:00:02+00:00 ipo calendar run ===
+git synced to 78029b8c
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-17T08:06:42+00:00 ===
+=== 2026-07-20T08:00:01+00:00 ipo calendar run ===
+warning: The last gc run reported the following. Please correct the root cause
+and remove .git/gc.log
+Automatic cleanup will not be performed until the file is removed.
+
+error: pack-objects died of signal 9
+fatal: failed to run repack
+
+fatal: Unable to create '/home/investmentofficehku/.openclaw/workspace/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+git sync FAILED (continue with local code)
+Traceback (most recent call last):
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 499, in <module>
+    raise SystemExit(main())
+  File "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py", line 478, in main
+    raise RuntimeError("failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug")
+RuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM; raw page saved for debug
+ipo_calendar_notify rc=1
+=== done 2026-07-20T08:06:34+00:00 ===

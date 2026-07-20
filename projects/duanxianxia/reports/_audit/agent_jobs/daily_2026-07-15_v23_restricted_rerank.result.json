@@ -1,0 +1,28 @@
+{
+  "id": "daily_2026-07-15_v23_restricted_rerank",
+  "script": "scripts/v23_restricted_rerank.py",
+  "args": [
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ],
+  "queued_file": "daily_2026-07-15_v23_restricted_rerank.json",
+  "note": "daily auto-refresh 2026-07-15",
+  "worker_time": "2026-07-15T07:00:24+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"oos_days\": 18,\n  \"ranked_by_top5\": [\n    [\n      \"amt\",\n      {\n        \"top3\": 0.8193,\n        \"top5\": 5.794,\n        \"top10\": 3.1192,\n        \"cap3\": 0.0185,\n        \"cap5\": 0.0556,\n        \"cap10\": 0.0611\n      }\n    ],\n    [\n      \"amtTop10_mlp\",\n      {\n        \"top3\": 1.8737,\n        \"top5\": 1.4803,\n        \"top10\": 3.1192,\n        \"cap3\": 0.037,\n        \"cap5\": 0.0444,\n        \"cap10\": 0.0611\n      }\n    ],\n    [\n      \"sparse\",\n      {\n        \"top3\": 1.0149,\n        \"top5\": 1.2291,\n        \"top10\": 2.9545,\n        \"cap3\": 0.0185,\n        \"cap5\": 0.0111,\n        \"cap10\": 0.0611\n      }\n    ],\n    [\n      \"amtTop30_mlp\",\n      {\n        \"top3\": -1.0223,\n        \"top5\": -0.4206,\n        \"top10\": 0.2472,\n        \"cap3\": 0.037,\n        \"cap5\": 0.0556,\n        \"cap10\": 0.0667\n      }\n    ],\n    [\n      \"amtTop20_mlp\",\n      {\n        \"top3\": -1.554,\n        \"top5\": -0.4207,\n        \"top10\": -0.0961,\n        \"cap3\": 0.037,\n        \"cap5\": 0.0778,\n        \"cap10\": 0.0667\n      }\n    ],\n    [\n      \"mlp_all\",\n      {\n        \"top3\": -2.3054,\n        \"top5\": -1.4462,\n        \"top10\": -0.1484,\n        \"cap3\": 0.0185,\n        \"cap5\": 0.0222,\n        \"cap10\": 0.0556\n      }\n    ]\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-15T07:00:24+08:00",
+  "ended": "2026-07-15T07:18:23+08:00",
+  "duration_s": 1079.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v23_restricted_rerank.py",
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ]
+}

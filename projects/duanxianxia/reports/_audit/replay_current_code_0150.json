@@ -1,0 +1,182 @@
+{
+  "job": "0150_replay_current_code",
+  "mode": "feature-level replay; auction_amount_pct = persisted first, else cross-section",
+  "target": "excess = (close-open)/preclose*100",
+  "n_days": 8,
+  "days": [
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-26",
+    "2026-06-29",
+    "2026-06-30",
+    "2026-07-01",
+    "2026-07-02",
+    "2026-07-03"
+  ],
+  "CURRENT": {
+    "overall": {
+      "n": 8,
+      "mean_excess": 1.189,
+      "win_rate": 0.5,
+      "avg_win": 7.119,
+      "avg_loss": -4.742,
+      "payoff": 1.501
+    },
+    "by_regime": {
+      "cold": {
+        "n": 8,
+        "mean_excess": 1.189,
+        "win_rate": 0.5,
+        "avg_win": 7.119,
+        "avg_loss": -4.742,
+        "payoff": 1.501
+      }
+    }
+  },
+  "STORED": {
+    "overall": {
+      "n": 8,
+      "mean_excess": 2.039,
+      "win_rate": 0.5,
+      "avg_win": 10.479,
+      "avg_loss": -8.534,
+      "payoff": 1.228
+    },
+    "by_regime": {
+      "cold": {
+        "n": 8,
+        "mean_excess": 2.039,
+        "win_rate": 0.5,
+        "avg_win": 10.479,
+        "avg_loss": -8.534,
+        "payoff": 1.228
+      }
+    }
+  },
+  "ranking_quality": {
+    "top1": {
+      "n": 8,
+      "mean_excess": 1.189,
+      "win_rate": 0.5,
+      "avg_win": 7.119,
+      "avg_loss": -4.742,
+      "payoff": 1.501
+    },
+    "top3": {
+      "n": 24,
+      "mean_excess": 0.865,
+      "win_rate": 0.458,
+      "avg_win": 5.946,
+      "avg_loss": -4.465,
+      "payoff": 1.332
+    },
+    "top5": {
+      "n": 40,
+      "mean_excess": 0.576,
+      "win_rate": 0.425,
+      "avg_win": 5.281,
+      "avg_loss": -3.926,
+      "payoff": 1.345
+    }
+  },
+  "faithfulness": {
+    "pct_source": {
+      "persisted": 2913,
+      "recomputed": 0,
+      "default": 0
+    },
+    "persisted_frac": 1.0,
+    "recomputed_frac": 0.0,
+    "default_frac": 0.0
+  },
+  "per_day": [
+    {
+      "date": "2026-06-23",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -4.706,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": -13.889,
+      "top1": "002354"
+    },
+    {
+      "date": "2026-06-24",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 9.534,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 9.534,
+      "top1": "002167"
+    },
+    {
+      "date": "2026-06-26",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -8.663,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 8.588,
+      "top1": "002580"
+    },
+    {
+      "date": "2026-06-29",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -1.53,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": -8.209,
+      "top1": "605366"
+    },
+    {
+      "date": "2026-06-30",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 0.549,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 0.549,
+      "top1": "002354"
+    },
+    {
+      "date": "2026-07-01",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 11.954,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": -3.505,
+      "top1": "300720"
+    },
+    {
+      "date": "2026-07-02",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": 6.44,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 23.244,
+      "top1": "600206"
+    },
+    {
+      "date": "2026-07-03",
+      "regime": "cold",
+      "cur_n_buys": 1,
+      "cur_scored": 1,
+      "cur_mean": -4.069,
+      "sto_n_buys": 1,
+      "sto_scored": 1,
+      "sto_mean": 0.0,
+      "top1": "002167"
+    }
+  ]
+}

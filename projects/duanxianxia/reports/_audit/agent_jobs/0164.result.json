@@ -1,0 +1,22 @@
+{
+  "id": "0164",
+  "script": "scripts/duanxianxia_fengdan_relation_probe_0164.py",
+  "args": [
+    "2026-07-06"
+  ],
+  "queued_file": "0164_fengdan_relation_20260706.json",
+  "note": "READ-ONLY: verify amount_915/920/925 vs bidAmount/weimai seal relationship (H1/H2)",
+  "worker_time": "2026-07-06T16:50:17+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "=== fengdan 关系比对 2026-07-06 ===\n列: code name | f915 f920 f925(亿) | 竞价成交(亿) | wm封单raw17(亿) | wm委买raw4(亿) | FF(亿)\n603137 恒尚节能 | 67.300 27.600 27.700 | 0.065 | 0.147 | 27.784 | 15.768\n603722 阿科力 | 53.500 18.700 18.800 | 0.043 | 0.048 | 18.886 | 24.241\n002607 中公教育 | 2.200 2.700 5.200 | 0.612 | 0.129 | 5.786 | 108.779\n002396 星网锐捷 | 7.300 3.500 2.900 | 1.062 | 0.043 | 3.966 | 143.236\n000656 金科股份 | 5.500 3.200 2.300 | 1.239 | 0.022 | 3.516 | 75.667\n002042 华孚时尚 | 0.533 0.217 1.900 | 0.146 | 0.018 | 1.999 | 42.007\n002072 凯瑞德 | 18.800 1.400 1.400 | 0.155 | - | 1.602 | 17.049\n002729 好利科技 | 10.000 0.197 0.625 | 0.267 | - | 0.892 | 20.792\n=== stats (H1: f925~=raw4-bid; H2: f920~=f925+bid; resid越接近0越成立) ===\n{\"n_fengdan\": 113, \"n_features\": 367, \"n_matched_f925_and_bid\": 8, \"median_f925_div_bid\": 8.775516685328176, \"median_f920_div_bid\": 3.8543838725810793, \"median_f925_div_wmSeal_raw17\": 104.14185030772285, \"median_f925_div_wmRaw4_weimai\": 0.8864173096972949, \"median_f925_div_(raw4-bid)_H1\": 0.9996628511033764, \"median_resid_H2_(f920-(f925+bid))/f920\": -0.12132771428571429, \"median_resid_H1_(f925-(raw4-bid))/f925\": -0.00033736690041136295}\nout=fengdan_relation_2026-07-06_0164.json\n",
+  "stderr_tail": "",
+  "started": "2026-07-06T16:50:17+08:00",
+  "ended": "2026-07-06T16:50:21+08:00",
+  "duration_s": 4.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_fengdan_relation_probe_0164.py",
+    "2026-07-06"
+  ]
+}

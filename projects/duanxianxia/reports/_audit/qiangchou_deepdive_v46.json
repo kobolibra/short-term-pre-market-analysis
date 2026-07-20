@@ -1,0 +1,152 @@
+{
+  "generated_at": "2026-06-27T10:20:14",
+  "job": "qiangchou_deepdive_v46",
+  "dataset": "auction.jjyd.qiangchou",
+  "n_dates": 16,
+  "coverage": {
+    "seal_amount_wan": {
+      "present": 11,
+      "total": 681,
+      "pct": 0.016
+    },
+    "yesterday_auction_turnover_wan": {
+      "present": 0,
+      "total": 681,
+      "pct": 0.0
+    }
+  },
+  "field_ic": [
+    {
+      "field": "auction_turnover_wan",
+      "mean_ic": 0.1629,
+      "icir": 0.665,
+      "n_days": 16
+    },
+    {
+      "field": "turnover_rate_pct",
+      "mean_ic": 0.1349,
+      "icir": 0.731,
+      "n_days": 16
+    },
+    {
+      "field": "latest_change_pct",
+      "mean_ic": 0.1295,
+      "icir": 0.357,
+      "n_days": 16
+    },
+    {
+      "field": "auction_volume_ratio",
+      "mean_ic": 0.068,
+      "icir": 0.228,
+      "n_days": 16
+    },
+    {
+      "field": "auction_change_pct",
+      "mean_ic": 0.0382,
+      "icir": 0.501,
+      "n_days": 6
+    },
+    {
+      "field": "grab_strength",
+      "mean_ic": 0.0271,
+      "icir": 0.15,
+      "n_days": 16
+    }
+  ],
+  "today_over_yesterday_turnover_ic": {
+    "mean_ic": null,
+    "icir": null,
+    "n_days": 0
+  },
+  "pairwise_redundancy": [
+    {
+      "pair": "auction_change_pct ~ latest_change_pct",
+      "avg_spearman": 0.784,
+      "n_days": 6
+    },
+    {
+      "pair": "auction_turnover_wan ~ auction_volume_ratio",
+      "avg_spearman": 0.656,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_turnover_wan ~ turnover_rate_pct",
+      "avg_spearman": 0.64,
+      "n_days": 16
+    },
+    {
+      "pair": "turnover_rate_pct ~ grab_strength",
+      "avg_spearman": 0.279,
+      "n_days": 16
+    },
+    {
+      "pair": "turnover_rate_pct ~ auction_change_pct",
+      "avg_spearman": 0.265,
+      "n_days": 6
+    },
+    {
+      "pair": "auction_turnover_wan ~ auction_change_pct",
+      "avg_spearman": 0.199,
+      "n_days": 6
+    },
+    {
+      "pair": "turnover_rate_pct ~ latest_change_pct",
+      "avg_spearman": 0.188,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_turnover_wan ~ grab_strength",
+      "avg_spearman": 0.187,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_turnover_wan ~ latest_change_pct",
+      "avg_spearman": 0.144,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_change_pct ~ grab_strength",
+      "avg_spearman": 0.112,
+      "n_days": 6
+    },
+    {
+      "pair": "grab_strength ~ latest_change_pct",
+      "avg_spearman": 0.059,
+      "n_days": 16
+    },
+    {
+      "pair": "turnover_rate_pct ~ auction_volume_ratio",
+      "avg_spearman": -0.056,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_volume_ratio ~ latest_change_pct",
+      "avg_spearman": -0.024,
+      "n_days": 16
+    },
+    {
+      "pair": "auction_change_pct ~ auction_volume_ratio",
+      "avg_spearman": -0.022,
+      "n_days": 6
+    },
+    {
+      "pair": "auction_volume_ratio ~ grab_strength",
+      "avg_spearman": -0.016,
+      "n_days": 16
+    }
+  ],
+  "group_bucket": [
+    {
+      "bucket": "grab_only",
+      "n": 630,
+      "mean_excess": -0.358,
+      "mean_excess_demeaned": -0.013
+    },
+    {
+      "bucket": "qiangchou",
+      "n": 51,
+      "mean_excess": -0.61,
+      "mean_excess_demeaned": 0.159
+    }
+  ]
+}

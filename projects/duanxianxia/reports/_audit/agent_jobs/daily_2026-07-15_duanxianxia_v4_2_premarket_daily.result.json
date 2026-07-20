@@ -1,0 +1,24 @@
+{
+  "id": "daily_2026-07-15_duanxianxia_v4_2_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": [
+    "--date",
+    "2026-07-15"
+  ],
+  "queued_file": "daily_2026-07-15_duanxianxia_v4_2_premarket_daily.json",
+  "note": "daily auto-refresh 2026-07-15",
+  "worker_time": "2026-07-15T00:00:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "v4.2 premarket analysis: running for 2026-07-15...\nv4.2 premarket done: /home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/v4_2_premarket/2026-07-15.json\n",
+  "stderr_tail": "",
+  "started": "2026-07-15T00:00:04+08:00",
+  "ended": "2026-07-15T00:00:06+08:00",
+  "duration_s": 2.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v4_2_premarket_daily.py",
+    "--date",
+    "2026-07-15"
+  ]
+}

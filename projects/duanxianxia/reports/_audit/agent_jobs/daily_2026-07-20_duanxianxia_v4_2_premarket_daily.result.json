@@ -1,0 +1,24 @@
+{
+  "id": "daily_2026-07-20_duanxianxia_v4_2_premarket_daily",
+  "script": "scripts/duanxianxia_v4_2_premarket_daily.py",
+  "args": [
+    "--date",
+    "2026-07-20"
+  ],
+  "queued_file": "daily_2026-07-20_duanxianxia_v4_2_premarket_daily.json",
+  "note": "daily auto-refresh 2026-07-20",
+  "worker_time": "2026-07-20T09:00:22+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "v4.2 premarket analysis: running for 2026-07-20...\nv4.2 premarket ERROR: no report found for 2026-07-20\n",
+  "stderr_tail": "",
+  "started": "2026-07-20T09:00:22+08:00",
+  "ended": "2026-07-20T09:00:23+08:00",
+  "duration_s": 0.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_v4_2_premarket_daily.py",
+    "--date",
+    "2026-07-20"
+  ]
+}

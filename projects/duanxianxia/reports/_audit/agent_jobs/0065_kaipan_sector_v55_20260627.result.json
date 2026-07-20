@@ -1,0 +1,19 @@
+{
+  "id": "0065_kaipan_sector_v55_20260627",
+  "script": "scripts/0065_kaipan_sector_v55_20260627.py",
+  "args": [],
+  "queued_file": "0065_kaipan_sector_v55_20260627.json",
+  "note": "表⑥ home.kaipan.plate.summary join股票级 IC+分桶 v55",
+  "worker_time": "2026-06-27T20:50:08+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "Total date dirs: 22\nDates with kaipan: 17\nTotal records: 4136\nDates: ['2026-05-19', '2026-05-20', '2026-06-01', '2026-06-02', '2026-06-04', '2026-06-05', '2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-15', '2026-06-16', '2026-06-17', '2026-06-18', '2026-06-23', '2026-06-24', '2026-06-26']\n\n--- Join hit rates ---\n  qiangchou: 667 rows, join_hit=0 (0.0%)\n  net_amount: 1036 rows, join_hit=226 (21.8%)\n  weimai: 2433 rows, join_hit=538 (22.1%)\n\n--- Deduped total: 3417 ---\n  in_top1: n=164 mean=-1.273\n  in_top3: n=363 mean=-0.290\n  in_top5: n=464 mean=0.032\n  in_top10: n=644 mean=0.078\n  no_match: n=2771 mean=0.938\n\n--- Per-date IC (deduped) ---\nFeature                         n   mean_IC     ICIR\n  sector_rank                  17    -0.013   -0.060\n  sector_strength_norm         17     0.014    0.062\n  sector_inflow_wan            17    -0.026   -0.097\n  sector_zt_count              17    -0.002   -0.012\n  in_top1                      17    -0.066   -1.171\n  in_top3                      17    -0.037   -0.466\n  in_top5                      17    -0.017   -0.179\n\n--- sector_has_zt x inflow_pos (qiangchou, deduped) ---\n  zt+_pos+: 0\n  zt+_pos-: 0\n  zt0_pos+: 0\n  zt0_pos-: 0\n  no_match: n=633 mean=-0.082\n\n--- sector rank bucket (qiangchou) ---\n  rank1: 0\n  rank2-5: 0\n  rank6-10: 0\n  no_match: n=633 mean=-0.082\n\n[DONE]\n",
+  "stderr_tail": "",
+  "started": "2026-06-27T20:50:08+08:00",
+  "ended": "2026-06-27T20:50:21+08:00",
+  "duration_s": 13.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0065_kaipan_sector_v55_20260627.py"
+  ]
+}

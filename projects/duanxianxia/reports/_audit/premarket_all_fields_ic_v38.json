@@ -1,0 +1,1060 @@
+{
+  "generated_at": "2026-06-27T08:20:44",
+  "job": "0049_all_fields_ic_v38",
+  "n_days": 22,
+  "tested_datasets": [
+    "auction.jjyd.vratio",
+    "auction.jjyd.qiangchou",
+    "auction.jjyd.net_amount",
+    "auction.jjlive.fengdan",
+    "auction.jjyd.weimai",
+    "rank.rocket",
+    "rank.hot_stock_day",
+    "cashflow.stock.today",
+    "cashflow.stock.3day",
+    "cashflow.stock.5day",
+    "cashflow.stock.10day",
+    "pool.hot",
+    "pool.surge"
+  ],
+  "schema_only_datasets": [
+    "home.kaipan.plate.summary",
+    "home.qxlive.top_metrics"
+  ],
+  "n_fields_tested": 100,
+  "field_ic": [
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "涨跌幅",
+      "mean_ic": 0.8169,
+      "icir": 7.853,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "涨跌幅",
+      "mean_ic": 0.8033,
+      "icir": 7.861,
+      "n_days": 18,
+      "numeric_rows": 2700
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "涨跌幅",
+      "mean_ic": 0.7998,
+      "icir": 7.051,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "涨跌幅",
+      "mean_ic": 0.774,
+      "icir": 7.217,
+      "n_days": 20,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "change_pct",
+      "mean_ic": 0.4937,
+      "icir": 2.838,
+      "n_days": 17,
+      "numeric_rows": 247
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "rank",
+      "mean_ic": -0.4934,
+      "icir": -2.83,
+      "n_days": 17,
+      "numeric_rows": 247
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "涨幅",
+      "mean_ic": 0.3981,
+      "icir": 2.262,
+      "n_days": 17,
+      "numeric_rows": 510
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "主力",
+      "mean_ic": 0.3043,
+      "icir": 1.483,
+      "n_days": 17,
+      "numeric_rows": 510
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "float_market_cap",
+      "mean_ic": -0.2887,
+      "icir": -1.176,
+      "n_days": 17,
+      "numeric_rows": 247
+    },
+    {
+      "dataset": "rank.rocket",
+      "field": "value",
+      "mean_ic": 0.2576,
+      "icir": 1.237,
+      "n_days": 16,
+      "numeric_rows": 1497
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "大单净流入",
+      "mean_ic": -0.2403,
+      "icir": -1.536,
+      "n_days": 20,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "特大单净流入",
+      "mean_ic": 0.2398,
+      "icir": 1.847,
+      "n_days": 20,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "rank.rocket",
+      "field": "raw_rate",
+      "mean_ic": 0.2222,
+      "icir": 1.027,
+      "n_days": 21,
+      "numeric_rows": 2012
+    },
+    {
+      "dataset": "rank.rocket",
+      "field": "rank",
+      "mean_ic": -0.2219,
+      "icir": -1.027,
+      "n_days": 21,
+      "numeric_rows": 2012
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "seal_amount_text",
+      "mean_ic": -0.2162,
+      "icir": -1.452,
+      "n_days": 4,
+      "numeric_rows": 118
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "amount",
+      "mean_ic": -0.2054,
+      "icir": -0.701,
+      "n_days": 17,
+      "numeric_rows": 247
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "latest_change_pct",
+      "mean_ic": 0.1905,
+      "icir": 0.466,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "latest_change_pct",
+      "mean_ic": 0.1732,
+      "icir": 0.458,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "实际换手",
+      "mean_ic": 0.1653,
+      "icir": 0.742,
+      "n_days": 17,
+      "numeric_rows": 510
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "特大单净流入",
+      "mean_ic": 0.1649,
+      "icir": 1.634,
+      "n_days": 18,
+      "numeric_rows": 2700
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "auction_turnover_wan",
+      "mean_ic": 0.1629,
+      "icir": 0.665,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "auction_turnover_wan_text",
+      "mean_ic": 0.1629,
+      "icir": 0.665,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "main_net_inflow_full",
+      "mean_ic": 0.1542,
+      "icir": 0.721,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "特大单净流入",
+      "mean_ic": 0.1497,
+      "icir": 1.427,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "中单净流入",
+      "mean_ic": -0.1489,
+      "icir": -1.095,
+      "n_days": 20,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "turnover_rate_pct",
+      "mean_ic": 0.1334,
+      "icir": 0.727,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "最新价",
+      "mean_ic": -0.1268,
+      "icir": -0.647,
+      "n_days": 20,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "排名",
+      "mean_ic": -0.1251,
+      "icir": -0.978,
+      "n_days": 20,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "主力净流入",
+      "mean_ic": 0.1249,
+      "icir": 0.975,
+      "n_days": 20,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "特大单净流入",
+      "mean_ic": 0.1245,
+      "icir": 1.104,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "pool.surge",
+      "field": "turnover_ratio",
+      "mean_ic": 0.1089,
+      "icir": 0.43,
+      "n_days": 17,
+      "numeric_rows": 247
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "流通",
+      "mean_ic": -0.1088,
+      "icir": -0.574,
+      "n_days": 17,
+      "numeric_rows": 510
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "price",
+      "mean_ic": 0.1026,
+      "icir": 0.432,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "排名",
+      "mean_ic": -0.0985,
+      "icir": -0.899,
+      "n_days": 18,
+      "numeric_rows": 2700
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "主力净流入",
+      "mean_ic": 0.0982,
+      "icir": 0.896,
+      "n_days": 18,
+      "numeric_rows": 2700
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "大单净流入",
+      "mean_ic": -0.0955,
+      "icir": -0.828,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "排名",
+      "mean_ic": -0.0948,
+      "icir": -0.909,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "super_large_net_inflow",
+      "mean_ic": 0.0947,
+      "icir": 0.562,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "主力净流入",
+      "mean_ic": 0.0947,
+      "icir": 0.909,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "大单净流入",
+      "mean_ic": -0.0932,
+      "icir": -0.933,
+      "n_days": 18,
+      "numeric_rows": 2700
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "auction_turnover_wan",
+      "mean_ic": 0.0928,
+      "icir": 0.487,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "auction_turnover_wan_text",
+      "mean_ic": 0.0928,
+      "icir": 0.487,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "latest_change_pct",
+      "mean_ic": 0.091,
+      "icir": 0.266,
+      "n_days": 18,
+      "numeric_rows": 1542
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "中单净流入",
+      "mean_ic": -0.0887,
+      "icir": -0.653,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "yesterday_auction_turnover_wan",
+      "mean_ic": 0.0884,
+      "icir": 0.495,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "seal_amount_wan",
+      "mean_ic": 0.0873,
+      "icir": 0.213,
+      "n_days": 12,
+      "numeric_rows": 190
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "排名",
+      "mean_ic": -0.0811,
+      "icir": -0.917,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "主力净流入",
+      "mean_ic": 0.081,
+      "icir": 0.914,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "amount_920",
+      "mean_ic": -0.077,
+      "icir": -0.203,
+      "n_days": 12,
+      "numeric_rows": 183
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "latest_change_pct",
+      "mean_ic": 0.0767,
+      "icir": 0.236,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "pool.hot",
+      "field": "成交",
+      "mean_ic": -0.0721,
+      "icir": -0.435,
+      "n_days": 17,
+      "numeric_rows": 510
+    },
+    {
+      "dataset": "cashflow.stock.today",
+      "field": "小单净流入",
+      "mean_ic": -0.0718,
+      "icir": -0.976,
+      "n_days": 20,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "auction_volume_ratio",
+      "mean_ic": 0.0717,
+      "icir": 0.245,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "market_cap",
+      "mean_ic": 0.071,
+      "icir": 0.398,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "market_cap_yi",
+      "mean_ic": 0.071,
+      "icir": 0.398,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "market_cap_text",
+      "mean_ic": 0.0708,
+      "icir": 0.438,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "中单净流入",
+      "mean_ic": -0.0689,
+      "icir": -0.75,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "auction_change_pct",
+      "mean_ic": -0.0679,
+      "icir": -0.429,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "中单净流入",
+      "mean_ic": -0.0674,
+      "icir": -0.539,
+      "n_days": 18,
+      "numeric_rows": 2700
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "amount_915",
+      "mean_ic": -0.0654,
+      "icir": -0.524,
+      "n_days": 18,
+      "numeric_rows": 1521
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "seal_volume",
+      "mean_ic": 0.0644,
+      "icir": 0.397,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "seal_volume_again",
+      "mean_ic": 0.0644,
+      "icir": 0.397,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "latest_change_pct_text",
+      "mean_ic": 0.0643,
+      "icir": 0.184,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "latest_change_pct",
+      "mean_ic": 0.0643,
+      "icir": 0.184,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "小单净流入",
+      "mean_ic": -0.0642,
+      "icir": -0.655,
+      "n_days": 18,
+      "numeric_rows": 2700
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "rank",
+      "mean_ic": 0.0616,
+      "icir": 0.548,
+      "n_days": 18,
+      "numeric_rows": 1542
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "auction_volume_ratio",
+      "mean_ic": 0.0607,
+      "icir": 0.354,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "market_cap_yi",
+      "mean_ic": 0.0603,
+      "icir": 0.306,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "large_order_net_inflow",
+      "mean_ic": -0.0598,
+      "icir": -0.349,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "大单净流入",
+      "mean_ic": -0.0561,
+      "icir": -0.441,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "auction.jjlive.fengdan",
+      "field": "amount_925",
+      "mean_ic": -0.0494,
+      "icir": -0.159,
+      "n_days": 3,
+      "numeric_rows": 105
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "最新价",
+      "mean_ic": 0.0439,
+      "icir": 0.177,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "最新价",
+      "mean_ic": 0.0438,
+      "icir": 0.18,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "main_net_inflow_wan",
+      "mean_ic": 0.0434,
+      "icir": 0.411,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "main_net_inflow",
+      "mean_ic": 0.0434,
+      "icir": 0.411,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "turnover_rate_pct",
+      "mean_ic": -0.0431,
+      "icir": -0.224,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "main_net_inflow_text",
+      "mean_ic": 0.0417,
+      "icir": 0.425,
+      "n_days": 18,
+      "numeric_rows": 2671
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "auction_turnover_wan",
+      "mean_ic": 0.0395,
+      "icir": 0.323,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "turnover_rate_pct",
+      "mean_ic": 0.0371,
+      "icir": 0.213,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "rank.hot_stock_day",
+      "field": "rank",
+      "mean_ic": -0.0337,
+      "icir": -0.328,
+      "n_days": 21,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "rank.hot_stock_day",
+      "field": "raw_rate",
+      "mean_ic": 0.0337,
+      "icir": 0.328,
+      "n_days": 21,
+      "numeric_rows": 2100
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "rank",
+      "mean_ic": 0.0287,
+      "icir": 0.268,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "volume_ratio_multiple",
+      "mean_ic": -0.0282,
+      "icir": -0.264,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "rank",
+      "mean_ic": -0.0273,
+      "icir": -0.149,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "grab_strength",
+      "mean_ic": 0.0271,
+      "icir": 0.15,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "cashflow.stock.3day",
+      "field": "最新价",
+      "mean_ic": -0.0229,
+      "icir": -0.093,
+      "n_days": 18,
+      "numeric_rows": 2700
+    },
+    {
+      "dataset": "auction.jjyd.qiangchou",
+      "field": "auction_change_pct_text",
+      "mean_ic": 0.0218,
+      "icir": 0.102,
+      "n_days": 16,
+      "numeric_rows": 810
+    },
+    {
+      "dataset": "cashflow.stock.5day",
+      "field": "小单净流入",
+      "mean_ic": -0.0217,
+      "icir": -0.213,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "turnover_rate_pct",
+      "mean_ic": -0.0191,
+      "icir": -0.129,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "turnover_rate_pct_text",
+      "mean_ic": -0.0191,
+      "icir": -0.129,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_amount_wan",
+      "mean_ic": 0.0184,
+      "icir": 0.189,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_amount",
+      "mean_ic": 0.0184,
+      "icir": 0.189,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_turnover_text",
+      "mean_ic": -0.0173,
+      "icir": -0.26,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "rank",
+      "mean_ic": 0.0145,
+      "icir": 0.195,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_turnover",
+      "mean_ic": -0.0145,
+      "icir": -0.195,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "auction.jjyd.weimai",
+      "field": "auction_turnover_wan",
+      "mean_ic": -0.0145,
+      "icir": -0.195,
+      "n_days": 18,
+      "numeric_rows": 2691
+    },
+    {
+      "dataset": "cashflow.stock.10day",
+      "field": "小单净流入",
+      "mean_ic": -0.0109,
+      "icir": -0.119,
+      "n_days": 20,
+      "numeric_rows": 3000
+    },
+    {
+      "dataset": "auction.jjyd.vratio",
+      "field": "auction_change_pct_text",
+      "mean_ic": 0.0076,
+      "icir": 0.048,
+      "n_days": 16,
+      "numeric_rows": 1659
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "rank",
+      "mean_ic": -0.0019,
+      "icir": -0.017,
+      "n_days": 18,
+      "numeric_rows": 1105
+    },
+    {
+      "dataset": "auction.jjyd.net_amount",
+      "field": "main_net_inflow_wan",
+      "mean_ic": 0.0017,
+      "icir": 0.015,
+      "n_days": 18,
+      "numeric_rows": 1105
+    }
+  ],
+  "stock_dataset_fields": {
+    "auction.jjyd.vratio": [
+      "auction_change_pct",
+      "auction_change_pct_text",
+      "auction_turnover_wan",
+      "auction_turnover_wan_text",
+      "auction_volume_ratio",
+      "code",
+      "concept",
+      "latest_change_pct",
+      "name",
+      "rank",
+      "raw",
+      "seal_amount_wan",
+      "turnover_rate_pct",
+      "volume_ratio_multiple",
+      "yesterday_auction_turnover_wan"
+    ],
+    "auction.jjyd.qiangchou": [
+      "auction_change_pct",
+      "auction_change_pct_text",
+      "auction_turnover_wan",
+      "auction_turnover_wan_text",
+      "auction_volume_ratio",
+      "code",
+      "concept",
+      "grab_strength",
+      "group",
+      "latest_change_pct",
+      "name",
+      "rank",
+      "raw",
+      "seal_amount_wan",
+      "turnover_rate_pct",
+      "yesterday_auction_turnover_wan"
+    ],
+    "auction.jjyd.net_amount": [
+      "auction_change_pct",
+      "auction_turnover_wan",
+      "code",
+      "concept",
+      "concept_1",
+      "concept_2",
+      "latest_change_pct",
+      "main_net_inflow_wan",
+      "market_cap_yi",
+      "name",
+      "rank",
+      "raw",
+      "turnover_rate_pct"
+    ],
+    "auction.jjlive.fengdan": [
+      "amount_915",
+      "amount_920",
+      "amount_925",
+      "board_label",
+      "code",
+      "latest_change_pct",
+      "latest_change_pct_source",
+      "name",
+      "rank",
+      "section_date",
+      "section_has_change_pct",
+      "section_kind",
+      "section_seal_total",
+      "section_t15_total",
+      "section_t20_total",
+      "section_t25_total",
+      "section_yizi_count",
+      "tag_1",
+      "tag_2",
+      "tag_3",
+      "tags"
+    ],
+    "auction.jjyd.weimai": [
+      "auction_amount",
+      "auction_amount_wan",
+      "auction_change_pct",
+      "auction_change_pct_text",
+      "auction_turnover",
+      "auction_turnover_text",
+      "auction_turnover_wan",
+      "board_label",
+      "code",
+      "concept",
+      "concept_1",
+      "concept_2",
+      "large_order_net_inflow",
+      "latest_change_pct",
+      "latest_change_pct_text",
+      "main_net_inflow",
+      "main_net_inflow_full",
+      "main_net_inflow_text",
+      "main_net_inflow_wan",
+      "market_cap",
+      "market_cap_text",
+      "market_cap_yi",
+      "name",
+      "price",
+      "rank",
+      "raw",
+      "seal_amount_text",
+      "seal_amount_wan",
+      "seal_volume",
+      "seal_volume_again",
+      "super_large_net_inflow",
+      "turnover_rate_pct",
+      "turnover_rate_pct_text"
+    ],
+    "rank.rocket": [
+      "code",
+      "name",
+      "rank",
+      "raw_rate",
+      "value"
+    ],
+    "rank.hot_stock_day": [
+      "code",
+      "name",
+      "rank",
+      "raw_rate",
+      "value"
+    ],
+    "cashflow.stock.today": [
+      "中单净流入",
+      "主力净流入",
+      "代码",
+      "名称",
+      "大单净流入",
+      "小单净流入",
+      "排名",
+      "最新价",
+      "涨跌幅",
+      "特大单净流入",
+      "股圈"
+    ],
+    "cashflow.stock.3day": [
+      "中单净流入",
+      "主力净流入",
+      "代码",
+      "名称",
+      "大单净流入",
+      "小单净流入",
+      "排名",
+      "最新价",
+      "涨跌幅",
+      "特大单净流入",
+      "股圈"
+    ],
+    "cashflow.stock.5day": [
+      "中单净流入",
+      "主力净流入",
+      "代码",
+      "名称",
+      "大单净流入",
+      "小单净流入",
+      "排名",
+      "最新价",
+      "涨跌幅",
+      "特大单净流入",
+      "股圈"
+    ],
+    "cashflow.stock.10day": [
+      "中单净流入",
+      "主力净流入",
+      "代码",
+      "名称",
+      "大单净流入",
+      "小单净流入",
+      "排名",
+      "最新价",
+      "涨跌幅",
+      "特大单净流入",
+      "股圈"
+    ],
+    "pool.hot": [
+      "主力",
+      "代码",
+      "名称",
+      "实际换手",
+      "成交",
+      "概念",
+      "流通",
+      "涨幅"
+    ],
+    "pool.surge": [
+      "amount",
+      "change_pct",
+      "code",
+      "concept",
+      "concept_1",
+      "concept_2",
+      "float_market_cap",
+      "name",
+      "rank",
+      "raw",
+      "turnover_ratio"
+    ]
+  },
+  "non_stock_dataset_fields": {
+    "home.kaipan.plate.summary": [
+      "主力流入",
+      "主力流入原值",
+      "主力流入真实金额",
+      "主标签代码",
+      "主标签名称",
+      "主标签序号",
+      "子标签列表",
+      "子标签数量",
+      "板块强度",
+      "板块强度原值",
+      "涨停数量"
+    ],
+    "home.qxlive.top_metrics": [
+      "button_display_value",
+      "button_id",
+      "button_text",
+      "chart_tail_value",
+      "compare_series",
+      "compare_value",
+      "date",
+      "display_series",
+      "metric_key",
+      "metric_label",
+      "order",
+      "raw_chart_tail_value",
+      "raw_compare_value",
+      "raw_value",
+      "source_series",
+      "time_point",
+      "value"
+    ]
+  }
+}

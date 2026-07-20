@@ -1,0 +1,364 @@
+{
+  "generated_at": "2026-06-27T11:30:14",
+  "job": "weimai_deepdive_v50",
+  "dataset": "auction.jjyd.weimai",
+  "n_dates": 18,
+  "coverage": {
+    "main_net_inflow_full": {
+      "present": 2570,
+      "total": 2570,
+      "pct": 1.0
+    },
+    "super_large_net_inflow": {
+      "present": 2570,
+      "total": 2570,
+      "pct": 1.0
+    },
+    "large_order_net_inflow": {
+      "present": 2570,
+      "total": 2570,
+      "pct": 1.0
+    },
+    "seal_amount_wan": {
+      "present": 160,
+      "total": 2570,
+      "pct": 0.062
+    },
+    "market_cap_yi": {
+      "present": 2570,
+      "total": 2570,
+      "pct": 1.0
+    },
+    "auction_amount_wan": {
+      "present": 2570,
+      "total": 2570,
+      "pct": 1.0
+    }
+  },
+  "field_ic": [
+    {
+      "field": "main_net_inflow_full",
+      "mean_ic": 0.1034,
+      "icir": 0.554,
+      "n_days": 18
+    },
+    {
+      "field": "super_large_net_inflow",
+      "mean_ic": 0.0937,
+      "icir": 0.548,
+      "n_days": 18
+    },
+    {
+      "field": "market_cap_yi",
+      "mean_ic": 0.0692,
+      "icir": 0.377,
+      "n_days": 18
+    },
+    {
+      "field": "seal_volume",
+      "mean_ic": 0.0644,
+      "icir": 0.397,
+      "n_days": 18
+    },
+    {
+      "field": "main_net_inflow_wan",
+      "mean_ic": 0.0434,
+      "icir": 0.411,
+      "n_days": 18
+    },
+    {
+      "field": "seal_amount_wan",
+      "mean_ic": 0.0329,
+      "icir": 0.073,
+      "n_days": 12
+    },
+    {
+      "field": "auction_amount_wan",
+      "mean_ic": 0.0184,
+      "icir": 0.189,
+      "n_days": 18
+    },
+    {
+      "field": "latest_change_pct",
+      "mean_ic": 0.015,
+      "icir": 0.052,
+      "n_days": 18
+    },
+    {
+      "field": "auction_turnover_wan",
+      "mean_ic": -0.0145,
+      "icir": -0.195,
+      "n_days": 18
+    },
+    {
+      "field": "turnover_rate_pct",
+      "mean_ic": -0.0191,
+      "icir": -0.129,
+      "n_days": 18
+    },
+    {
+      "field": "large_order_net_inflow",
+      "mean_ic": -0.0681,
+      "icir": -0.445,
+      "n_days": 18
+    },
+    {
+      "field": "auction_change_pct",
+      "mean_ic": -0.1017,
+      "icir": -1.091,
+      "n_days": 6
+    }
+  ],
+  "normalized_inflow_intensity_ic": [
+    {
+      "factor": "superlarge_over_turnover",
+      "mean_ic": 0.1354,
+      "icir": 0.713,
+      "n_days": 18
+    },
+    {
+      "factor": "main_net_over_turnover",
+      "mean_ic": 0.12,
+      "icir": 0.667,
+      "n_days": 18
+    },
+    {
+      "factor": "main_net_over_mktcap",
+      "mean_ic": 0.1053,
+      "icir": 0.581,
+      "n_days": 18
+    },
+    {
+      "factor": "superlarge_over_mktcap",
+      "mean_ic": 0.0301,
+      "icir": 0.301,
+      "n_days": 18
+    }
+  ],
+  "pairwise_redundancy": [
+    {
+      "pair": "super_large_net_inflow ~ large_order_net_inflow",
+      "avg_spearman": -0.919,
+      "n_days": 18
+    },
+    {
+      "pair": "turnover_rate_pct ~ market_cap_yi",
+      "avg_spearman": -0.65,
+      "n_days": 18
+    },
+    {
+      "pair": "large_order_net_inflow ~ market_cap_yi",
+      "avg_spearman": -0.607,
+      "n_days": 18
+    },
+    {
+      "pair": "super_large_net_inflow ~ market_cap_yi",
+      "avg_spearman": 0.602,
+      "n_days": 18
+    },
+    {
+      "pair": "auction_turnover_wan ~ large_order_net_inflow",
+      "avg_spearman": -0.539,
+      "n_days": 18
+    },
+    {
+      "pair": "auction_turnover_wan ~ super_large_net_inflow",
+      "avg_spearman": 0.527,
+      "n_days": 18
+    },
+    {
+      "pair": "auction_turnover_wan ~ turnover_rate_pct",
+      "avg_spearman": 0.379,
+      "n_days": 18
+    },
+    {
+      "pair": "auction_turnover_wan ~ auction_change_pct",
+      "avg_spearman": 0.354,
+      "n_days": 6
+    },
+    {
+      "pair": "main_net_inflow_full ~ super_large_net_inflow",
+      "avg_spearman": 0.317,
+      "n_days": 18
+    },
+    {
+      "pair": "market_cap_yi ~ auction_change_pct",
+      "avg_spearman": -0.168,
+      "n_days": 6
+    },
+    {
+      "pair": "main_net_inflow_full ~ auction_change_pct",
+      "avg_spearman": 0.141,
+      "n_days": 6
+    },
+    {
+      "pair": "turnover_rate_pct ~ auction_change_pct",
+      "avg_spearman": 0.131,
+      "n_days": 6
+    },
+    {
+      "pair": "auction_turnover_wan ~ market_cap_yi",
+      "avg_spearman": 0.11,
+      "n_days": 18
+    },
+    {
+      "pair": "large_order_net_inflow ~ auction_change_pct",
+      "avg_spearman": 0.105,
+      "n_days": 6
+    },
+    {
+      "pair": "main_net_inflow_full ~ market_cap_yi",
+      "avg_spearman": 0.086,
+      "n_days": 18
+    },
+    {
+      "pair": "super_large_net_inflow ~ turnover_rate_pct",
+      "avg_spearman": 0.082,
+      "n_days": 18
+    },
+    {
+      "pair": "large_order_net_inflow ~ turnover_rate_pct",
+      "avg_spearman": -0.082,
+      "n_days": 18
+    },
+    {
+      "pair": "auction_turnover_wan ~ main_net_inflow_full",
+      "avg_spearman": 0.071,
+      "n_days": 18
+    },
+    {
+      "pair": "super_large_net_inflow ~ auction_change_pct",
+      "avg_spearman": -0.049,
+      "n_days": 6
+    },
+    {
+      "pair": "main_net_inflow_full ~ turnover_rate_pct",
+      "avg_spearman": 0.025,
+      "n_days": 18
+    },
+    {
+      "pair": "main_net_inflow_full ~ large_order_net_inflow",
+      "avg_spearman": -0.018,
+      "n_days": 18
+    }
+  ],
+  "interaction_turnover_x_main_net_inflow": {
+    "quadrant_median_split": [
+      {
+        "bucket": "HH",
+        "n": 687,
+        "mean_excess": 0.985,
+        "mean_excess_demeaned": 0.469
+      },
+      {
+        "bucket": "HL",
+        "n": 600,
+        "mean_excess": -0.308,
+        "mean_excess_demeaned": -0.611
+      },
+      {
+        "bucket": "LH",
+        "n": 600,
+        "mean_excess": 0.732,
+        "mean_excess_demeaned": 0.428
+      },
+      {
+        "bucket": "LL",
+        "n": 683,
+        "mean_excess": 0.209,
+        "mean_excess_demeaned": -0.311
+      }
+    ],
+    "double_high_gates": {
+      "both_top33": {
+        "n": 389,
+        "mean_excess_demeaned": 0.169
+      },
+      "both_top20": {
+        "n": 184,
+        "mean_excess_demeaned": -0.314
+      }
+    },
+    "cond_ic_inflow_within_high_turnover": {
+      "mean_ic": 0.0989,
+      "icir": 0.505,
+      "n_days": 18
+    },
+    "cond_ic_turnover_within_high_inflow": {
+      "mean_ic": -0.0312,
+      "icir": -0.262,
+      "n_days": 18
+    }
+  },
+  "inflow_sign_bucket": [
+    {
+      "bucket": "net_inflow_pos",
+      "n": 1447,
+      "mean_excess": 0.949,
+      "mean_excess_demeaned": 0.372
+    },
+    {
+      "bucket": "net_inflow_neg",
+      "n": 1123,
+      "mean_excess": -0.267,
+      "mean_excess_demeaned": -0.479
+    }
+  ],
+  "board_label_bucket": [
+    {
+      "label": "昨3连板",
+      "n": 18,
+      "mean_excess": 0.995,
+      "mean_excess_demeaned": 0.614
+    },
+    {
+      "label": "(none)",
+      "n": 1913,
+      "mean_excess": 0.683,
+      "mean_excess_demeaned": 0.248
+    },
+    {
+      "label": "昨日首板",
+      "n": 390,
+      "mean_excess": 0.024,
+      "mean_excess_demeaned": -0.344
+    },
+    {
+      "label": "3连板",
+      "n": 19,
+      "mean_excess": -0.498,
+      "mean_excess_demeaned": -0.914
+    },
+    {
+      "label": "2连板",
+      "n": 39,
+      "mean_excess": -0.971,
+      "mean_excess_demeaned": -1.15
+    },
+    {
+      "label": "4连板",
+      "n": 11,
+      "mean_excess": 0.105,
+      "mean_excess_demeaned": -1.267
+    },
+    {
+      "label": "首板",
+      "n": 54,
+      "mean_excess": -1.292,
+      "mean_excess_demeaned": -1.421
+    },
+    {
+      "label": "昨2连板",
+      "n": 77,
+      "mean_excess": -0.993,
+      "mean_excess_demeaned": -1.546
+    }
+  ],
+  "overlap_with_qiangchou": {
+    "n_days": 16,
+    "avg_n_weimai": 143.2,
+    "avg_n_qiangchou": 47.7,
+    "avg_n_overlap": 9.2,
+    "avg_weimai_in_qc_pct": 0.065
+  }
+}

@@ -1,0 +1,355 @@
+{
+  "generated_at": "2026-07-20T16:02:10",
+  "top_n": 30,
+  "min_train": 5,
+  "n_days": 23,
+  "days_used": [
+    "2026-05-21",
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-04",
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-18",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-26",
+    "2026-06-29",
+    "2026-06-30",
+    "2026-07-01",
+    "2026-07-02",
+    "2026-07-03",
+    "2026-07-08",
+    "2026-07-09",
+    "2026-07-10"
+  ],
+  "n_samples": 7705,
+  "data_regen": {
+    "attempted": false
+  },
+  "field_ic": [
+    {
+      "field": "qiangchou_920_925_rank",
+      "mean_ic": 0.1584,
+      "icir": 1.599,
+      "n_days": 7
+    },
+    {
+      "field": "auction_amount_wan",
+      "mean_ic": 0.0721,
+      "icir": 0.381,
+      "n_days": 23
+    },
+    {
+      "field": "auction_strength",
+      "mean_ic": 0.0708,
+      "icir": 0.501,
+      "n_days": 23
+    },
+    {
+      "field": "deriv.amt_x_auc",
+      "mean_ic": 0.0695,
+      "icir": 0.484,
+      "n_days": 23
+    },
+    {
+      "field": "liquidity",
+      "mean_ic": 0.063,
+      "icir": 0.452,
+      "n_days": 23
+    },
+    {
+      "field": "pressure_score",
+      "mean_ic": 0.0569,
+      "icir": 0.459,
+      "n_days": 23
+    },
+    {
+      "field": "amt_pct",
+      "mean_ic": 0.0489,
+      "icir": 0.335,
+      "n_days": 23
+    },
+    {
+      "field": "deriv.money_x_liq",
+      "mean_ic": 0.0433,
+      "icir": 0.379,
+      "n_days": 23
+    },
+    {
+      "field": "money",
+      "mean_ic": 0.0422,
+      "icir": 0.368,
+      "n_days": 23
+    },
+    {
+      "field": "orderbook",
+      "mean_ic": 0.0382,
+      "icir": 0.5,
+      "n_days": 22
+    },
+    {
+      "field": "deriv.auc_minus_8xopen",
+      "mean_ic": 0.0235,
+      "icir": 0.102,
+      "n_days": 23
+    },
+    {
+      "field": "weimai_strength",
+      "mean_ic": 0.0198,
+      "icir": 0.198,
+      "n_days": 23
+    },
+    {
+      "field": "net_pressure",
+      "mean_ic": -0.0127,
+      "icir": -0.073,
+      "n_days": 23
+    },
+    {
+      "field": "qiangchou_last_second_rank",
+      "mean_ic": -0.0127,
+      "icir": -0.068,
+      "n_days": 15
+    },
+    {
+      "field": "latest_change_pct",
+      "mean_ic": 0.0124,
+      "icir": 0.057,
+      "n_days": 23
+    },
+    {
+      "field": "cashflow_continuity_score",
+      "mean_ic": 0.0098,
+      "icir": 0.143,
+      "n_days": 23
+    },
+    {
+      "field": "source_evidence_score",
+      "mean_ic": 0.0084,
+      "icir": 0.141,
+      "n_days": 23
+    },
+    {
+      "field": "deriv.lowopen_strength",
+      "mean_ic": 0.008,
+      "icir": 0.057,
+      "n_days": 23
+    },
+    {
+      "field": "low_cost",
+      "mean_ic": -0.004,
+      "icir": -0.028,
+      "n_days": 23
+    },
+    {
+      "field": "net_amount_rank",
+      "mean_ic": 0.0022,
+      "icir": 0.019,
+      "n_days": 23
+    }
+  ],
+  "winner_reverse_raw": [
+    {
+      "field": "qiangchou_920_925_rank",
+      "mean_sep": 8.52,
+      "days_positive": 2,
+      "n_days": 3,
+      "solo_hit_rate": 0.127
+    },
+    {
+      "field": "net_pressure",
+      "mean_sep": 7.03,
+      "days_positive": 13,
+      "n_days": 19,
+      "solo_hit_rate": 0.161
+    },
+    {
+      "field": "liquidity",
+      "mean_sep": 6.52,
+      "days_positive": 19,
+      "n_days": 23,
+      "solo_hit_rate": 0.154
+    },
+    {
+      "field": "theme_strength_t0",
+      "mean_sep": -6.14,
+      "days_positive": 3,
+      "n_days": 23,
+      "solo_hit_rate": 0.157
+    },
+    {
+      "field": "market_env_score",
+      "mean_sep": -6.14,
+      "days_positive": 3,
+      "n_days": 23,
+      "solo_hit_rate": 0.157
+    },
+    {
+      "field": "longtou_score",
+      "mean_sep": -6.14,
+      "days_positive": 3,
+      "n_days": 23,
+      "solo_hit_rate": 0.157
+    },
+    {
+      "field": "money",
+      "mean_sep": 5.97,
+      "days_positive": 21,
+      "n_days": 23,
+      "solo_hit_rate": 0.152
+    },
+    {
+      "field": "qiangchou_last_second_rank",
+      "mean_sep": 5.52,
+      "days_positive": 4,
+      "n_days": 5,
+      "solo_hit_rate": 0.093
+    },
+    {
+      "field": "auction_strength",
+      "mean_sep": 5.51,
+      "days_positive": 19,
+      "n_days": 23,
+      "solo_hit_rate": 0.158
+    },
+    {
+      "field": "auction_amount_wan",
+      "mean_sep": 4.45,
+      "days_positive": 16,
+      "n_days": 23,
+      "solo_hit_rate": 0.114
+    },
+    {
+      "field": "orderbook",
+      "mean_sep": -3.93,
+      "days_positive": 4,
+      "n_days": 23,
+      "solo_hit_rate": 0.148
+    },
+    {
+      "field": "amt_pct",
+      "mean_sep": 3.67,
+      "days_positive": 17,
+      "n_days": 23,
+      "solo_hit_rate": 0.114
+    },
+    {
+      "field": "low_cost",
+      "mean_sep": -3.01,
+      "days_positive": 8,
+      "n_days": 23,
+      "solo_hit_rate": 0.086
+    },
+    {
+      "field": "cashflow_continuity_score",
+      "mean_sep": -2.37,
+      "days_positive": 9,
+      "n_days": 23,
+      "solo_hit_rate": 0.119
+    },
+    {
+      "field": "pressure_score",
+      "mean_sep": 1.78,
+      "days_positive": 14,
+      "n_days": 23,
+      "solo_hit_rate": 0.161
+    },
+    {
+      "field": "weimai_strength",
+      "mean_sep": -1.6,
+      "days_positive": 13,
+      "n_days": 23,
+      "solo_hit_rate": 0.109
+    },
+    {
+      "field": "source_evidence_score",
+      "mean_sep": -1.46,
+      "days_positive": 8,
+      "n_days": 23,
+      "solo_hit_rate": 0.091
+    },
+    {
+      "field": "net_amount_rank",
+      "mean_sep": -0.27,
+      "days_positive": 8,
+      "n_days": 19,
+      "solo_hit_rate": 0.11
+    },
+    {
+      "field": "latest_change_pct",
+      "mean_sep": 0.23,
+      "days_positive": 10,
+      "n_days": 23,
+      "solo_hit_rate": 0.117
+    }
+  ],
+  "winner_reverse_derived": [
+    {
+      "field": "deriv.money_x_liq",
+      "mean_sep": 6.19,
+      "days_positive": 21,
+      "n_days": 23,
+      "solo_hit_rate": 0.164
+    },
+    {
+      "field": "deriv.amt_x_auc",
+      "mean_sep": 5.08,
+      "days_positive": 18,
+      "n_days": 23,
+      "solo_hit_rate": 0.136
+    },
+    {
+      "field": "deriv.auc_minus_8xopen",
+      "mean_sep": 2.96,
+      "days_positive": 16,
+      "n_days": 23,
+      "solo_hit_rate": 0.138
+    },
+    {
+      "field": "deriv.lowopen_strength",
+      "mean_sep": -0.44,
+      "days_positive": 10,
+      "n_days": 23,
+      "solo_hit_rate": 0.132
+    }
+  ],
+  "walk_forward": {
+    "oos_days": 18,
+    "learned": {
+      "mean_ic": 0.0832,
+      "icir": 0.553
+    },
+    "v10_amt_fixed": {
+      "mean_ic": 0.0899,
+      "icir": 0.595
+    },
+    "edge_old_stored": {
+      "mean_ic": 0.0843,
+      "icir": 0.584
+    },
+    "final_stored": {
+      "mean_ic": 0.0759,
+      "icir": 0.528
+    },
+    "capture_at_n": {
+      "learned": 0.156,
+      "v10_amt": 0.163,
+      "edge_old": 0.157
+    }
+  },
+  "recommended_weights_fullsample": {
+    "amt_pct": 0.1439,
+    "auction_strength": 0.2084,
+    "liquidity": 0.1854,
+    "money": 0.1242,
+    "pressure_score": 0.1675,
+    "weimai_strength": 0.0583,
+    "orderbook": 0.1124
+  }
+}

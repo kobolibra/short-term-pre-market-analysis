@@ -1,0 +1,19 @@
+{
+  "id": "0010_env_probe_v20_20260623",
+  "script": "scripts/v20_env_probe.py",
+  "args": [],
+  "queued_file": "0010_env_probe_v20_20260623.json",
+  "note": "Rebuild step 0: probe ML libraries + quantify trainable data volume.",
+  "worker_time": "2026-06-23T20:40:04+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"libraries\": {\n    \"numpy\": \"2.2.6\",\n    \"pandas\": \"2.2.3\",\n    \"scipy\": \"MISSING (ModuleNotFoundError)\",\n    \"sklearn\": \"MISSING (ModuleNotFoundError)\",\n    \"lightgbm\": \"MISSING (ModuleNotFoundError)\",\n    \"xgboost\": \"MISSING (ModuleNotFoundError)\",\n    \"statsmodels\": \"MISSING (ModuleNotFoundError)\",\n    \"torch\": \"2.11.0+cpu\",\n    \"joblib\": \"MISSING (ModuleNotFoundError)\",\n    \"sympy\": \"1.14.0\"\n  },\n  \"data\": {\n    \"capture_days\": 14,\n    \"capture_date_range\": [\n      \"2026-05-20\",\n      \"2026-06-23\"\n    ],\n    \"capture_dates\": [\n      \"2026-05-20\",\n      \"2026-05-21\",\n      \"2026-06-01\",\n      \"2026-06-02\",\n      \"2026-06-04\",\n      \"2026-06-05\",\n      \"2026-06-08\",\n      \"2026-06-09\",\n      \"2026-06-10\",\n      \"2026-06-11\",\n      \"2026-06-15\",\n      \"2026-06-16\",\n      \"2026-06-18\",\n      \"2026-06-23\"\n    ],\n    \"total_candidate_rows_raw\": 4279,\n    \"dailyline_csv_files\": 2501,\n    \"trainable_days\": 13,\n    \"trainable_rows\": 3894,\n    \"trainable_dates\": [\n      \"2026-05-21\",\n      \"2026-06-01\",\n      \"2026-06-02\",\n      \"2026-06-04\",\n      \"2026-06-05\",\n      \"2026-06-08\",\n      \"2026-06-09\",\n      \"2026-06-10\",\n      \"2026-06-11\",\n      \"2026-06-15\",\n      \"2026-06-16\",\n      \"2026-06-18\",\n      \"2026-06-23\"\n    ]\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-23T20:40:04+08:00",
+  "ended": "2026-06-23T20:41:33+08:00",
+  "duration_s": 89.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v20_env_probe.py"
+  ]
+}

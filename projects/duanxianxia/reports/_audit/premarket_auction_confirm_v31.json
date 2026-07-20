@@ -1,0 +1,378 @@
+{
+  "generated_at": "2026-06-27T04:30:35",
+  "job": "0040_premarket_auction_amount_confirm_v31",
+  "top_n": 30,
+  "min_train": 5,
+  "n_days": 15,
+  "days": [
+    "2026-05-21",
+    "2026-06-01",
+    "2026-06-02",
+    "2026-06-04",
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-18",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-26"
+  ],
+  "n_samples": 4603,
+  "candidate_fields": [
+    "auction_amount_wan",
+    "qiangchou_920_925_rank"
+  ],
+  "weights": [
+    2.0,
+    4.0,
+    6.0,
+    8.0
+  ],
+  "summary": {
+    "v10_amt_raw": {
+      "oos_days": 10,
+      "mean_ic": 0.1263,
+      "icir": 0.824,
+      "capture_at_n": 0.18,
+      "top3_pooled": {
+        "n": 30,
+        "mean_excess": 1.246,
+        "median_excess": 3.098,
+        "win_rate": 0.6,
+        "limitdown_rate": 0.067
+      },
+      "top5_pooled": {
+        "n": 50,
+        "mean_excess": 0.683,
+        "median_excess": 0.202,
+        "win_rate": 0.5,
+        "limitdown_rate": 0.06
+      },
+      "top3_daily_mean_excess": 1.246,
+      "top5_daily_mean_excess": 0.683
+    },
+    "auction_amount_wan|w2": {
+      "oos_days": 10,
+      "mean_ic": 0.1257,
+      "icir": 0.813,
+      "capture_at_n": 0.17,
+      "top3_pooled": {
+        "n": 30,
+        "mean_excess": 0.675,
+        "median_excess": 1.847,
+        "win_rate": 0.567,
+        "limitdown_rate": 0.067
+      },
+      "top5_pooled": {
+        "n": 50,
+        "mean_excess": 0.819,
+        "median_excess": 0.689,
+        "win_rate": 0.52,
+        "limitdown_rate": 0.06
+      },
+      "top3_daily_mean_excess": 0.675,
+      "top5_daily_mean_excess": 0.819
+    },
+    "auction_amount_wan|w4": {
+      "oos_days": 10,
+      "mean_ic": 0.1263,
+      "icir": 0.822,
+      "capture_at_n": 0.16,
+      "top3_pooled": {
+        "n": 30,
+        "mean_excess": 11.212,
+        "median_excess": 1.086,
+        "win_rate": 0.6,
+        "limitdown_rate": 0.033
+      },
+      "top5_pooled": {
+        "n": 50,
+        "mean_excess": 8.771,
+        "median_excess": 0.696,
+        "win_rate": 0.54,
+        "limitdown_rate": 0.06
+      },
+      "top3_daily_mean_excess": 11.212,
+      "top5_daily_mean_excess": 8.771
+    },
+    "auction_amount_wan|w6": {
+      "oos_days": 10,
+      "mean_ic": 0.1256,
+      "icir": 0.829,
+      "capture_at_n": 0.153,
+      "top3_pooled": {
+        "n": 30,
+        "mean_excess": 14.512,
+        "median_excess": 1.086,
+        "win_rate": 0.6,
+        "limitdown_rate": 0.067
+      },
+      "top5_pooled": {
+        "n": 50,
+        "mean_excess": 9.488,
+        "median_excess": 1.086,
+        "win_rate": 0.56,
+        "limitdown_rate": 0.04
+      },
+      "top3_daily_mean_excess": 14.512,
+      "top5_daily_mean_excess": 9.488
+    },
+    "auction_amount_wan|w8": {
+      "oos_days": 10,
+      "mean_ic": 0.1264,
+      "icir": 0.84,
+      "capture_at_n": 0.143,
+      "top3_pooled": {
+        "n": 30,
+        "mean_excess": 14.611,
+        "median_excess": 1.569,
+        "win_rate": 0.633,
+        "limitdown_rate": 0.1
+      },
+      "top5_pooled": {
+        "n": 50,
+        "mean_excess": 9.282,
+        "median_excess": 0.877,
+        "win_rate": 0.56,
+        "limitdown_rate": 0.06
+      },
+      "top3_daily_mean_excess": 14.611,
+      "top5_daily_mean_excess": 9.282
+    },
+    "qiangchou_920_925_rank|w2": {
+      "oos_days": 10,
+      "mean_ic": 0.1267,
+      "icir": 0.825,
+      "capture_at_n": 0.18,
+      "top3_pooled": {
+        "n": 30,
+        "mean_excess": 1.246,
+        "median_excess": 3.098,
+        "win_rate": 0.6,
+        "limitdown_rate": 0.067
+      },
+      "top5_pooled": {
+        "n": 50,
+        "mean_excess": 0.683,
+        "median_excess": 0.202,
+        "win_rate": 0.5,
+        "limitdown_rate": 0.06
+      },
+      "top3_daily_mean_excess": 1.246,
+      "top5_daily_mean_excess": 0.683
+    },
+    "qiangchou_920_925_rank|w4": {
+      "oos_days": 10,
+      "mean_ic": 0.1272,
+      "icir": 0.828,
+      "capture_at_n": 0.18,
+      "top3_pooled": {
+        "n": 30,
+        "mean_excess": 1.246,
+        "median_excess": 3.098,
+        "win_rate": 0.6,
+        "limitdown_rate": 0.067
+      },
+      "top5_pooled": {
+        "n": 50,
+        "mean_excess": 0.683,
+        "median_excess": 0.202,
+        "win_rate": 0.5,
+        "limitdown_rate": 0.06
+      },
+      "top3_daily_mean_excess": 1.246,
+      "top5_daily_mean_excess": 0.683
+    },
+    "qiangchou_920_925_rank|w6": {
+      "oos_days": 10,
+      "mean_ic": 0.1276,
+      "icir": 0.831,
+      "capture_at_n": 0.18,
+      "top3_pooled": {
+        "n": 30,
+        "mean_excess": 1.246,
+        "median_excess": 3.098,
+        "win_rate": 0.6,
+        "limitdown_rate": 0.067
+      },
+      "top5_pooled": {
+        "n": 50,
+        "mean_excess": 0.645,
+        "median_excess": 0.175,
+        "win_rate": 0.5,
+        "limitdown_rate": 0.06
+      },
+      "top3_daily_mean_excess": 1.246,
+      "top5_daily_mean_excess": 0.645
+    },
+    "qiangchou_920_925_rank|w8": {
+      "oos_days": 10,
+      "mean_ic": 0.1279,
+      "icir": 0.832,
+      "capture_at_n": 0.18,
+      "top3_pooled": {
+        "n": 30,
+        "mean_excess": 1.281,
+        "median_excess": 3.098,
+        "win_rate": 0.6,
+        "limitdown_rate": 0.067
+      },
+      "top5_pooled": {
+        "n": 50,
+        "mean_excess": 0.645,
+        "median_excess": 0.175,
+        "win_rate": 0.5,
+        "limitdown_rate": 0.06
+      },
+      "top3_daily_mean_excess": 1.281,
+      "top5_daily_mean_excess": 0.645
+    }
+  },
+  "evaluations": [
+    {
+      "strategy": "auction_amount_wan|w4",
+      "mean_ic": 0.1263,
+      "ic_delta": 0.0,
+      "top3_mean_excess": 11.212,
+      "top3_mean_delta": 9.966,
+      "top5_mean_excess": 8.771,
+      "checks": {
+        "ic_ge_base": true,
+        "top3_mean_ge_base": true,
+        "top3_win_ge_base": true,
+        "top3_limitdown_le_base": true,
+        "top5_mean_ge_base": true
+      },
+      "recommended": true
+    },
+    {
+      "strategy": "qiangchou_920_925_rank|w4",
+      "mean_ic": 0.1272,
+      "ic_delta": 0.0009,
+      "top3_mean_excess": 1.246,
+      "top3_mean_delta": 0.0,
+      "top5_mean_excess": 0.683,
+      "checks": {
+        "ic_ge_base": true,
+        "top3_mean_ge_base": true,
+        "top3_win_ge_base": true,
+        "top3_limitdown_le_base": true,
+        "top5_mean_ge_base": true
+      },
+      "recommended": true
+    },
+    {
+      "strategy": "qiangchou_920_925_rank|w2",
+      "mean_ic": 0.1267,
+      "ic_delta": 0.0004,
+      "top3_mean_excess": 1.246,
+      "top3_mean_delta": 0.0,
+      "top5_mean_excess": 0.683,
+      "checks": {
+        "ic_ge_base": true,
+        "top3_mean_ge_base": true,
+        "top3_win_ge_base": true,
+        "top3_limitdown_le_base": true,
+        "top5_mean_ge_base": true
+      },
+      "recommended": true
+    },
+    {
+      "strategy": "auction_amount_wan|w8",
+      "mean_ic": 0.1264,
+      "ic_delta": 0.0001,
+      "top3_mean_excess": 14.611,
+      "top3_mean_delta": 13.365,
+      "top5_mean_excess": 9.282,
+      "checks": {
+        "ic_ge_base": true,
+        "top3_mean_ge_base": true,
+        "top3_win_ge_base": true,
+        "top3_limitdown_le_base": false,
+        "top5_mean_ge_base": true
+      },
+      "recommended": false
+    },
+    {
+      "strategy": "auction_amount_wan|w6",
+      "mean_ic": 0.1256,
+      "ic_delta": -0.0007,
+      "top3_mean_excess": 14.512,
+      "top3_mean_delta": 13.266,
+      "top5_mean_excess": 9.488,
+      "checks": {
+        "ic_ge_base": false,
+        "top3_mean_ge_base": true,
+        "top3_win_ge_base": true,
+        "top3_limitdown_le_base": true,
+        "top5_mean_ge_base": true
+      },
+      "recommended": false
+    },
+    {
+      "strategy": "qiangchou_920_925_rank|w8",
+      "mean_ic": 0.1279,
+      "ic_delta": 0.0016,
+      "top3_mean_excess": 1.281,
+      "top3_mean_delta": 0.035,
+      "top5_mean_excess": 0.645,
+      "checks": {
+        "ic_ge_base": true,
+        "top3_mean_ge_base": true,
+        "top3_win_ge_base": true,
+        "top3_limitdown_le_base": true,
+        "top5_mean_ge_base": false
+      },
+      "recommended": false
+    },
+    {
+      "strategy": "qiangchou_920_925_rank|w6",
+      "mean_ic": 0.1276,
+      "ic_delta": 0.0013,
+      "top3_mean_excess": 1.246,
+      "top3_mean_delta": 0.0,
+      "top5_mean_excess": 0.645,
+      "checks": {
+        "ic_ge_base": true,
+        "top3_mean_ge_base": true,
+        "top3_win_ge_base": true,
+        "top3_limitdown_le_base": true,
+        "top5_mean_ge_base": false
+      },
+      "recommended": false
+    },
+    {
+      "strategy": "auction_amount_wan|w2",
+      "mean_ic": 0.1257,
+      "ic_delta": -0.0006,
+      "top3_mean_excess": 0.675,
+      "top3_mean_delta": -0.571,
+      "top5_mean_excess": 0.819,
+      "checks": {
+        "ic_ge_base": false,
+        "top3_mean_ge_base": false,
+        "top3_win_ge_base": false,
+        "top3_limitdown_le_base": true,
+        "top5_mean_ge_base": true
+      },
+      "recommended": false
+    }
+  ],
+  "verdict": {
+    "base_oos_ic": 0.1263,
+    "base_top3_mean_excess": 1.246,
+    "base_oos_days": 10,
+    "any_variant_recommended": true,
+    "recommended_variants": [
+      "auction_amount_wan|w4",
+      "qiangchou_920_925_rank|w4",
+      "qiangchou_920_925_rank|w2"
+    ],
+    "best_variant": "auction_amount_wan|w4",
+    "best_variant_recommended": true
+  }
+}

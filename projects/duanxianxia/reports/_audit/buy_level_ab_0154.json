@@ -1,0 +1,114 @@
+{
+  "job": "0154_buy_level_ab",
+  "n_days": 20,
+  "regime_days": {
+    "cold": 17,
+    "cold_to_warming": 3
+  },
+  "variants": {
+    "baseline": {
+      "overall": {
+        "n": 26,
+        "mean_excess": 2.538,
+        "win_rate": 0.615,
+        "avg_win": 6.429,
+        "avg_loss": -3.686,
+        "payoff": 1.744
+      },
+      "cold": {
+        "n": 17,
+        "mean_excess": 1.498,
+        "win_rate": 0.529,
+        "avg_win": 6.567,
+        "avg_loss": -4.204,
+        "payoff": 1.562
+      },
+      "cold_to_warming": {
+        "n": 9,
+        "mean_excess": 4.503,
+        "win_rate": 0.778,
+        "avg_win": 6.251,
+        "avg_loss": -1.614,
+        "payoff": 3.874
+      }
+    },
+    "risk_strict": {
+      "overall": {
+        "n": 13,
+        "mean_excess": 4.625,
+        "win_rate": 0.769,
+        "avg_win": 6.904,
+        "avg_loss": -2.973,
+        "payoff": 2.322
+      },
+      "cold": {
+        "n": 6,
+        "mean_excess": 3.643,
+        "win_rate": 0.667,
+        "avg_win": 7.424,
+        "avg_loss": -3.919,
+        "payoff": 1.894
+      },
+      "cold_to_warming": {
+        "n": 7,
+        "mean_excess": 5.466,
+        "win_rate": 0.857,
+        "avg_win": 6.557,
+        "avg_loss": -1.081,
+        "payoff": 6.066
+      }
+    },
+    "profile": {
+      "overall": {
+        "n": 26,
+        "mean_excess": 2.538,
+        "win_rate": 0.615,
+        "avg_win": 6.429,
+        "avg_loss": -3.686,
+        "payoff": 1.744
+      },
+      "cold": {
+        "n": 17,
+        "mean_excess": 1.498,
+        "win_rate": 0.529,
+        "avg_win": 6.567,
+        "avg_loss": -4.204,
+        "payoff": 1.562
+      },
+      "cold_to_warming": {
+        "n": 9,
+        "mean_excess": 4.503,
+        "win_rate": 0.778,
+        "avg_win": 6.251,
+        "avg_loss": -1.614,
+        "payoff": 3.874
+      }
+    },
+    "cap_auction": {
+      "overall": {
+        "n": 24,
+        "mean_excess": 0.717,
+        "win_rate": 0.417,
+        "avg_win": 5.196,
+        "avg_loss": -2.483,
+        "payoff": 2.093
+      },
+      "cold": {
+        "n": 17,
+        "mean_excess": 0.758,
+        "win_rate": 0.353,
+        "avg_win": 6.325,
+        "avg_loss": -2.278,
+        "payoff": 2.776
+      },
+      "cold_to_warming": {
+        "n": 7,
+        "mean_excess": 0.616,
+        "win_rate": 0.571,
+        "avg_win": 3.503,
+        "avg_loss": -3.233,
+        "payoff": 1.083
+      }
+    }
+  }
+}

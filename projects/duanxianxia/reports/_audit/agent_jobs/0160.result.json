@@ -1,0 +1,19 @@
+{
+  "id": "0160",
+  "script": "scripts/duanxianxia_premarket_retry_verify_0160.py",
+  "args": [],
+  "queued_file": "0160_premarket_retry_verify_20260706.json",
+  "note": "Verify premarket path now installs fetch-retry monkey-patch (auction hardening).",
+  "worker_time": "2026-07-06T14:20:18+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\"job\": \"0160_premarket_retry_verify\", \"v7_runner_import\": \"ok\", \"fetch_methods_total\": 20, \"retry_wrapped_total\": 20, \"all_fetch_methods\": [\"fetch_auction_fengdan\", \"fetch_auction_net_amount\", \"fetch_auction_qiangchou\", \"fetch_auction_vratio\", \"fetch_auction_weimai\", \"fetch_cashflow_10d\", \"fetch_cashflow_3d\", \"fetch_cashflow_5d\", \"fetch_cashflow_today\", \"fetch_home_qxlive_plate_summary\", \"fetch_home_qxlive_top_metrics\", \"fetch_home_ztpool\", \"fetch_hot\", \"fetch_hotlist_day\", \"fetch_review_daily\", \"fetch_review_daily_core11\", \"fetch_review_ltgd_range\", \"fetch_review_plate\", \"fetch_rocket\", \"fetch_surge\"], \"auction_related_methods\": [\"fetch_auction_fengdan\", \"fetch_auction_net_amount\", \"fetch_auction_qiangchou\", \"fetch_auction_vratio\", \"fetch_auction_weimai\"], \"all_wrapped\": true}\n",
+  "stderr_tail": "[premarket_v7_runner] fetch retry patched=20 pw_timeout_floored=3\n",
+  "started": "2026-07-06T14:20:18+08:00",
+  "ended": "2026-07-06T14:20:34+08:00",
+  "duration_s": 15.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_premarket_retry_verify_0160.py"
+  ]
+}

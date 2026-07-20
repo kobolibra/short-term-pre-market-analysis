@@ -1,0 +1,19 @@
+{
+  "id": "0063_kaipan_sector_join_v53_20260627",
+  "script": "scripts/0063_kaipan_sector_join_v53_20260627.py",
+  "args": [],
+  "queued_file": "0063_kaipan_sector_join_v53_20260627.json",
+  "note": "表⑥ home.kaipan.plate.summary 题材join到股票级 IC+分桶分析",
+  "worker_time": "2026-06-27T20:50:02+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "Total date dirs: 22\n",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/0063_kaipan_sector_join_v53_20260627.py\", line 92, in <module>\n    d_obj = Daily(str(PROJECT_ROOT), dd.name)\nTypeError: Daily.__init__() takes 2 positional arguments but 3 were given\n",
+  "started": "2026-06-27T20:50:02+08:00",
+  "ended": "2026-06-27T20:50:02+08:00",
+  "duration_s": 0.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0063_kaipan_sector_join_v53_20260627.py"
+  ]
+}

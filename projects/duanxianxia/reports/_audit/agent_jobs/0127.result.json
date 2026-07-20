@@ -1,0 +1,19 @@
+{
+  "id": "0127",
+  "script": "scripts/duanxianxia_fixc_verify_0127.py",
+  "args": [],
+  "queued_file": "0127_fixc_verify_20260703.json",
+  "note": "Fix C verify: canonicalize_row preserves group; qiangchou grab/qiangchou separated with shared-code differing grab_strength; master grab_strength(grp_grab) vs grab_strength_qiangchou(grp_qiangchou) no overwrite; plus B auction_change_pct coverage on vratio+qiangchou.",
+  "worker_time": "2026-07-03T18:30:46+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "=== FIX C VERIFY 0127 ===\n{\n \"task\": \"0127_fixc_verify\",\n \"ok\": true,\n \"checks\": {\n  \"imports\": \"ok\",\n  \"group_counts\": {\n   \"grab\": 74,\n   \"qiangchou\": 4,\n   \"other\": 0\n  },\n  \"grab_top5\": [\n   {\n    \"code\": \"300666\",\n    \"name\": \"江丰电子\",\n    \"grab_strength\": 7.47\n   },\n   {\n    \"code\": \"300543\",\n    \"name\": \"朗科智能\",\n    \"grab_strength\": 7.06\n   },\n   {\n    \"code\": \"300918\",\n    \"name\": \"南山智尚\",\n    \"grab_strength\": 6.62\n   },\n   {\n    \"code\": \"300751\",\n    \"name\": \"迈为股份\",\n    \"grab_strength\": 6.25\n   },\n   {\n    \"code\": \"301165\",\n    \"name\": \"锐捷网络\",\n    \"grab_strength\": 6.22\n   }\n  ],\n  \"qiangchou_top5\": [\n   {\n    \"code\": \"300543\",\n    \"name\": \"朗科智能\",\n    \"grab_strength\": 7.34\n   },\n   {\n    \"code\": \"920790\",\n    \"name\": \"联迪信息\",\n    \"grab_strength\": 6.94\n   },\n   {\n    \"code\": \"688513\",\n    \"name\": \"苑东生物\",\n    \"grab_strength\": 5.56\n   },\n   {\n    \"code\": \"688702\",\n    \"name\": \"盛科通信-U\",\n    \"grab_strength\": 5.38\n   }\n  ],\n  \"shared_codes\": [\n   {\n    \"code\": \"300543\",\n    \"name\": \"朗科智能\",\n    \"grab\": 7.06,\n    \"qiangchou\": 7.34,\n    \"differ\": true\n   },\n   {\n    \"code\": \"688702\",\n    \"name\": \"盛科通信-U\",\n    \"grab\": 3.97,\n    \"qiangchou\": 5.38,\n    \"differ\": true\n   },\n   {\n    \"code\": \"920790\",\n    \"name\": \"联迪信息\",\n    \"grab\": 2.98,\n    \"qiangchou\": 6.94,\n    \"differ\": true\n   }\n  ],\n  \"qiangchou_auction_change_pct_cov\": \"78/78\",\n  \"vratio_auction_change_pct_cov\": \"138/138\",\n  \"tables_for\": {\n   \"grab_strength\": [\n    \"auction.jjyd.qiangchou.grp_grab\"\n   ],\n   \"grab_strength_qiangchou\": [\n    \"auction.jjyd.qiangchou.grp_qiangchou\"\n   ]\n  },\n  \"load_report_grp\": {\n   \"auction.jjyd.qiangchou.grp_grab\": {\n    \"loaded\": true,\n    \"codes\": 74,\n    \"canonical_err\": 0,\n    \"group_filter\": \"grab\",\n    \"skipped_other_groups\": 4\n   },\n   \"auction.jjyd.qiangchou.grp_qiangchou\": {\n    \"loaded\": true,\n    \"codes\": 4,\n    \"canonical_err\": 0,\n    \"group_filter\": \"qiangchou\",\n    \"skipped_other_groups\": 74\n   }\n  },\n  \"coverage\": {\n   \"grab_strength\": 12.2,\n   \"grab_strength_qiangchou\": 0.7,\n   \"auction_change_pct\": 40.1,\n   \"volume_ratio\": 22.7\n  },\n  \"panel_shared_sample\": {\n   \"code\": \"300543\",\n   \"name\": \"朗科智能\",\n   \"grab_strength\": 7.06,\n   \"grab_strength_qiangchou\": 7.34\n  }\n },\n \"errors\": [],\n \"date_dir\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures/2026-07-03\"\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-03T18:30:46+08:00",
+  "ended": "2026-07-03T18:30:48+08:00",
+  "duration_s": 1.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_fixc_verify_0127.py"
+  ]
+}

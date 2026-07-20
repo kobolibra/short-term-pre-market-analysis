@@ -1,0 +1,19 @@
+{
+  "id": "0090",
+  "script": "scripts/duanxianxia_canonical.py",
+  "args": [],
+  "queued_file": "0090.json",
+  "note": "Task 0090: install + verify transform-1 canonical layer. Running the module executes _self_test() on import against job 0089 real samples (多氟多/002407 cross-table anchor + mislabel/caliber guards); rc=0 = all assertions pass. READ-ONLY, no writes, no push.",
+  "worker_time": "2026-06-30T11:10:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "duanxianxia_canonical self-test: PASS\ndatasets: auction.jjyd.vratio, auction.jjyd.qiangchou, auction.jjyd.net_amount, auction.jjyd.weimai, pool.surge, pool.hot\n",
+  "stderr_tail": "",
+  "started": "2026-06-30T11:10:05+08:00",
+  "ended": "2026-06-30T11:10:05+08:00",
+  "duration_s": 0.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_canonical.py"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "daily_2026-06-30_v16_strategy",
+  "script": "scripts/v16_strategy.py",
+  "args": [
+    "--top-n",
+    "30",
+    "--min-train",
+    "5"
+  ],
+  "queued_file": "daily_2026-06-30_v16_strategy.json",
+  "note": "daily auto-refresh 2026-06-30",
+  "worker_time": "2026-06-30T00:22:56+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_eligible_days\": 16,\n  \"partA_fixed\": {\n    \"0.0\": {\n      \"capture\": 0.156,\n      \"mean_excess\": 1.415,\n      \"win_rate\": 0.512,\n      \"mean_t1high\": 5.852\n    },\n    \"0.25\": {\n      \"capture\": 0.148,\n      \"mean_excess\": 1.336,\n      \"win_rate\": 0.494,\n      \"mean_t1high\": 5.766\n    },\n    \"0.5\": {\n      \"capture\": 0.163,\n      \"mean_excess\": 1.531,\n      \"win_rate\": 0.496,\n      \"mean_t1high\": 6.124\n    },\n    \"0.75\": {\n      \"capture\": 0.169,\n      \"mean_excess\": 1.164,\n      \"win_rate\": 0.492,\n      \"mean_t1high\": 6.228\n    },\n    \"1.0\": {\n      \"capture\": 0.163,\n      \"mean_excess\": 1.203,\n      \"win_rate\": 0.494,\n      \"mean_t1high\": 6.568\n    }\n  },\n  \"partA_walk_forward\": {\n    \"n_test_days\": 11,\n    \"alpha_usage\": {\n      \"0.0\": 0,\n      \"0.25\": 0,\n      \"0.5\": 1,\n      \"0.75\": 8,\n      \"1.0\": 2\n    },\n    \"capture\": 0.158,\n    \"mean_excess\": 1.629,\n    \"win_rate\": 0.5,\n    \"mean_t1high\": 6.969\n  },\n  \"partB_exit_edge_target\": {\n    \"3.0\": {\n      \"n\": 431,\n      \"mean\": -0.488,\n      \"median\": 3.0,\n      \"win_rate\": 0.647,\n      \"odds\": 0.43,\n      \"p90\": 3.0,\n      \"p10\": -8.42\n    },\n    \"5.0\": {\n      \"n\": 431,\n      \"mean\": 0.254,\n      \"median\": 5.0,\n      \"win_rate\": 0.606,\n      \"odds\": 0.71,\n      \"p90\": 5.0,\n      \"p10\": -8.58\n    },\n    \"8.0\": {\n      \"n\": 431,\n      \"mean\": 0.983,\n      \"median\": 2.165,\n      \"win_rate\": 0.578,\n      \"odds\": 1.01,\n      \"p90\": 8.0,\n      \"p10\": -8.6\n    },\n    \"10.0\": {\n      \"n\": 431,\n      \"mean\": 1.271,\n      \"median\": 1.636,\n      \"win_rate\": 0.568,\n      \"odds\": 1.13,\n      \"p90\": 10.0,\n      \"p10\": -8.6\n    },\n    \"12.0\": {\n      \"n\": 431,\n      \"mean\": 1.347,\n      \"median\": 1.371,\n      \"win_rate\": 0.559,\n      \"odds\": 1.19,\n      \"p90\": 12.0,\n      \"p10\": -8.6\n    }\n  },\n  \"partB_baseline_edge\": {\n    \"n\": 431,\n    \"mean\": 1.806,\n    \"median\": 1.368,\n    \"win_rate\": 0.557,\n    \"odds\": 1.34,\n    \"p90\": 13.27,\n    \"p10\": -8.6\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-30T00:22:56+08:00",
+  "ended": "2026-06-30T00:30:03+08:00",
+  "duration_s": 426.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v16_strategy.py",
+    "--top-n",
+    "30",
+    "--min-train",
+    "5"
+  ]
+}

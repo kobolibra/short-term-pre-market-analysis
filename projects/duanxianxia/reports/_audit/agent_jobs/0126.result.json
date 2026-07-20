@@ -1,0 +1,19 @@
+{
+  "id": "0126",
+  "script": "scripts/duanxianxia_fixb_verify_0126.py",
+  "args": [],
+  "queued_file": "0126_fixb_verify_20260703.json",
+  "note": "Verify Fix B: import canonical/routing/master (self-tests) + re-derive today vratio/qiangchou auction_change_pct coverage through routing (expect ~100% via raw[8] fallback).",
+  "worker_time": "2026-07-03T16:50:10+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"job\": \"0126\",\n  \"target\": \"2026-07-03\",\n  \"imports\": \"ok (canonical/routing/master self-tests passed on import)\",\n  \"n_datasets\": 16,\n  \"auction_change_pct_after_fix\": {\n    \"auction.jjyd.vratio\": {\n      \"n\": 138,\n      \"auction_change_pct_nonnull\": 138,\n      \"cov_pct\": 100.0,\n      \"sample\": [\n        {\n          \"code\": \"002292\",\n          \"name\": \"奥飞娱乐\",\n          \"auction_change_pct\": 9.96\n        },\n        {\n          \"code\": \"300543\",\n          \"name\": \"朗科智能\",\n          \"auction_change_pct\": 11.22\n        },\n        {\n          \"code\": \"600376\",\n          \"name\": \"首开股份\",\n          \"auction_change_pct\": 10.12\n        },\n        {\n          \"code\": \"002066\",\n          \"name\": \"瑞泰科技\",\n          \"auction_change_pct\": 6.84\n        },\n        {\n          \"code\": \"301503\",\n          \"name\": \"智迪科技\",\n          \"auction_change_pct\": 1.49\n        }\n      ]\n    },\n    \"auction.jjyd.qiangchou\": {\n      \"n\": 78,\n      \"auction_change_pct_nonnull\": 78,\n      \"cov_pct\": 100.0,\n      \"sample\": [\n        {\n          \"code\": \"300666\",\n          \"name\": \"江丰电子\",\n          \"auction_change_pct\": 1.73\n        },\n        {\n          \"code\": \"300543\",\n          \"name\": \"朗科智能\",\n          \"auction_change_pct\": 11.22\n        },\n        {\n          \"code\": \"300918\",\n          \"name\": \"南山智尚\",\n          \"auction_change_pct\": 1.18\n        },\n        {\n          \"code\": \"300751\",\n          \"name\": \"迈为股份\",\n          \"auction_change_pct\": 2.0\n        },\n        {\n          \"code\": \"301165\",\n          \"name\": \"锐捷网络\",\n          \"auction_change_pct\": 20.0\n        }\n      ]\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-03T16:50:10+08:00",
+  "ended": "2026-07-03T16:50:10+08:00",
+  "duration_s": 0.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_fixb_verify_0126.py"
+  ]
+}

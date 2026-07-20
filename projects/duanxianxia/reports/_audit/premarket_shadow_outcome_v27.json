@@ -1,0 +1,556 @@
+{
+  "generated_at": "2026-07-20T15:00:26",
+  "date": "2026-07-10",
+  "analysis_file": "reports/2026-07-10/premarket/172804_analysis_v9.json",
+  "n_candidates": 371,
+  "same_day_sparse_top5": {
+    "excess": {
+      "n": 5,
+      "mean": -3.725,
+      "median": -2.724,
+      "win_rate": 0.0,
+      "odds": 0.0,
+      "sum": -18.6248,
+      "min": -8.3936,
+      "max": 0.0
+    },
+    "hold_open_t1close": {
+      "n": 5,
+      "mean": -9.6387,
+      "median": -9.1329,
+      "win_rate": 0.0,
+      "odds": 0.0,
+      "sum": -48.1936,
+      "min": -14.5843,
+      "max": -4.4399
+    },
+    "items": [
+      {
+        "code": "001399",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 98.086,
+        "v10_amt": 88.181,
+        "excess": -5.1349,
+        "hold_open_t1close": -14.5604,
+        "latest_change_pct": 1.17
+      },
+      {
+        "code": "002536",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 97.927,
+        "v10_amt": 89.305,
+        "excess": -2.3724,
+        "hold_open_t1close": -9.1329,
+        "latest_change_pct": 2.66
+      },
+      {
+        "code": "002841",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 97.546,
+        "v10_amt": 82.836,
+        "excess": -2.724,
+        "hold_open_t1close": -5.4761,
+        "latest_change_pct": 3.34
+      },
+      {
+        "code": "002709",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 96.468,
+        "v10_amt": 83.436,
+        "excess": -8.3936,
+        "hold_open_t1close": -14.5843,
+        "latest_change_pct": 5.02
+      },
+      {
+        "code": "002414",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 96.427,
+        "v10_amt": 89.793,
+        "excess": 0.0,
+        "hold_open_t1close": -4.4399,
+        "latest_change_pct": 9.99
+      }
+    ]
+  },
+  "aggressive_v10_top3": {
+    "excess": {
+      "n": 3,
+      "mean": -2.5024,
+      "median": -2.3724,
+      "win_rate": 0.0,
+      "odds": 0.0,
+      "sum": -7.5072,
+      "min": -5.1349,
+      "max": 0.0
+    },
+    "hold_open_t1close": {
+      "n": 3,
+      "mean": -9.3777,
+      "median": -9.1329,
+      "win_rate": 0.0,
+      "odds": 0.0,
+      "sum": -28.1332,
+      "min": -14.5604,
+      "max": -4.4399
+    },
+    "items": [
+      {
+        "code": "002414",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 96.427,
+        "v10_amt": 89.793,
+        "excess": 0.0,
+        "hold_open_t1close": -4.4399,
+        "latest_change_pct": 9.99
+      },
+      {
+        "code": "002536",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 97.927,
+        "v10_amt": 89.305,
+        "excess": -2.3724,
+        "hold_open_t1close": -9.1329,
+        "latest_change_pct": 2.66
+      },
+      {
+        "code": "001399",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 98.086,
+        "v10_amt": 88.181,
+        "excess": -5.1349,
+        "hold_open_t1close": -14.5604,
+        "latest_change_pct": 1.17
+      }
+    ]
+  },
+  "t1_hold_v10_top30": {
+    "excess": {
+      "n": 30,
+      "mean": 2.2709,
+      "median": -0.4125,
+      "win_rate": 0.4333,
+      "odds": 2.075,
+      "sum": 68.1267,
+      "min": -16.4719,
+      "max": 58.8496
+    },
+    "hold_open_t1close": {
+      "n": 29,
+      "mean": -4.6029,
+      "median": -6.4282,
+      "win_rate": 0.3103,
+      "odds": 0.874,
+      "sum": -133.485,
+      "min": -25.2642,
+      "max": 18.1818
+    },
+    "items": [
+      {
+        "code": "002414",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 96.427,
+        "v10_amt": 89.793,
+        "excess": 0.0,
+        "hold_open_t1close": -4.4399,
+        "latest_change_pct": 9.99
+      },
+      {
+        "code": "002536",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 97.927,
+        "v10_amt": 89.305,
+        "excess": -2.3724,
+        "hold_open_t1close": -9.1329,
+        "latest_change_pct": 2.66
+      },
+      {
+        "code": "001399",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 98.086,
+        "v10_amt": 88.181,
+        "excess": -5.1349,
+        "hold_open_t1close": -14.5604,
+        "latest_change_pct": 1.17
+      },
+      {
+        "code": "002185",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 95.849,
+        "v10_amt": 86.024,
+        "excess": -3.3291,
+        "hold_open_t1close": -7.5479,
+        "latest_change_pct": 9.99
+      },
+      {
+        "code": "301583",
+        "action": "BUY",
+        "risk_flag": true,
+        "sparse_ic": 93.616,
+        "v10_amt": 85.204,
+        "excess": 58.8496,
+        "hold_open_t1close": 9.0462,
+        "latest_change_pct": 800.0
+      },
+      {
+        "code": "000628",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 94.4,
+        "v10_amt": 85.053,
+        "excess": 1.2873,
+        "hold_open_t1close": -6.4282,
+        "latest_change_pct": -6.55
+      },
+      {
+        "code": "002709",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 96.468,
+        "v10_amt": 83.436,
+        "excess": -8.3936,
+        "hold_open_t1close": -14.5843,
+        "latest_change_pct": 5.02
+      },
+      {
+        "code": "002841",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 97.546,
+        "v10_amt": 82.836,
+        "excess": -2.724,
+        "hold_open_t1close": -5.4761,
+        "latest_change_pct": 3.34
+      },
+      {
+        "code": "301117",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 86.27,
+        "v10_amt": 80.504,
+        "excess": 26.1975,
+        "hold_open_t1close": 14.1236,
+        "latest_change_pct": -6.21
+      },
+      {
+        "code": "002490",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 89.2,
+        "v10_amt": 80.439,
+        "excess": 4.824,
+        "hold_open_t1close": 12.9959,
+        "latest_change_pct": -4.69
+      },
+      {
+        "code": "002115",
+        "action": "WATCH",
+        "risk_flag": true,
+        "sparse_ic": 95.384,
+        "v10_amt": 79.063,
+        "excess": 0.0,
+        "hold_open_t1close": 5.9361,
+        "latest_change_pct": 10.05
+      },
+      {
+        "code": "688432",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 92.946,
+        "v10_amt": 78.963,
+        "excess": 7.9784,
+        "hold_open_t1close": -6.1365,
+        "latest_change_pct": -2.72
+      },
+      {
+        "code": "002579",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 96.341,
+        "v10_amt": 78.802,
+        "excess": -4.8173,
+        "hold_open_t1close": -14.1859,
+        "latest_change_pct": 3.05
+      },
+      {
+        "code": "300821",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 90.932,
+        "v10_amt": 77.627,
+        "excess": -7.814,
+        "hold_open_t1close": -25.2642,
+        "latest_change_pct": -3.3
+      },
+      {
+        "code": "000938",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 93.365,
+        "v10_amt": 77.032,
+        "excess": 6.1939,
+        "hold_open_t1close": 6.0773,
+        "latest_change_pct": 1.46
+      },
+      {
+        "code": "000070",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 94.211,
+        "v10_amt": 76.855,
+        "excess": -0.8251,
+        "hold_open_t1close": -10.7438,
+        "latest_change_pct": -0.17
+      },
+      {
+        "code": "000977",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 89.584,
+        "v10_amt": 76.423,
+        "excess": -2.8841,
+        "hold_open_t1close": -7.0761,
+        "latest_change_pct": 6.99
+      },
+      {
+        "code": "003005",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 82.47,
+        "v10_amt": 75.601,
+        "excess": 8.9182,
+        "hold_open_t1close": null,
+        "latest_change_pct": -4.54
+      },
+      {
+        "code": "300164",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 90.157,
+        "v10_amt": 75.445,
+        "excess": 4.4662,
+        "hold_open_t1close": 12.1893,
+        "latest_change_pct": -7.95
+      },
+      {
+        "code": "688797",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 85.478,
+        "v10_amt": 74.287,
+        "excess": -16.4719,
+        "hold_open_t1close": -22.2788,
+        "latest_change_pct": 2.91
+      },
+      {
+        "code": "603083",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 80.886,
+        "v10_amt": 73.686,
+        "excess": -9.797,
+        "hold_open_t1close": -15.3326,
+        "latest_change_pct": 8.36
+      },
+      {
+        "code": "000021",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 91.351,
+        "v10_amt": 73.172,
+        "excess": -3.5028,
+        "hold_open_t1close": -12.9593,
+        "latest_change_pct": 6.47
+      },
+      {
+        "code": "002747",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 90.362,
+        "v10_amt": 72.987,
+        "excess": 5.8753,
+        "hold_open_t1close": -4.5612,
+        "latest_change_pct": -2.87
+      },
+      {
+        "code": "300522",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 83.576,
+        "v10_amt": 72.377,
+        "excess": -3.3195,
+        "hold_open_t1close": -14.4119,
+        "latest_change_pct": -6.07
+      },
+      {
+        "code": "600360",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 90.759,
+        "v10_amt": 72.332,
+        "excess": 6.3164,
+        "hold_open_t1close": 7.858,
+        "latest_change_pct": -1.31
+      },
+      {
+        "code": "002192",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 87.605,
+        "v10_amt": 71.491,
+        "excess": -3.6049,
+        "hold_open_t1close": -2.1622,
+        "latest_change_pct": -6.4
+      },
+      {
+        "code": "002384",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 86.657,
+        "v10_amt": 71.295,
+        "excess": -10.3589,
+        "hold_open_t1close": -12.1283,
+        "latest_change_pct": 3.08
+      },
+      {
+        "code": "001365",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 82.724,
+        "v10_amt": 70.818,
+        "excess": 10.6253,
+        "hold_open_t1close": 0.0667,
+        "latest_change_pct": -5.01
+      },
+      {
+        "code": "000078",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 81.357,
+        "v10_amt": 70.566,
+        "excess": 6.9892,
+        "hold_open_t1close": 18.1818,
+        "latest_change_pct": -5.38
+      },
+      {
+        "code": "301099",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 87.684,
+        "v10_amt": 70.135,
+        "excess": 4.9548,
+        "hold_open_t1close": -10.5495,
+        "latest_change_pct": -1.98
+      }
+    ]
+  },
+  "sparse_top5_risk_true": {
+    "excess": {
+      "n": 1,
+      "mean": 0.0,
+      "median": 0.0,
+      "win_rate": 0.0,
+      "odds": null,
+      "sum": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "hold_open_t1close": {
+      "n": 1,
+      "mean": -4.4399,
+      "median": -4.4399,
+      "win_rate": 0.0,
+      "odds": 0.0,
+      "sum": -4.4399,
+      "min": -4.4399,
+      "max": -4.4399
+    },
+    "items": [
+      {
+        "code": "002414",
+        "action": "DROP",
+        "risk_flag": true,
+        "sparse_ic": 96.427,
+        "v10_amt": 89.793,
+        "excess": 0.0,
+        "hold_open_t1close": -4.4399,
+        "latest_change_pct": 9.99
+      }
+    ]
+  },
+  "sparse_top5_risk_false": {
+    "excess": {
+      "n": 4,
+      "mean": -4.6562,
+      "median": -3.9294,
+      "win_rate": 0.0,
+      "odds": 0.0,
+      "sum": -18.6248,
+      "min": -8.3936,
+      "max": -2.3724
+    },
+    "hold_open_t1close": {
+      "n": 4,
+      "mean": -10.9384,
+      "median": -11.8466,
+      "win_rate": 0.0,
+      "odds": 0.0,
+      "sum": -43.7537,
+      "min": -14.5843,
+      "max": -5.4761
+    },
+    "items": [
+      {
+        "code": "001399",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 98.086,
+        "v10_amt": 88.181,
+        "excess": -5.1349,
+        "hold_open_t1close": -14.5604,
+        "latest_change_pct": 1.17
+      },
+      {
+        "code": "002536",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 97.927,
+        "v10_amt": 89.305,
+        "excess": -2.3724,
+        "hold_open_t1close": -9.1329,
+        "latest_change_pct": 2.66
+      },
+      {
+        "code": "002841",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 97.546,
+        "v10_amt": 82.836,
+        "excess": -2.724,
+        "hold_open_t1close": -5.4761,
+        "latest_change_pct": 3.34
+      },
+      {
+        "code": "002709",
+        "action": "WATCH",
+        "risk_flag": false,
+        "sparse_ic": 96.468,
+        "v10_amt": 83.436,
+        "excess": -8.3936,
+        "hold_open_t1close": -14.5843,
+        "latest_change_pct": 5.02
+      }
+    ]
+  }
+}

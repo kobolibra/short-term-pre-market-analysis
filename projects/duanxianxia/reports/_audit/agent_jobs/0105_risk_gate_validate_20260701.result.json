@@ -1,0 +1,19 @@
+{
+  "id": "0105_risk_gate_validate_20260701",
+  "script": "scripts/duanxianxia_0105_risk_gate_validate_20260701.py",
+  "args": [],
+  "queued_file": "0105_risk_gate_validate_20260701.json",
+  "note": "0105: validate high-position/连板/前一日炸败 risk gate (v9_edge, commit d308390d) on 2026-07-01 REAL data. Re-runs v9 engine --no-write --json (NO webhook/bitable push), runs v9_edge self-test, dumps 002674 full row (edge_score/action/risk_flag/risk_detail/context_detail) to prove veto/flag. Read-only wrt production output.",
+  "worker_time": "2026-07-01T19:10:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "[0105] start 2026-07-01T19:10:07.076969+08:00\n[0105] SUMMARY_JSON_BEGIN\n{\n  \"job\": \"0105_risk_gate_validate\",\n  \"date\": \"2026-07-01\",\n  \"target\": \"002674\",\n  \"edge_self_test_rc\": 0,\n  \"edge_self_test_tail\": \"v9_edge _self_test passed\\nv9_edge high-position risk gate _self_test passed\\n\",\n  \"runner_rc\": 0,\n  \"runner_stderr_tail\": \"[data_loader WARN] No home.qxlive.top_metrics capture at 2026-07-01 <= 093300; refusing after-cutoff fallback to avoid lookahead\\n\",\n  \"candidate_count\": 400,\n  \"buy_count\": 1,\n  \"buy_codes\": [\n    \"002674\"\n  ],\n  \"target_in_buy\": true,\n  \"target_row\": {\n    \"edge_score\": 100.0,\n    \"score\": null,\n    \"action_type\": \"BUY\",\n    \"alpha_type\": \"LOW_OPEN_REVERSAL\",\n    \"risk_flag\": false,\n    \"risk_detail\": {},\n    \"risk_penalty\": null,\n    \"reasons\": [],\n    \"risks\": [],\n    \"context_detail\": {\n      \"t1_zt_board_label\": null,\n      \"t1_in_ztpool\": null,\n      \"ztpool_raw\": null,\n      \"market_longtou_height\": null,\n      \"cashflow_continuity\": null\n    }\n  },\n  \"gate_fired\": false,\n  \"verdict\": \"STILL_BUY\"\n}\n[0105] SUMMARY_JSON_END\n",
+  "stderr_tail": "",
+  "started": "2026-07-01T19:10:07+08:00",
+  "ended": "2026-07-01T19:10:12+08:00",
+  "duration_s": 5.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0105_risk_gate_validate_20260701.py"
+  ]
+}

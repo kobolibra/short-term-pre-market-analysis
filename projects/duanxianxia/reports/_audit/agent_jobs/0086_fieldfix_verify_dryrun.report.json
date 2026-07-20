@@ -1,0 +1,604 @@
+{
+  "job": "0086_fieldfix_verify_dryrun",
+  "generated_at": "2026-06-29T10:30:07.712312",
+  "workspace": "/home/investmentofficehku/.openclaw/workspace",
+  "script_dir": "/home/investmentofficehku/.openclaw/workspace/scripts",
+  "live_probe": {
+    "hotlist_json": {
+      "url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+      "top_level": {
+        "stock_topic": {
+          "__list_len__": 14,
+          "__elem0__": "dict"
+        },
+        "skyrocket_hour": {
+          "__list_len__": 100,
+          "__elem0__": "dict"
+        },
+        "hot_stock_day": {
+          "__list_len__": 100,
+          "__elem0__": "dict"
+        },
+        "hot_stock_hour": {
+          "__list_len__": 100,
+          "__elem0__": "dict"
+        },
+        "hotkeyword": {
+          "__list_len__": 33,
+          "__elem0__": "dict"
+        }
+      },
+      "top_level_keys": [
+        "stock_topic",
+        "skyrocket_hour",
+        "hot_stock_day",
+        "hot_stock_hour",
+        "hotkeyword"
+      ],
+      "list_keys": {
+        "stock_topic": {
+          "len": 14,
+          "elem0": {
+            "code": null,
+            "name": null,
+            "rate": "str[6]:729569",
+            "rank": null,
+            "title": "str[18]:3.5万芯片工厂投资！韩企史上最大！",
+            "url": "str[74]:https://mams.10jqka.com.cn/new/server/ht",
+            "type": "str[11]:stock_topic"
+          }
+        },
+        "skyrocket_hour": {
+          "len": 100,
+          "elem0": {
+            "code": "str[6]:601636",
+            "name": "str[4]:旗滨集团",
+            "rate": "str[5]:10633",
+            "rank": "str[1]:1",
+            "title": null,
+            "url": null,
+            "type": "str[14]:skyrocket_hour"
+          }
+        },
+        "hot_stock_day": {
+          "len": 100,
+          "elem0": {
+            "code": "str[6]:000725",
+            "name": "str[4]:京东方A",
+            "rate": "str[8]:59859383",
+            "rank": "str[1]:1",
+            "title": null,
+            "url": null,
+            "type": "str[13]:hot_stock_day"
+          }
+        },
+        "hot_stock_hour": {
+          "len": 100,
+          "elem0": {
+            "code": "str[6]:000725",
+            "name": "str[4]:京东方A",
+            "rate": "str[7]:1840772",
+            "rank": "str[1]:1",
+            "title": null,
+            "url": null,
+            "type": "str[14]:hot_stock_hour"
+          }
+        },
+        "hotkeyword": {
+          "len": 33,
+          "elem0": {
+            "keyword": "str[3]:磷化铟",
+            "count": "str[2]:25"
+          }
+        }
+      }
+    },
+    "hot": {
+      "url": "https://duanxianxia.com/data/getFxPoolData/",
+      "shape": {
+        "list": {
+          "__list_len__": 30,
+          "__elem0__": "list"
+        },
+        "count": {
+          "zt": "int",
+          "lb": "int",
+          "zb": "int",
+          "dt": "int",
+          "cz": "int",
+          "dm": "int",
+          "fx": "int",
+          "limit_up_count": "dict",
+          "limit_down_count": "dict"
+        }
+      },
+      "row0_len": 12,
+      "rows_indexed": [
+        {
+          "0": "300260",
+          "1": "新莱应材",
+          "2": "11.52",
+          "3": "",
+          "4": "",
+          "5": "",
+          "6": "洁净室+光刻胶",
+          "7": "",
+          "8": 4898044392,
+          "9": 18636856370,
+          "10": 58794497,
+          "11": 27.09
+        },
+        {
+          "0": "000021",
+          "1": "深科技",
+          "2": "10.00",
+          "3": "",
+          "4": "",
+          "5": "",
+          "6": "存储+汽车类",
+          "7": "4天2板",
+          "8": 13770298101,
+          "9": 60954256635,
+          "10": 1299867973,
+          "11": 23.14
+        }
+      ]
+    },
+    "surge": {
+      "url": "https://duanxianxia.com/data/getCzPoolData/",
+      "shape": {
+        "list": {
+          "__list_len__": 32,
+          "__elem0__": "list"
+        },
+        "count": {
+          "zt": "int",
+          "lb": "int",
+          "zb": "int",
+          "dt": "int",
+          "cz": "int",
+          "dm": "int",
+          "fx": "int",
+          "limit_up_count": "dict",
+          "limit_down_count": "dict"
+        }
+      },
+      "row0_len": 11,
+      "rows_indexed": [
+        {
+          "0": "300706",
+          "1": "阿石创",
+          "2": 19.06,
+          "3": "",
+          "4": "",
+          "5": "",
+          "6": "靶材+OLED",
+          "7": "",
+          "8": 2818792500,
+          "9": 10458750800,
+          "10": 30.06
+        },
+        {
+          "0": "300024",
+          "1": "机器人",
+          "2": 18.92,
+          "3": "",
+          "4": "",
+          "5": "",
+          "6": "机器人概念+激光",
+          "7": "",
+          "8": 2651134400,
+          "9": 28329934000,
+          "10": 10.09
+        }
+      ]
+    },
+    "realtime_quotes": {
+      "method_present": true,
+      "returned": {
+        "600519": {
+          "latest_change_pct": "str"
+        }
+      },
+      "captured_url": "https://qt.gtimg.cn/q=sh600519",
+      "captured_exception": null,
+      "note": "if captured_url contains literal { } braces, the f-string URL bug is confirmed"
+    }
+  },
+  "static_needles": {
+    "file": "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_fetcher.py",
+    "file_lines": 2485,
+    "file_bytes": 101359,
+    "needles": {
+      "data.get(\"hot_stock_day\"": {
+        "count": 1,
+        "lines": [
+          531
+        ],
+        "contexts": [
+          {
+            "line": 531,
+            "context": "    def fetch_hotlist_day(self) -> FetchResult:\n        data = self._get_json(f\"{X_BASE}/vendor/stockdata/hotlist.json\")\n        items = data.get(\"hot_stock_day\", []) or []\n        rows = [\n            {"
+          }
+        ]
+      },
+      "data.get('hot_stock_day'": {
+        "count": 0,
+        "lines": [],
+        "contexts": []
+      },
+      "hot_stock_day": {
+        "count": 3,
+        "lines": [
+          58,
+          531,
+          547
+        ],
+        "contexts": [
+          {
+            "line": 58,
+            "context": "    },\n    \"hotlist_day\": {\n        \"id\": \"rank.hot_stock_day\",\n        \"label\": \"热度榜（日）\",\n        \"path\": \"热度榜/日\","
+          },
+          {
+            "line": 531,
+            "context": "    def fetch_hotlist_day(self) -> FetchResult:\n        data = self._get_json(f\"{X_BASE}/vendor/stockdata/hotlist.json\")\n        items = data.get(\"hot_stock_day\", []) or []\n        rows = [\n            {"
+          },
+          {
+            "line": 547,
+            "context": "            meta={\n                \"source\": f\"{X_BASE}/vendor/stockdata/hotlist.json\",\n                \"field\": \"hot_stock_day\",\n                \"count\": len(rows),\n            },"
+          }
+        ]
+      },
+      "data.get(\"skyrocket_hour\"": {
+        "count": 1,
+        "lines": [
+          465
+        ],
+        "contexts": [
+          {
+            "line": 465,
+            "context": "    def fetch_rocket(self) -> FetchResult:\n        data = self._get_json(f\"{X_BASE}/vendor/stockdata/hotlist.json\")\n        items = data.get(\"skyrocket_hour\", [])\n        rows = [\n            {"
+          }
+        ]
+      },
+      "skyrocket_hour": {
+        "count": 2,
+        "lines": [
+          465,
+          481
+        ],
+        "contexts": [
+          {
+            "line": 465,
+            "context": "    def fetch_rocket(self) -> FetchResult:\n        data = self._get_json(f\"{X_BASE}/vendor/stockdata/hotlist.json\")\n        items = data.get(\"skyrocket_hour\", [])\n        rows = [\n            {"
+          },
+          {
+            "line": 481,
+            "context": "            meta={\n                \"source\": f\"{X_BASE}/vendor/stockdata/hotlist.json\",\n                \"field\": \"skyrocket_hour\",\n                \"count\": len(rows),\n            },"
+          }
+        ]
+      },
+      "qt.gtimg.cn/q=": {
+        "count": 1,
+        "lines": [
+          2189
+        ],
+        "contexts": [
+          {
+            "line": 2189,
+            "context": "            batch = unique_codes[i : i + 60]\n            symbols = \",\".join(f\"{market_prefix(code)}{code}\" for code in batch)\n            url = f\"https://qt.gtimg.cn/q={symbols}\"\n            resp = self.session.get(\n                url,"
+          }
+        ]
+      },
+      "float(item[8])/float(item[9])": {
+        "count": 0,
+        "lines": [],
+        "contexts": []
+      },
+      "float(item[8]) / float(item[9])": {
+        "count": 1,
+        "lines": [
+          563
+        ],
+        "contexts": [
+          {
+            "line": 563,
+            "context": "            if len(item) > 9 and item[9]:\n                try:\n                    turnover_ratio = f\"{(float(item[8]) / float(item[9]) * 100):.2f}%\"\n                except Exception:\n                    turnover_ratio = \"\""
+          }
+        ]
+      },
+      "getFxPoolData": {
+        "count": 2,
+        "lines": [
+          487,
+          522
+        ],
+        "contexts": [
+          {
+            "line": 487,
+            "context": "\n    def fetch_hot(self, sort: str = \"\") -> FetchResult:\n        data = self._post_json(f\"{BASE}/data/getFxPoolData/{sort}\")\n        items = data.get(\"list\", []) or []\n        rows: List[Dict[str, Any]] = []"
+          },
+          {
+            "line": 522,
+            "context": "            rows=rows,\n            meta={\n                \"source\": f\"{BASE}/data/getFxPoolData/{sort}\",\n                \"field\": \"list\",\n                \"count\": len(rows),"
+          }
+        ]
+      },
+      "getCzPoolData": {
+        "count": 2,
+        "lines": [
+          553,
+          587
+        ],
+        "contexts": [
+          {
+            "line": 553,
+            "context": "\n    def fetch_surge(self, sort: str = \"\") -> FetchResult:\n        data = self._post_json(f\"{BASE}/data/getCzPoolData/{sort}\")\n        items = data.get(\"list\", []) or []\n        rows: List[Dict[str, Any]] = []"
+          },
+          {
+            "line": 587,
+            "context": "            rows=rows,\n            meta={\n                \"source\": f\"{BASE}/data/getCzPoolData/{sort}\",\n                \"field\": \"list\",\n                \"count\": len(rows),"
+          }
+        ]
+      },
+      "jinjidata.json": {
+        "count": 2,
+        "lines": [
+          306,
+          452
+        ],
+        "contexts": [
+          {
+            "line": 306,
+            "context": "                result = page.evaluate(\n                    \"\"\"async () => {\n                        const resp = await fetch('/vendor/stockdata/jinjidata.json', { credentials: 'include' });\n                        const text = await resp.text();\n                        const dateText = (document.querySelector('#jinjidate')?.innerText || '').trim();"
+          },
+          {
+            "line": 452,
+            "context": "            rows=rows,\n            meta={\n                'source': f'{page_url} + /vendor/stockdata/jinjidata.json',\n                'field': 'jinjidata.html',\n                'count': len(rows),"
+          }
+        ]
+      },
+      "+ /vendor/stockdata/jinjidata.json": {
+        "count": 1,
+        "lines": [
+          452
+        ],
+        "contexts": [
+          {
+            "line": 452,
+            "context": "            rows=rows,\n            meta={\n                'source': f'{page_url} + /vendor/stockdata/jinjidata.json',\n                'field': 'jinjidata.html',\n                'count': len(rows),"
+          }
+        ]
+      },
+      "item[7]": {
+        "count": 7,
+        "lines": [
+          1684,
+          1728,
+          1763,
+          1774,
+          1881,
+          1882,
+          1882
+        ],
+        "contexts": [
+          {
+            "line": 1684,
+            "context": "                    \"latest_change_pct\": item[5],\n                    \"auction_turnover_wan\": item[6],\n                    \"concept\": item[7],\n                    \"auction_change_pct_text\": item[8],\n                    \"auction_turnover_wan_text\": item[9],"
+          },
+          {
+            "line": 1728,
+            "context": "                        \"latest_change_pct\": item[5],\n                        \"auction_turnover_wan\": item[6],\n                        \"concept\": item[7],\n                        \"auction_change_pct_text\": item[8],\n                        \"auction_turnover_wan_text\": item[9],"
+          },
+          {
+            "line": 1763,
+            "context": "        rows = []\n        for idx, item in enumerate(items, start=1):\n            concept_1, concept_2 = self._split_pipe_concepts(item[7] if len(item) > 7 else \"\")\n            rows.append(\n                {"
+          },
+          {
+            "line": 1774,
+            "context": "                    \"auction_turnover_wan\": item[5],\n                    \"market_cap_yi\": item[6],\n                    \"concept\": item[7],\n                    \"turnover_rate_pct\": item[8],\n                    \"concept_1\": concept_1,"
+          },
+          {
+            "line": 1881,
+            "context": "                    \"main_net_inflow_wan\": round(float(item[6]) / 10000, 2) if item[6] not in (None, \"\") else None,\n                    \"main_net_inflow_text\": self._format_qxlive_amount(item[6], yi_digits=1, wan_digits=0) if item[6] not in (None, \"\") else \"\",\n                    \"turnover_rate_pct\": item[7],\n                    \"turnover_rate_pct_text\": f\"{item[7]}%\" if len(item) > 7 and item[7] not in (None, \"\") else \"\",\n                    \"seal_volume\": item[8],"
+          },
+          {
+            "line": 1882,
+            "context": "                    \"main_net_inflow_text\": self._format_qxlive_amount(item[6], yi_digits=1, wan_digits=0) if item[6] not in (None, \"\") else \"\",\n                    \"turnover_rate_pct\": item[7],\n                    \"turnover_rate_pct_text\": f\"{item[7]}%\" if len(item) > 7 and item[7] not in (None, \"\") else \"\",\n                    \"seal_volume\": item[8],\n                    \"auction_amount\": item[9],"
+          }
+        ]
+      },
+      "def fetch_hot": {
+        "count": 2,
+        "lines": [
+          486,
+          529
+        ],
+        "contexts": [
+          {
+            "line": 486,
+            "context": "        )\n\n    def fetch_hot(self, sort: str = \"\") -> FetchResult:\n        data = self._post_json(f\"{BASE}/data/getFxPoolData/{sort}\")\n        items = data.get(\"list\", []) or []"
+          },
+          {
+            "line": 529,
+            "context": "        )\n\n    def fetch_hotlist_day(self) -> FetchResult:\n        data = self._get_json(f\"{X_BASE}/vendor/stockdata/hotlist.json\")\n        items = data.get(\"hot_stock_day\", []) or []"
+          }
+        ]
+      },
+      "def fetch_surge": {
+        "count": 1,
+        "lines": [
+          552
+        ],
+        "contexts": [
+          {
+            "line": 552,
+            "context": "        )\n\n    def fetch_surge(self, sort: str = \"\") -> FetchResult:\n        data = self._post_json(f\"{BASE}/data/getCzPoolData/{sort}\")\n        items = data.get(\"list\", []) or []"
+          }
+        ]
+      },
+      "def fetch_hotlist_day": {
+        "count": 1,
+        "lines": [
+          529
+        ],
+        "contexts": [
+          {
+            "line": 529,
+            "context": "        )\n\n    def fetch_hotlist_day(self) -> FetchResult:\n        data = self._get_json(f\"{X_BASE}/vendor/stockdata/hotlist.json\")\n        items = data.get(\"hot_stock_day\", []) or []"
+          }
+        ]
+      },
+      "def fetch_rocket": {
+        "count": 1,
+        "lines": [
+          463
+        ],
+        "contexts": [
+          {
+            "line": 463,
+            "context": "        )\n\n    def fetch_rocket(self) -> FetchResult:\n        data = self._get_json(f\"{X_BASE}/vendor/stockdata/hotlist.json\")\n        items = data.get(\"skyrocket_hour\", [])"
+          }
+        ]
+      },
+      "def _fetch_realtime_quotes": {
+        "count": 1,
+        "lines": [
+          2167
+        ],
+        "contexts": [
+          {
+            "line": 2167,
+            "context": "        return rows\n\n    def _fetch_realtime_quotes(self, codes: List[str]) -> Dict[str, Dict[str, str]]:\n        unique_codes: List[str] = []\n        seen = set()"
+          }
+        ]
+      }
+    }
+  },
+  "module_introspection": {
+    "module_attrs": [
+      "AES",
+      "Any",
+      "BASE",
+      "BeautifulSoup",
+      "CAPTURE_ROOT",
+      "CASHFLOW_BASE",
+      "CASHFLOW_DEFAULT_LIMIT",
+      "DATASET_REGISTRY",
+      "Dict",
+      "DuanxianxiaFetcher",
+      "FetchResult",
+      "JJLIVE_AES_IV",
+      "JJLIVE_AES_KEY",
+      "LTGD_BOARD_ORDER",
+      "LTGD_RANGE_WINDOWS",
+      "List",
+      "PROJECT_ROOT",
+      "Path",
+      "QXLIVE_TOP_METRIC_DEFS",
+      "REVIEW_CORE11_EXCLUDED_KEYS",
+      "REVIEW_METRIC_DEFS",
+      "REVIEW_PLATE_FINE_TAGS",
+      "ReadTimeout",
+      "TIMEOUT",
+      "TZ_SHANGHAI",
+      "ThreadPoolExecutor",
+      "Tuple",
+      "UA",
+      "WORKSPACE_ROOT",
+      "X_BASE",
+      "ZoneInfo",
+      "annotations",
+      "argparse",
+      "as_completed",
+      "base64",
+      "build_arg_parser",
+      "build_capture_payload",
+      "dataclass",
+      "dataset_meta",
+      "datetime",
+      "infer_headers",
+      "json",
+      "main",
+      "persist_capture",
+      "re",
+      "requests",
+      "sync_playwright",
+      "time",
+      "timezone",
+      "unpad"
+    ],
+    "BASE": "https://duanxianxia.com",
+    "X_BASE": "https://x.duanxianxia.cn",
+    "instance_attrs": [
+      "_board_sort_key",
+      "_build_review_jinji_rows",
+      "_build_review_plate_fine_tag_summary",
+      "_classify_board",
+      "_decode_padded_base64",
+      "_decrypt_jjlive_payload",
+      "_extract_button_display_value",
+      "_extract_cashflow_rows_from_page",
+      "_extract_review_plate_fine_tags",
+      "_fetch_cashflow_rank",
+      "_fetch_home_ztpool_snapshot",
+      "_fetch_qxlive_top_metrics_snapshot",
+      "_fetch_realtime_quotes",
+      "_format_amount",
+      "_format_hot_rate",
+      "_format_qxlive_amount",
+      "_format_qxlive_axis",
+      "_format_qxlive_metric_value",
+      "_format_qxlive_money_display",
+      "_format_qxlive_pct",
+      "_format_qxlive_seal_amount",
+      "_format_review_percent",
+      "_format_review_ratio",
+      "_get_json",
+      "_get_text",
+      "_normalize_qxlive_stock_row",
+      "_normalize_qxlive_trade_date",
+      "_normalize_ztpool_html",
+      "_normalize_ztpool_trade_date",
+      "_parse_fengdan_head",
+      "_parse_fengdan_table",
+      "_parse_qxlive_money_raw_to_yuan",
+      "_parse_qxlive_plate_text",
+      "_parse_qxlive_subplates_html",
+      "_parse_review_plate_html",
+      "_parse_review_plate_htmlcopy_metrics",
+      "_parse_ztpool_rate_text",
+      "_post_json",
+      "_post_json_via_browser",
+      "_review_jinji_bucket",
+      "_series_last_value",
+      "_split_concepts",
+      "_split_pipe_concepts",
+      "_to_float_or_none",
+      "_to_int_or_none",
+      "_window_sort_key",
+      "fetch_auction_fengdan",
+      "fetch_auction_net_amount",
+      "fetch_auction_qiangchou",
+      "fetch_auction_vratio",
+      "fetch_auction_weimai",
+      "fetch_cashflow_10d",
+      "fetch_cashflow_3d",
+      "fetch_cashflow_5d",
+      "fetch_cashflow_today",
+      "fetch_home_qxlive_plate_summary",
+      "fetch_home_qxlive_top_metrics",
+      "fetch_home_ztpool",
+      "fetch_hot",
+      "fetch_hotlist_day",
+      "fetch_review_daily",
+      "fetch_review_daily_core11",
+      "fetch_review_ltgd_range",
+      "fetch_review_plate",
+      "fetch_rocket",
+      "fetch_surge",
+      "session"
+    ]
+  },
+  "errors": []
+}

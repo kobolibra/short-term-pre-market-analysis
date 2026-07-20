@@ -1,0 +1,287 @@
+{
+  "generated_at": "2026-06-25T04:30:06.583823",
+  "page_html_len": 50568,
+  "chunks": [
+    {
+      "url": "https://stock.9fzt.com//upload.9fzt.com/production/jfztgw/js/extraLogic.js",
+      "len": 0
+    },
+    {
+      "url": "https://stock.9fzt.com//upload.9fzt.com/production/jfztgw/js/globalLogin.js",
+      "len": 0
+    },
+    {
+      "url": "https://stock.9fzt.com//upload.9fzt.com/production/jfztgw/js/globalstockindex.js",
+      "len": 0
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/1903a724.306880b126c1e8a0528e.js",
+      "len": 70
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/6156bbab0d794c3f9f5ca993fbf2cdedbc758d36.e985cfe87ee523bc111b.js",
+      "len": 17629
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/7f8cb945814df31fa6545e615457957a1662d596.d500531f63eab80245b1.js",
+      "len": 9899
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/80265448225167b296e0f60cb50fa5f5c7095d80.fa75f16e513451b28c6e.js",
+      "len": 39801
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/b45d07d6757450b3a0d021d76fd2a333a9695677.2e294bca1d865e285553.js",
+      "len": 6768
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/b96031948643c1f5958931f7d125251c297dd7be.4cd1854889d15e4d0f80.js",
+      "len": 188411
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/cd592ad928dfdb26299ca34f5f9919693ea0755f.689d45b23d01fd250955.js",
+      "len": 425360
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/cd82629a7060093aab1c2ea578ef9aabcd3c0df9.8b87cb69d7a14e46c47e.js",
+      "len": 12817
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ed09edb74d920ee62dc8039337c431d87cac7d54.25c138d7c95b072ed3a1.js",
+      "len": 12370
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "len": 86413
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/f6078781a05fe1bcb0902d23dbbb2662c8d200b3.b386ae01924fd43485dc.js",
+      "len": 49059
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/framework.aa5133d8da296023f716.js",
+      "len": 131077
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/main-46793b6200d7a3b82e90.js",
+      "len": 18300
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/_app-1ca0fb962a65272bdf73.js",
+      "len": 1343
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "len": 47439
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/polyfills-2bcdbfd05ba0d5ff0f0d.js",
+      "len": 92427
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/webpack-578bd7ac7abbf8ed5895.js",
+      "len": 2352
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/dFsSqdUqGo0KD2vjhHpAt/_buildManifest.js",
+      "len": 16604
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/dFsSqdUqGo0KD2vjhHpAt/_ssgManifest.js",
+      "len": 76
+    },
+    {
+      "url": "https://stock.9fzt.com/server/static/echarts.min.js",
+      "len": 454639
+    },
+    {
+      "url": "https://upload.9fzt.com/production/jfnpm/sa-track/1.0.3/jftrack.min.js",
+      "len": 154367
+    },
+    {
+      "url": "https://upload.9fzt.com/production/jfztgw/js/tingyun.js",
+      "len": 34194
+    },
+    {
+      "url": "https://upload.9fzt.com/production/jquery.min.js",
+      "len": 92629
+    }
+  ],
+  "dg18": [
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "snippet": "{var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:0,e=arguments.length>1?arguments[1]:void 0;return\"\".concat(o.e,\"/optional/index.html?tab=\").concat(t).concat(e?\"&source=\".concat(e):\"\")}},DG18:function(t,e,n){\"use strict\";n.r(e);var o=n(\"vDqi\"),r=n.n(o),c=n(\"aCH8\"),a=n.n(c),i=n(\"2nGb\"),u=n(\"aabv\"),s=i.default.domain,f=i.default.apiServer,l=i.default.httpTimeOut,d=[\"/api/1/9fztgw/news/moduleNewsList\",\"/api/1/stock/quote/v1/historyv1\",\"/api/1/9fzt/news/page/list\",\"/api/1/news/customer/stockbar/list/9fztgw\",\"/api/1/news/customer/stockbar/detail/9fztgw\",\"/api/1/news/customer/stockbar/review/list/channelH5\",\"/api/1/review/customer/unSupport/news/9fztgw\",\"/api/1/review/customer/support/news/9fztgw\",\"/api/1/review/customer/support/review/channelH5\",\"/api/1/review/customer/unSupport/review/channelH5\",\"/api/1/review/customer/reviews/channelH5\",\"/api/1/quantization/stock/pick/type/list\",\"/api/1/stock/up/down/check\",\"/api/1/stock/up/down/detail\",\"/api/1/stock/up/down/add\",\"/api/1/gw/new/stock/add\",\"/api/admin/2/theme/publishPoint\"],p=r.a.create({timeout:l});p.interceptors.request.use((function(t){return t.baseURL=function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{apiServer:\"rjhyGmgQuote\",domain:\"hqdomain\"};return\"\".concat(s[t.domain]).concat(f[t.apiServer])}(t.urlConfig),t.sign&&(t.headers=Object.assign(function(t){var e=[];if(t){var n=Object.keys(t).sort();for(var o in n)e.push(t[n[o]])}var r=(new Date).getTime();return{signature:a()(\"sjdxfnqogbzoun13d971ckh8p\"+e.join(\"\")+r),timestamp:r}}(t.paramsData||t.params),t.headers)),t}),(function(t){return Promise.reject(t)})),p.interceptors.response.use((function(t){return t.status>=200&&t.status<300?d.includes(t.config.url)?t.data:t.data?t.data.data||t.data:Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null):Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null)}),(function(t){return console.log(\"url:\",t.config.baseURL+t.config.url,\";message:\",t.message),Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null)})),e.default=p},DfZB:function(t,e,n){\"use strict\";t.exports=function(t){return function(e){return t.apply(null,e)}}},FYa8:function(t,e,n){\"use strict\";var o;e.__esModule=!0,e.HeadManagerContext=void 0;var r=((o=n(\"q1tI\"))&&o.__esModule?o:{default:o}).default.createContext({});e.HeadManagerContext=r},\"G+5h\":function(t,e,n){\"use strict\";n.d(e,\"a\",(function(){return i}));var o=n(\"H+61\"),r=n(\"UlJF\"),c=new Map([[\"yyyy\",\"fullYear\"],[\"mm\",\"month\"],[\"m\",\"month\"],[\"dd\",\"date\"],[\"d\",\"date\"],[\"HH\",\"hours\"],[\"H\",\"hours\"],[\"MM\",\"minutes\"],[\"M\",\"minutes\"],[\"SS\",\"seconds\"],[\"S\",\"seconds\"]]),a=function(){function t(e){Object(o.default)(this,t),this._date=new Date(e)}return Object(r.default)(t,[{key:\"formatNumber\",value:function(t){return t<10?\"0\".concat(t):t}},{key:\"initDate\",value:function(){this.fullYear=this._date.getFullYear(),this.month=this._date.getMonth()+1,this.date=this._date.getDate(),this.hours=this._date.getHours(),this.minutes=this._date.getMinutes(),this.seconds=this._date.getSeconds()}}]),t}();function i(t,e){if(!t)return\"\";var n=new a(t);return n.initDate(),c.forEach((function(t,o){if(e.includes(o)){var r=o.length>1?n.formatNumber(n[t]):n[t];e=e.replace(o,r)}})),e}},\"H+61\":function(t,e,n){\"use strict\";function o(t,e){if(!(t instanceof e))throw new TypeError(\"Cannot call a class as a function\")}n.r(e),n.d(e,\"default\",(function(){return o}))},HSsa:function(t,e,n){\"use strict\";t.exports=function(t,e){return function(){for(var n=new Array(arguments.length),o=0;o<n.length;o++)n[o]=arguments[o];return t.apply(e,n)}}},IMd6:function(t,e,n){var o=n(\"DG18\"),r=[\".hsi\",\"hscei\",\"hscci\",\"dia\",\"ndaq\",\"spy\",\"qqq\"];function c(t,e){if(!t||!e)return!1;if(\"HKIDX\"===e.toLocaleUpperCase())return!0;if(r.includes(t.toLowerCase()))return!0;var n=t.slice(0,3);return\"sz\"===e.toLowerCase()?\"399\"===n:\"sh\"===e.toLowerCase()&&\"000\"===n}t.exports.getStockName=function(t){var e=t.symbol,n=t.market,r=t.dataSourceType;return o.get(o.apis.quote.getStockName,{symbol:e.toUpperCase(),market:\"A\"===r?n:n.toUpperCase()}).then((function(t){return t&&t.data&&t.data.length>0?t.data[0].Name:\"--\"}))},t.exports.getIsIndexStock=c,t.exports.getIsStock=function(t,e){return!c(t,e)&&(\"sz\"===e.toLowerCase()||\"bj\"===e.toLowerCase()||\"sh\"===e.toLowerCase())},t.exports.getIsAIndexStock=function(t,e){if(!t||!e)return!1;var n=t.slice(0,3);return\"sz\"===e?\"399\"===n:\"sh\"===e&&\"000\"===n},t.exports.getIsUkIndexStock=function(t,e){return!(!t||!e)&&!!r.includes(t.toLowerCase())},t.exports.getExchange=function(t,e){return e.indexOf(\"hk\")>-1||e.indexOf(\"HK\")>-1?\"HK\":\"sz\"==e?\"SZ\":\"sh\"==e?\"SH\":\"US\"},e.getIsFund=function(t){return t=t.toLowerCase(),!!~[\"szetf\",\"shetf\",\"fund\"].indexOf(t)}},JEQr:function(t,e,n){\"use strict\";(function(e){var o=n(\"xTJ+\"),r=n(\"yK9s\"),c=n(\"OH9c\"),a={\"Content-Type\":\"application/x-www-form-urlencoded\"};function i(t,e){!o.isUndefined(t)&&o.isUndefined(t[\"Content-Type\"])&&(t[\"Content-Type\"]=e)}var u={transitional:{silentJSONParsing:!0,forcedJSONParsing:!0,clarifyTimeoutError:!1},adapter:function(){var t;return(\"undefined\"!==typeof XMLHttpRequest||\"undefined\"!==typeof e&&\"[object process]\"===Object.prototype.toString.call(e))&&(t=n(\"tQ2B\")),t}(),transformRequest:[function(t,e){return r(e,\"Accept\"),r(e,\"Content-Type\"),o.isFormData(t)||o.isArrayBuffer(t)||o.isBuffer(t)||o.isStream(t)||o.isFile(t)||o.isBlob(t)?t:o.isArrayBufferView(t)?t.buffer:o.isURLSearchParams(t)?(i(e,\"application/x-www-form-urlencoded;charset=utf-8\"),t.toString()):o.isObject(t)||e&&\"application/json\"===e[\"Content-Type\"]?(i(e,\"application/json\"),function(t,e,n){if(o.isString(t))try{return(e||JSON.parse)(t),o.trim(t)}catch(r){if(\"SyntaxError\"!==r.name)throw r}return(n||JSON.stringify)(t)}(t)):t}],transformResponse:[function(t){var e=this.transitional,n=e&&e.silentJSONParsing,r=e&&e.forcedJSONParsing,a=!n&&\"json\"===this.responseType;if(a||r&&o.isString(t)&&t.length)try{return JSON.parse(t)}catch(i){if(a){if(\"SyntaxError\"===i.name)throw c(i,this,\"E_JSON_PARSE\");throw i}}return t}],timeout:0,xsrfCookieName:\"XSRF-TOKEN\",xsrfHeaderName:\"X-XSRF-TOKEN\",maxContentLength:-1,maxBodyLength:-1,validateStatus:function(t){return t>=200&&t<300},headers:{common:{Accept:\"application/json, text/plain, */*\"}}};o.forEach([\"delete\",\"get\",\"head\"],(function(t){u.headers[t]={}})),o.forEach([\"post\",\"put\",\"patch\"],(function(t){u.headers[t]=o.merge(a)})),t.exports=u}).call(this,n(\"8oxB\"))},K0c6:function(t,e,n){\"use strict\";var o=n(\"nKUr\"),r=n(\"g4pe\"),c=n.n(r);e.a=function(t){var e=t.title,n=t.description,r=t.keywords,a=t.docNeedAliplayer,i=t.docMetaRobotsContent;return Object(o.jsxs)(c.a,{children:[Object(o.jsx)(\"title\",{children:e||\"\\u4e5d\\u65b9\\u667a\\u6295_\\u65b0\\u4e00\\u4ee3\\u80a1\\u7968\\u6295\\u8d44\\u52a9\\u624b\"}),Object(o.jsx)(\"meta\",{name:\"description\",content:n||\"\\u4e5d\\u65b9\\u667a\\u6295\\u4e3a\\u4e5d\\u65b9\\u8d22\\u5bcc\\uff08\\u80a1\\u7968\\u4ee3\\u7801\\uff1a09636.HK\\uff09\\u65d7\\u4e0b\\u54c1\\u724c\\uff0c\\u56fd\\u5185\\u9996\\u6279\\u83b7\\u5f97\\u8bc1\\u5238\\u6295\\u8d44\\u54a8\\u8be2\\u8d44\\u683c\\u7684\\u673a\\u6784\\u4e4b\\u4e00\\uff0c\\u4e2d\\u56fd\\u8bc1\\u5238\\u4e1a\\u534f\\u4f1a\\u4f1a\\u5458\\u7406\\u4e8b\\u5355\\u4f4d\\u3002\\u516c\\u53f8\\u6df1\\u8015\\u6295\\u987e\\u884c\\u4e1a28\\u8f7d\\uff0c\\u575a\\u6301\\u201c\\u79d1\\u6280+\\u6295\\u7814\\u201d\\u53cc\\u9a71\\u52a8\\uff0c\\u5e76\\u4ece\\u6295\\u8d44\\u7b56\\u7565\\u3001\\u6295\\u8d44\\u98ce\\u63a7\\u3001\\u667a\\u80fd\\u6295\\u987e\\u7b49\\u591a\\u65b9\\u9762\\u4e3a\\u6295\\u8d44\\u8005\\u63d0\\u4f9b\\u4e00\\u7ad9\\u5f0f\\u8bc1\\u5238\\u6295\\u8d44\\u987e\\u95ee\\u670d\\u52a1\\uff0c\\u81f4\\u529b\\u4e8e\\u6210\\u4e3a\\u5ba2\\u6237\\u6295\\u8d44\\u7406\\u8d22\\u7684\\u7ec8\\u8eab\\u4f34\\u4fa3\\u3002\"}),Object(o.jsx)(\"meta\",{name:\"keywords\",content:r||\"\\u80a1\\u7968,\\u8d22\\u7ecf,\\u8bc1\\u5238,\\u91d1\\u878d,\\u80a1\\u7968\\u8f6f\\u4ef6,\\u7092\\u80a1,\\u80a1\\u7968\\u5b66\\u4e60,\\u6295\\u6559\\u8bfe\\u7a0b,\\u80a1\\u7968\\u8d44\\u8baf,\\u80a1\\u7968\\u65b0\\u95fb,\\u80a1\\u7968\\u4fe1\\u606f,\\u80a1\\u7968\\u884c\\u60c5,\\u80a1\\u5708,\\u80a1\\u5e02\\u76f4\\u64ad,\\u80a1\\u7968\\u5206\\u6790,\\u80a1\\u7968\\u63a8\\u8350,\\u80a1\\u7968\\u6295\\u8d44,\\u80a1\\u7968\\u5e02\\u573a,\\u80a1\\u7968\\u7f51,\\u80a1\\u7968\\u6570\\u636e,\\u80a1\\u6c11\\u6559\\u80b2,\\u80a1\\u5e02\\u8d44\\u8baf,\\u4e2a\\u80a1\\u8d44\\u8baf,\\u8bc1\\u5238\\u8d44\\u8baf,\\u4e5d\\u65b9\\u4e91,\\u4e5d\\u65b9\\u4e91\\u667a\\u80fd\\u79d1\\u6280\"}),i&&Object(o.jsx)(\"meta\",{name:\"robots\",content:i}),Object(o.jsx)(\"link\",{rel:\"shortcut icon\",href:\"https://stock.9fzt.com/server/jfzt_favicon.ico\"}),Object(o.jsx)(\"link\",{rel:\"stylesheet\",type:\"text/css\",href:\"https://www.9fzt.com/css/common.css\"}),Object(o.jsx)(\"link\",{rel:\"dns-prefetch\",href:\"//www.9fzt.com\"}),Object(o.jsx)(\"link\",{rel:\"dns-prefetch\",href:\"//fund.9fzt.com\"}),Object(o.jsx)(\"script\",{src:\"https://upload.9fzt.com/production/mqtt.min.js?_=1627455304518\"}),Object(o.jsx)(\"script\",{src:\"https://upload.9fzt.com/production/jquery.min.js\"}),a?Object(o.jsxs)(o.Fragment,{children:[Object(o.jsx)(\"script\",{src:\"https://g.alicdn.com/de/prismplayer/2.9.8/aliplayer-h5-min.js\",defer:\"defer\"}),Object(o.jsx)(\"link\",{rel:\"stylesheet\",href:\"https://g.alicdn.com/de/prismplayer/2.9.8/skins/default/aliplayer-min.css\"})]}):\"\"]})}},KckH:function(t,e,n){var o=n(\"7eYB\");t.exports=function(t,e){if(t){if(\"string\"===typeof t)return o(t,e);var n=Object"
+    }
+  ],
+  "domain_map": [
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "chongnengjihua",
+      "snippet": "urn n||r&&a}},\"/GRZ\":function(t,e){t.exports=function(t,e){if(!(t instanceof e))throw new TypeError(\"Cannot call a class as a function\")}},\"2SVd\":function(t,e,n){\"use strict\";t.exports=function(t){return/^([a-z][a-z\\d\\+\\-\\.]*:)?\\/\\//i.test(t)}},\"2nGb\":function(t,e,n){\"use strict\";n.r(e),n.d(e,\"CHANNEL\",(function(){return r})),n.d(e,\"APP_CODE\",(function(){return c})),n.d(e,\"SERVER_ID\",(function(){return a}));var o={dev:{domain:{gwDomain:\"https://test-api.techgp.cn/gw\",tempDomain:\"https://gateway.chongnengjihua.com\",tempHqDomain:\"https://hq.chongnengjihua.com\",getWay:\"https://test-gateway.jinyi999.cn\",hqdomain:\"https://test-gateway.jinyi999.cn\",liveDomain:\"https://test-gateway.jinyi999.cn\",apiHqDomain:\"https://test-api-hq.jinyi999.cn\",promotion:\"https://test-promotion-gw.jinyi999.cn\",getWayJy:\"https://test-gateway.jinyi999.cn\",getToken:\"https://test-hqpassport.9fh5.com/api/v2/AuthGetToken\",getBusi:\"https://test-qas.9fh5.com/api/v30/busi\",info:\"https://test-infocenter.9fh5.com\",appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "chongnengjihua",
+      "snippet": "function(t,e){if(!(t instanceof e))throw new TypeError(\"Cannot call a class as a function\")}},\"2SVd\":function(t,e,n){\"use strict\";t.exports=function(t){return/^([a-z][a-z\\d\\+\\-\\.]*:)?\\/\\//i.test(t)}},\"2nGb\":function(t,e,n){\"use strict\";n.r(e),n.d(e,\"CHANNEL\",(function(){return r})),n.d(e,\"APP_CODE\",(function(){return c})),n.d(e,\"SERVER_ID\",(function(){return a}));var o={dev:{domain:{gwDomain:\"https://test-api.techgp.cn/gw\",tempDomain:\"https://gateway.chongnengjihua.com\",tempHqDomain:\"https://hq.chongnengjihua.com\",getWay:\"https://test-gateway.jinyi999.cn\",hqdomain:\"https://test-gateway.jinyi999.cn\",liveDomain:\"https://test-gateway.jinyi999.cn\",apiHqDomain:\"https://test-api-hq.jinyi999.cn\",promotion:\"https://test-promotion-gw.jinyi999.cn\",getWayJy:\"https://test-gateway.jinyi999.cn\",getToken:\"https://test-hqpassport.9fh5.com/api/v2/AuthGetToken\",getBusi:\"https://test-qas.9fh5.com/api/v30/busi\",info:\"https://test-infocenter.9fh5.com\",appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "chongnengjihua",
+      "snippet": "pi/v2/AuthGetToken\",getBusi:\"https://test-qas.9fh5.com/api/v30/busi\",info:\"https://test-infocenter.9fh5.com\",appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}},test:{domain:{gwDomain:\"https://test-api.techgp.cn/gw\",tempDomain:\"https://gateway.chongnengjihua.com\",tempHqDomain:\"https://hq.chongnengjihua.com\",getWay:\"https://test-gateway.jinyi999.cn\",hqdomain:\"https://test-gateway.jinyi999.cn\",liveDomain:\"https://test-gateway.jinyi999.cn\",apiHqDomain:\"https://test-api-hq.jinyi999.cn\",promotion:\"https://test-promotion-gw.jinyi999.cn\",getWayJy:\"https://test-gateway.jinyi999.cn\",getToken:\"https://test-hqpassport.9fh5.com/api/v2/AuthGetToken\",getBusi:\"https://test-qas.9fh5.com/api/v30/busi\",info:\"https://test-infocenter.9fh5.com\",appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "apiHqDomain",
+      "snippet": "return/^([a-z][a-z\\d\\+\\-\\.]*:)?\\/\\//i.test(t)}},\"2nGb\":function(t,e,n){\"use strict\";n.r(e),n.d(e,\"CHANNEL\",(function(){return r})),n.d(e,\"APP_CODE\",(function(){return c})),n.d(e,\"SERVER_ID\",(function(){return a}));var o={dev:{domain:{gwDomain:\"https://test-api.techgp.cn/gw\",tempDomain:\"https://gateway.chongnengjihua.com\",tempHqDomain:\"https://hq.chongnengjihua.com\",getWay:\"https://test-gateway.jinyi999.cn\",hqdomain:\"https://test-gateway.jinyi999.cn\",liveDomain:\"https://test-gateway.jinyi999.cn\",apiHqDomain:\"https://test-api-hq.jinyi999.cn\",promotion:\"https://test-promotion-gw.jinyi999.cn\",getWayJy:\"https://test-gateway.jinyi999.cn\",getToken:\"https://test-hqpassport.9fh5.com/api/v2/AuthGetToken\",getBusi:\"https://test-qas.9fh5.com/api/v30/busi\",info:\"https://test-infocenter.9fh5.com\",appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}},test:{domain:{gwDomain:\"https://test-api.techgp.cn/gw\",tempDomain:\"https://gateway.chongnengjihua.c"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "apiHqDomain",
+      "snippet": "cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}},test:{domain:{gwDomain:\"https://test-api.techgp.cn/gw\",tempDomain:\"https://gateway.chongnengjihua.com\",tempHqDomain:\"https://hq.chongnengjihua.com\",getWay:\"https://test-gateway.jinyi999.cn\",hqdomain:\"https://test-gateway.jinyi999.cn\",liveDomain:\"https://test-gateway.jinyi999.cn\",apiHqDomain:\"https://test-api-hq.jinyi999.cn\",promotion:\"https://test-promotion-gw.jinyi999.cn\",getWayJy:\"https://test-gateway.jinyi999.cn\",getToken:\"https://test-hqpassport.9fh5.com/api/v2/AuthGetToken\",getBusi:\"https://test-qas.9fh5.com/api/v30/busi\",info:\"https://test-infocenter.9fh5.com\",appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}},production:{domain:{gwDomain:\"https://api.9fzt.com/gw\",tempDomain:\"https://gateway.chongnengjihua.c"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "apiHqDomain",
+      "snippet": "hgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}},production:{domain:{gwDomain:\"https://api.9fzt.com/gw\",tempDomain:\"https://gateway.chongnengjihua.com\",tempHqDomain:\"https://hq.chongnengjihua.com\",getWay:\"https://gateway.chongnengjihua.com\",hqdomain:\"https://hq.chongnengjihua.com\",liveDomain:\"https://gateway-9fzt.secon.cn\",apiHqDomain:\"https://api-hq.chongnengjihua.com\",promotion:\"https://promotion-gw.chongnengjihua.com\",getWayJy:\"https://gateway.jingyi999.cn\",getToken:\"https://hqpassport.sylapp.cn/api/v2/AuthGetToken\",getBusi:\"https://qas.sylapp.cn/api/v30/busi\",info:\"https://infocenter.9fzt.com\",appDomain:\"https://api.9fzt.com/ql/app\"},MQTTConfig:{url:\"wss://emqtt-hq-prod.techgp.cn:8084/mqtt\",option:{username:\"rjhy\",password:\"1TvKvBIuwNdtl1GrmMsP\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"beff3635-8c86-42c3-a157-637db2c52554\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}}},r=\"9fztgw\",c=\"9fztgw\",a=200;e.default={domain:o.production.domain,mqtt:o.production.MQTTConfig,websock"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "hqdomain",
+      "snippet": " call a class as a function\")}},\"2SVd\":function(t,e,n){\"use strict\";t.exports=function(t){return/^([a-z][a-z\\d\\+\\-\\.]*:)?\\/\\//i.test(t)}},\"2nGb\":function(t,e,n){\"use strict\";n.r(e),n.d(e,\"CHANNEL\",(function(){return r})),n.d(e,\"APP_CODE\",(function(){return c})),n.d(e,\"SERVER_ID\",(function(){return a}));var o={dev:{domain:{gwDomain:\"https://test-api.techgp.cn/gw\",tempDomain:\"https://gateway.chongnengjihua.com\",tempHqDomain:\"https://hq.chongnengjihua.com\",getWay:\"https://test-gateway.jinyi999.cn\",hqdomain:\"https://test-gateway.jinyi999.cn\",liveDomain:\"https://test-gateway.jinyi999.cn\",apiHqDomain:\"https://test-api-hq.jinyi999.cn\",promotion:\"https://test-promotion-gw.jinyi999.cn\",getWayJy:\"https://test-gateway.jinyi999.cn\",getToken:\"https://test-hqpassport.9fh5.com/api/v2/AuthGetToken\",getBusi:\"https://test-qas.9fh5.com/api/v30/busi\",info:\"https://test-infocenter.9fh5.com\",appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}},test:{dom"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "hqdomain",
+      "snippet": "\",appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}},test:{domain:{gwDomain:\"https://test-api.techgp.cn/gw\",tempDomain:\"https://gateway.chongnengjihua.com\",tempHqDomain:\"https://hq.chongnengjihua.com\",getWay:\"https://test-gateway.jinyi999.cn\",hqdomain:\"https://test-gateway.jinyi999.cn\",liveDomain:\"https://test-gateway.jinyi999.cn\",apiHqDomain:\"https://test-api-hq.jinyi999.cn\",promotion:\"https://test-promotion-gw.jinyi999.cn\",getWayJy:\"https://test-gateway.jinyi999.cn\",getToken:\"https://test-hqpassport.9fh5.com/api/v2/AuthGetToken\",getBusi:\"https://test-qas.9fh5.com/api/v30/busi\",info:\"https://test-infocenter.9fh5.com\",appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}},productio"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "hqdomain",
+      "snippet": "appDomain:\"https://test-api.techgp.cn/ql/app\"},MQTTConfig:{url:\"wss://test-emqtt.techgp.cn:8084/mqtt\",option:{username:\"ytx\",password:\"ytx123456\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"6dff2f6b-5d0c-433e-9355-95a0be35d04b\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}},production:{domain:{gwDomain:\"https://api.9fzt.com/gw\",tempDomain:\"https://gateway.chongnengjihua.com\",tempHqDomain:\"https://hq.chongnengjihua.com\",getWay:\"https://gateway.chongnengjihua.com\",hqdomain:\"https://hq.chongnengjihua.com\",liveDomain:\"https://gateway-9fzt.secon.cn\",apiHqDomain:\"https://api-hq.chongnengjihua.com\",promotion:\"https://promotion-gw.chongnengjihua.com\",getWayJy:\"https://gateway.jingyi999.cn\",getToken:\"https://hqpassport.sylapp.cn/api/v2/AuthGetToken\",getBusi:\"https://qas.sylapp.cn/api/v30/busi\",info:\"https://infocenter.9fzt.com\",appDomain:\"https://api.9fzt.com/ql/app\"},MQTTConfig:{url:\"wss://emqtt-hq-prod.techgp.cn:8084/mqtt\",option:{username:\"rjhy\",password:\"1TvKvBIuwNdtl1GrmMsP\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"beff3635-8c86-42c3-a157-637db2c52554\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}}},r=\"9fztgw\",c=\"9fzt"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "rjhy",
+      "snippet": "hongnengjihua.com\",hqdomain:\"https://hq.chongnengjihua.com\",liveDomain:\"https://gateway-9fzt.secon.cn\",apiHqDomain:\"https://api-hq.chongnengjihua.com\",promotion:\"https://promotion-gw.chongnengjihua.com\",getWayJy:\"https://gateway.jingyi999.cn\",getToken:\"https://hqpassport.sylapp.cn/api/v2/AuthGetToken\",getBusi:\"https://qas.sylapp.cn/api/v30/busi\",info:\"https://infocenter.9fzt.com\",appDomain:\"https://api.9fzt.com/ql/app\"},MQTTConfig:{url:\"wss://emqtt-hq-prod.techgp.cn:8084/mqtt\",option:{username:\"rjhy\",password:\"1TvKvBIuwNdtl1GrmMsP\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"beff3635-8c86-42c3-a157-637db2c52554\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}}},r=\"9fztgw\",c=\"9fztgw\",a=200;e.default={domain:o.production.domain,mqtt:o.production.MQTTConfig,websocketConfig:{baseWebSocket:\"wss://qas.sylapp.cn/quote\",authConf:{OrgCode:\"rh\",Token:\"e9252a64-6ac8-4bf8-9725-6f106f682908\",AppName:\"htzpc\",AppVer:\"v1.0.0\",AppType:\"pc\",Tag:\"af91c60a-1acc-4150-9014-d11086cb9489\"}},apiServer:{rjhyEduUranus:\"/rjhy-edu-uranus\",rjhyGmgQuote:\"/rjhy-gmg-quote\",rjhyStockDiagnosis:\"/rjhy-stock-diagnosis\",rjhyIndustryChain:\"/rjhy-industry-chain\",rjhyQuoteSector:\"/rjhy-quote"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "rjhy",
+      "snippet": "wNdtl1GrmMsP\"}},tokenConfig:{AppKey:\"jf\",AppSecret:\"beff3635-8c86-42c3-a157-637db2c52554\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}}},r=\"9fztgw\",c=\"9fztgw\",a=200;e.default={domain:o.production.domain,mqtt:o.production.MQTTConfig,websocketConfig:{baseWebSocket:\"wss://qas.sylapp.cn/quote\",authConf:{OrgCode:\"rh\",Token:\"e9252a64-6ac8-4bf8-9725-6f106f682908\",AppName:\"htzpc\",AppVer:\"v1.0.0\",AppType:\"pc\",Tag:\"af91c60a-1acc-4150-9014-d11086cb9489\"}},apiServer:{rjhyEduUranus:\"/rjhy-edu-uranus\",rjhyGmgQuote:\"/rjhy-gmg-quote\",rjhyStockDiagnosis:\"/rjhy-stock-diagnosis\",rjhyIndustryChain:\"/rjhy-industry-chain\",rjhyQuoteSector:\"/rjhy-quote-sector\",rjhyDynamic:\"/rjhy-dynamic\",rjhyMinilive:\"/rjhy-minilive\",rjhyNews:\"/rjhy-news\",rjhyActivityManage:\"/rjhy-activity-manage\",optional:\"/rjhy-optional\",rjhyQuoteSearch:\"/rjhy-quote-search\",diagnosis:\"/diagnosis\",pool:\"/pool\",news:\"/news\",bigLive:\"/rjhy-official-business\",rjhyOfficialBusiness:\"/rjhy-official-business\",quoteIndicator:\"/rjhy-quote-indicator\",stockRank:\"/rjhy-stock-rank\",finance:\"/finance\",rjhyCircle:\"/rjhy-circle\",capital:\"/capital\",rjhyStockQuote:\"/rjhy-stock-quote\",sector:\"/sector\",watching:\"/watc"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "rjhy",
+      "snippet": "tokenConfig:{AppKey:\"jf\",AppSecret:\"beff3635-8c86-42c3-a157-637db2c52554\",Name:\"jfztgw\",Desc:\"\\u4e5d\\u65b9\\u667a\\u6295\\u5b98\\u7f51\",Version:\"1.0.0\",Type:\"h5\"}}},r=\"9fztgw\",c=\"9fztgw\",a=200;e.default={domain:o.production.domain,mqtt:o.production.MQTTConfig,websocketConfig:{baseWebSocket:\"wss://qas.sylapp.cn/quote\",authConf:{OrgCode:\"rh\",Token:\"e9252a64-6ac8-4bf8-9725-6f106f682908\",AppName:\"htzpc\",AppVer:\"v1.0.0\",AppType:\"pc\",Tag:\"af91c60a-1acc-4150-9014-d11086cb9489\"}},apiServer:{rjhyEduUranus:\"/rjhy-edu-uranus\",rjhyGmgQuote:\"/rjhy-gmg-quote\",rjhyStockDiagnosis:\"/rjhy-stock-diagnosis\",rjhyIndustryChain:\"/rjhy-industry-chain\",rjhyQuoteSector:\"/rjhy-quote-sector\",rjhyDynamic:\"/rjhy-dynamic\",rjhyMinilive:\"/rjhy-minilive\",rjhyNews:\"/rjhy-news\",rjhyActivityManage:\"/rjhy-activity-manage\",optional:\"/rjhy-optional\",rjhyQuoteSearch:\"/rjhy-quote-search\",diagnosis:\"/diagnosis\",pool:\"/pool\",news:\"/news\",bigLive:\"/rjhy-official-business\",rjhyOfficialBusiness:\"/rjhy-official-business\",quoteIndicator:\"/rjhy-quote-indicator\",stockRank:\"/rjhy-stock-rank\",finance:\"/finance\",rjhyCircle:\"/rjhy-circle\",capital:\"/capital\",rjhyStockQuote:\"/rjhy-stock-quote\",sector:\"/sector\",watching:\"/watching\",search:\"/s"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "apiHqDomain",
+      "snippet": "otype,r),o&&a(t,o),e}();function s(e,t){if(!e)throw new Error(\"StyleSheet: \"+t+\".\")}t.default=r}).call(this,a(\"8oxB\"))},kpAY:function(e,t,a){\"use strict\";a.d(t,\"d\",(function(){return i})),a.d(t,\"c\",(function(){return r})),a.d(t,\"a\",(function(){return s})),a.d(t,\"b\",(function(){return o})),a.d(t,\"f\",(function(){return c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/history/net/list\",urlConfig:{requestKey:\"getFlowHistory\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return Object(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthkline"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "apiHqDomain",
+      "snippet": " i})),a.d(t,\"c\",(function(){return r})),a.d(t,\"a\",(function(){return s})),a.d(t,\"b\",(function(){return o})),a.d(t,\"f\",(function(){return c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/history/net/list\",urlConfig:{requestKey:\"getFlowHistory\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return Object(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}function l(e){return Object(n.default)({method:\"get\",url:\"/api/1/sto"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "apiHqDomain",
+      "snippet": "8\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/history/net/list\",urlConfig:{requestKey:\"getFlowHistory\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return Object(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}function l(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/Getneckstockall\",urlConfig:{requestKey:\"getNeckstockall\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}},rg98:function(e,t,a){\"use strict\";function n(e,t,a,n,i,r"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "hqdomain",
+      "snippet": "ect(n.default)({method:\"get\",url:\"/api/1/flow/history/net/list\",urlConfig:{requestKey:\"getFlowHistory\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return Object(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}function l(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/Getneckstockall\",urlConfig:{requestKey:\"getNeckstockall\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}},rg98:function(e,t,a){\"use strict\";function n(e,t,a,n,i,r,s){try{var o=e[r](s),c=o.value}catch(l){return void a(l)}o.done?t(c):Promise.resolve(c).then(n,i)}function i(e){return function(){var t=this,a=arguments;return new Promise((function(i,r){var s=e.apply(t,a);function o(e){n(s,i,r,o,c,\"next\",e)}function c(e){n(s,i,r,o,c,\"throw\",e)}o(void 0)}))}}a.d(t,\"a\",(function(){return i}))},tGUD:function(e,t){$.fn.extend({whjPaging:function(e,t){var "
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "hqdomain",
+      "snippet": "ult)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}function l(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/Getneckstockall\",urlConfig:{requestKey:\"getNeckstockall\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}},rg98:function(e,t,a){\"use strict\";function n(e,t,a,n,i,r,s){try{var o=e[r](s),c=o.value}catch(l){return void a(l)}o.done?t(c):Promise.resolve(c).then(n,i)}function i(e){return function(){var t=this,a=arguments;return new Promise((function(i,r){var s=e.apply(t,a);function o(e){n(s,i,r,o,c,\"next\",e)}function c(e){n(s,i,r,o,c,\"throw\",e)}o(void 0)}))}}a.d(t,\"a\",(function(){return i}))},tGUD:function(e,t){$.fn.extend({whjPaging:function(e,t){var a=$(this);if(\"getPage\"===e)return{totalSize:a.get(0).pageText.totalSize,currPage:a.get(0).pageText.staticCurrPage,pageSize:a.get(0).pageText.staticPageSize,totalPage:a.get(0).pageText.staticTotalPag"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "rjhy",
+      "snippet": "d:\"get\",url:\"/api/1/flow/history/net/list\",urlConfig:{requestKey:\"getFlowHistory\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return Object(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}function l(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/Getneckstockall\",urlConfig:{requestKey:\"getNeckstockall\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}},rg98:function(e,t,a){\"use strict\";function n(e,t,a,n,i,r,s){try{var o=e[r](s),c=o.value}catch(l){return void a(l)}o.done?t(c):Promise.resolve(c).then(n,i)}function i(e){return function(){var t=this,a=arguments;return new Promise((function(i,r){var s=e.apply(t,a);function o(e){n(s,i,r,o,c,\"next\",e)}function c(e){n(s,i,r,o,c,\"throw\",e)}o(void 0)}))}}a.d(t,\"a\",(function(){return i}))},tGUD:function(e,t){$.fn.extend({whjPaging:function(e,t){var a=$(this);if(\"getPage"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "rjhy",
+      "snippet": "l:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}function l(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/Getneckstockall\",urlConfig:{requestKey:\"getNeckstockall\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}},rg98:function(e,t,a){\"use strict\";function n(e,t,a,n,i,r,s){try{var o=e[r](s),c=o.value}catch(l){return void a(l)}o.done?t(c):Promise.resolve(c).then(n,i)}function i(e){return function(){var t=this,a=arguments;return new Promise((function(i,r){var s=e.apply(t,a);function o(e){n(s,i,r,o,c,\"next\",e)}function c(e){n(s,i,r,o,c,\"throw\",e)}o(void 0)}))}}a.d(t,\"a\",(function(){return i}))},tGUD:function(e,t){$.fn.extend({whjPaging:function(e,t){var a=$(this);if(\"getPage\"===e)return{totalSize:a.get(0).pageText.totalSize,currPage:a.get(0).pageText.staticCurrPage,pageSize:a.get(0).pageText.staticPageSize,totalPage:a.get(0).pageText.staticTotalPage};if(\"setPage\"===e)a"
+    },
+    {
+      "url": "https://upload.9fzt.com/production/jfnpm/sa-track/1.0.3/jftrack.min.js",
+      "kw": "rjhy",
+      "snippet": "sensorsdata.cn/sdk/1.22.2/heatmap.min.js\",name:\"sensors\",heatmap:{clickmap:\"default\",scroll_notice_map:\"default\",loadTimeout:3e3,scroll_delay_time:3e3},is_track_single_page:!0,use_client_time:!0,send_type:\"beacon\",show_log:!0},this.track=this.saSdk.track,this.login=this.saSdk.login,e&&\"object\"==typeof e){if(r=new i(!!e.debugger&&e.debugger),!this._checkOptions(e))return;this._mergeOptions(e),this.userName=e.userName||\"jftrascksdk\",this.platForm=e.platForm||\"jftrascksdk\",this.project=e.project||\"rjhy_tiantian_gold_test\"}else r=new i(!1);r.info(\"jfstrack constructor options\",e),r.info(\"jfstrack constructor defaultOptions\",this.defaultOptions),this._trackInit()}return e.prototype._trackInit=function(){var e=this,t=e.userName,i=e.platForm;this.defaultOptions.server_url+=\"?project=\".concat(e.project),r.info(\"jftrack is init\",this.defaultOptions),this.saSdk.init(this.defaultOptions),this.saSdk.login(t),this.saSdk.quick(\"autoTrack\",{project_id:i,$user_agent:navigator.userAgent,$userId:t})},e.prototype._mergeOptions=function(e){var t=this;Object.entries(e).forEach((function(e){var r=e[0];t.defaultOptions[r]&&(t.defaultOptions[r]=e[1])})),this.defaultOptions.show_log=e.debugger||!1},e.proto"
+    },
+    {
+      "url": "https://upload.9fzt.com/production/jfnpm/sa-track/1.0.3/jftrack.min.js",
+      "kw": "rjhy",
+      "snippet": "bugger||!1},e.prototype._checkOptions=function(e){return\"string\"==typeof e.server_url&&e.server_url?\"string\"==typeof e.userName&&e.userName?\"string\"==typeof e.platForm&&e.platForm?!(\"string\"!=typeof e.project||!e.project)||(r.error('jf track sdk options project must be \"string\", 神策打点项目，问产品。'),!1):(r.error('jf track sdk options platForm must be \"string\"'),!1):(r.error('jf track sdk options userName must be \"string\"'),!1):(r.error('jf track sdk options server_url must be \"string\", 测试环境server_url： rjhy_tiantian_gold_test'),!1)},e.prototype.getServerUrl=function(){return this.defaultOptions.server_url},e}()}));\n//# sourceMappingURL=jftrack.js.map\n"
+    }
+  ],
+  "apiserver": [
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "apiServer",
+      "snippet": "baseWebSocket:\"wss://qas.sylapp.cn/quote\",authConf:{OrgCode:\"rh\",Token:\"e9252a64-6ac8-4bf8-9725-6f106f682908\",AppName:\"htzpc\",AppVer:\"v1.0.0\",AppType:\"pc\",Tag:\"af91c60a-1acc-4150-9014-d11086cb9489\"}},apiServer:{rjhyEduUranus:\"/rjhy-edu-uranus\",rjhyGmgQuote:\"/rjhy-gmg-quote\",rjhyStockDiagnosis:\"/rjhy-stock-diagnosis\",rjhyIndustryChain:\"/rjhy-industry-chain\",rjhyQuoteSector:\"/rjhy-quote-sector\",rjhyDynamic:\"/rjhy-dynamic\",rjhyMinilive:\"/rjhy-minilive\",rjhyNews:\"/rjhy-news\",rjhyActivityManage:\"/rjhy-activity-manage\",optional:\"/rjhy-optional\",rjhyQuoteSearch:\"/rjhy-quote-search\",diagnosis:\"/diagnosis\",pool:\"/pool\",news:\"/news\",bigLive:\"/rjhy-official-business\",rjhyOfficialBusiness:\"/rjhy-official-business\",quoteIndicator:\"/rjhy-quote-indicator\",stockRank:\"/rjhy-stock-rank\",finance:\"/finance\",rjhyCircle:\"/rjhy-circle\",capital:\"/capital\",rjhyStockQuote:\"/rjhy-stock-quote\",sector:\"/sector\",watc"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "requestKey",
+      "snippet": ".reject(t)})),p.interceptors.response.use((function(t){return t.status>=200&&t.status<300?d.includes(t.config.url)?t.data:t.data?t.data.data||t.data:Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null):Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null)}),(function(t){return console.log(\"url:\",t.config.baseURL+t.config.url,\";message:\",t.message),Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null)})),e.default=p},DfZB:function(t,e,n){\"use strict\";t.exports=function(t){return function(e){return t.apply(null,e)}}},FYa8:function(t,e,n){\"use strict\";var o;e.__esModule=!0,e.HeadManagerContext=void 0;var r=((o=n(\"q1tI\"))&&o.__esModule?o:{default:o}).default.createContext({});e.HeadManagerContext=r},\"G+5h\":function(t,e,n){\"use strict\";n.d(e,\"a\",(function(){return i}));var o=n(\"H+61\"),r=n(\"UlJF\"),c=new Map([[\"yyyy\",\"fullYear\"],[\"mm\",\"month\"],[\"m\","
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "apiServer",
+      "snippet": "eturn c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/history/net/list\",urlConfig:{requestKey:\"getFlowHistory\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return Object(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlC"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "requestKey",
+      "snippet": "unction(){return o})),a.d(t,\"f\",(function(){return c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/history/net/list\",urlConfig:{requestKey:\"getFlowHistory\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return Object(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/"
+    }
+  ],
+  "sign_code": [
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/b96031948643c1f5958931f7d125251c297dd7be.4cd1854889d15e4d0f80.js",
+      "kw": "nonce",
+      "snippet": "var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},r=d(n),a=v(r),i=(0,o.default)((0,o.default)({},n),{},{styles:a});b(r,i);var u=g(t,i);if(u){var c,s,l;if(null!==(c=i.csp)&&void 0!==c&&c.nonce&&u.nonce!==(null===(s=i.csp)||void 0===s?void 0:s.nonce))u.nonce=null===(l=i.csp)||void 0===l?void 0:l.nonce;return u.innerHTML!==e&&(u.innerHTML=e),u}var p=h(e,i);return p.setAttribute(f(i),t),p};var o=r(n(\"3tO9\")),a=r(n(\"3Mug\")),i=r(n(\"bKFb\")),u=\"data-rc-order\",c=\"data-rc-priority\",s=\"rc-util-key\",l=new Map;function f(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=e.mark;return t?t.startsWith(\"data-\")?t:\"data-\".concat(t):s}function d(e){return e.attachTo?e.attachTo:d"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/cd592ad928dfdb26299ca34f5f9919693ea0755f.689d45b23d01fd250955.js",
+      "kw": "nonce",
+      "snippet": "ll;var n=t.csp,r=t.prepend,a=t.priority,o=void 0===a?0:a,l=k(r),i=\"prependQueue\"===l,c=document.createElement(\"style\");c.setAttribute(E,l),i&&o&&c.setAttribute(w,\"\".concat(o)),null!==n&&void 0!==n&&n.nonce&&(c.nonce=null===n||void 0===n?void 0:n.nonce),c.innerHTML=e;var u=P(t),d=u.firstChild;if(r){if(i){var s=(t.styles||M(u)).filter((function(e){if(![\"prepend\",\"prependQueue\"].includes(e.getAttribute(E)))return!1;var t=Number(e.getAttribute(w)||0);return o>=t}));if(s.length)return u.insertBefore(c,s[s.length-1].nextSibling),c}u.insertBefore(c,d)}else u.appendChild(c);return c}function I(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=P(t);return(t.styles||M(n)).find((func"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "signature",
+      "snippet": ".domain]).concat(f[t.apiServer])}(t.urlConfig),t.sign&&(t.headers=Object.assign(function(t){var e=[];if(t){var n=Object.keys(t).sort();for(var o in n)e.push(t[n[o]])}var r=(new Date).getTime();return{signature:a()(\"sjdxfnqogbzoun13d971ckh8p\"+e.join(\"\")+r),timestamp:r}}(t.paramsData||t.params),t.headers)),t}),(function(t){return Promise.reject(t)})),p.interceptors.response.use((function(t){return t.status>=200&&t.status<300?d.includes(t.config.url)?t.data:t.data?t.data.data||t.data:Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null):Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null)}),(function(t){return console.log(\"url:\",t.config.baseURL+t.config.url,\";mes"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/ef9c51f355fe8ed463cbc5461b360cb5557fefdf.104d2959d61cae5babad.js",
+      "kw": "timestamp",
+      "snippet": "t.headers=Object.assign(function(t){var e=[];if(t){var n=Object.keys(t).sort();for(var o in n)e.push(t[n[o]])}var r=(new Date).getTime();return{signature:a()(\"sjdxfnqogbzoun13d971ckh8p\"+e.join(\"\")+r),timestamp:r}}(t.paramsData||t.params),t.headers)),t}),(function(t){return Promise.reject(t)})),p.interceptors.response.use((function(t){return t.status>=200&&t.status<300?d.includes(t.config.url)?t.data:t.data?t.data.data||t.data:Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null):Object(u.a)(t.config.urlConfig&&t.config.urlConfig.requestKey||null)}),(function(t){return console.log(\"url:\",t.config.baseURL+t.config.url,\";message:\",t.message),Object(u.a)(t.config.urlConfig&&t.conf"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/main-46793b6200d7a3b82e90.js",
+      "kw": "nonce",
+      "snippet": "Attribute(\"data-n-css\");a.forEach((function(e){var r=e.href,o=e.text;if(!t.has(r)){var a=document.createElement(\"style\");a.setAttribute(\"data-n-href\",r),a.setAttribute(\"media\",\"x\"),n&&a.setAttribute(\"nonce\",n),document.head.appendChild(a),a.appendChild(document.createTextNode(o))}}))}(),l=p,f=ee,x.ST&&performance.mark(\"beforeRender\"),ce?(v.default.hydrate(l,f,se),ce=!1):v.default.render(l,f,le),s}function ve(e){var t=e.callback,r=e.children;return h.default.useLayoutEffect((function(){return t()}),[t]),h.default.useEffect((function(){(0,C.default)(Z)}),[]),r}function ye(e){var t=e.callback;return h.default.useLayoutEffect((function(){return t()}),[t]),null}},T0f4:function(e,t){function r(t){"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js",
+      "kw": "nonce",
+      "snippet": "be a boolean\"),this._optimizeForSpeed=c,this._isBrowser=g,this._serverSheet=void 0,this._tags=[],this._injected=!1,this._rulesCount=0;var d=this._isBrowser&&document.querySelector('meta[property=\"csp-nonce\"]');this._nonce=d?d.getAttribute(\"content\"):null}var t,r,o,c=e.prototype;return c.setOptimizeForSpeed=function(e){s(\"boolean\"===typeof e,\"`setOptimizeForSpeed` accepts a boolean\"),s(0===this._rulesCount,\"optimizeForSpeed cannot be when rules have already been inserted\"),this.flush(),this._optimizeForSpeed=e,this.inject()},c.isOptimizeForSpeed=function(){return this._optimizeForSpeed},c.inject=function(){var e=this;if(s(!this._injected,\"sheet already injected\"),this._injected=!0,this._isBro"
+    },
+    {
+      "url": "https://stock.9fzt.com/_next/static/chunks/webpack-578bd7ac7abbf8ed5895.js",
+      "kw": "nonce",
+      "snippet": "],t=o[e];if(0!==t)if(t)r.push(t[2]);else{var n=new Promise((function(r,n){t=o[e]=[r,n]}));r.push(t[2]=n);var u,i=document.createElement(\"script\");i.charset=\"utf-8\",i.timeout=120,a.nc&&i.setAttribute(\"nonce\",a.nc),i.src=function(e){return a.p+\"static/chunks/\"+({}[e]||e)+\".\"+{111:\"8da8d7ac5bb9596523e1\"}[e]+\".js\"}(e);var c=new Error;u=function(r){i.onerror=i.onload=null,clearTimeout(l);var t=o[e];if(0!==t){if(t){var n=r&&(\"load\"===r.type?\"missing\":r.type),u=r&&r.target&&r.target.src;c.message=\"Loading chunk \"+e+\" failed.\\n(\"+n+\": \"+u+\")\",c.name=\"ChunkLoadError\",c.type=n,c.request=u,t[1](c)}o[e]=void 0}};var l=setTimeout((function(){u({type:\"timeout\",target:i})}),12e4);i.onerror=i.onload=u,docum"
+    },
+    {
+      "url": "https://upload.9fzt.com/production/jfztgw/js/tingyun.js",
+      "kw": "timestamp",
+      "snippet": "ime&&0===e.name.indexOf(gn)){var r=e.name.substring(gn.length);r&&(t[r]=Math.round(e.startTime),n+=1)}});var i=e[En]&&e[En].data,a=_({},i||{},gr||{});return a&&r&&r.timing&&o(a,function(e,i){De(e)&&e.timestamp&&(t[i]=e.timestamp-r.timing.navigationStart,n+=1)}),n>0?t:null}function jt(t,e){var n=Ne(t),r=n?n.length:0;if(r>wn&&t.res&&t.res.length>0){t.res=t.res.slice(0,e);var i=Ne(t),a=i?i.length:0;return a>wn?jt(t,e-10>0?e-10:0):t}return t}function Dt(){dr.poMetricCollected?ri():(dr.pfWaitingPoMetric=!0,setTimeout(ri,Xn.max_metric_wait||Ln))}function Lt(){function t(t){try{var e=t.getEntries();e&&o(e,function(t){t.entryType===Dn?lr[Dn]=t.renderTime||t.loadTime:t.entryType===Hn&&t.name===jn&&(l"
+    }
+  ]
+}

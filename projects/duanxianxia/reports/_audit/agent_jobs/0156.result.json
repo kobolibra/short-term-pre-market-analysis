@@ -1,0 +1,22 @@
+{
+  "id": "0156",
+  "script": "scripts/duanxianxia_dump_0703_raw_tables_0156.py",
+  "args": [
+    "2026-07-03"
+  ],
+  "queued_file": "0156_dump_0703_raw_tables_20260705.json",
+  "note": "Task 0156: dump full raw weimai+vratio capture tables for 2026-07-03 for item9/vratio semantics verification.",
+  "worker_time": "2026-07-05T22:40:15+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"date\": \"2026-07-03\",\n  \"captures_root_exists\": true,\n  \"date_dir_exists\": true,\n  \"date_dir_listing\": [\n    \"auction.jjlive.fengdan\",\n    \"auction.jjyd.net_amount\",\n    \"auction.jjyd.qiangchou\",\n    \"auction.jjyd.vratio\",\n    \"auction.jjyd.weimai\",\n    \"cashflow.stock.10day\",\n    \"cashflow.stock.3day\",\n    \"cashflow.stock.5day\",\n    \"cashflow.stock.today\",\n    \"dailyline.stock.manifest\",\n    \"home.kaipan.plate.summary\",\n    \"home.qxlive.top_metrics\",\n    \"home.ztpool\",\n    \"pool.hot\",\n    \"pool.surge\",\n    \"rank.hot_stock_day\",\n    \"rank.rocket\",\n    \"review.daily.top_metrics\",\n    \"review.fupan.plate\",\n    \"review.ltgd.range\"\n  ],\n  \"captures_root_listing_tail\": [\n    \"2026-05-19\",\n    \"2026-05-20\",\n    \"2026-05-21\",\n    \"2026-06-01\",\n    \"2026-06-02\",\n    \"2026-06-03\",\n    \"2026-06-04\",\n    \"2026-06-05\",\n    \"2026-06-08\",\n    \"2026-06-09\",\n    \"2026-06-10\",\n    \"2026-06-11\",\n    \"2026-06-12\",\n    \"2026-06-15\",\n    \"2026-06-16\",\n    \"2026-06-17\",\n    \"2026-06-18\",\n    \"2026-06-22\",\n    \"2026-06-23\",\n    \"2026-06-24\",\n    \"2026-06-25\",\n    \"2026-06-26\",\n    \"2026-06-29\",\n    \"2026-06-30\",\n    \"2026-07-01\",\n    \"2026-07-02\",\n    \"2026-07-03\",\n    \"2026-07-04\"\n  ],\n  \"weimai_files\": [\n    \"092539.json\",\n    \"172622.json\"\n  ],\n  \"vratio_files\": [\n    \"092535.json\",\n    \"172616.json\"\n  ],\n  \"weimai_row_counts\": [\n    150,\n    150\n  ],\n  \"vratio_row_counts\": [\n    138,\n    138\n  ],\n  \"output_file\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/raw_dump_0703_weimai_vratio_0156.json\"\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-05T22:40:15+08:00",
+  "ended": "2026-07-05T22:40:19+08:00",
+  "duration_s": 4.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_dump_0703_raw_tables_0156.py",
+    "2026-07-03"
+  ]
+}

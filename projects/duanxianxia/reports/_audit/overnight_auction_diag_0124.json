@@ -1,0 +1,1402 @@
+{
+  "job": "0124",
+  "ws": "/home/investmentofficehku/.openclaw/workspace",
+  "target": "2026-07-03",
+  "generated": "2026-07-03T08:00:10",
+  "crontab": [
+    "*/10 * * * * /usr/bin/flock -n /tmp/dxx_agent_job.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/agent_job_runner.sh",
+    "0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh",
+    "25 9 * * 1-5 /usr/bin/flock -n /tmp/dxx_premarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh premarket",
+    "1 10 * * 1-5 /usr/bin/flock -n /tmp/dxx_intraday.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_cron_runner.sh intraday_cashflow",
+    "20 17 * * 1-5 /usr/bin/flock -n /tmp/dxx_postmarket.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_postmarket_chain_runner.sh"
+  ],
+  "crontab_rc": 0,
+  "crontab_stderr": "",
+  "cadence": {
+    "review.fupan.plate": [
+      {
+        "folder": "2026-06-02",
+        "snap": "172048",
+        "fetched_at": "2026-06-02T17:20:48",
+        "content_date": "2026-06-02",
+        "folder_minus_content": 0,
+        "row_count": 66
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "180035",
+        "fetched_at": "2026-06-02T18:00:35",
+        "content_date": "2026-06-02",
+        "folder_minus_content": 0,
+        "row_count": 66
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "182532",
+        "fetched_at": "2026-06-02T18:25:32",
+        "content_date": "2026-06-02",
+        "folder_minus_content": 0,
+        "row_count": 66
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "172043",
+        "fetched_at": "2026-06-03T17:20:43",
+        "content_date": "2026-06-03",
+        "folder_minus_content": 0,
+        "row_count": 66
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "180055",
+        "fetched_at": "2026-06-03T18:00:55",
+        "content_date": "2026-06-03",
+        "folder_minus_content": 0,
+        "row_count": 66
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "182545",
+        "fetched_at": "2026-06-03T18:25:45",
+        "content_date": "2026-06-03",
+        "folder_minus_content": 0,
+        "row_count": 66
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "172024",
+        "fetched_at": "2026-06-04T17:20:24",
+        "content_date": "2026-06-04",
+        "folder_minus_content": 0,
+        "row_count": 79
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "180049",
+        "fetched_at": "2026-06-04T18:00:49",
+        "content_date": "2026-06-04",
+        "folder_minus_content": 0,
+        "row_count": 79
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "182547",
+        "fetched_at": "2026-06-04T18:25:47",
+        "content_date": "2026-06-04",
+        "folder_minus_content": 0,
+        "row_count": 79
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "172041",
+        "fetched_at": "2026-06-05T17:20:41",
+        "content_date": "2026-06-05",
+        "folder_minus_content": 0,
+        "row_count": 73
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "180045",
+        "fetched_at": "2026-06-05T18:00:45",
+        "content_date": "2026-06-05",
+        "folder_minus_content": 0,
+        "row_count": 73
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "182532",
+        "fetched_at": "2026-06-05T18:25:32",
+        "content_date": "2026-06-05",
+        "folder_minus_content": 0,
+        "row_count": 73
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "192048",
+        "fetched_at": "2026-06-05T19:20:48",
+        "content_date": "2026-06-05",
+        "folder_minus_content": 0,
+        "row_count": 73
+      },
+      {
+        "folder": "2026-06-08",
+        "snap": "172049",
+        "fetched_at": "2026-06-08T17:20:49",
+        "content_date": "2026-06-08",
+        "folder_minus_content": 0,
+        "row_count": 57
+      },
+      {
+        "folder": "2026-06-10",
+        "snap": "172102",
+        "fetched_at": "2026-06-10T17:21:02",
+        "content_date": "2026-06-10",
+        "folder_minus_content": 0,
+        "row_count": 70
+      },
+      {
+        "folder": "2026-06-11",
+        "snap": "172039",
+        "fetched_at": "2026-06-11T17:20:39",
+        "content_date": "2026-06-11",
+        "folder_minus_content": 0,
+        "row_count": 69
+      },
+      {
+        "folder": "2026-06-12",
+        "snap": "172307",
+        "fetched_at": "2026-06-12T17:23:07",
+        "content_date": "2026-06-12",
+        "folder_minus_content": 0,
+        "row_count": 89
+      },
+      {
+        "folder": "2026-06-16",
+        "snap": "172052",
+        "fetched_at": "2026-06-16T17:20:52",
+        "content_date": "2026-06-16",
+        "folder_minus_content": 0,
+        "row_count": 117
+      },
+      {
+        "folder": "2026-06-17",
+        "snap": "172116",
+        "fetched_at": "2026-06-17T17:21:16",
+        "content_date": "2026-06-17",
+        "folder_minus_content": 0,
+        "row_count": 86
+      },
+      {
+        "folder": "2026-06-18",
+        "snap": "172051",
+        "fetched_at": "2026-06-18T17:20:51",
+        "content_date": "2026-06-18",
+        "folder_minus_content": 0,
+        "row_count": 91
+      },
+      {
+        "folder": "2026-06-22",
+        "snap": "172024",
+        "fetched_at": "2026-06-22T17:20:24",
+        "content_date": "2026-06-22",
+        "folder_minus_content": 0,
+        "row_count": 106
+      },
+      {
+        "folder": "2026-06-23",
+        "snap": "172057",
+        "fetched_at": "2026-06-23T17:20:57",
+        "content_date": "2026-06-23",
+        "folder_minus_content": 0,
+        "row_count": 96
+      },
+      {
+        "folder": "2026-06-25",
+        "snap": "172036",
+        "fetched_at": "2026-06-25T17:20:36",
+        "content_date": "2026-06-25",
+        "folder_minus_content": 0,
+        "row_count": 86
+      },
+      {
+        "folder": "2026-06-26",
+        "snap": "172051",
+        "fetched_at": "2026-06-26T17:20:51",
+        "content_date": "2026-06-26",
+        "folder_minus_content": 0,
+        "row_count": 60
+      },
+      {
+        "folder": "2026-06-30",
+        "snap": "172052",
+        "fetched_at": "2026-06-30T17:20:52",
+        "content_date": "2026-06-30",
+        "folder_minus_content": 0,
+        "row_count": 138
+      },
+      {
+        "folder": "2026-07-01",
+        "snap": "172031",
+        "fetched_at": "2026-07-01T17:20:31",
+        "content_date": "2026-07-01",
+        "folder_minus_content": 0,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-07-02",
+        "snap": "012033",
+        "fetched_at": "2026-07-02T01:20:33",
+        "content_date": "2026-07-01",
+        "folder_minus_content": 1,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-07-03",
+        "snap": "012032",
+        "fetched_at": "2026-07-03T01:20:32",
+        "content_date": "2026-07-02",
+        "folder_minus_content": 1,
+        "row_count": 92
+      }
+    ],
+    "review.ltgd.range": [
+      {
+        "folder": "2026-06-02",
+        "snap": "172047",
+        "fetched_at": "2026-06-02T17:20:47",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 76
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "180034",
+        "fetched_at": "2026-06-02T18:00:34",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 76
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "182530",
+        "fetched_at": "2026-06-02T18:25:30",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 76
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "172041",
+        "fetched_at": "2026-06-03T17:20:41",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "180053",
+        "fetched_at": "2026-06-03T18:00:53",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "182543",
+        "fetched_at": "2026-06-03T18:25:43",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "172023",
+        "fetched_at": "2026-06-04T17:20:23",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "180047",
+        "fetched_at": "2026-06-04T18:00:47",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "182546",
+        "fetched_at": "2026-06-04T18:25:46",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "172040",
+        "fetched_at": "2026-06-05T17:20:40",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "180044",
+        "fetched_at": "2026-06-05T18:00:44",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "182531",
+        "fetched_at": "2026-06-05T18:25:31",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "192047",
+        "fetched_at": "2026-06-05T19:20:47",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 78
+      },
+      {
+        "folder": "2026-06-08",
+        "snap": "172047",
+        "fetched_at": "2026-06-08T17:20:47",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 73
+      },
+      {
+        "folder": "2026-06-09",
+        "snap": "172046",
+        "fetched_at": "2026-06-09T17:20:46",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 79
+      },
+      {
+        "folder": "2026-06-10",
+        "snap": "172100",
+        "fetched_at": "2026-06-10T17:21:00",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 79
+      },
+      {
+        "folder": "2026-06-11",
+        "snap": "172038",
+        "fetched_at": "2026-06-11T17:20:38",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-06-12",
+        "snap": "172306",
+        "fetched_at": "2026-06-12T17:23:06",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-06-16",
+        "snap": "172050",
+        "fetched_at": "2026-06-16T17:20:50",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-06-17",
+        "snap": "172115",
+        "fetched_at": "2026-06-17T17:21:15",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-06-18",
+        "snap": "172049",
+        "fetched_at": "2026-06-18T17:20:49",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-06-22",
+        "snap": "172022",
+        "fetched_at": "2026-06-22T17:20:22",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-06-23",
+        "snap": "172055",
+        "fetched_at": "2026-06-23T17:20:55",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-06-25",
+        "snap": "172035",
+        "fetched_at": "2026-06-25T17:20:35",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-06-26",
+        "snap": "172049",
+        "fetched_at": "2026-06-26T17:20:49",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-06-30",
+        "snap": "172050",
+        "fetched_at": "2026-06-30T17:20:50",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-07-01",
+        "snap": "172029",
+        "fetched_at": "2026-07-01T17:20:29",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-07-02",
+        "snap": "012032",
+        "fetched_at": "2026-07-02T01:20:32",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      },
+      {
+        "folder": "2026-07-03",
+        "snap": "012031",
+        "fetched_at": "2026-07-03T01:20:31",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 80
+      }
+    ],
+    "review.daily.top_metrics": [
+      {
+        "folder": "2026-06-02",
+        "snap": "172044",
+        "fetched_at": "2026-06-02T17:20:44",
+        "content_date": "2026-06-02",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "180032",
+        "fetched_at": "2026-06-02T18:00:32",
+        "content_date": "2026-06-02",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "182528",
+        "fetched_at": "2026-06-02T18:25:28",
+        "content_date": "2026-06-02",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "172039",
+        "fetched_at": "2026-06-03T17:20:39",
+        "content_date": "2026-06-03",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "180051",
+        "fetched_at": "2026-06-03T18:00:51",
+        "content_date": "2026-06-03",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "182541",
+        "fetched_at": "2026-06-03T18:25:41",
+        "content_date": "2026-06-03",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "172021",
+        "fetched_at": "2026-06-04T17:20:21",
+        "content_date": "2026-06-04",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "180045",
+        "fetched_at": "2026-06-04T18:00:45",
+        "content_date": "2026-06-04",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "182544",
+        "fetched_at": "2026-06-04T18:25:44",
+        "content_date": "2026-06-04",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "172037",
+        "fetched_at": "2026-06-05T17:20:37",
+        "content_date": "2026-06-05",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "180042",
+        "fetched_at": "2026-06-05T18:00:42",
+        "content_date": "2026-06-05",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "182529",
+        "fetched_at": "2026-06-05T18:25:29",
+        "content_date": "2026-06-05",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "192044",
+        "fetched_at": "2026-06-05T19:20:44",
+        "content_date": "2026-06-05",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-08",
+        "snap": "172044",
+        "fetched_at": "2026-06-08T17:20:44",
+        "content_date": "2026-06-08",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-09",
+        "snap": "172043",
+        "fetched_at": "2026-06-09T17:20:43",
+        "content_date": "2026-06-09",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-10",
+        "snap": "172058",
+        "fetched_at": "2026-06-10T17:20:58",
+        "content_date": "2026-06-10",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-11",
+        "snap": "172035",
+        "fetched_at": "2026-06-11T17:20:35",
+        "content_date": "2026-06-11",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-12",
+        "snap": "172304",
+        "fetched_at": "2026-06-12T17:23:04",
+        "content_date": "2026-06-12",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-16",
+        "snap": "172048",
+        "fetched_at": "2026-06-16T17:20:48",
+        "content_date": "2026-06-16",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-17",
+        "snap": "172112",
+        "fetched_at": "2026-06-17T17:21:12",
+        "content_date": "2026-06-17",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-18",
+        "snap": "172047",
+        "fetched_at": "2026-06-18T17:20:47",
+        "content_date": "2026-06-18",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-22",
+        "snap": "172020",
+        "fetched_at": "2026-06-22T17:20:20",
+        "content_date": "2026-06-22",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-23",
+        "snap": "172053",
+        "fetched_at": "2026-06-23T17:20:53",
+        "content_date": "2026-06-23",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-25",
+        "snap": "172032",
+        "fetched_at": "2026-06-25T17:20:32",
+        "content_date": "2026-06-25",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-26",
+        "snap": "172045",
+        "fetched_at": "2026-06-26T17:20:45",
+        "content_date": "2026-06-26",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-06-30",
+        "snap": "172048",
+        "fetched_at": "2026-06-30T17:20:48",
+        "content_date": "2026-06-30",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-07-01",
+        "snap": "172026",
+        "fetched_at": "2026-07-01T17:20:26",
+        "content_date": "2026-07-01",
+        "folder_minus_content": 0,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-07-02",
+        "snap": "012029",
+        "fetched_at": "2026-07-02T01:20:29",
+        "content_date": "2026-07-01",
+        "folder_minus_content": 1,
+        "row_count": 17
+      },
+      {
+        "folder": "2026-07-03",
+        "snap": "012028",
+        "fetched_at": "2026-07-03T01:20:28",
+        "content_date": "2026-07-02",
+        "folder_minus_content": 1,
+        "row_count": 17
+      }
+    ],
+    "cashflow.stock.today": [
+      {
+        "folder": "2026-05-20",
+        "snap": "100452",
+        "fetched_at": "2026-05-20T10:04:52",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-01",
+        "snap": "100448",
+        "fetched_at": "2026-06-01T10:04:48",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "100836",
+        "fetched_at": "2026-06-02T10:08:36",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 0
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "172637",
+        "fetched_at": "2026-06-02T17:26:37",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "180404",
+        "fetched_at": "2026-06-02T18:04:04",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-02",
+        "snap": "182901",
+        "fetched_at": "2026-06-02T18:29:01",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "100554",
+        "fetched_at": "2026-06-03T10:05:54",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "172452",
+        "fetched_at": "2026-06-03T17:24:52",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "180515",
+        "fetched_at": "2026-06-03T18:05:15",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-03",
+        "snap": "183048",
+        "fetched_at": "2026-06-03T18:30:48",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "100543",
+        "fetched_at": "2026-06-04T10:05:43",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "172324",
+        "fetched_at": "2026-06-04T17:23:24",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "180334",
+        "fetched_at": "2026-06-04T18:03:34",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-04",
+        "snap": "182901",
+        "fetched_at": "2026-06-04T18:29:01",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "101158",
+        "fetched_at": "2026-06-05T10:11:58",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 37
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "113922",
+        "fetched_at": "2026-06-05T11:39:22",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "121258",
+        "fetched_at": "2026-06-05T12:12:58",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "155816",
+        "fetched_at": "2026-06-05T15:58:16",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "160903",
+        "fetched_at": "2026-06-05T16:09:03",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "172401",
+        "fetched_at": "2026-06-05T17:24:01",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "180456",
+        "fetched_at": "2026-06-05T18:04:56",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "182845",
+        "fetched_at": "2026-06-05T18:28:45",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-05",
+        "snap": "192434",
+        "fetched_at": "2026-06-05T19:24:34",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-08",
+        "snap": "100521",
+        "fetched_at": "2026-06-08T10:05:21",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-08",
+        "snap": "172522",
+        "fetched_at": "2026-06-08T17:25:22",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-09",
+        "snap": "100540",
+        "fetched_at": "2026-06-09T10:05:40",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-09",
+        "snap": "172454",
+        "fetched_at": "2026-06-09T17:24:54",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-10",
+        "snap": "100516",
+        "fetched_at": "2026-06-10T10:05:16",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-10",
+        "snap": "172435",
+        "fetched_at": "2026-06-10T17:24:35",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-11",
+        "snap": "100445",
+        "fetched_at": "2026-06-11T10:04:45",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-11",
+        "snap": "172521",
+        "fetched_at": "2026-06-11T17:25:21",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-12",
+        "snap": "172704",
+        "fetched_at": "2026-06-12T17:27:04",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-15",
+        "snap": "100433",
+        "fetched_at": "2026-06-15T10:04:33",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-16",
+        "snap": "100510",
+        "fetched_at": "2026-06-16T10:05:10",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-16",
+        "snap": "172418",
+        "fetched_at": "2026-06-16T17:24:18",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-17",
+        "snap": "100418",
+        "fetched_at": "2026-06-17T10:04:18",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-17",
+        "snap": "172537",
+        "fetched_at": "2026-06-17T17:25:37",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-18",
+        "snap": "100515",
+        "fetched_at": "2026-06-18T10:05:15",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-18",
+        "snap": "172439",
+        "fetched_at": "2026-06-18T17:24:39",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-22",
+        "snap": "172608",
+        "fetched_at": "2026-06-22T17:26:08",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-23",
+        "snap": "100352",
+        "fetched_at": "2026-06-23T10:03:52",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-23",
+        "snap": "172321",
+        "fetched_at": "2026-06-23T17:23:21",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-24",
+        "snap": "100756",
+        "fetched_at": "2026-06-24T10:07:56",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-25",
+        "snap": "172414",
+        "fetched_at": "2026-06-25T17:24:14",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-26",
+        "snap": "100359",
+        "fetched_at": "2026-06-26T10:03:59",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-06-26",
+        "snap": "172349",
+        "fetched_at": "2026-06-26T17:23:49",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-29",
+        "snap": "100517",
+        "fetched_at": "2026-06-29T10:05:17",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-30",
+        "snap": "100455",
+        "fetched_at": "2026-06-30T10:04:55",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-06-30",
+        "snap": "172409",
+        "fetched_at": "2026-06-30T17:24:09",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-07-01",
+        "snap": "100435",
+        "fetched_at": "2026-07-01T10:04:35",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-07-01",
+        "snap": "172338",
+        "fetched_at": "2026-07-01T17:23:38",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      },
+      {
+        "folder": "2026-07-01",
+        "snap": "180439",
+        "fetched_at": "2026-07-01T18:04:39",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-07-02",
+        "snap": "100455",
+        "fetched_at": "2026-07-02T10:04:55",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-07-02",
+        "snap": "180356",
+        "fetched_at": "2026-07-02T18:03:56",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 150
+      },
+      {
+        "folder": "2026-07-03",
+        "snap": "100448",
+        "fetched_at": "2026-07-03T10:04:48",
+        "content_date": null,
+        "folder_minus_content": null,
+        "row_count": 50
+      }
+    ]
+  },
+  "cadence_summary": {
+    "review.fupan.plate": {
+      "n": 28,
+      "delta_counts": {
+        "0": 26,
+        "1": 2
+      },
+      "n_overnight_before_0600": 2,
+      "n_evening_1500_2359": 26
+    },
+    "review.ltgd.range": {
+      "n": 29,
+      "delta_counts": {},
+      "n_overnight_before_0600": 2,
+      "n_evening_1500_2359": 27
+    },
+    "review.daily.top_metrics": {
+      "n": 29,
+      "delta_counts": {
+        "0": 27,
+        "1": 2
+      },
+      "n_overnight_before_0600": 2,
+      "n_evening_1500_2359": 27
+    },
+    "cashflow.stock.today": {
+      "n": 55,
+      "delta_counts": {},
+      "n_overnight_before_0600": 0,
+      "n_evening_1500_2359": 31
+    }
+  },
+  "auction": {
+    "auction.jjyd.vratio": {
+      "snapshot": "092535",
+      "all_snaps": [
+        "092535"
+      ],
+      "structure": {
+        "headers": [
+          "rank",
+          "code",
+          "name",
+          "auction_volume_ratio",
+          "seal_amount_wan",
+          "auction_change_pct",
+          "latest_change_pct",
+          "auction_turnover_wan",
+          "concept",
+          "auction_change_pct_text",
+          "auction_turnover_wan_text",
+          "yesterday_auction_turnover_wan",
+          "volume_ratio_multiple",
+          "turnover_rate_pct",
+          "raw"
+        ],
+        "meta": {
+          "source": "https://duanxianxia.com/data/getVratioData/11",
+          "field": "list",
+          "count": 138
+        },
+        "row_count": 138,
+        "group_counts": {
+          "<none>": 138
+        }
+      },
+      "by_group": {
+        "<none>": {
+          "n": 138,
+          "auction_change_pct_nonnull": 0,
+          "auction_change_pct_cov_pct": 0.0,
+          "top5": [
+            {
+              "code": "603993",
+              "name": "洛阳钼业",
+              "auction_volume_ratio": 1335,
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.08
+            },
+            {
+              "code": "000792",
+              "name": "盐湖股份",
+              "auction_volume_ratio": 970,
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.1
+            },
+            {
+              "code": "600489",
+              "name": "中金黄金",
+              "auction_volume_ratio": 522,
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.14
+            },
+            {
+              "code": "000408",
+              "name": "藏格矿业",
+              "auction_volume_ratio": 497,
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.02
+            },
+            {
+              "code": "000426",
+              "name": "兴业银锡",
+              "auction_volume_ratio": 462,
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.12
+            }
+          ]
+        }
+      }
+    },
+    "auction.jjyd.qiangchou": {
+      "snapshot": "092536",
+      "all_snaps": [
+        "092536"
+      ],
+      "structure": {
+        "headers": [
+          "group",
+          "rank",
+          "code",
+          "name",
+          "auction_volume_ratio",
+          "seal_amount_wan",
+          "auction_change_pct",
+          "latest_change_pct",
+          "auction_turnover_wan",
+          "concept",
+          "auction_change_pct_text",
+          "auction_turnover_wan_text",
+          "yesterday_auction_turnover_wan",
+          "grab_strength",
+          "turnover_rate_pct",
+          "raw"
+        ],
+        "meta": {
+          "source": "https://duanxianxia.com/data/getQiangchouData/11",
+          "field": "list.grab + list.qiangchou",
+          "count": 78,
+          "groups": {
+            "grab": 74,
+            "qiangchou": 4
+          }
+        },
+        "row_count": 78,
+        "group_counts": {
+          "grab": 74,
+          "qiangchou": 4
+        }
+      },
+      "by_group": {
+        "grab": {
+          "n": 74,
+          "auction_change_pct_nonnull": 0,
+          "auction_change_pct_cov_pct": 0.0,
+          "top5": [
+            {
+              "code": "300666",
+              "name": "江丰电子",
+              "grab_strength": "7.47",
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.13
+            },
+            {
+              "code": "300543",
+              "name": "朗科智能",
+              "grab_strength": "7.06",
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.21
+            },
+            {
+              "code": "300918",
+              "name": "南山智尚",
+              "grab_strength": "6.62",
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.16
+            },
+            {
+              "code": "300751",
+              "name": "迈为股份",
+              "grab_strength": "6.25",
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.04
+            },
+            {
+              "code": "301165",
+              "name": "锐捷网络",
+              "grab_strength": "6.22",
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 1.67
+            }
+          ]
+        },
+        "qiangchou": {
+          "n": 4,
+          "auction_change_pct_nonnull": 0,
+          "auction_change_pct_cov_pct": 0.0,
+          "top5": [
+            {
+              "code": "300543",
+              "name": "朗科智能",
+              "grab_strength": "7.34",
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.21
+            },
+            {
+              "code": "920790",
+              "name": "联迪信息",
+              "grab_strength": "6.94",
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.13
+            },
+            {
+              "code": "688513",
+              "name": "苑东生物",
+              "grab_strength": "5.56",
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.06
+            },
+            {
+              "code": "688702",
+              "name": "盛科通信-U",
+              "grab_strength": "5.38",
+              "auction_change_pct": "none",
+              "turnover_rate_pct": 0.16
+            }
+          ]
+        }
+      }
+    }
+  },
+  "grab_qiangchou_same_code_both_groups": [
+    {
+      "code": "300543",
+      "grab_group_grab_strength": "7.06",
+      "qiangchou_group_grab_strength": "7.34"
+    },
+    {
+      "code": "688702",
+      "grab_group_grab_strength": "3.97",
+      "qiangchou_group_grab_strength": "5.38"
+    },
+    {
+      "code": "920790",
+      "grab_group_grab_strength": "2.98",
+      "qiangchou_group_grab_strength": "6.94"
+    }
+  ],
+  "grab_qiangchou_mixing_count": 3
+}

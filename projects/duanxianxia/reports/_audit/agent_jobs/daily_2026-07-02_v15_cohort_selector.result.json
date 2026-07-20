@@ -1,0 +1,32 @@
+{
+  "id": "daily_2026-07-02_v15_cohort_selector",
+  "script": "scripts/v15_cohort_selector.py",
+  "args": [
+    "--top-n",
+    "30",
+    "--min-train",
+    "5",
+    "--low-open-max",
+    "2.0"
+  ],
+  "queued_file": "daily_2026-07-02_v15_cohort_selector.json",
+  "note": "daily auto-refresh 2026-07-02",
+  "worker_time": "2026-07-02T00:16:53+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"oos_days\": 13,\n  \"oos_summary\": {\n    \"edge_stored\": {\n      \"oos_days\": 13,\n      \"capture\": 0.1641,\n      \"mean_excess\": 2.5909,\n      \"win_rate\": 0.559,\n      \"t1_high_payoff\": 6.9326\n    },\n    \"v10_amt\": {\n      \"oos_days\": 13,\n      \"capture\": 0.1487,\n      \"mean_excess\": 1.7743,\n      \"win_rate\": 0.5179,\n      \"t1_high_payoff\": 6.8595\n    },\n    \"cohort\": {\n      \"oos_days\": 13,\n      \"capture\": 0.1308,\n      \"mean_excess\": 1.5735,\n      \"win_rate\": 0.5051,\n      \"t1_high_payoff\": 6.2807\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-02T00:16:53+08:00",
+  "ended": "2026-07-02T00:45:58+08:00",
+  "duration_s": 1745.4,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v15_cohort_selector.py",
+    "--top-n",
+    "30",
+    "--min-train",
+    "5",
+    "--low-open-max",
+    "2.0"
+  ]
+}

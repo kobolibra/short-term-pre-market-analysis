@@ -1,0 +1,19 @@
+{
+  "id": "0023_install_ipo_calendar_cron_20260624",
+  "script": "scripts/install_ipo_calendar_cron.py",
+  "args": [],
+  "queued_file": "0023_install_ipo_calendar_cron_20260624.json",
+  "note": "Install standalone weekday 08:00 IPO calendar cron on the VM, separate from duanxianxia.",
+  "worker_time": "2026-06-24T22:00:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"generated_at\": \"2026-06-24T22:00:07+08:00\",\n  \"ok\": true,\n  \"cron_line\": \"0 8 * * 1-5 /usr/bin/flock -n /tmp/ipo_calendar.lock bash /home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_cron_runner.sh\",\n  \"stdout\": \"\",\n  \"stderr\": \"\",\n  \"previous_count\": 1,\n  \"new_count\": 2\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-24T22:00:07+08:00",
+  "ended": "2026-06-24T22:00:07+08:00",
+  "duration_s": 0.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/install_ipo_calendar_cron.py"
+  ]
+}

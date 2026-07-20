@@ -1,0 +1,759 @@
+{
+  "generated_at": "2026-07-19T22:09:19",
+  "n_days": 23,
+  "oos_days": 17,
+  "min_train": 6,
+  "baseline_top5": {
+    "n": 17,
+    "mean": 5.879,
+    "median": 2.208,
+    "win_rate": 0.588,
+    "odds": 5.11,
+    "sum": 99.944,
+    "p10": -3.696,
+    "p90": 9.603
+  },
+  "gated_top5": {
+    "n": 17,
+    "mean": 2.105,
+    "median": 0.0,
+    "win_rate": 0.412,
+    "odds": 2.59,
+    "sum": 35.788,
+    "p10": -3.242,
+    "p90": 6.66
+  },
+  "folds": [
+    {
+      "date": "2026-06-09",
+      "base_ret": 2.2077906825366433,
+      "gated_ret": 0.0,
+      "trade": false,
+      "rule": {
+        "k": "top10_score_mean",
+        "op": "<=",
+        "th": 87.23109997142858,
+        "train_gain": 0.6252506881751028,
+        "train_mean": 2.3520069997543898,
+        "train_win": 0.6666666666666666,
+        "trade_frac": 0.6666666666666666
+      },
+      "feat": {
+        "n_candidates": 390,
+        "top1_score": 89.33129914537444,
+        "top5_score_mean": 88.50536110044054,
+        "top10_score_mean": 87.46068713303966,
+        "top30_score_mean": 79.57944301600588,
+        "score_gap_1_5": 1.906956528634339,
+        "score_gap_5_30": 8.925918084434656,
+        "top5_lowopen_frac": 0.6,
+        "top5_highopen_frac": 0.2,
+        "top5_open_mean": 0.8474999999999999,
+        "top30_risk_frac": 0.26666666666666666,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "603629",
+        "001896",
+        "600162",
+        "002251",
+        "300975"
+      ],
+      "excess": [
+        0.46,
+        10.1,
+        -1.08,
+        -2.15,
+        3.7
+      ]
+    },
+    {
+      "date": "2026-06-10",
+      "base_ret": -3.2418337204392653,
+      "gated_ret": -3.2418337204392653,
+      "trade": true,
+      "rule": {
+        "k": "top10_score_mean",
+        "op": "<=",
+        "th": 87.46068713303966,
+        "train_gain": 0.5359291612929451,
+        "train_mean": 2.331404668723283,
+        "train_win": 0.7142857142857143,
+        "trade_frac": 0.7142857142857143
+      },
+      "feat": {
+        "n_candidates": 271,
+        "top1_score": 93.78508454838709,
+        "top5_score_mean": 90.4903830967742,
+        "top10_score_mean": 87.23926607741936,
+        "top30_score_mean": 77.42614430537635,
+        "score_gap_1_5": 6.336730225806434,
+        "score_gap_5_30": 13.064238791397841,
+        "top5_lowopen_frac": 0.2,
+        "top5_highopen_frac": 0.4,
+        "top5_open_mean": 3.9619999999999997,
+        "top30_risk_frac": 1.0,
+        "top30_weak_frac": 1.0
+      },
+      "codes": [
+        "002354",
+        "002747",
+        "300221",
+        "000670",
+        "301013"
+      ],
+      "excess": [
+        7.32,
+        -10.29,
+        -6.08,
+        -4.88,
+        -2.28
+      ]
+    },
+    {
+      "date": "2026-06-11",
+      "base_ret": -2.0418538604826293,
+      "gated_ret": -2.0418538604826293,
+      "trade": true,
+      "rule": {
+        "k": "top5_lowopen_frac",
+        "op": ">=",
+        "th": 0.6,
+        "train_gain": 0.8741672311862354,
+        "train_mean": 2.039979085132873,
+        "train_win": 0.625,
+        "trade_frac": 0.625
+      },
+      "feat": {
+        "n_candidates": 296,
+        "top1_score": 94.51048224832215,
+        "top5_score_mean": 91.3781411852349,
+        "top10_score_mean": 88.03867176241612,
+        "top30_score_mean": 78.91712921387025,
+        "score_gap_1_5": 7.776290288590602,
+        "score_gap_5_30": 12.461011971364641,
+        "top5_lowopen_frac": 0.6,
+        "top5_highopen_frac": 0.4,
+        "top5_open_mean": 3.348,
+        "top30_risk_frac": 1.0,
+        "top30_weak_frac": 1.0
+      },
+      "codes": [
+        "002636",
+        "002354",
+        "000833",
+        "002585",
+        "600141"
+      ],
+      "excess": [
+        9.51,
+        -8.68,
+        -5.52,
+        -5.51,
+        0.0
+      ]
+    },
+    {
+      "date": "2026-06-15",
+      "base_ret": 5.844748312851567,
+      "gated_ret": 5.844748312851567,
+      "trade": true,
+      "rule": {
+        "k": "top5_highopen_frac",
+        "op": "<=",
+        "th": 0.2,
+        "train_gain": 1.0039101899969456,
+        "train_mean": 1.8133147423403313,
+        "train_win": 0.5555555555555556,
+        "trade_frac": 0.5555555555555556
+      },
+      "feat": {
+        "n_candidates": 282,
+        "top1_score": 90.80900818181819,
+        "top5_score_mean": 87.10933437142857,
+        "top10_score_mean": 83.21280972467532,
+        "top30_score_mean": 73.2755212930736,
+        "score_gap_1_5": 6.234859857142851,
+        "score_gap_5_30": 13.833813078354979,
+        "top5_lowopen_frac": 0.6,
+        "top5_highopen_frac": 0.2,
+        "top5_open_mean": 2.194,
+        "top30_risk_frac": 0.2,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "300570",
+        "600500",
+        "002842",
+        "002119",
+        "600536"
+      ],
+      "excess": [
+        10.2,
+        4.92,
+        4.41,
+        5.48,
+        4.23
+      ]
+    },
+    {
+      "date": "2026-06-16",
+      "base_ret": -0.6059163643535512,
+      "gated_ret": 0.0,
+      "trade": false,
+      "rule": {
+        "k": "top5_highopen_frac",
+        "op": "<=",
+        "th": 0.2,
+        "train_gain": 0.9035191709972512,
+        "train_mean": 2.216458099391455,
+        "train_win": 0.6,
+        "trade_frac": 0.6
+      },
+      "feat": {
+        "n_candidates": 335,
+        "top1_score": 92.30944723076924,
+        "top5_score_mean": 90.00945503076925,
+        "top10_score_mean": 87.85207845641025,
+        "top30_score_mean": 80.28925197777778,
+        "score_gap_1_5": 4.917785820512819,
+        "score_gap_5_30": 9.720203052991465,
+        "top5_lowopen_frac": 0.6,
+        "top5_highopen_frac": 0.4,
+        "top5_open_mean": 1.5200000000000002,
+        "top30_risk_frac": 0.43333333333333335,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "601958",
+        "600500",
+        "603738",
+        "000603",
+        "002125"
+      ],
+      "excess": [
+        2.78,
+        0.73,
+        -2.62,
+        -1.98,
+        -1.94
+      ]
+    },
+    {
+      "date": "2026-06-18",
+      "base_ret": 2.2475792950805453,
+      "gated_ret": 2.2475792950805453,
+      "trade": true,
+      "rule": {
+        "k": "top5_highopen_frac",
+        "op": "<=",
+        "th": 0.2,
+        "train_gain": 0.8764643703932786,
+        "train_mean": 2.0149619085376864,
+        "train_win": 0.5454545454545454,
+        "trade_frac": 0.5454545454545454
+      },
+      "feat": {
+        "n_candidates": 322,
+        "top1_score": 92.38549948192771,
+        "top5_score_mean": 87.95229796385543,
+        "top10_score_mean": 85.99269864096387,
+        "top30_score_mean": 77.49309580401606,
+        "score_gap_1_5": 7.050536204819267,
+        "score_gap_5_30": 10.459202159839364,
+        "top5_lowopen_frac": 0.4,
+        "top5_highopen_frac": 0.2,
+        "top5_open_mean": 0.5639999999999998,
+        "top30_risk_frac": 1.0,
+        "top30_weak_frac": 1.0
+      },
+      "codes": [
+        "002167",
+        "300285",
+        "002491",
+        "000777",
+        "605006"
+      ],
+      "excess": [
+        0.0,
+        9.34,
+        5.47,
+        -3.57,
+        0.0
+      ]
+    },
+    {
+      "date": "2026-06-23",
+      "base_ret": -4.668284859632471,
+      "gated_ret": 0.0,
+      "trade": false,
+      "rule": {
+        "k": "top5_highopen_frac",
+        "op": "<=",
+        "th": 0.2,
+        "train_gain": 0.8034256728605051,
+        "train_mean": 2.034346690749591,
+        "train_win": 0.5833333333333334,
+        "trade_frac": 0.5833333333333334
+      },
+      "feat": {
+        "n_candidates": 344,
+        "top1_score": 95.830214,
+        "top5_score_mean": 90.7927784,
+        "top10_score_mean": 87.63084546666667,
+        "top30_score_mean": 81.40612456666668,
+        "score_gap_1_5": 8.606748666666661,
+        "score_gap_5_30": 9.386653833333327,
+        "top5_lowopen_frac": 0.0,
+        "top5_highopen_frac": 0.8,
+        "top5_open_mean": 10.99,
+        "top30_risk_frac": 1.0,
+        "top30_weak_frac": 1.0
+      },
+      "codes": [
+        "002837",
+        "300085",
+        "301580",
+        "300420",
+        "000823"
+      ],
+      "excess": [
+        -4.59,
+        11.75,
+        -2.03,
+        -14.57,
+        -13.89
+      ]
+    },
+    {
+      "date": "2026-06-24",
+      "base_ret": 63.510378247455925,
+      "gated_ret": 0.0,
+      "trade": false,
+      "rule": {
+        "k": "top5_highopen_frac",
+        "op": "<=",
+        "th": 0.2,
+        "train_gain": 1.1007225333814257,
+        "train_mean": 1.8778584837688534,
+        "train_win": 0.5384615384615384,
+        "trade_frac": 0.5384615384615384
+      },
+      "feat": {
+        "n_candidates": 331,
+        "top1_score": 90.65901286516853,
+        "top5_score_mean": 88.2762885011236,
+        "top10_score_mean": 85.95356358426966,
+        "top30_score_mean": 78.01409207153559,
+        "score_gap_1_5": 4.850422865168525,
+        "score_gap_5_30": 10.262196429588016,
+        "top5_lowopen_frac": 0.6,
+        "top5_highopen_frac": 0.4,
+        "top5_open_mean": 182.316,
+        "top30_risk_frac": 0.13333333333333333,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "002167",
+        "000070",
+        "002083",
+        "600172",
+        "688797"
+      ],
+      "excess": [
+        9.53,
+        2.95,
+        -5.63,
+        3.24,
+        307.45
+      ]
+    },
+    {
+      "date": "2026-06-26",
+      "base_ret": 17.494551494288924,
+      "gated_ret": 17.494551494288924,
+      "trade": true,
+      "rule": {
+        "k": "top10_score_mean",
+        "op": "<=",
+        "th": 87.23109997142858,
+        "train_gain": 0.8644001608158494,
+        "train_mean": 6.122481989565313,
+        "train_win": 0.5,
+        "trade_frac": 0.5
+      },
+      "feat": {
+        "n_candidates": 331,
+        "top1_score": 93.22790656804733,
+        "top5_score_mean": 88.1798965668639,
+        "top10_score_mean": 85.56089771952664,
+        "top30_score_mean": 78.02679032859962,
+        "score_gap_1_5": 7.801801775147922,
+        "score_gap_5_30": 10.153106238264286,
+        "top5_lowopen_frac": 0.2,
+        "top5_highopen_frac": 0.8,
+        "top5_open_mean": 48.676,
+        "top30_risk_frac": 1.0,
+        "top30_weak_frac": 1.0
+      },
+      "codes": [
+        "000823",
+        "002254",
+        "600973",
+        "301392",
+        "001399"
+      ],
+      "excess": [
+        0.0,
+        -5.9,
+        -7.5,
+        -1.89,
+        102.77
+      ]
+    },
+    {
+      "date": "2026-06-29",
+      "base_ret": -3.6961734646394095,
+      "gated_ret": -3.6961734646394095,
+      "trade": true,
+      "rule": {
+        "k": "top10_score_mean",
+        "op": "<=",
+        "th": 87.23109997142858,
+        "train_gain": 0.8067734834281257,
+        "train_mean": 6.880619956546886,
+        "train_win": 0.5333333333333333,
+        "trade_frac": 0.5333333333333333
+      },
+      "feat": {
+        "n_candidates": 388,
+        "top1_score": 95.37548726530612,
+        "top5_score_mean": 88.71660962040816,
+        "top10_score_mean": 84.49488567959185,
+        "top30_score_mean": 76.94299935782313,
+        "score_gap_1_5": 11.666116306122461,
+        "score_gap_5_30": 11.773610262585038,
+        "top5_lowopen_frac": 0.4,
+        "top5_highopen_frac": 0.4,
+        "top5_open_mean": 4.56,
+        "top30_risk_frac": 0.3,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "002407",
+        "000823",
+        "002549",
+        "002579",
+        "002354"
+      ],
+      "excess": [
+        0.0,
+        -9.59,
+        0.0,
+        -8.21,
+        -0.68
+      ]
+    },
+    {
+      "date": "2026-06-30",
+      "base_ret": 0.9350834031240436,
+      "gated_ret": 0.9350834031240436,
+      "trade": true,
+      "rule": {
+        "k": "top10_score_mean",
+        "op": "<=",
+        "th": 87.07461297619048,
+        "train_gain": 0.6180706003972256,
+        "train_mean": 6.081290827406101,
+        "train_win": 0.4375,
+        "trade_frac": 0.5
+      },
+      "feat": {
+        "n_candidates": 343,
+        "top1_score": 91.28875839534885,
+        "top5_score_mean": 87.3961751767442,
+        "top10_score_mean": 84.99584346976745,
+        "top30_score_mean": 75.84646267286823,
+        "score_gap_1_5": 7.538926558139551,
+        "score_gap_5_30": 11.549712503875966,
+        "top5_lowopen_frac": 0.6,
+        "top5_highopen_frac": 0.4,
+        "top5_open_mean": 2.1839999999999997,
+        "top30_risk_frac": 0.13333333333333333,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "002354",
+        "002273",
+        "000636",
+        "600552",
+        "600783"
+      ],
+      "excess": [
+        0.55,
+        0.4,
+        0.0,
+        3.56,
+        0.17
+      ]
+    },
+    {
+      "date": "2026-07-01",
+      "base_ret": 4.1484875268143835,
+      "gated_ret": 0.0,
+      "trade": false,
+      "rule": {
+        "k": "top10_score_mean",
+        "op": "<=",
+        "th": 87.07461297619048,
+        "train_gain": 0.5817135062562127,
+        "train_mean": 5.778572743624803,
+        "train_win": 0.47058823529411764,
+        "trade_frac": 0.5294117647058824
+      },
+      "feat": {
+        "n_candidates": 399,
+        "top1_score": 92.3768550760234,
+        "top5_score_mean": 90.1586802,
+        "top10_score_mean": 88.62486720760234,
+        "top30_score_mean": 84.29734312456141,
+        "score_gap_1_5": 3.73699350292398,
+        "score_gap_5_30": 5.861337075438598,
+        "top5_lowopen_frac": 0.4,
+        "top5_highopen_frac": 0.4,
+        "top5_open_mean": 4.2860000000000005,
+        "top30_risk_frac": 0.3333333333333333,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "002407",
+        "300720",
+        "600509",
+        "600367",
+        "002549"
+      ],
+      "excess": [
+        0.9,
+        11.95,
+        0.0,
+        1.81,
+        6.08
+      ]
+    },
+    {
+      "date": "2026-07-02",
+      "base_ret": 6.660221388971095,
+      "gated_ret": 6.660221388971095,
+      "trade": true,
+      "rule": {
+        "k": "top5_score_mean",
+        "op": "<=",
+        "th": 90.35796666666667,
+        "train_gain": 0.5715856531342256,
+        "train_mean": 5.710202017694249,
+        "train_win": 0.5555555555555556,
+        "trade_frac": 0.7222222222222222
+      },
+      "feat": {
+        "n_candidates": 351,
+        "top1_score": 91.07989222222223,
+        "top5_score_mean": 90.24425413333334,
+        "top10_score_mean": 89.09031454444445,
+        "top30_score_mean": 79.7960528925926,
+        "score_gap_1_5": 1.8688254444444397,
+        "score_gap_5_30": 10.448201240740744,
+        "top5_lowopen_frac": 0.2,
+        "top5_highopen_frac": 0.8,
+        "top5_open_mean": 26.006,
+        "top30_risk_frac": 1.0,
+        "top30_weak_frac": 1.0
+      },
+      "codes": [
+        "600206",
+        "002354",
+        "600641",
+        "001248",
+        "002020"
+      ],
+      "excess": [
+        6.44,
+        3.62,
+        0.0,
+        23.24,
+        0.0
+      ]
+    },
+    {
+      "date": "2026-07-03",
+      "base_ret": -1.1586390132051894,
+      "gated_ret": -1.1586390132051894,
+      "trade": true,
+      "rule": {
+        "k": "top5_score_mean",
+        "op": "<=",
+        "th": 90.35796666666667,
+        "train_gain": 0.5415021977061079,
+        "train_mean": 5.760203037235136,
+        "train_win": 0.5789473684210527,
+        "trade_frac": 0.7368421052631579
+      },
+      "feat": {
+        "n_candidates": 390,
+        "top1_score": 94.2265538235294,
+        "top5_score_mean": 89.73628275294118,
+        "top10_score_mean": 86.19492034705883,
+        "top30_score_mean": 77.6831815882353,
+        "score_gap_1_5": 6.326651882352934,
+        "score_gap_5_30": 12.053101164705879,
+        "top5_lowopen_frac": 0.2,
+        "top5_highopen_frac": 0.6,
+        "top5_open_mean": 8.664,
+        "top30_risk_frac": 1.0,
+        "top30_weak_frac": 1.0
+      },
+      "codes": [
+        "002979",
+        "002167",
+        "600376",
+        "002635",
+        "301165"
+      ],
+      "excess": [
+        0.0,
+        -4.07,
+        0.0,
+        6.97,
+        -8.69
+      ]
+    },
+    {
+      "date": "2026-07-08",
+      "base_ret": -0.436304882059764,
+      "gated_ret": 0.0,
+      "trade": false,
+      "rule": {
+        "k": "top5_score_mean",
+        "op": "<=",
+        "th": 90.35796666666667,
+        "train_gain": 0.5144270878208035,
+        "train_mean": 5.41426093471312,
+        "train_win": 0.55,
+        "trade_frac": 0.75
+      },
+      "feat": {
+        "n_candidates": 373,
+        "top1_score": 96.093824,
+        "top5_score_mean": 90.46145700246915,
+        "top10_score_mean": 87.07135995679013,
+        "top30_score_mean": 77.78991142263375,
+        "score_gap_1_5": 9.438094629629617,
+        "score_gap_5_30": 12.671545579835396,
+        "top5_lowopen_frac": 0.2,
+        "top5_highopen_frac": 0.6,
+        "top5_open_mean": 8.12,
+        "top30_risk_frac": 0.5333333333333333,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "000977",
+        "000938",
+        "002185",
+        "002457",
+        "301251"
+      ],
+      "excess": [
+        0.0,
+        -2.8,
+        -6.38,
+        3.67,
+        3.33
+      ]
+    },
+    {
+      "date": "2026-07-09",
+      "base_ret": 3.1412602231221216,
+      "gated_ret": 3.1412602231221216,
+      "trade": true,
+      "rule": {
+        "k": "top5_score_mean",
+        "op": "<=",
+        "th": 90.46145700246915,
+        "train_gain": 0.489930559829336,
+        "train_mean": 5.135662562485839,
+        "train_win": 0.5238095238095238,
+        "trade_frac": 0.7619047619047619
+      },
+      "feat": {
+        "n_candidates": 297,
+        "top1_score": 92.55523128571429,
+        "top5_score_mean": 88.49965131428571,
+        "top10_score_mean": 85.9133197857143,
+        "top30_score_mean": 77.13773422857143,
+        "score_gap_1_5": 6.13947257142857,
+        "score_gap_5_30": 11.361917085714282,
+        "top5_lowopen_frac": 0.6,
+        "top5_highopen_frac": 0.2,
+        "top5_open_mean": 1.936,
+        "top30_risk_frac": 0.36666666666666664,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "002414",
+        "600172",
+        "301165",
+        "001399",
+        "002025"
+      ],
+      "excess": [
+        0.0,
+        7.67,
+        5.91,
+        5.35,
+        -3.22
+      ]
+    },
+    {
+      "date": "2026-07-10",
+      "base_ret": 9.602643363804761,
+      "gated_ret": 9.602643363804761,
+      "trade": true,
+      "rule": {
+        "k": "top5_score_mean",
+        "op": "<=",
+        "th": 90.35796666666667,
+        "train_gain": 0.4874930290216284,
+        "train_mean": 5.064839950790205,
+        "train_win": 0.5454545454545454,
+        "trade_frac": 0.7272727272727273
+      },
+      "feat": {
+        "n_candidates": 367,
+        "top1_score": 89.785465,
+        "top5_score_mean": 87.69179559999999,
+        "top10_score_mean": 85.0635332,
+        "top30_score_mean": 77.97145123333334,
+        "score_gap_1_5": 4.582875000000001,
+        "score_gap_5_30": 9.720344366666652,
+        "top5_lowopen_frac": 0.2,
+        "top5_highopen_frac": 0.6,
+        "top5_open_mean": 164.762,
+        "top30_risk_frac": 0.3,
+        "top30_weak_frac": 0.0
+      },
+      "codes": [
+        "002414",
+        "002536",
+        "001399",
+        "002185",
+        "301583"
+      ],
+      "excess": [
+        0.0,
+        -2.37,
+        -5.13,
+        -3.33,
+        58.85
+      ]
+    }
+  ]
+}

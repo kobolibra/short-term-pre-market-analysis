@@ -1,0 +1,29 @@
+{
+  "id": "daily_2026-07-03_v23_restricted_rerank",
+  "script": "scripts/v23_restricted_rerank.py",
+  "args": [
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ],
+  "queued_file": "daily_2026-07-03_v23_restricted_rerank.json",
+  "note": "daily auto-refresh 2026-07-03",
+  "worker_time": "2026-07-03T04:42:40+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "timeout after 2400s",
+  "stdout_tail": "",
+  "stderr_tail": "",
+  "started": "2026-07-03T04:42:42+08:00",
+  "ended": "2026-07-03T05:23:03+08:00",
+  "duration_s": 2421.4,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v23_restricted_rerank.py",
+    "--min-train",
+    "5",
+    "--epochs",
+    "80"
+  ]
+}

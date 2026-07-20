@@ -1,0 +1,19 @@
+{
+  "id": "0016_shadow_strategy_v26_20260624",
+  "script": "scripts/v26_shadow_strategy.py",
+  "args": [],
+  "queued_file": "0016_shadow_strategy_v26_20260624.json",
+  "note": "Generate latest-date shadow strategy: sparse_ic Top5 same-day, v10_amt Top3 aggressive, v10_amt Top30 T+1 hold.",
+  "worker_time": "2026-06-24T10:00:02+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/v26_shadow_strategy.py\", line 143, in <module>\n    try: sys.exit(main())\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/v26_shadow_strategy.py\", line 95, in main\n    raise RuntimeError(f\"date {date} has analysis but no trainable rows/excess; likely same-day dailyline missing\")\nRuntimeError: date 2026-06-24 has analysis but no trainable rows/excess; likely same-day dailyline missing\n",
+  "started": "2026-06-24T10:00:02+08:00",
+  "ended": "2026-06-24T10:00:32+08:00",
+  "duration_s": 30.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v26_shadow_strategy.py"
+  ]
+}

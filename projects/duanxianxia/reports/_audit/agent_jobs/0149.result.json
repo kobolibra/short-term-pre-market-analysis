@@ -1,0 +1,19 @@
+{
+  "id": "0149",
+  "script": "scripts/duanxianxia_field_coverage_audit.py",
+  "args": [],
+  "queued_file": "0149_field_coverage_audit_20260704.json",
+  "note": "Task 0149: per-day auction_amount_wan/pct coverage audit to localize missing-field leak (old files vs ongoing production)",
+  "worker_time": "2026-07-04T21:10:07+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"job\": \"0149_field_coverage_audit\",\n  \"n_days\": 20,\n  \"per_day\": [\n    {\n      \"date\": \"2026-05-21\",\n      \"n\": 455,\n      \"wan_cov\": 0.699,\n      \"pct_cov\": 1.0\n    },\n    {\n      \"date\": \"2026-06-01\",\n      \"n\": 407,\n      \"wan_cov\": 0.609,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-02\",\n      \"n\": 357,\n      \"wan_cov\": 0.695,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-04\",\n      \"n\": 206,\n      \"wan_cov\": 0.204,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-05\",\n      \"n\": 324,\n      \"wan_cov\": 0.565,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-08\",\n      \"n\": 258,\n      \"wan_cov\": 0.446,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-09\",\n      \"n\": 394,\n      \"wan_cov\": 0.584,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-10\",\n      \"n\": 273,\n      \"wan_cov\": 0.465,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-11\",\n      \"n\": 302,\n      \"wan_cov\": 0.51,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-15\",\n      \"n\": 287,\n      \"wan_cov\": 0.272,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-16\",\n      \"n\": 340,\n      \"wan_cov\": 0.585,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-18\",\n      \"n\": 324,\n      \"wan_cov\": 0.522,\n      \"pct_cov\": 0.0\n    },\n    {\n      \"date\": \"2026-06-23\",\n      \"n\": 352,\n      \"wan_cov\": 0.565,\n      \"pct_cov\": 1.0\n    },\n    {\n      \"date\": \"2026-06-24\",\n      \"n\": 334,\n      \"wan_cov\": 0.542,\n      \"pct_cov\": 1.0\n    },\n    {\n      \"date\": \"2026-06-26\",\n      \"n\": 333,\n      \"wan_cov\": 0.514,\n      \"pct_cov\": 1.0\n    },\n    {\n      \"date\": \"2026-06-29\",\n      \"n\": 398,\n      \"wan_cov\": 0.638,\n      \"pct_cov\": 1.0\n    },\n    {\n      \"date\": \"2026-06-30\",\n      \"n\": 347,\n      \"wan_cov\": 0.504,\n      \"pct_cov\": 1.0\n    },\n    {\n      \"date\": \"2026-07-01\",\n      \"n\": 400,\n      \"wan_cov\": 0.858,\n      \"pct_cov\": 1.0\n    },\n    {\n      \"date\": \"2026-07-02\",\n      \"n\": 355,\n      \"wan_cov\": 0.82,\n      \"pct_cov\": 1.0\n    },\n    {\n      \"date\": \"2026-07-03\",\n      \"n\": 394,\n      \"wan_cov\": 0.873,\n      \"pct_cov\": 1.0\n    }\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-04T21:10:07+08:00",
+  "ended": "2026-07-04T21:10:12+08:00",
+  "duration_s": 4.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_field_coverage_audit.py"
+  ]
+}

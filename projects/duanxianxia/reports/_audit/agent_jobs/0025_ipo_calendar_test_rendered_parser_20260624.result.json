@@ -1,0 +1,28 @@
+{
+  "id": "0025_ipo_calendar_test_rendered_parser_20260624",
+  "script": "scripts/ipo_calendar_notify.py",
+  "args": [
+    "--date",
+    "2026-06-24",
+    "--no-send",
+    "--run-weekends"
+  ],
+  "queued_file": "0025_ipo_calendar_test_rendered_parser_20260624.json",
+  "note": "Retest strictly provided 9fzt stockApply URL after rendered-text parser fix; no Feishu send.",
+  "worker_time": "2026-06-24T22:10:06+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py\", line 373, in <module>\n    raise SystemExit(main())\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py\", line 352, in main\n    raise RuntimeError(\"failed to parse stockApply rows from provided 9fzt URL on VM even after headless render; raw page saved for debug\")\nRuntimeError: failed to parse stockApply rows from provided 9fzt URL on VM even after headless render; raw page saved for debug\n",
+  "started": "2026-06-24T22:10:06+08:00",
+  "ended": "2026-06-24T22:13:31+08:00",
+  "duration_s": 205.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_notify.py",
+    "--date",
+    "2026-06-24",
+    "--no-send",
+    "--run-weekends"
+  ]
+}

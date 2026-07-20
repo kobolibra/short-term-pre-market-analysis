@@ -1,0 +1,157 @@
+{
+  "job": "0152_edge_weight_sweep",
+  "n_days": 20,
+  "regime_days": {
+    "cold": 17,
+    "cold_to_warming": 3
+  },
+  "variants": {
+    "baseline": {
+      "mean_ic": 0.0636,
+      "ir": 0.481,
+      "pos_day_frac": 0.8,
+      "cold_ic": 0.0396,
+      "ctw_ic": 0.1997,
+      "decile_top": 1.473,
+      "decile_bottom": -0.263,
+      "top_minus_bottom": 1.736,
+      "decile": [
+        -0.263,
+        0.111,
+        -0.129,
+        -0.014,
+        0.313,
+        0.168,
+        -0.058,
+        0.318,
+        0.808,
+        1.473
+      ],
+      "weights": "current-defaults"
+    },
+    "ic_prop": {
+      "mean_ic": 0.0602,
+      "ir": 0.473,
+      "pos_day_frac": 0.8,
+      "cold_ic": 0.0338,
+      "ctw_ic": 0.2098,
+      "decile_top": 1.341,
+      "decile_bottom": -0.102,
+      "top_minus_bottom": 1.443,
+      "decile": [
+        -0.102,
+        0.037,
+        -0.155,
+        0.193,
+        0.205,
+        -0.095,
+        -0.04,
+        0.433,
+        0.904,
+        1.341
+      ],
+      "weights": {
+        "edge_w_amt": 0.16,
+        "edge_w_auction": 0.26,
+        "edge_w_liquidity": 0.23,
+        "edge_w_money": 0.16,
+        "edge_w_pressure": 0.07,
+        "edge_w_weimai": 0.07,
+        "edge_w_orderbook": 0.05
+      }
+    },
+    "auction_heavy": {
+      "mean_ic": 0.0609,
+      "ir": 0.493,
+      "pos_day_frac": 0.8,
+      "cold_ic": 0.0351,
+      "ctw_ic": 0.207,
+      "decile_top": 1.334,
+      "decile_bottom": -0.14,
+      "top_minus_bottom": 1.474,
+      "decile": [
+        -0.14,
+        -0.032,
+        -0.134,
+        0.437,
+        0.073,
+        -0.193,
+        0.073,
+        0.433,
+        0.878,
+        1.334
+      ],
+      "weights": {
+        "edge_w_amt": 0.08,
+        "edge_w_auction": 0.34,
+        "edge_w_liquidity": 0.28,
+        "edge_w_money": 0.15,
+        "edge_w_pressure": 0.07,
+        "edge_w_weimai": 0.04,
+        "edge_w_orderbook": 0.04
+      }
+    },
+    "full_cov": {
+      "mean_ic": 0.0638,
+      "ir": 0.53,
+      "pos_day_frac": 0.8,
+      "cold_ic": 0.0388,
+      "ctw_ic": 0.2053,
+      "decile_top": 0.88,
+      "decile_bottom": -0.254,
+      "top_minus_bottom": 1.134,
+      "decile": [
+        -0.254,
+        -0.014,
+        -0.199,
+        0.349,
+        0.434,
+        -0.247,
+        -0.036,
+        0.486,
+        1.336,
+        0.88
+      ],
+      "weights": {
+        "edge_w_amt": 0.05,
+        "edge_w_auction": 0.38,
+        "edge_w_liquidity": 0.3,
+        "edge_w_money": 0.17,
+        "edge_w_pressure": 0.05,
+        "edge_w_weimai": 0.03,
+        "edge_w_orderbook": 0.02
+      }
+    },
+    "drop_dead": {
+      "mean_ic": 0.0641,
+      "ir": 0.532,
+      "pos_day_frac": 0.8,
+      "cold_ic": 0.0397,
+      "ctw_ic": 0.2024,
+      "decile_top": 0.86,
+      "decile_bottom": -0.244,
+      "top_minus_bottom": 1.104,
+      "decile": [
+        -0.244,
+        -0.099,
+        -0.037,
+        0.319,
+        0.328,
+        -0.175,
+        0.051,
+        0.364,
+        1.374,
+        0.86
+      ],
+      "weights": {
+        "edge_w_amt": 0.05,
+        "edge_w_auction": 0.4,
+        "edge_w_liquidity": 0.32,
+        "edge_w_money": 0.18,
+        "edge_w_pressure": 0.0,
+        "edge_w_weimai": 0.03,
+        "edge_w_orderbook": 0.02
+      }
+    }
+  }
+}

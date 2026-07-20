@@ -1,0 +1,22 @@
+{
+  "id": "0146",
+  "script": "scripts/duanxianxia_replay_current_code.py",
+  "args": [
+    "10"
+  ],
+  "queued_file": "0146_replay_current_code_20260704.json",
+  "note": "Task 0146: replay last 10 days with CURRENT edge+gate; win_rate/payoff vs STORED; ranking topK; faithfulness self-check",
+  "worker_time": "2026-07-04T20:20:03+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_days\": 10,\n  \"days\": [\n    \"2026-06-16\",\n    \"2026-06-18\",\n    \"2026-06-23\",\n    \"2026-06-24\",\n    \"2026-06-26\",\n    \"2026-06-29\",\n    \"2026-06-30\",\n    \"2026-07-01\",\n    \"2026-07-02\",\n    \"2026-07-03\"\n  ],\n  \"CURRENT_overall\": {\n    \"n\": 10,\n    \"mean_excess\": 1.36,\n    \"win_rate\": 0.5,\n    \"avg_win\": 7.227,\n    \"avg_loss\": -4.507,\n    \"payoff\": 1.603\n  },\n  \"STORED_overall\": {\n    \"n\": 9,\n    \"mean_excess\": 2.663,\n    \"win_rate\": 0.556,\n    \"avg_win\": 9.915,\n    \"avg_loss\": -8.534,\n    \"payoff\": 1.162\n  },\n  \"CURRENT_by_regime\": {\n    \"cold\": {\n      \"n\": 10,\n      \"mean_excess\": 1.36,\n      \"win_rate\": 0.5,\n      \"avg_win\": 7.227,\n      \"avg_loss\": -4.507,\n      \"payoff\": 1.603\n    }\n  },\n  \"ranking_quality\": {\n    \"top1\": {\n      \"n\": 10,\n      \"mean_excess\": 1.36,\n      \"win_rate\": 0.5,\n      \"avg_win\": 7.227,\n      \"avg_loss\": -4.507,\n      \"payoff\": 1.603\n    },\n    \"top3\": {\n      \"n\": 30,\n      \"mean_excess\": 1.35,\n      \"win_rate\": 0.5,\n      \"avg_win\": 6.043,\n      \"avg_loss\": -4.18,\n      \"payoff\": 1.446\n    },\n    \"top5\": {\n      \"n\": 50,\n      \"mean_excess\": 0.658,\n      \"win_rate\": 0.44,\n      \"avg_win\": 5.296,\n      \"avg_loss\": -3.799,\n      \"payoff\": 1.394\n    }\n  },\n  \"faithfulness\": {\n    \"auction_amount_pct_coverage\": 0.814,\n    \"raw_capture_days_available\": 0,\n    \"note\": \"auction_amount_pct 覆盖率低则 feature replay 失真; raw_capture 可用则可做 C2 全链路重跑\"\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-04T20:20:03+08:00",
+  "ended": "2026-07-04T20:20:08+08:00",
+  "duration_s": 5.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_replay_current_code.py",
+    "10"
+  ]
+}

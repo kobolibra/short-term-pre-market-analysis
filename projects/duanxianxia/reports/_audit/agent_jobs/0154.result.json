@@ -1,0 +1,19 @@
+{
+  "id": "0154",
+  "script": "scripts/duanxianxia_buy_level_ab.py",
+  "args": [],
+  "queued_file": "0154_buy_level_ab_20260705.json",
+  "note": "Task 0154: buy-level A/B (current-code) baseline gate vs risk_strict/profile/cap_auction; realized win-rate/payoff/drawdown at buy set",
+  "worker_time": "2026-07-05T14:40:17+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "n_days=20 regime_days={'cold': 17, 'cold_to_warming': 3}\nvariant       scope            n    mean_ex  win    avg_win  avg_loss  payoff\nbaseline     overall         26   2.538    0.615  6.429    -3.686    1.744\nbaseline     cold            17   1.498    0.529  6.567    -4.204    1.562\nbaseline     cold_to_warming 9    4.503    0.778  6.251    -1.614    3.874\nrisk_strict  overall         13   4.625    0.769  6.904    -2.973    2.322\nrisk_strict  cold            6    3.643    0.667  7.424    -3.919    1.894\nrisk_strict  cold_to_warming 7    5.466    0.857  6.557    -1.081    6.066\nprofile      overall         26   2.538    0.615  6.429    -3.686    1.744\nprofile      cold            17   1.498    0.529  6.567    -4.204    1.562\nprofile      cold_to_warming 9    4.503    0.778  6.251    -1.614    3.874\ncap_auction  overall         24   0.717    0.417  5.196    -2.483    2.093\ncap_auction  cold            17   0.758    0.353  6.325    -2.278    2.776\ncap_auction  cold_to_warming 7    0.616    0.571  3.503    -3.233    1.083\n",
+  "stderr_tail": "",
+  "started": "2026-07-05T14:40:17+08:00",
+  "ended": "2026-07-05T14:42:21+08:00",
+  "duration_s": 124.7,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_buy_level_ab.py"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "0110_multihorizon_composite_backtest_20260702",
+  "script": "duanxianxia_0110_multihorizon_composite_backtest_20260702.py",
+  "args": [],
+  "queued_file": "0110_multihorizon_composite_backtest_20260702.json",
+  "note": "P0a 只读回测: 收益轴 R0/R1/R2 × 打法 × (竞价成交额 vs 复合)排序 + 字段覆盖率自检 + theme_sync代理。不触发webhook/多维表/生产写入。",
+  "worker_time": "2026-07-02T23:10:08+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "script not allowed (must be scripts/*.py): duanxianxia_0110_multihorizon_composite_backtest_20260702.py",
+  "ended": "2026-07-02T23:10:08+08:00"
+}

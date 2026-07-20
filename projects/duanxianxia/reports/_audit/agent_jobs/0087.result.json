@@ -1,0 +1,19 @@
+{
+  "id": "0087",
+  "script": "scripts/0087_fieldfix_apply_hot_boardstate_20260629.py",
+  "args": [],
+  "queued_file": "0087.json",
+  "note": "Apply non-destructive fix: fetch_hot capture board-state item[7] + raw. Assertion-anchored (count==1) + py_compile check; commits to feature branch fix/hot-board-state-raw (NOT main) for PR review; reverts working tree.",
+  "worker_time": "2026-06-29T18:50:01+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"ok\": true,\n  \"feature_branch\": \"fix/hot-board-state-raw\",\n  \"commit\": \"ae3308918a83f0fc3b5907efe5b71cd463740a97\",\n  \"parent_head\": \"0996cf361aac175de38743d0a38a9a336b523d62\",\n  \"anchor_count\": 1,\n  \"bytes_before\": 101359,\n  \"bytes_after\": 101476,\n  \"diff\": \"--- a/scripts/duanxianxia_fetcher.py\\n+++ b/scripts/duanxianxia_fetcher.py\\n@@ -513,6 +513,8 @@\\n                     \\\"成交\\\": amount,\\n                     \\\"流通\\\": float_cap,\\n                     \\\"概念\\\": \\\"+\\\".join([x for x in [concept_1, concept_2] if x]),\\n+                    \\\"板态\\\": item[7] if len(item) > 7 and item[7] is not None else \\\"\\\",\\n+                    \\\"raw\\\": item,\\n                 }\\n             )\\n         return FetchResult(\\n\",\n  \"report_file\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/reports/_audit/agent_jobs/0087_fieldfix_apply_hot_boardstate.report.json\"\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-29T18:50:01+08:00",
+  "ended": "2026-06-29T18:50:03+08:00",
+  "duration_s": 1.7,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0087_fieldfix_apply_hot_boardstate_20260629.py"
+  ]
+}

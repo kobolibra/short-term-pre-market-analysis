@@ -1,0 +1,24 @@
+{
+  "id": "daily_2026-06-29_v12_reflection",
+  "script": "scripts/v12_reflection.py",
+  "args": [
+    "--top-n",
+    "30"
+  ],
+  "queued_file": "daily_2026-06-29_v12_reflection.json",
+  "note": "daily auto-refresh 2026-06-29",
+  "worker_time": "2026-06-29T00:00:30+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_days\": 15,\n  \"n_samples\": 4603,\n  \"edge_topN_capture\": 0.162,\n  \"buy_capture\": 0.011,\n  \"pick_performance_by_action\": {\n    \"BUY\": {\n      \"n\": 16,\n      \"mean_excess\": 4.395,\n      \"median_excess\": 5.327,\n      \"win_rate\": 0.875,\n      \"limitdown_rate\": 0.062\n    },\n    \"DROP\": {\n      \"n\": 3405,\n      \"mean_excess\": -0.077,\n      \"median_excess\": -0.175,\n      \"win_rate\": 0.462,\n      \"limitdown_rate\": 0.023\n    },\n    \"UNKNOWN\": {\n      \"n\": 308,\n      \"mean_excess\": -0.637,\n      \"median_excess\": -0.986,\n      \"win_rate\": 0.419,\n      \"limitdown_rate\": 0.032\n    },\n    \"WATCH\": {\n      \"n\": 874,\n      \"mean_excess\": 1.093,\n      \"median_excess\": 0.324,\n      \"win_rate\": 0.521,\n      \"limitdown_rate\": 0.035\n    }\n  },\n  \"top_field_ic\": [\n    {\n      \"field\": \"qiangchou_920_925_rank\",\n      \"mean_ic\": 0.2657,\n      \"icir\": null,\n      \"n_days\": 1\n    },\n    {\n      \"field\": \"auction_amount_wan\",\n      \"mean_ic\": 0.0957,\n      \"icir\": 0.483,\n      \"n_days\": 15\n    },\n    {\n      \"field\": \"deriv.amt_x_auc\",\n      \"mean_ic\": 0.0803,\n      \"icir\": 0.573,\n      \"n_days\": 15\n    },\n    {\n      \"field\": \"auction_strength\",\n      \"mean_ic\": 0.0761,\n      \"icir\": 0.543,\n      \"n_days\": 15\n    },\n    {\n      \"field\": \"liquidity\",\n      \"mean_ic\": 0.0732,\n      \"icir\": 0.516,\n      \"n_days\": 15\n    },\n    {\n      \"field\": \"pressure_score\",\n      \"mean_ic\": 0.0698,\n      \"icir\": 0.495,\n      \"n_days\": 15\n    }\n  ],\n  \"weight_adjustment\": [\n    {\n      \"field\": \"amt_pct\",\n      \"current_w\": 0.23,\n      \"ic\": 0.0639,\n      \"ic_share\": 0.159,\n      \"delta\": -0.071,\n      \"rec\": \"降权\"\n    },\n    {\n      \"field\": \"money\",\n      \"current_w\": 0.14,\n      \"ic\": 0.05,\n      \"ic_share\": 0.124,\n      \"delta\": -0.016,\n      \"rec\": \"维持\"\n    },\n    {\n      \"field\": \"auction_strength\",\n      \"current_w\": 0.19,\n      \"ic\": 0.0761,\n      \"ic_share\": 0.189,\n      \"delta\": -0.001,\n      \"rec\": \"维持\"\n    },\n    {\n      \"field\": \"liquidity\",\n      \"current_w\": 0.18,\n      \"ic\": 0.0732,\n      \"ic_share\": 0.182,\n      \"delta\": 0.002,\n      \"rec\": \"维持\"\n    },\n    {\n      \"field\": \"orderbook\",\n      \"current_w\": 0.05,\n      \"ic\": 0.0264,\n      \"ic_share\": 0.066,\n      \"delta\": 0.016,\n      \"rec\": \"维持\"\n    },\n    {\n      \"field\": \"weimai_strength\",\n      \"current_w\": 0.08,\n      \"ic\": 0.0427,\n      \"ic_share\": 0.106,\n      \"delta\": 0.026,\n      \"rec\": \"维持\"\n    },\n    {\n      \"field\": \"pressure_score\",\n      \"current_w\": 0.14,\n      \"ic\": 0.0698,\n      \"ic_share\": 0.174,\n      \"delta\": 0.034,\n      \"rec\": \"维持\"\n    }\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-29T00:00:30+08:00",
+  "ended": "2026-06-29T00:00:57+08:00",
+  "duration_s": 27.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v12_reflection.py",
+    "--top-n",
+    "30"
+  ]
+}

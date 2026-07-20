@@ -1,0 +1,19 @@
+{
+  "id": "0031_ipo_calendar_endpoint_probe_20260625",
+  "script": "scripts/ipo_calendar_endpoint_probe.py",
+  "args": [],
+  "queued_file": "0031_ipo_calendar_endpoint_probe_20260625.json",
+  "note": "Decisively locate the 9fzt stockApply data endpoint by probing api.9fzt.com/gw, api.9fzt.com and stock.9fzt.com with GET/POST and capturing response bodies (incl auth errors). Output projects/ipo_calendar/reports/_audit/latest_9fzt_endpoint.json",
+  "worker_time": "2026-06-25T11:20:05+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\"paths\": 52, \"urls\": 3, \"candidates\": 1251, \"tried\": 240, \"hits\": 0, \"hit_urls\": []}\n",
+  "stderr_tail": "",
+  "started": "2026-06-25T11:20:05+08:00",
+  "ended": "2026-06-25T11:21:16+08:00",
+  "duration_s": 71.2,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/ipo_calendar_endpoint_probe.py"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "daily_2026-07-04_v24_day_gate",
+  "script": "scripts/v24_day_gate.py",
+  "args": [
+    "--min-train",
+    "6"
+  ],
+  "queued_file": "daily_2026-07-04_v24_day_gate.json",
+  "note": "daily auto-refresh 2026-07-04",
+  "worker_time": "2026-07-04T06:31:01+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "timeout after 2400s",
+  "stdout_tail": "",
+  "stderr_tail": "",
+  "started": "2026-07-04T06:31:03+08:00",
+  "ended": "2026-07-04T07:11:12+08:00",
+  "duration_s": 2410.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v24_day_gate.py",
+    "--min-train",
+    "6"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "0116",
+  "script": "scripts/duanxianxia_canonical_selftest.py",
+  "args": [],
+  "queued_file": "0116_canonical_register_20260703.json",
+  "note": "Task 0116: register all 10 stock-scope tables into canonical via named_dict raw_kind (rank.rocket, rank.hot_stock_day, cashflow.stock.{today,3day,5day,10day}, auction.jjlive.fengdan, home.ztpool, review.ltgd.range, review.fupan.plate). Import-time _self_test() on both duanxianxia_canonical and duanxianxia_canonical_routing must pass (real captured rows, caliber-tagged mktcaps, cn_amount->yuan). Runner prints REGISTRY summary and asserts all 10 present.",
+  "worker_time": "2026-07-03T13:10:10+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "=== Task 0116 canonical registration ===\ncanonical datasets: 16\n  - auction.jjlive.fengdan     kind=named_dict     fields=14\n  - auction.jjyd.net_amount    kind=positional     fields=9\n  - auction.jjyd.qiangchou     kind=positional     fields=11\n  - auction.jjyd.vratio        kind=positional     fields=11\n  - auction.jjyd.weimai        kind=positional     fields=18\n  - cashflow.stock.10day       kind=named_dict     fields=9\n  - cashflow.stock.3day        kind=named_dict     fields=9\n  - cashflow.stock.5day        kind=named_dict     fields=9\n  - cashflow.stock.today       kind=named_dict     fields=9\n  - home.ztpool                kind=named_dict     fields=12\n  - pool.hot                   kind=named_strings  fields=6\n  - pool.surge                 kind=positional     fields=8\n  - rank.hot_stock_day         kind=named_dict     fields=5\n  - rank.rocket                kind=named_dict     fields=5\n  - review.fupan.plate         kind=named_dict     fields=18\n  - review.ltgd.range          kind=named_dict     fields=8\nrouting KIND_TO_DATASET: 8\n  - auction_fengdan      -> auction.jjlive.fengdan\n  - auction_net_amount   -> auction.jjyd.net_amount\n  - auction_qiangchou    -> auction.jjyd.qiangchou\n  - auction_vratio       -> auction.jjyd.vratio\n  - auction_weimai       -> auction.jjyd.weimai\n  - cashflow_today       -> cashflow.stock.today\n  - hot                  -> pool.hot\n  - surge                -> pool.surge\nstock-scope tables registered: 10 -> OK\nSELFTEST_OK\n",
+  "stderr_tail": "",
+  "started": "2026-07-03T13:10:10+08:00",
+  "ended": "2026-07-03T13:10:10+08:00",
+  "duration_s": 0.1,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_canonical_selftest.py"
+  ]
+}

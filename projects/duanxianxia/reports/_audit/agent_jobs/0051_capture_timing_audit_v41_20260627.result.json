@@ -1,0 +1,19 @@
+{
+  "id": "0051_capture_timing_audit_v41_20260627",
+  "script": "scripts/v41_capture_timing_audit.py",
+  "args": [],
+  "queued_file": "0051_capture_timing_audit_v41_20260627.json",
+  "note": "Confirm capture timing across ALL server-side dates (GitHub only has 4). Scans fetched_at of every snapshot for every dataset; reports earliest/latest time, preopen(<=09:30) vs intraday counts, per-date first-fetch time, and is_premarket_dataset flag. Settles whether pool.hot/pool.surge are premarket or intraday. Output reports/_audit/capture_timing_audit_v41.{json,md}.",
+  "worker_time": "2026-06-27T16:40:06+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "",
+  "stderr_tail": "  File \"/home/investmentofficehku/.openclaw/workspace/scripts/v41_capture_timing_audit.py\", line 94\n    L.append(f\"| {ds} | {o['n_files']} | {o['preopen_files']} | {o['intraday_files']} | {o['earliest']} | {o['latest']} | {'\\u662f' if o['is_premarket_dataset'] else '\\u5426'} |\")\n                                                                                                                                                                                  ^\nSyntaxError: f-string expression part cannot include a backslash\n",
+  "started": "2026-06-27T16:40:06+08:00",
+  "ended": "2026-06-27T16:40:08+08:00",
+  "duration_s": 1.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v41_capture_timing_audit.py"
+  ]
+}

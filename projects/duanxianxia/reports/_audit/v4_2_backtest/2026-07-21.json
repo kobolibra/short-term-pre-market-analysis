@@ -1,0 +1,194 @@
+{
+  "version": "v4.2.1",
+  "days": [
+    "2026-07-14",
+    "2026-07-15",
+    "2026-07-16",
+    "2026-07-17",
+    "2026-07-20"
+  ],
+  "results": [
+    {
+      "date": "2026-07-14",
+      "status": "ok",
+      "phase": "发酵主升",
+      "risk_tier": "NORMAL",
+      "position_cap": 0.8,
+      "jinji_weighted": 21.0,
+      "ztbx_925": 0.91,
+      "t0_impulse": false,
+      "n_orders": 10,
+      "orders": [
+        {
+          "code": "300214",
+          "name": "日科化学",
+          "pool": "一字封",
+          "position_pct": 3.2
+        },
+        {
+          "code": "003020",
+          "name": "立方制药",
+          "pool": "换手封",
+          "position_pct": 2.04
+        },
+        {
+          "code": "001388",
+          "name": "信通电子",
+          "pool": "换手封",
+          "position_pct": 2.4
+        },
+        {
+          "code": "603065",
+          "name": "宿迁联盛",
+          "pool": "换手封",
+          "position_pct": 2.4
+        },
+        {
+          "code": "603042",
+          "name": "华脉科技",
+          "pool": "非板",
+          "position_pct": 2.4
+        },
+        {
+          "code": "920491",
+          "name": "奥迪威",
+          "pool": "非板",
+          "position_pct": 2.4
+        },
+        {
+          "code": "600722",
+          "name": "金牛化工",
+          "pool": "非板",
+          "position_pct": 2.4
+        },
+        {
+          "code": "300534",
+          "name": "陇神戎发",
+          "pool": "分歧封",
+          "position_pct": 1.2
+        },
+        {
+          "code": "000989",
+          "name": "九芝堂",
+          "pool": "分歧封",
+          "position_pct": 1.2
+        },
+        {
+          "code": "001395",
+          "name": "亚联机械",
+          "pool": "分歧封",
+          "position_pct": 0.71
+        }
+      ]
+    },
+    {
+      "date": "2026-07-15",
+      "status": "ok",
+      "phase": "退潮",
+      "risk_tier": "CRISIS",
+      "position_cap": 0.0,
+      "jinji_weighted": 25.0,
+      "ztbx_925": 1.72,
+      "t0_impulse": false,
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-07-16",
+      "status": "ok",
+      "phase": "发酵主升",
+      "risk_tier": "NORMAL",
+      "position_cap": 0.8,
+      "jinji_weighted": 31.78,
+      "ztbx_925": 0.66,
+      "t0_impulse": false,
+      "n_orders": 10,
+      "orders": [
+        {
+          "code": "002432",
+          "name": "九安医疗",
+          "pool": "一字封",
+          "position_pct": 2.72
+        },
+        {
+          "code": "002980",
+          "name": "华盛昌",
+          "pool": "一字封",
+          "position_pct": 3.2
+        },
+        {
+          "code": "002382",
+          "name": "蓝帆医疗",
+          "pool": "换手封",
+          "position_pct": 2.4
+        },
+        {
+          "code": "001896",
+          "name": "豫能控股",
+          "pool": "换手封",
+          "position_pct": 2.4
+        },
+        {
+          "code": "000593",
+          "name": "德龙汇能",
+          "pool": "换手封",
+          "position_pct": 2.4
+        },
+        {
+          "code": "002726",
+          "name": "ST龙大",
+          "pool": "非板",
+          "position_pct": 2.4
+        },
+        {
+          "code": "600203",
+          "name": "福日电子",
+          "pool": "非板",
+          "position_pct": 2.4
+        },
+        {
+          "code": "300932",
+          "name": "三友联众",
+          "pool": "非板",
+          "position_pct": 2.4
+        },
+        {
+          "code": "002141",
+          "name": "贤丰控股",
+          "pool": "分歧封",
+          "position_pct": 1.02
+        },
+        {
+          "code": "002739",
+          "name": "儒意电影",
+          "pool": "分歧封",
+          "position_pct": 0.84
+        }
+      ]
+    },
+    {
+      "date": "2026-07-17",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": 14.02,
+      "ztbx_925": null,
+      "t0_impulse": false,
+      "n_orders": 0,
+      "orders": []
+    },
+    {
+      "date": "2026-07-20",
+      "status": "ok",
+      "phase": "数据不足",
+      "risk_tier": "WARNING",
+      "position_cap": 0.1,
+      "jinji_weighted": 23.09,
+      "ztbx_925": 1.7,
+      "t0_impulse": false,
+      "n_orders": 0,
+      "orders": []
+    }
+  ]
+}

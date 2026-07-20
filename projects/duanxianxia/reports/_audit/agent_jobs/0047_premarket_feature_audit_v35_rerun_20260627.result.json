@@ -1,0 +1,19 @@
+{
+  "id": "0047_premarket_feature_audit_v35_rerun_20260627",
+  "script": "scripts/v35_feature_audit.py",
+  "args": [],
+  "queued_file": "0047_premarket_feature_audit_v35_rerun_20260627.json",
+  "note": "RE-QUEUE of v35 (job 0044 failed: queue used 'command' instead of 'script'). Complementary to v36: works on the persisted v9 candidate schema. (1) Tests the buried raw ratios (委买/封单比, 封单/流通比, 大单占比, 净流入压强) + turnover_intensity=竞价成交额/流通市值 as independent cross-sectional factors vs excess, with IC/ICIR/coverage, vs the production headline amt. (2) Conditional IC of amt and turnover_intensity bucketed by open position (latest_change_pct: 低开/平开/高开/高开>=7) to test the 放量×位置 reversal logic. Pure descriptive, no production change. Output reports/_audit/premarket_feature_audit_v35.{json,md}.",
+  "worker_time": "2026-06-27T16:00:06+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"verdict\": {\n    \"strongest_feature\": {\n      \"field\": \"qiangchou_920_925_rank\",\n      \"mean_ic\": 0.2657,\n      \"icir\": null,\n      \"n_days\": 1,\n      \"coverage\": 0.01\n    },\n    \"turnover_vs_amt\": {\n      \"turnover_intensity\": {\n        \"field\": \"turnover_intensity\",\n        \"mean_ic\": -0.0132,\n        \"icir\": -0.072,\n        \"n_days\": 15,\n        \"coverage\": 0.143\n      },\n      \"auction_amount_wan\": {\n        \"field\": \"auction_amount_wan\",\n        \"mean_ic\": 0.0957,\n        \"icir\": 0.483,\n        \"n_days\": 15,\n        \"coverage\": 0.525\n      },\n      \"turnover_better\": false\n    },\n    \"buried_ratios_with_signal\": [],\n    \"amt_sign_flips_by_open\": {\n      \"1_low_open(<0)\": {\n        \"pooled_spearman\": 0.4,\n        \"n\": 656\n      },\n      \"2_flat_open(0-3)\": {\n        \"pooled_spearman\": 0.1393,\n        \"n\": 1128\n      },\n      \"3_high_open(3-7)\": {\n        \"pooled_spearman\": 0.1032,\n        \"n\": 445\n      },\n      \"4_veryhigh_open(>=7)\": {\n        \"pooled_spearman\": -0.1197,\n        \"n\": 167\n      }\n    },\n    \"turnover_sign_by_open\": {\n      \"1_low_open(<0)\": {\n        \"pooled_spearman\": -0.0562,\n        \"n\": 217\n      },\n      \"2_flat_open(0-3)\": {\n        \"pooled_spearman\": 0.1078,\n        \"n\": 208\n      },\n      \"3_high_open(3-7)\": {\n        \"pooled_spearman\": -0.0436,\n        \"n\": 136\n      },\n      \"4_veryhigh_open(>=7)\": {\n        \"pooled_spearman\": -0.0373,\n        \"n\": 98\n      }\n    }\n  },\n  \"top6_ic\": [\n    {\n      \"field\": \"qiangchou_920_925_rank\",\n      \"mean_ic\": 0.2657,\n      \"icir\": null,\n      \"n_days\": 1,\n      \"coverage\": 0.01\n    },\n    {\n      \"field\": \"auction_amount_wan\",\n      \"mean_ic\": 0.0957,\n      \"icir\": 0.483,\n      \"n_days\": 15,\n      \"coverage\": 0.525\n    },\n    {\n      \"field\": \"seal_to_mcap_ratio\",\n      \"mean_ic\": 0.0506,\n      \"icir\": 0.116,\n      \"n_days\": 10,\n      \"coverage\": 0.03\n    },\n    {\n      \"field\": \"big_order_share\",\n      \"mean_ic\": 0.0409,\n      \"icir\": 0.26,\n      \"n_days\": 15,\n      \"coverage\": 0.27\n    },\n    {\n      \"field\": \"net_inflow_pct\",\n      \"mean_ic\": 0.0387,\n      \"icir\": 0.333,\n      \"n_days\": 15,\n      \"coverage\": 0.464\n    },\n    {\n      \"field\": \"wm_net_pressure\",\n      \"mean_ic\": -0.0191,\n      \"icir\": -0.183,\n      \"n_days\": 14,\n      \"coverage\": 0.46\n    }\n  ]\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-27T16:00:06+08:00",
+  "ended": "2026-06-27T16:00:27+08:00",
+  "duration_s": 21.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v35_feature_audit.py"
+  ]
+}

@@ -1,0 +1,1278 @@
+{
+  "generated_at": "2026-06-29T02:30:08.755177",
+  "captures_root": "/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures",
+  "n_dates": 23,
+  "last_dates": [
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-17",
+    "2026-06-18",
+    "2026-06-22",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-25",
+    "2026-06-26",
+    "2026-06-29"
+  ],
+  "datasets": {
+    "auction.jjlive.fengdan": {
+      "file": "092537.json",
+      "label": "竞价封单/当日封单表",
+      "source_url": "https://ds.duanxianxia.com/vendor/stockdata/jjlive.json",
+      "source_path": "竞价/竞价封单",
+      "row_count": 110,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "section_date",
+        "section_kind",
+        "section_yizi_count",
+        "section_seal_total",
+        "section_t15_total",
+        "section_t20_total",
+        "section_t25_total",
+        "section_has_change_pct",
+        "rank",
+        "code",
+        "name",
+        "tag_1",
+        "tag_2",
+        "tag_3",
+        "board_label",
+        "amount_915",
+        "amount_920",
+        "amount_925",
+        "latest_change_pct",
+        "latest_change_pct_source",
+        "tags"
+      ],
+      "sample_row": {
+        "section_date": "2026-06-29",
+        "section_kind": "live",
+        "section_yizi_count": 5,
+        "section_seal_total": "54.4亿",
+        "section_t15_total": "150.4亿",
+        "section_t20_total": "39.1亿",
+        "section_t25_total": "54.4亿",
+        "section_has_change_pct": true,
+        "rank": 1,
+        "code": "002407",
+        "name": "多氟多",
+        "tag_1": "氢氟酸",
+        "tag_2": "电解液",
+        "tag_3": "",
+        "board_label": "首板",
+        "amount_915": "7.7亿",
+        "amount_920": "14.4亿",
+        "amount_925": "20.8亿",
+        "latest_change_pct": "10.00%",
+        "latest_change_pct_source": "qt.gtimg.cn",
+        "tags": [
+          "氢氟酸",
+          "电解液",
+          "首板"
+        ]
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "count",
+        "field",
+        "section_count",
+        "sections",
+        "source"
+      ]
+    },
+    "auction.jjyd.net_amount": {
+      "file": "092536.json",
+      "label": "竞价异动/竞价净额",
+      "source_url": "https://duanxianxia.com/vendor/stockdata/jjzhuli.json",
+      "source_path": "竞价/竞价异动/竞价净额",
+      "row_count": 73,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "auction_change_pct",
+        "latest_change_pct",
+        "main_net_inflow_wan",
+        "auction_turnover_wan",
+        "market_cap_yi",
+        "concept",
+        "turnover_rate_pct",
+        "concept_1",
+        "concept_2",
+        "raw"
+      ],
+      "sample_row": {
+        "rank": 1,
+        "code": "002407",
+        "name": "多氟多",
+        "auction_change_pct": 10,
+        "latest_change_pct": 10,
+        "main_net_inflow_wan": 14442,
+        "auction_turnover_wan": 25872,
+        "market_cap_yi": 461.8,
+        "concept": "氢氟酸|电解液",
+        "turnover_rate_pct": 0.56,
+        "concept_1": "氢氟酸",
+        "concept_2": "电解液",
+        "raw": [
+          "002407",
+          "多氟多",
+          10,
+          10,
+          14442,
+          25872,
+          461.8,
+          "氢氟酸|电解液",
+          0.56
+        ]
+      },
+      "mcap_fields_by_name": [
+        {
+          "key": "market_cap_yi",
+          "value": 461.8
+        }
+      ],
+      "meta_keys": [
+        "count",
+        "count_meta",
+        "field",
+        "source",
+        "source_tab"
+      ]
+    },
+    "auction.jjyd.qiangchou": {
+      "file": "092536.json",
+      "label": "竞价异动/竞价抢筹",
+      "source_url": "https://duanxianxia.com/data/getQiangchouData/11",
+      "source_path": "竞价/竞价异动/竞价抢筹",
+      "row_count": 79,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "group",
+        "rank",
+        "code",
+        "name",
+        "auction_volume_ratio",
+        "seal_amount_wan",
+        "auction_change_pct",
+        "latest_change_pct",
+        "auction_turnover_wan",
+        "concept",
+        "auction_change_pct_text",
+        "auction_turnover_wan_text",
+        "yesterday_auction_turnover_wan",
+        "grab_strength",
+        "turnover_rate_pct",
+        "raw"
+      ],
+      "sample_row": {
+        "group": "grab",
+        "rank": 1,
+        "code": "300279",
+        "name": "和晶科技",
+        "auction_volume_ratio": 22,
+        "seal_amount_wan": null,
+        "auction_change_pct": "none",
+        "latest_change_pct": "1.01",
+        "auction_turnover_wan": "189",
+        "concept": "机器人",
+        "auction_change_pct_text": "1.01",
+        "auction_turnover_wan_text": "189",
+        "yesterday_auction_turnover_wan": null,
+        "grab_strength": "11.93",
+        "turnover_rate_pct": 0.09,
+        "raw": [
+          "300279",
+          "和晶科技",
+          22,
+          null,
+          "none",
+          "1.01",
+          "189",
+          "机器人",
+          "1.01",
+          "189",
+          null,
+          "11.93",
+          0.09
+        ]
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "count",
+        "field",
+        "groups",
+        "source"
+      ]
+    },
+    "auction.jjyd.vratio": {
+      "file": "092535.json",
+      "label": "竞价异动/竞价爆量",
+      "source_url": "https://duanxianxia.com/data/getVratioData/11",
+      "source_path": "竞价/竞价异动/竞价爆量",
+      "row_count": 155,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "auction_volume_ratio",
+        "seal_amount_wan",
+        "auction_change_pct",
+        "latest_change_pct",
+        "auction_turnover_wan",
+        "concept",
+        "auction_change_pct_text",
+        "auction_turnover_wan_text",
+        "yesterday_auction_turnover_wan",
+        "volume_ratio_multiple",
+        "turnover_rate_pct",
+        "raw"
+      ],
+      "sample_row": {
+        "rank": 1,
+        "code": "000521",
+        "name": "长虹美菱",
+        "auction_volume_ratio": 34,
+        "seal_amount_wan": 32740,
+        "auction_change_pct": "none",
+        "latest_change_pct": "10.02",
+        "auction_turnover_wan": "1779",
+        "concept": "家电",
+        "auction_change_pct_text": "10.02",
+        "auction_turnover_wan_text": "1779",
+        "yesterday_auction_turnover_wan": "15",
+        "volume_ratio_multiple": "118.6",
+        "turnover_rate_pct": 0.52,
+        "raw": [
+          "000521",
+          "长虹美菱",
+          34,
+          32740,
+          "none",
+          "10.02",
+          "1779",
+          "家电",
+          "10.02",
+          "1779",
+          "15",
+          "118.6",
+          0.52
+        ]
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "count",
+        "field",
+        "source"
+      ]
+    },
+    "auction.jjyd.weimai": {
+      "file": "092538.json",
+      "label": "竞价异动/涨停委买",
+      "source_url": "https://duanxianxia.com/vendor/stockdata/daban.json",
+      "source_path": "竞价/竞价异动/涨停委买",
+      "row_count": 150,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "price",
+        "latest_change_pct",
+        "latest_change_pct_text",
+        "auction_turnover",
+        "auction_turnover_wan",
+        "auction_turnover_text",
+        "auction_change_pct",
+        "auction_change_pct_text",
+        "main_net_inflow",
+        "main_net_inflow_wan",
+        "main_net_inflow_text",
+        "turnover_rate_pct",
+        "turnover_rate_pct_text",
+        "seal_volume",
+        "auction_amount",
+        "auction_amount_wan",
+        "seal_volume_again",
+        "concept",
+        "concept_1",
+        "concept_2",
+        "market_cap",
+        "market_cap_yi",
+        "market_cap_text",
+        "main_net_inflow_full",
+        "super_large_net_inflow",
+        "large_order_net_inflow",
+        "board_label",
+        "seal_amount_wan",
+        "seal_amount_text",
+        "raw"
+      ],
+      "sample_row": {
+        "rank": 1,
+        "code": "002407",
+        "name": "多氟多",
+        "price": 45.66,
+        "latest_change_pct": 10,
+        "latest_change_pct_text": "10%",
+        "auction_turnover": 2339609266,
+        "auction_turnover_wan": 233960.93,
+        "auction_turnover_text": "23.4亿",
+        "auction_change_pct": "none",
+        "auction_change_pct_text": "none%",
+        "main_net_inflow": 144416464,
+        "main_net_inflow_wan": 14441.65,
+        "main_net_inflow_text": "1.4亿",
+        "turnover_rate_pct": 0.56,
+        "turnover_rate_pct_text": "0.56%",
+        "seal_volume": 258717139,
+        "auction_amount": 1016893860,
+        "auction_amount_wan": 101689.39,
+        "seal_volume_again": 258717139,
+        "concept": "氢氟酸、电解液",
+        "concept_1": "氢氟酸",
+        "concept_2": "电解液",
+        "market_cap": 46177984662,
+        "market_cap_yi": 461.78,
+        "market_cap_text": "462亿",
+        "main_net_inflow_full": 144416464,
+        "super_large_net_inflow": 203217386,
+        "large_order_net_inflow": -58800922,
+        "board_label": "首板",
+        "seal_amount_wan": 208089,
+        "seal_amount_text": "21万",
+        "raw": [
+          "002407",
+          "多氟多",
+          45.66,
+          10,
+          2339609266,
+          "none",
+          144416464,
+          0.56,
+          258717139,
+          1016893860,
+          258717139,
+          "氢氟酸、电解液",
+          46177984662,
+          144416464,
+          203217386,
+          -58800922,
+          "首板",
+          208089
+        ]
+      },
+      "mcap_fields_by_name": [
+        {
+          "key": "market_cap",
+          "value": 46177984662
+        },
+        {
+          "key": "market_cap_yi",
+          "value": 461.78
+        },
+        {
+          "key": "market_cap_text",
+          "value": "462亿"
+        }
+      ],
+      "meta_keys": [
+        "count",
+        "field",
+        "source",
+        "source_tab"
+      ]
+    },
+    "cashflow.stock.10day": {
+      "file": "100720.json",
+      "label": "个股资金流向/10日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "source_path": "资金流向/个股资金流向/10日排行",
+      "row_count": 150,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ],
+      "sample_row": {
+        "排名": 1,
+        "名称": "C惠科股份",
+        "代码": "001399",
+        "股圈": "进入",
+        "最新价": "36.41",
+        "涨跌幅": "-13.31%",
+        "主力净流入": "43.42亿",
+        "特大单净流入": "15.97亿",
+        "大单净流入": "27.45亿",
+        "中单净流入": "33.03亿",
+        "小单净流入": "-76.45亿"
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "complete",
+        "count",
+        "default_limit",
+        "field",
+        "page_counts",
+        "period",
+        "period_label",
+        "source",
+        "total_pages"
+      ]
+    },
+    "cashflow.stock.3day": {
+      "file": "100600.json",
+      "label": "个股资金流向/3日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "source_path": "资金流向/个股资金流向/3日排行",
+      "row_count": 150,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ],
+      "sample_row": {
+        "排名": 1,
+        "名称": "C惠科股份",
+        "代码": "001399",
+        "股圈": "进入",
+        "最新价": "36.75",
+        "涨跌幅": "-12.50%",
+        "主力净流入": "43.44亿",
+        "特大单净流入": "15.96亿",
+        "大单净流入": "27.48亿",
+        "中单净流入": "33.02亿",
+        "小单净流入": "-76.46亿"
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "complete",
+        "count",
+        "default_limit",
+        "field",
+        "page_counts",
+        "period",
+        "period_label",
+        "source",
+        "total_pages"
+      ]
+    },
+    "cashflow.stock.5day": {
+      "file": "100634.json",
+      "label": "个股资金流向/5日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "source_path": "资金流向/个股资金流向/5日排行",
+      "row_count": 150,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ],
+      "sample_row": {
+        "排名": 1,
+        "名称": "C惠科股份",
+        "代码": "001399",
+        "股圈": "进入",
+        "最新价": "36.41",
+        "涨跌幅": "-13.31%",
+        "主力净流入": "43.42亿",
+        "特大单净流入": "15.97亿",
+        "大单净流入": "27.45亿",
+        "中单净流入": "33.03亿",
+        "小单净流入": "-76.45亿"
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "complete",
+        "count",
+        "default_limit",
+        "field",
+        "page_counts",
+        "period",
+        "period_label",
+        "source",
+        "total_pages"
+      ]
+    },
+    "cashflow.stock.today": {
+      "file": "100517.json",
+      "label": "个股资金流向/今日排行",
+      "source_url": "https://stock.9fzt.com/cashFlow/stock.html",
+      "source_path": "资金流向/个股资金流向/今日排行",
+      "row_count": 50,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "排名",
+        "名称",
+        "代码",
+        "股圈",
+        "最新价",
+        "涨跌幅",
+        "主力净流入",
+        "特大单净流入",
+        "大单净流入",
+        "中单净流入",
+        "小单净流入"
+      ],
+      "sample_row": {
+        "排名": 1,
+        "名称": "华工科技",
+        "代码": "000988",
+        "股圈": "进入",
+        "最新价": "177.03",
+        "涨跌幅": "10.00%",
+        "主力净流入": "14.76亿",
+        "特大单净流入": "19.17亿",
+        "大单净流入": "-4.42亿",
+        "中单净流入": "-8.88亿",
+        "小单净流入": "-5.88亿"
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "complete",
+        "count",
+        "default_limit",
+        "field",
+        "page_counts",
+        "period",
+        "period_label",
+        "source",
+        "total_pages"
+      ]
+    },
+    "home.kaipan.plate.summary": {
+      "file": "092716.json",
+      "label": "主页板块强度全主标签汇总表",
+      "source_url": "https://duanxianxia.com/web/qxlive",
+      "source_path": "主页/qxlive/全主标签/主标签字段+子标签列表",
+      "row_count": 10,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "主标签序号",
+        "主标签名称",
+        "主标签代码",
+        "板块强度",
+        "板块强度原值",
+        "主力流入",
+        "主力流入原值",
+        "主力流入真实金额",
+        "涨停数量",
+        "子标签数量",
+        "子标签列表"
+      ],
+      "sample_row": {
+        "主标签序号": 1,
+        "主标签名称": "芯片",
+        "主标签代码": "801001",
+        "板块强度": "3892",
+        "板块强度原值": "3892",
+        "主力流入": "-1.7亿",
+        "主力流入原值": "-17332",
+        "主力流入真实金额": -173320000.0,
+        "涨停数量": "3",
+        "子标签数量": 33,
+        "子标签列表": "先进封装、磷化铟、存储、洁净室、碳化硅、半导体设备、光芯片、光刻机、光刻胶、砷化镓、模拟芯片、芯片前端制造、扇出型封装、HBM、大基金二期、大基金持股、数字芯片、中芯国际概念、芯片封测、MCU、汽车芯片、CPU、芯片设计、第三代半导体、抛光液、RISC-V、IGBT、滤波器、EDA、氮化镓、玻璃基板、靶材、电子气体"
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "complete",
+        "count",
+        "failed_items",
+        "field",
+        "missing_items",
+        "money_value_semantics",
+        "selected_top_plate",
+        "source",
+        "subplate_count",
+        "subplates",
+        "table_headers",
+        "top_plate_count",
+        "top_plate_summaries",
+        "top_plates"
+      ]
+    },
+    "home.qxlive.top_metrics": {
+      "file": "092744.json",
+      "label": "主页 qxlive 顶部指标按钮组",
+      "source_url": "https://duanxianxia.com/web/qxlive",
+      "source_path": "主页/qxlive/顶部指标按钮组",
+      "row_count": 12,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "order",
+        "metric_key",
+        "metric_label",
+        "date",
+        "time_point",
+        "value",
+        "button_display_value",
+        "chart_tail_value",
+        "compare_value",
+        "source_series",
+        "display_series",
+        "compare_series",
+        "button_id",
+        "button_text",
+        "raw_value",
+        "raw_chart_tail_value",
+        "raw_compare_value"
+      ],
+      "sample_row": {
+        "order": 1,
+        "metric_key": "QX",
+        "metric_label": "情绪指标",
+        "date": "2026-06-29",
+        "time_point": "09:28",
+        "value": "19",
+        "button_display_value": "19",
+        "chart_tail_value": "19",
+        "compare_value": "",
+        "source_series": "QX",
+        "display_series": "QX",
+        "compare_series": "",
+        "button_id": "QX_btn",
+        "button_text": "情绪指标：19",
+        "raw_value": "19",
+        "raw_chart_tail_value": "19",
+        "raw_compare_value": ""
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "available_last_keys",
+        "available_series_keys",
+        "button_count",
+        "count",
+        "date",
+        "field",
+        "mapping_notes",
+        "source",
+        "time_point",
+        "time_point_raw"
+      ]
+    },
+    "pool.hot": {
+      "file": "100158.json",
+      "label": "热门",
+      "source_url": "https://duanxianxia.com/data/getFxPoolData/",
+      "source_path": "股票池/热门",
+      "row_count": 30,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "代码",
+        "名称",
+        "涨幅",
+        "主力",
+        "实际换手",
+        "成交",
+        "流通",
+        "概念"
+      ],
+      "sample_row": {
+        "代码": "300260",
+        "名称": "新莱应材",
+        "涨幅": "10.51%",
+        "主力": "+9046万",
+        "实际换手": "11.4%",
+        "成交": "20.5亿",
+        "流通": "182亿",
+        "概念": "洁净室+光刻胶"
+      },
+      "mcap_fields_by_name": [
+        {
+          "key": "流通",
+          "value": "182亿"
+        }
+      ],
+      "meta_keys": [
+        "count",
+        "field",
+        "sort",
+        "source"
+      ]
+    },
+    "pool.surge": {
+      "file": "100158.json",
+      "label": "冲涨",
+      "source_url": "https://duanxianxia.com/data/getCzPoolData/",
+      "source_path": "股票池/冲涨",
+      "row_count": 19,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "change_pct",
+        "turnover_ratio",
+        "amount",
+        "float_market_cap",
+        "concept",
+        "concept_1",
+        "concept_2",
+        "raw"
+      ],
+      "sample_row": {
+        "rank": 1,
+        "code": "688233",
+        "name": "神工股份",
+        "change_pct": "17.88%",
+        "turnover_ratio": "4.99%",
+        "amount": "16.23亿",
+        "float_market_cap": "325亿",
+        "concept": "芯片+存储",
+        "concept_1": "芯片",
+        "concept_2": "存储",
+        "raw": [
+          "688233",
+          "神工股份",
+          17.88,
+          "",
+          "",
+          "",
+          "芯片+存储",
+          "",
+          1622951900,
+          32511365000,
+          4.99
+        ]
+      },
+      "mcap_fields_by_name": [
+        {
+          "key": "float_market_cap",
+          "value": "325亿"
+        }
+      ],
+      "meta_keys": [
+        "count",
+        "field",
+        "sort",
+        "source"
+      ]
+    },
+    "rank.hot_stock_day": {
+      "file": "092534.json",
+      "label": "热度榜（日）",
+      "source_url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+      "source_path": "热度榜/日",
+      "row_count": 100,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "value",
+        "raw_rate"
+      ],
+      "sample_row": {
+        "rank": 1,
+        "code": "000725",
+        "name": "京东方A",
+        "value": "609w",
+        "raw_rate": "6088981"
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "count",
+        "field",
+        "source"
+      ]
+    },
+    "rank.rocket": {
+      "file": "092533.json",
+      "label": "飙升榜",
+      "source_url": "https://x.duanxianxia.cn/vendor/stockdata/hotlist.json",
+      "source_path": "搜索/榜单",
+      "row_count": 100,
+      "top_level_keys": [
+        "dataset_id",
+        "dataset_kind",
+        "dataset_label",
+        "fetched_at",
+        "fetched_at_utc",
+        "headers",
+        "meta",
+        "project",
+        "row_count",
+        "rows",
+        "source_path",
+        "source_url",
+        "timezone"
+      ],
+      "headers": [
+        "rank",
+        "code",
+        "name",
+        "value",
+        "raw_rate"
+      ],
+      "sample_row": {
+        "rank": 1,
+        "code": "002407",
+        "name": "多氟多",
+        "value": "+106w",
+        "raw_rate": "1059788"
+      },
+      "mcap_fields_by_name": [],
+      "meta_keys": [
+        "count",
+        "field",
+        "source"
+      ]
+    }
+  },
+  "limit_up_count_by_date": {
+    "2026-06-17": {
+      "file": "092909.json",
+      "zt": 6,
+      "lb": 4,
+      "zb": 0,
+      "dt": 1,
+      "cz": 0,
+      "limit_up_count": {
+        "today": {
+          "num": 6,
+          "history_num": 6,
+          "rate": 1,
+          "open_num": 0,
+          "lbnum": 4
+        },
+        "yesterday": {
+          "num": 116,
+          "history_num": 153,
+          "rate": 0.7581699346405228,
+          "open_num": 37,
+          "lbnum": "29"
+        }
+      },
+      "limit_down_count": {
+        "today": {
+          "num": 1,
+          "history_num": 1,
+          "rate": 1,
+          "open_num": 0
+        },
+        "yesterday": {
+          "num": 7,
+          "history_num": 8,
+          "rate": 0.875,
+          "open_num": 1
+        }
+      }
+    },
+    "2026-06-18": {
+      "file": "092531.json",
+      "zt": 7,
+      "lb": 1,
+      "zb": 0,
+      "dt": 1,
+      "cz": 1,
+      "limit_up_count": {
+        "today": {
+          "num": 7,
+          "history_num": 7,
+          "rate": 1,
+          "open_num": 0,
+          "lbnum": 1
+        },
+        "yesterday": {
+          "num": 85,
+          "history_num": 112,
+          "rate": 0.7589285714285714,
+          "open_num": 27,
+          "lbnum": "19"
+        }
+      },
+      "limit_down_count": {
+        "today": {
+          "num": 1,
+          "history_num": 1,
+          "rate": 1,
+          "open_num": 0
+        },
+        "yesterday": {
+          "num": 1,
+          "history_num": 2,
+          "rate": 0.5,
+          "open_num": 1
+        }
+      }
+    },
+    "2026-06-23": {
+      "file": "092543.json",
+      "zt": 16,
+      "lb": 8,
+      "zb": 0,
+      "dt": 4,
+      "cz": 8,
+      "limit_up_count": {
+        "today": {
+          "num": 16,
+          "history_num": 16,
+          "rate": 1,
+          "open_num": 0,
+          "lbnum": 8
+        },
+        "yesterday": {
+          "num": 132,
+          "history_num": 158,
+          "rate": 0.8354430379746836,
+          "open_num": 26,
+          "lbnum": "23"
+        }
+      },
+      "limit_down_count": {
+        "today": {
+          "num": 4,
+          "history_num": 4,
+          "rate": 1,
+          "open_num": 0
+        },
+        "yesterday": {
+          "num": 3,
+          "history_num": 23,
+          "rate": 0.13043478260869565,
+          "open_num": 20
+        }
+      }
+    },
+    "2026-06-24": {
+      "file": "092547.json",
+      "zt": 3,
+      "lb": 2,
+      "zb": 0,
+      "dt": 2,
+      "cz": 4,
+      "limit_up_count": {
+        "today": {
+          "num": 3,
+          "history_num": 3,
+          "rate": 1,
+          "open_num": 0,
+          "lbnum": 2
+        },
+        "yesterday": {
+          "num": 94,
+          "history_num": 142,
+          "rate": 0.6619718309859155,
+          "open_num": 48,
+          "lbnum": "20"
+        }
+      },
+      "limit_down_count": {
+        "today": {
+          "num": 2,
+          "history_num": 2,
+          "rate": 1,
+          "open_num": 0
+        },
+        "yesterday": {
+          "num": 39,
+          "history_num": 56,
+          "rate": 0.6964285714285714,
+          "open_num": 17
+        }
+      }
+    },
+    "2026-06-26": {
+      "file": "092548.json",
+      "zt": 6,
+      "lb": 4,
+      "zb": 0,
+      "dt": 0,
+      "cz": 3,
+      "limit_up_count": {
+        "today": {
+          "num": 6,
+          "history_num": 6,
+          "rate": 1,
+          "open_num": 0,
+          "lbnum": 4
+        },
+        "yesterday": {
+          "num": 85,
+          "history_num": 116,
+          "rate": 0.7327586206896551,
+          "open_num": 31,
+          "lbnum": "16"
+        }
+      },
+      "limit_down_count": {
+        "today": {
+          "num": 0,
+          "history_num": 0,
+          "rate": null,
+          "open_num": 0
+        },
+        "yesterday": {
+          "num": 17,
+          "history_num": 28,
+          "rate": 0.6071428571428571,
+          "open_num": 11
+        }
+      }
+    },
+    "2026-06-29": {
+      "file": "092536.json",
+      "zt": 5,
+      "lb": 0,
+      "zb": 0,
+      "dt": 1,
+      "cz": 8,
+      "limit_up_count": {
+        "today": {
+          "num": 5,
+          "history_num": 5,
+          "rate": 1,
+          "open_num": 0,
+          "lbnum": 0
+        },
+        "yesterday": {
+          "num": 60,
+          "history_num": 94,
+          "rate": 0.6382978723404256,
+          "open_num": 34,
+          "lbnum": "8"
+        }
+      },
+      "limit_down_count": {
+        "today": {
+          "num": 1,
+          "history_num": 1,
+          "rate": 1,
+          "open_num": 0
+        },
+        "yesterday": {
+          "num": 30,
+          "history_num": 46,
+          "rate": 0.6521739130434783,
+          "open_num": 16
+        }
+      }
+    }
+  }
+}

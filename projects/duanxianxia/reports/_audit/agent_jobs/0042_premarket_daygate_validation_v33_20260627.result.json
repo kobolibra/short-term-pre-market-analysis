@@ -1,0 +1,19 @@
+{
+  "id": "0042_premarket_daygate_validation_v33_20260627",
+  "script": "scripts/v33_daygate_validation.py",
+  "args": [],
+  "queued_file": "0042_premarket_daygate_validation_v33_20260627.json",
+  "note": "Validate whether the risk gate from job 0041 is a real, deployable day-selector. 0041 showed risk-gated baskets with huge info ratios (Top3 IR=5.16) but used_days collapsed from 15 to 6 (identical across k=1..10), implying ~9 days have the whole pool risk_flagged. That 5.16 is on a 6-day selected subsample and is NOT directly usable. This job freezes v10_amt ranking and compares, on the FULL 15-day basis (sit-out days counted as 0 excess so opportunity cost is included): always_top{1,2,3} (trade every day, current behavior) vs daygate_top{1,2,3} (trade only on clean days where >=k non-risk names exist, else cash). Reports per-day breakdown (date/regime/n_clean/all_top3), whether risk_flag is effectively day-level (sat-out days fully flagged), and the avoided-day P&L (sum of always_top3 excess on the sat-out days: negative=gate saved you, positive=gate cost you). Output reports/_audit/premarket_daygate_validation_v33.{json,md}.",
+  "worker_time": "2026-06-27T13:50:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"verdict\": {\n    \"frozen_ranking\": \"v10_amt: score(CORE,V10AMT_W) - risk_penalty\",\n    \"n_days\": 15,\n    \"n_satout_days(clean<3)\": 9,\n    \"n_fully_flagged_days(clean==0)\": 9,\n    \"fully_flagged_dates\": [\n      \"2026-05-21\",\n      \"2026-06-04\",\n      \"2026-06-05\",\n      \"2026-06-08\",\n      \"2026-06-10\",\n      \"2026-06-11\",\n      \"2026-06-18\",\n      \"2026-06-23\",\n      \"2026-06-26\"\n    ],\n    \"risk_flag_is_effectively_daylevel\": true,\n    \"avoided_days_always_top3\": {\n      \"n\": 9,\n      \"sum_excess\": -5.314,\n      \"mean_excess\": -0.59,\n      \"n_negative\": 6\n    },\n    \"traded_days_always_top3\": {\n      \"n\": 6,\n      \"mean_excess\": 4.785\n    },\n    \"always_top3\": {\n      \"n_total_days\": 15,\n      \"n_traded\": 15,\n      \"mean_daily_all\": 1.56,\n      \"std_daily_all\": 3.998,\n      \"info_ratio_all\": 0.39,\n      \"cumulative\": 23.396,\n      \"win_rate_all_days\": 0.6,\n      \"worst_day\": -4.728,\n      \"best_day\": 7.592,\n      \"mean_traded_only\": 1.56\n    },\n    \"daygate_top3\": {\n      \"n_total_days\": 15,\n      \"n_traded\": 6,\n      \"mean_daily_all\": 1.914,\n      \"std_daily_all\": 2.416,\n      \"info_ratio_all\": 0.792,\n      \"cumulative\": 28.709,\n      \"win_rate_all_days\": 0.4,\n      \"worst_day\": 0.0,\n      \"best_day\": 5.764,\n      \"mean_traded_only\": 4.785\n    },\n    \"daygate_beats_always_top3\": {\n      \"by_cumulative\": true,\n      \"by_info_ratio_all\": true\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-27T13:50:02+08:00",
+  "ended": "2026-06-27T13:50:35+08:00",
+  "duration_s": 32.4,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v33_daygate_validation.py"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "0165",
+  "script": "scripts/duanxianxia_weimai_columns_probe_0165.py",
+  "args": [
+    "2026-07-06"
+  ],
+  "queued_file": "0165_weimai_columns_20260706.json",
+  "note": "READ-ONLY: dump weimai raw4/raw8/raw17 vs fengdan f925 to pin column meaning + fengdan/FF coverage counts",
+  "worker_time": "2026-07-06T19:30:19+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "=== weimai 列含义查明 + fengdan 覆盖 2026-07-06 ===\ncoverage={\"n_fengdan\": 113, \"n_weimai\": 150, \"n_vratio\": 175, \"n_net_amount\": 49, \"n_qiangchou\": 68, \"fengdan_925_nonzero\": 8, \"in_weimai\": 27, \"in_vratio\": 25, \"in_net_amount\": 7, \"in_qiangchou\": 3, \"in_any_of_4\": 46, \"fengdan_with_FF\": 46, \"fengdan_with_bid\": 46}\n列(亿): code name | f915 f920 f925 | raw4未剔委托 | raw8 | raw17 | vbid竞价成交 | A=raw4-f925 | FF\n603137 恒尚节能 | 67.300 27.600 27.700 | 27.784 | 0.065 | 3.489 | - | 0.084 | 15.768\n603722 阿科力 | 53.500 18.700 18.800 | 18.886 | 0.043 | 2.187 | - | 0.086 | 24.241\n002607 中公教育 | 2.200 2.700 5.200 | 5.786 | 0.612 | 2.918 | 0.612 | 0.586 | 108.779\n002396 星网锐捷 | 7.300 3.500 2.900 | 3.966 | 1.063 | 2.006 | - | 1.066 | 143.236\n000656 金科股份 | 5.500 3.200 2.300 | 3.516 | 1.239 | 1.024 | - | 1.216 | 75.667\n002042 华孚时尚 | 0.533 0.217 1.900 | 1.999 | 0.146 | 0.298 | 0.146 | 0.099 | 42.007\n002072 凯瑞德 | 18.800 1.400 1.400 | 1.602 | 0.155 | - | - | 0.202 | 17.049\n002729 好利科技 | 10.000 0.197 0.625 | 0.892 | 0.267 | - | - | 0.267 | 20.792\n=== stats (比值~1 即恒等; A=raw4-f925=真封单口径下的竞价成交) ===\n{\"n_col_compare\": 8, \"median_raw8_div_A(raw4-f925)\": 0.998253587587955, \"median_vbid_div_A\": 1.2616122555303266, \"median_raw8_div_vbid\": 0.9999776319927665, \"median_(raw4-raw8)_div_f925\": 1.0003373669004114, \"median_raw17_div_f925\": 0.30106979405034323, \"median_raw17_div_A\": 3.9984926312994764, \"median_f920_div_raw4\": 0.8782566604395812, \"median_f920_div_(f925+vbid)\": 0.28528953692464093}\nout=weimai_columns_2026-07-06_0165.json\n",
+  "stderr_tail": "",
+  "started": "2026-07-06T19:30:19+08:00",
+  "ended": "2026-07-06T19:30:23+08:00",
+  "duration_s": 3.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_weimai_columns_probe_0165.py",
+    "2026-07-06"
+  ]
+}

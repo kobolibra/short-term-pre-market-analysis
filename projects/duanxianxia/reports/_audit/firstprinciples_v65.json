@@ -1,0 +1,158 @@
+{
+  "generated_at": "2026-06-28T13:10:12",
+  "job": "firstprinciples_v65",
+  "n_days": 15,
+  "qx_median": 29.0,
+  "Q1_orthogonalization": {
+    "ic_amount": {
+      "mean_ic": 0.1341,
+      "icir": 0.596,
+      "n_days": 15
+    },
+    "ic_turnrate": {
+      "mean_ic": 0.1216,
+      "icir": 0.664,
+      "n_days": 15
+    },
+    "corr_amount_turnrate": {
+      "mean_ic": 0.6274,
+      "icir": 5.332,
+      "n_days": 15
+    },
+    "ic_turnrate_resid_after_amount": {
+      "mean_ic": 0.0583,
+      "icir": 0.302,
+      "n_days": 15
+    },
+    "ic_amount_resid_after_turnrate": {
+      "mean_ic": 0.0414,
+      "icir": 0.167,
+      "n_days": 15
+    },
+    "ic_composite_amt_plus_turn": {
+      "mean_ic": 0.1364,
+      "icir": 0.764,
+      "n_days": 15
+    }
+  },
+  "Q2_gap_nonlinearity": {
+    "ic_gap_all": {
+      "mean_ic": 0.1683,
+      "icir": 0.494,
+      "n_days": 15
+    },
+    "ic_gap_hot_regime": {
+      "mean_ic": 0.0438,
+      "icir": 0.158,
+      "n_days": 5
+    },
+    "ic_gap_cold_regime": {
+      "mean_ic": 0.2726,
+      "icir": 0.809,
+      "n_days": 5
+    },
+    "bin_curve_low_to_high": [
+      {
+        "bin": 0,
+        "pooled_mean_demeaned": -0.5792,
+        "perday_mean": -1.1008,
+        "perday_icir": -0.385,
+        "n_obs": 138
+      },
+      {
+        "bin": 1,
+        "pooled_mean_demeaned": -0.5305,
+        "perday_mean": -0.637,
+        "perday_icir": -0.342,
+        "n_obs": 131
+      },
+      {
+        "bin": 2,
+        "pooled_mean_demeaned": -0.2916,
+        "perday_mean": -0.2065,
+        "perday_icir": -0.137,
+        "n_obs": 135
+      },
+      {
+        "bin": 3,
+        "pooled_mean_demeaned": -0.0071,
+        "perday_mean": 0.2143,
+        "perday_icir": 0.103,
+        "n_obs": 130
+      },
+      {
+        "bin": 4,
+        "pooled_mean_demeaned": 1.3649,
+        "perday_mean": 1.427,
+        "perday_icir": 0.454,
+        "n_obs": 139
+      }
+    ],
+    "monotonic_top_minus_bottom": {
+      "mean_ic": 2.5278,
+      "icir": 0.481,
+      "n_days": 15
+    },
+    "hump_mid_minus_ends": {
+      "mean_ic": -0.3696,
+      "icir": -0.152,
+      "n_days": 15
+    }
+  },
+  "Q3_regime_direction": {
+    "core_ic_hot": {
+      "mean_ic": 0.1323,
+      "icir": 0.551,
+      "n_days": 5
+    },
+    "core_ic_cold": {
+      "mean_ic": 0.2568,
+      "icir": 1.457,
+      "n_days": 5
+    },
+    "top5_raw_excess_hot": 0.43,
+    "top5_raw_excess_cold": 3.2477,
+    "top5_demeaned_hot": 1.1299,
+    "top5_demeaned_cold": 2.2715,
+    "breadth_mean_excess_hot": -0.6999,
+    "breadth_mean_excess_cold": 0.9762,
+    "corr_qx_top5raw": -0.15244185832977605,
+    "corr_qx_coreic": -0.024390697332764166,
+    "n_hot": 5,
+    "n_cold": 5
+  },
+  "Q4_smallcap_robustness": {
+    "ic_cap_raw": {
+      "mean_ic": 0.0445,
+      "icir": 0.153,
+      "n_days": 15
+    },
+    "ic_cap_winsor": {
+      "mean_ic": 0.0444,
+      "icir": 0.153,
+      "n_days": 15
+    },
+    "tercile_demeaned_raw": {
+      "small": 0.131,
+      "mid": -0.1905,
+      "large": 0.0561,
+      "n_small": 221
+    },
+    "small_tercile_demeaned": {
+      "raw": 0.131,
+      "winsor": 0.1246,
+      "ex_outlier_days": 0.2615,
+      "n": 221
+    },
+    "abs_small_lt_100yi_demeaned": {
+      "raw": 0.1097,
+      "winsor": 0.1145,
+      "ex_outlier_days": 0.1769,
+      "n": 423
+    },
+    "outlier_days_excluded": [
+      "2026-06-17",
+      "2026-06-18"
+    ]
+  }
+}

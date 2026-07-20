@@ -1,0 +1,15 @@
+{
+  "id": "daily_2026-07-14_rerun9_duanxianxia_premarket_daily",
+  "script": "scripts/duanxianxia_premarket_daily.py",
+  "args": [
+    "--date",
+    "2026-07-14"
+  ],
+  "queued_file": "daily_2026-07-14_rerun9_duanxianxia_premarket_daily.json",
+  "note": "飞书推送修复: D6情绪周期+选股候选加入webhook摘要",
+  "worker_time": "2026-07-14T10:20:12+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "script not found under workspace: scripts/duanxianxia_premarket_daily.py",
+  "ended": "2026-07-14T10:20:12+08:00"
+}

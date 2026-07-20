@@ -1,0 +1,19 @@
+{
+  "id": "0137",
+  "script": "scripts/duanxianxia_0118_pit_enriched_backtest.py",
+  "args": [],
+  "queued_file": "0137_rerun_0118_pit_backtest_20260703.json",
+  "note": "Re-run of Task 0118 PIT-enriched multi-horizon backtest (worker dedups by id; 0118 already has a result, so re-queued as 0137) now that today's failed cashflow tables (3/5/10day, home.ztpool, rank.rocket) are backfilled and dailyline is confirmed complete. Keep v9 strategy layer (all_candidates/edge/action_type/board/matched_plate/ltgd); canonical PIT data layer (ff/turnover/volume_ratio/amt/bidstrength) joined by code; report pit_join hit-rate + field_coverage lift vs 0110.",
+  "worker_time": "2026-07-04T00:01:02+08:00",
+  "ok": false,
+  "rc": 1,
+  "stdout_tail": "",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0118_pit_enriched_backtest.py\", line 28, in <module>\n    from duanxianxia_pit_enrich import build_pit_index, enrich_fields  # noqa: E402\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_pit_enrich.py\", line 25, in <module>\n    from duanxianxia_pit_panel import build_pit_panel  # noqa: E402\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_pit_panel.py\", line 311, in <module>\n    _self_test()\n  File \"/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_pit_panel.py\", line 73, in _self_test\n    assert ds in AVAILABILITY, f\"missing availability: {ds}\"\nAssertionError: missing availability: auction.jjyd.qiangchou.grp_grab\n",
+  "started": "2026-07-04T00:01:02+08:00",
+  "ended": "2026-07-04T00:01:14+08:00",
+  "duration_s": 12.3,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_0118_pit_enriched_backtest.py"
+  ]
+}

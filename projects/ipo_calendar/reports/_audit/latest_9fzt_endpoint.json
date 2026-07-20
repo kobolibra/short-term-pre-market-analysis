@@ -1,0 +1,2453 @@
+{
+  "generated_at": "2026-06-25T11:20:05+08:00",
+  "page": "https://stock.9fzt.com/dataCenter/stockApply.html",
+  "chunks": {
+    "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js": {
+      "ok": true,
+      "status": 200,
+      "len": 47439,
+      "n_paths": 52,
+      "n_urls": 3,
+      "paths": [
+        "/api/1/flow/history/net/list",
+        "/api/1/flow/snap/single/info",
+        "/api/1/index/flow/min/info",
+        "/api/1/stock/a/ipo/list",
+        "/api/1/stock/quotes/Getneckstockall",
+        "/api/1/stock/quotes/getnorthklinehistory",
+        "/bkList/refresh.png",
+        "/common/no-data.png",
+        "/data-center/chuangyeban.png",
+        "/data-center/estimate.png",
+        "/data-center/greenSanjiao.png",
+        "/data-center/jingban.png",
+        "/data-center/kechuangban.png",
+        "/data-center/redirectIcon.png",
+        "/data-center/right-arrow.png",
+        "/data-center/sanjiao.png",
+        "/data-center/whiteIcon.png",
+        "/dataCenter/stockApply.html",
+        "/industryChain/downCloseList.png",
+        "/industryChain/downOpenList.png",
+        "/industryChain/upCloseList.png",
+        "/industryChain/upOpenList.png",
+        "/mainchart/fs-left-new.png",
+        "/mainchart/fs-right-new.png",
+        "/mainchart/new.png",
+        "/pc/stock/chengjiao.png",
+        "/pc/stock/fengdan.png",
+        "/pc/stock/huanshou.png",
+        "/pc/stock/liuru.png",
+        "/pc/stock/zhangting.png",
+        "/stockSelection/9fzt-znxg-ret.png",
+        "/stockSelection/addSub.png",
+        "/stockSelection/dyyx.png",
+        "/stockSelection/gjdzc.png",
+        "/stockSelection/gzqc.png",
+        "/stockSelection/head.png",
+        "/stockSelection/jgdx-bg.png",
+        "/stockSelection/jjxg-bg.png",
+        "/stockSelection/jsyx.png",
+        "/stockSelection/jzcm.png",
+        "/stockSelection/jzjx.png",
+        "/stockSelection/more.png",
+        "/stockSelection/removeSub.png",
+        "/stockSelection/stock-index-tab-bg.png",
+        "/stockSelection/zljj.png",
+        "/stockSelection/zlzj.png",
+        "/stockSelection/znxg-tab-ai-icon.png",
+        "/stockSelection/znxg-tab-clxg-icon.png",
+        "/stockSelection/znxg-tab-icon-ret.png",
+        "/stockSelection/znxg-tab-jgdx-icon.png",
+        "/stockSelection/znxg-triangle-left.png",
+        "/tigerlist/icon-triangle-right.png"
+      ],
+      "urls": [
+        "https://test-www.9fzt.com/index.html",
+        "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+        "https://upload.9fzt.com/production/jfzt-website-pc/user/empty.png"
+      ]
+    },
+    "https://stock.9fzt.com/_next/static/chunks/cd592ad928dfdb26299ca34f5f9919693ea0755f.689d45b23d01fd250955.js": {
+      "ok": true,
+      "status": 200,
+      "len": 425360,
+      "n_paths": 0,
+      "n_urls": 0,
+      "paths": [],
+      "urls": []
+    },
+    "https://stock.9fzt.com/_next/static/chunks/6156bbab0d794c3f9f5ca993fbf2cdedbc758d36.e985cfe87ee523bc111b.js": {
+      "ok": true,
+      "status": 200,
+      "len": 17629,
+      "n_paths": 0,
+      "n_urls": 0,
+      "paths": [],
+      "urls": []
+    },
+    "https://stock.9fzt.com/_next/static/chunks/cd82629a7060093aab1c2ea578ef9aabcd3c0df9.8b87cb69d7a14e46c47e.js": {
+      "ok": true,
+      "status": 200,
+      "len": 12817,
+      "n_paths": 0,
+      "n_urls": 0,
+      "paths": [],
+      "urls": []
+    },
+    "https://stock.9fzt.com/_next/static/chunks/pages/_app-1ca0fb962a65272bdf73.js": {
+      "ok": true,
+      "status": 200,
+      "len": 1343,
+      "n_paths": 0,
+      "n_urls": 0,
+      "paths": [],
+      "urls": []
+    }
+  },
+  "paths": [
+    "/api/1/flow/history/net/list",
+    "/api/1/flow/snap/single/info",
+    "/api/1/index/flow/min/info",
+    "/api/1/stock/a/ipo/list",
+    "/api/1/stock/quotes/Getneckstockall",
+    "/api/1/stock/quotes/getnorthklinehistory",
+    "/bkList/refresh.png",
+    "/common/no-data.png",
+    "/data-center/chuangyeban.png",
+    "/data-center/estimate.png",
+    "/data-center/greenSanjiao.png",
+    "/data-center/jingban.png",
+    "/data-center/kechuangban.png",
+    "/data-center/redirectIcon.png",
+    "/data-center/right-arrow.png",
+    "/data-center/sanjiao.png",
+    "/data-center/whiteIcon.png",
+    "/dataCenter/stockApply.html",
+    "/industryChain/downCloseList.png",
+    "/industryChain/downOpenList.png",
+    "/industryChain/upCloseList.png",
+    "/industryChain/upOpenList.png",
+    "/mainchart/fs-left-new.png",
+    "/mainchart/fs-right-new.png",
+    "/mainchart/new.png",
+    "/pc/stock/chengjiao.png",
+    "/pc/stock/fengdan.png",
+    "/pc/stock/huanshou.png",
+    "/pc/stock/liuru.png",
+    "/pc/stock/zhangting.png",
+    "/stockSelection/9fzt-znxg-ret.png",
+    "/stockSelection/addSub.png",
+    "/stockSelection/dyyx.png",
+    "/stockSelection/gjdzc.png",
+    "/stockSelection/gzqc.png",
+    "/stockSelection/head.png",
+    "/stockSelection/jgdx-bg.png",
+    "/stockSelection/jjxg-bg.png",
+    "/stockSelection/jsyx.png",
+    "/stockSelection/jzcm.png",
+    "/stockSelection/jzjx.png",
+    "/stockSelection/more.png",
+    "/stockSelection/removeSub.png",
+    "/stockSelection/stock-index-tab-bg.png",
+    "/stockSelection/zljj.png",
+    "/stockSelection/zlzj.png",
+    "/stockSelection/znxg-tab-ai-icon.png",
+    "/stockSelection/znxg-tab-clxg-icon.png",
+    "/stockSelection/znxg-tab-icon-ret.png",
+    "/stockSelection/znxg-tab-jgdx-icon.png",
+    "/stockSelection/znxg-triangle-left.png",
+    "/tigerlist/icon-triangle-right.png"
+  ],
+  "urls": [
+    "https://test-www.9fzt.com/index.html",
+    "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+    "https://upload.9fzt.com/production/jfzt-website-pc/user/empty.png"
+  ],
+  "tries": [
+    {
+      "url": "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NoSuchKey</Code>\n  <Message>The specified key does not exist.</Message>\n  <RequestId>6A3C9E6BA1E8F83537BA7FD9</RequestId>\n  <HostId>ytx-upload.oss-cn-shanghai.aliyuncs.com</HostId>\n  <Key>production/9fzt-stock-pc-ssr/assets</Key>\n  <EC>0026-00000001</EC>\n  <RecommendDoc>https://api.aliyun.com/troubleshoot?q=0026-00000001</RecommendDoc>\n</Error>\n",
+      "status": 404
+    },
+    {
+      "url": "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 405: 'Not Allowed'>",
+      "err_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>MethodNotAllowed</Code>\n  <Message>The specified method is not allowed against this resource.</Message>\n  <RequestId>6A3C9E6BEDDB5B36356B61A6</RequestId>\n  <HostId>ytx-upload.oss-cn-shanghai.aliyuncs.com</HostId>\n  <Method>POST</Method>\n  <ResourceType>Object</ResourceType>\n  <EC>0017-00000001</EC>\n  <RecommendDoc>https://api.aliyun.com/troubleshoot?q=0017-00000001</RecommendDoc>\n</Error>\n",
+      "status": 405
+    },
+    {
+      "url": "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NoSuchKey</Code>\n  <Message>The specified key does not exist.</Message>\n  <RequestId>6A3C9E6BA1E8F83537BA7FD9</RequestId>\n  <HostId>ytx-upload.oss-cn-shanghai.aliyuncs.com</HostId>\n  <Key>production/9fzt-stock-pc-ssr/assets</Key>\n  <EC>0026-00000001</EC>\n  <RecommendDoc>https://api.aliyun.com/troubleshoot?q=0026-00000001</RecommendDoc>\n</Error>\n",
+      "status": 404
+    },
+    {
+      "url": "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 405: 'Not Allowed'>",
+      "err_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>MethodNotAllowed</Code>\n  <Message>The specified method is not allowed against this resource.</Message>\n  <RequestId>6A3C9E6C24FA4D33356A750A</RequestId>\n  <HostId>ytx-upload.oss-cn-shanghai.aliyuncs.com</HostId>\n  <Method>POST</Method>\n  <ResourceType>Object</ResourceType>\n  <EC>0017-00000001</EC>\n  <RecommendDoc>https://api.aliyun.com/troubleshoot?q=0017-00000001</RecommendDoc>\n</Error>\n",
+      "status": 405
+    },
+    {
+      "url": "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NoSuchKey</Code>\n  <Message>The specified key does not exist.</Message>\n  <RequestId>6A3C9E6D1F9040323732B58F</RequestId>\n  <HostId>ytx-upload.oss-cn-shanghai.aliyuncs.com</HostId>\n  <Key>production/9fzt-stock-pc-ssr/assets</Key>\n  <EC>0026-00000001</EC>\n  <RecommendDoc>https://api.aliyun.com/troubleshoot?q=0026-00000001</RecommendDoc>\n</Error>\n",
+      "status": 404
+    },
+    {
+      "url": "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 405: 'Not Allowed'>",
+      "err_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>MethodNotAllowed</Code>\n  <Message>The specified method is not allowed against this resource.</Message>\n  <RequestId>6A3C9E6D26F419373852C4A3</RequestId>\n  <HostId>ytx-upload.oss-cn-shanghai.aliyuncs.com</HostId>\n  <Method>POST</Method>\n  <ResourceType>Object</ResourceType>\n  <EC>0017-00000001</EC>\n  <RecommendDoc>https://api.aliyun.com/troubleshoot?q=0017-00000001</RecommendDoc>\n</Error>\n",
+      "status": 405
+    },
+    {
+      "url": "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NoSuchKey</Code>\n  <Message>The specified key does not exist.</Message>\n  <RequestId>6A3C9E6D1F9040323732B58F</RequestId>\n  <HostId>ytx-upload.oss-cn-shanghai.aliyuncs.com</HostId>\n  <Key>production/9fzt-stock-pc-ssr/assets</Key>\n  <EC>0026-00000001</EC>\n  <RecommendDoc>https://api.aliyun.com/troubleshoot?q=0026-00000001</RecommendDoc>\n</Error>\n",
+      "status": 404
+    },
+    {
+      "url": "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/assets",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 405: 'Not Allowed'>",
+      "err_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>MethodNotAllowed</Code>\n  <Message>The specified method is not allowed against this resource.</Message>\n  <RequestId>6A3C9E6E99244C303188E1C0</RequestId>\n  <HostId>ytx-upload.oss-cn-shanghai.aliyuncs.com</HostId>\n  <Method>POST</Method>\n  <ResourceType>Object</ResourceType>\n  <EC>0017-00000001</EC>\n  <RecommendDoc>https://api.aliyun.com/troubleshoot?q=0017-00000001</RecommendDoc>\n</Error>\n",
+      "status": 405
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?current=1&size=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?current=1&size=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?date=2026-06-25",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?date=2026-06-25",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?date=2026-06-25",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?date=2026-06-25",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?date=2026-06-25",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?date=2026-06-25",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?date=2026-06-25",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?date=2026-06-25",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/history/net/list?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?current=1&size=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?current=1&size=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?date=2026-06-25",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?date=2026-06-25",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?date=2026-06-25",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?date=2026-06-25",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?date=2026-06-25",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?date=2026-06-25",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?date=2026-06-25",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?date=2026-06-25",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/flow/snap/single/info?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?current=1&size=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?current=1&size=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?date=2026-06-25",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?date=2026-06-25",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?date=2026-06-25",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?date=2026-06-25",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?date=2026-06-25",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?date=2026-06-25",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?date=2026-06-25",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?date=2026-06-25",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?tradeDate=2026-06-25&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?type=1&pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/index/flow/min/info?type=1&pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?page=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?page=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?current=1&size=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?current=1&size=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?current=1&size=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?current=1&size=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": null,
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "web"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "wwwgw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNo=1&pageSize=30",
+      "method": "GET",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNo=1&pageSize=30",
+      "method": "POST",
+      "appcode": {
+        "appcode": "gw"
+      },
+      "error": "<HTTPError 404: 'Not Found'>",
+      "err_body": "404 page not found\n",
+      "status": 404
+    }
+  ],
+  "hits": [],
+  "n_candidates": 1251,
+  "n_tried": 240,
+  "n_hits": 0
+}

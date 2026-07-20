@@ -1,0 +1,378 @@
+{
+  "generated_at": "2026-06-26T06:10:02.828830",
+  "js": {
+    "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js": {
+      "len": 47439,
+      "snips": [
+        {
+          "kw": "getIpoList",
+          "snippet": "t,\"b\",(function(){return o})),a.d(t,\"f\",(function(){return c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.default)({method:\"get\",url:\"/api/1/"
+        },
+        {
+          "kw": "ipo/list",
+          "snippet": ",\"a\",(function(){return s})),a.d(t,\"b\",(function(){return o})),a.d(t,\"f\",(function(){return c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.de"
+        },
+        {
+          "kw": "kpAY",
+          "snippet": "),i=a.n(n),r=a(\"nKUr\"),s=a(\"vJKn\"),o=a.n(s),c=a(\"rg98\"),l=a(\"H+61\"),g=a(\"UlJF\"),d=a(\"7LId\"),u=a(\"VIvw\"),p=a(\"iHvq\"),h=a(\"MX0m\"),_=a.n(h),m=a(\"q1tI\"),f=a(\"Kt/j\"),x=a.n(f),j=a(\"RcVn\"),b=a(\"YEdf\"),v=a(\"AMWm\"),S=a.n(v),w=a(\"kpAY\"),y=a(\"K0c6\"),P=a(\"D6Ns\");function O(e){var t=function(){if(\"undefined\"===typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if(\"function\"===typeof Proxy)return!0;try{return Date.prototype.toString.call(Reflect.construct(Date,[],(function(){}))),!0}catch(e){return!1}}();return function("
+        },
+        {
+          "kw": "kpAY",
+          "snippet": "(n,a):r.appendChild(n),n},t=e,(r=[{key:\"length\",get:function(){return this._rulesCount}}])&&a(t.prototype,r),o&&a(t,o),e}();function s(e,t){if(!e)throw new Error(\"StyleSheet: \"+t+\".\")}t.default=r}).call(this,a(\"8oxB\"))},kpAY:function(e,t,a){\"use strict\";a.d(t,\"d\",(function(){return i})),a.d(t,\"c\",(function(){return r})),a.d(t,\"a\",(function(){return s})),a.d(t,\"b\",(function(){return o})),a.d(t,\"f\",(function(){return c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/s"
+        },
+        {
+          "kw": "Ipo",
+          "snippet": "ataCenter\",value:function(){return\"index.html\"}},{key:\"clickPlate\",value:function(e){var t=this;this.setState({plateIndex:e,pageNo:1},(function(){t.getData()}))}},{key:\"goSymbolHtml\",value:function(e,t){T(e,t)}},{key:\"goIpotitle\",value:function(e){e&&window.open(e,\"_self\",\"noopener\")}},{key:\"render\",value:function(){var e=this,t=this.state.plateIndex,a=this,n=[{title:\"\\u5e8f\\u53f7\",width:60,dataIndex:\"num\",key:\"name\",fixed:\"left\",align:\"center\"},{title:function(){return Object(r.jsx)(\"div\",{style:{paddingLeft:\"12px\"},children:\"\\u4ee3\\"
+        },
+        {
+          "kw": "Ipo",
+          "snippet": "b\",(function(){return o})),a.d(t,\"f\",(function(){return c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.default)({method:\"get\",url:\"/api/1/flo"
+        },
+        {
+          "kw": "pageNum",
+          "snippet": "{t.getData()}))}},{key:\"getData\",value:function(){var e=Object(c.a)(o.a.mark((function e(){var t,a,n,i,r=this;return o.a.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return t={listedSector:this.state.plateIndex,pageNum:this.state.pageNo,pageSize:10,sortField:this.state.sortObj.key,sortType:this.state.sortObj.order},e.next=3,Object(w.d)(t);case 3:(a=e.sent)&&a.count&&a.ipoList&&(n=a.count,(i=a.ipoList).map((function(e,t){e.num=10*(r.state.pageNo-1)+t+1})),this.setState({total:n,tableData:i},(function(){r.setPagination()})));ca"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": ".goSymbolHtml,z={0:\"iconFlatSequence\",1:\"iconReverseOrder\",2:\"iconPositiveSequence\"},N=!0,I=function(e){Object(d.a)(a,e);var t=O(a);function a(e){var n;return Object(l.default)(this,a),(n=t.call(this,e)).state={pageNo:1,pageSize:10,total:0,tableData:[],plateIndex:0,plate:[\"\\u5168\\u90e8A\\u80a1\",\"\\u4e0a\\u6d77\\u4e3b\\u677f\",\"\\u6df1\\u8bc1\\u4e3b\\u677f\",\"\\u79d1\\u521b\\u677f\",\"\\u521b\\u4e1a\\u677f\"],sortObj:{key:\"onlineStartDate\",order:0}},n}return Object(g.default)(a,[{key:\"componentDidMount\",value:function(){this.getData(),this.initPagination("
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "tData\",value:function(){var e=Object(c.a)(o.a.mark((function e(){var t,a,n,i,r=this;return o.a.wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return t={listedSector:this.state.plateIndex,pageNum:this.state.pageNo,pageSize:10,sortField:this.state.sortObj.key,sortType:this.state.sortObj.order},e.next=3,Object(w.d)(t);case 3:(a=e.sent)&&a.count&&a.ipoList&&(n=a.count,(i=a.ipoList).map((function(e,t){e.num=10*(r.state.pageNo-1)+t+1})),this.setState({total:n,tableData:i},(function(){r.setPagination()})));case 5:case\"end\":return e.st"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "oid 0)}))}}a.d(t,\"a\",(function(){return i}))},tGUD:function(e,t){$.fn.extend({whjPaging:function(e,t){var a=$(this);if(\"getPage\"===e)return{totalSize:a.get(0).pageText.totalSize,currPage:a.get(0).pageText.staticCurrPage,pageSize:a.get(0).pageText.staticPageSize,totalPage:a.get(0).pageText.staticTotalPage};if(\"setPage\"===e)a.get(0).pageText.currPage=null!=t.currPage?t.currPage:null,a.get(0).pageText.totalPage=null!=t.totalPage?t.totalPage:null,a.get(0).pageText.totalSize=null!=t.totalSize?t.totalSize:null,a.get(0).pageText.isShowPageSi"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "a.get(0).pageText.isShowPageSizeOpt&&x();else if(null!=e){var n=[{value:5,text:\"5\\u6761/\\u9875\",selected:!0},{value:10,text:\"10\\u6761/\\u9875\"},{value:15,text:\"15\\u6761/\\u9875\"},{value:20,text:\"20\\u6761/\\u9875\"}];null!=e.pageSizeOpt&&(n=e.pageSizeOpt);for(var i=n[0].value,r=n.length,s=0;s<r;s++){if(n[s].selected){i=n[s].value;break}s+1==r&&(n[0].selected=!0)}var o=\"whj_jqueryPaginationCss-1\";if(null!=e.css)switch(e.css){case\"css-1\":o=\"whj_jqueryPaginationCss-1\";break;case\"css-2\":o=\"whj_jqueryPaginationCss-2\";break;case\"css-3\":o=\"whj_jq"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "isShowPageSizeOpt&&x();else if(null!=e){var n=[{value:5,text:\"5\\u6761/\\u9875\",selected:!0},{value:10,text:\"10\\u6761/\\u9875\"},{value:15,text:\"15\\u6761/\\u9875\"},{value:20,text:\"20\\u6761/\\u9875\"}];null!=e.pageSizeOpt&&(n=e.pageSizeOpt);for(var i=n[0].value,r=n.length,s=0;s<r;s++){if(n[s].selected){i=n[s].value;break}s+1==r&&(n[0].selected=!0)}var o=\"whj_jqueryPaginationCss-1\";if(null!=e.css)switch(e.css){case\"css-1\":o=\"whj_jqueryPaginationCss-1\";break;case\"css-2\":o=\"whj_jqueryPaginationCss-2\";break;case\"css-3\":o=\"whj_jqueryPaginationCss-"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "=\"whj_jqueryPaginationCss-2\";break;case\"css-3\":o=\"whj_jqueryPaginationCss-3\";break;case\"css-4\":o=\"whj_jqueryPaginationCss-4\";break;case\"css-5\":o=\"whj_jqueryPaginationCss-5\";break;default:o=e.css}a.get(0).pageText={css:o,pageSizeOpt:n,totalPage:null!=e.totalPage?e.totalPage:null,showPageNum:null!=e.showPageNum?e.showPageNum:5,firstPage:null!=e.firstPage?e.firstPage:\"\\u9996\\u9875\",previousPage:null!=e.previousPage?e.previousPage:\"\\u4e0a\\u4e00\\u9875\",nextPage:null!=e.nextPage?e.nextPage:\"\\u4e0b\\u4e00\\u9875\",lastPage:null!=e.lastPage?e.la"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "=e.isShowFL,isShowPageSizeOpt:!1!==e.isShowPageSizeOpt,isShowSkip:!1!==e.isShowSkip,isShowRefresh:!1!==e.isShowRefresh,isShowTotalPage:!1!==e.isShowTotalPage,isResetPage:!0===e.isResetPage,callBack:e.callBack,currPage:1,pageSize:!1===e.isShowPageSizeOpt?null:i,totalSize:null!=e.totalSize?e.totalSize:null,isShowTotalSize:!1!==e.isShowTotalSize,totalSizeText:null!=e.totalSizeText?e.totalSizeText:\"\\u5171{}\\u6761\\u8bb0\\u5f55\"}}if(null==a.get(0).pageText.totalPage||a.get(0).pageText.totalPage<1)a.empty();else{a.get(0).pageText.currPage<1?a"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "t(0).pageText.currPage>a.get(0).pageText.totalPage&&(a.get(0).pageText.currPage=a.get(0).pageText.totalPage),a.get(0).pageText.staticCurrPage=a.get(0).pageText.currPage,a.get(0).pageText.staticPageSize=a.get(0).pageText.pageSize,a.get(0).pageText.staticTotalPage=a.get(0).pageText.totalPage;var c=a.get(0).pageText.currPage<2?\"whj_hoverDisable\":\"whj_hover\",l=a.get(0).pageText.currPage>=a.get(0).pageText.totalPage?\"whj_hoverDisable\":\"whj_hover\",g=0,d=0,u=parseInt(a.get(0).pageText.showPageNum/2);d=a.get(0).pageText.showPageNum<2?a.get(0)"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "='<div class=\"whj_border whj_padding whj_bgc '+l+'\" name=\"whj_lastPage\">'+a.get(0).pageText.lastPage+\"</div>\"),a.get(0).pageText.isShowPageSizeOpt){for(var _ in p+='<select class=\"whj_border whj_bgc whj_hover\" name=\"whj_pageSize\">',a.get(0).pageText.pageSizeOpt){var m=a.get(0).pageText.pageSizeOpt[_].selected?\"selected\":\"\";p+='<option value=\"'+a.get(0).pageText.pageSizeOpt[_].value+'\" '+m+\">\"+a.get(0).pageText.pageSizeOpt[_].text+\"</option>\"}p+=\"</select>\"}a.get(0).pageText.isShowSkip&&(p+='<div class=\"whj_padding whj_color\">'+a.get(0"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "adding whj_bgc '+l+'\" name=\"whj_lastPage\">'+a.get(0).pageText.lastPage+\"</div>\"),a.get(0).pageText.isShowPageSizeOpt){for(var _ in p+='<select class=\"whj_border whj_bgc whj_hover\" name=\"whj_pageSize\">',a.get(0).pageText.pageSizeOpt){var m=a.get(0).pageText.pageSizeOpt[_].selected?\"selected\":\"\";p+='<option value=\"'+a.get(0).pageText.pageSizeOpt[_].value+'\" '+m+\">\"+a.get(0).pageText.pageSizeOpt[_].text+\"</option>\"}p+=\"</select>\"}a.get(0).pageText.isShowSkip&&(p+='<div class=\"whj_padding whj_color\">'+a.get(0).pageText.skip+'</div><input "
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "age\">'+a.get(0).pageText.lastPage+\"</div>\"),a.get(0).pageText.isShowPageSizeOpt){for(var _ in p+='<select class=\"whj_border whj_bgc whj_hover\" name=\"whj_pageSize\">',a.get(0).pageText.pageSizeOpt){var m=a.get(0).pageText.pageSizeOpt[_].selected?\"selected\":\"\";p+='<option value=\"'+a.get(0).pageText.pageSizeOpt[_].value+'\" '+m+\">\"+a.get(0).pageText.pageSizeOpt[_].text+\"</option>\"}p+=\"</select>\"}a.get(0).pageText.isShowSkip&&(p+='<div class=\"whj_padding whj_color\">'+a.get(0).pageText.skip+'</div><input type=\"text\" class=\"whj_border whj_col"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "pt){for(var _ in p+='<select class=\"whj_border whj_bgc whj_hover\" name=\"whj_pageSize\">',a.get(0).pageText.pageSizeOpt){var m=a.get(0).pageText.pageSizeOpt[_].selected?\"selected\":\"\";p+='<option value=\"'+a.get(0).pageText.pageSizeOpt[_].value+'\" '+m+\">\"+a.get(0).pageText.pageSizeOpt[_].text+\"</option>\"}p+=\"</select>\"}a.get(0).pageText.isShowSkip&&(p+='<div class=\"whj_padding whj_color\">'+a.get(0).pageText.skip+'</div><input type=\"text\" class=\"whj_border whj_color\" name=\"whj_toPage\"/><div class=\"whj_border whj_padding whj_bgc whj_hover\" "
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "_bgc whj_hover\" name=\"whj_pageSize\">',a.get(0).pageText.pageSizeOpt){var m=a.get(0).pageText.pageSizeOpt[_].selected?\"selected\":\"\";p+='<option value=\"'+a.get(0).pageText.pageSizeOpt[_].value+'\" '+m+\">\"+a.get(0).pageText.pageSizeOpt[_].text+\"</option>\"}p+=\"</select>\"}a.get(0).pageText.isShowSkip&&(p+='<div class=\"whj_padding whj_color\">'+a.get(0).pageText.skip+'</div><input type=\"text\" class=\"whj_border whj_color\" name=\"whj_toPage\"/><div class=\"whj_border whj_padding whj_bgc whj_hover\" name=\"whj_confirm\">'+a.get(0).pageText.confirm+\"</"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "lace(\"{}\",a.get(0).pageText.totalSize)+\"</div>\"),p+=\"</div>\",a.html(p),a.get(0).pageText.isShowFL&&(\"whj_hover\"==c&&a.find(\"div[name='whj_firstPage']\").click((function(){a.get(0).pageText.isResetPage&&(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize),a.get(0).pageText.currPage=1,f()})),\"whj_hover\"==l&&a.find(\"div[name='whj_lastPage']\").click((function(){a.get(0).pageText.isResetPage?(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize,a.get(0).pageText.currPage=a.get(0).pageText.staticTotalPage):a.get(0).pageText.c"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "ge&&(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize),a.get(0).pageText.currPage=1,f()})),\"whj_hover\"==l&&a.find(\"div[name='whj_lastPage']\").click((function(){a.get(0).pageText.isResetPage?(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize,a.get(0).pageText.currPage=a.get(0).pageText.staticTotalPage):a.get(0).pageText.currPage=a.get(0).pageText.totalPage,f()}))),\"whj_hover\"==c&&a.find(\"div[name='whj_previousPage']\").click((function(){a.get(0).pageText.isResetPage?(a.get(0).pageText.pageSize=a.get(0).pageText.stat"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "a.get(0).pageText.staticTotalPage):a.get(0).pageText.currPage=a.get(0).pageText.totalPage,f()}))),\"whj_hover\"==c&&a.find(\"div[name='whj_previousPage']\").click((function(){a.get(0).pageText.isResetPage?(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize,a.get(0).pageText.currPage=a.get(0).pageText.staticCurrPage-1):a.get(0).pageText.currPage=a.get(0).pageText.currPage-1,f()})),\"whj_hover\"==l&&a.find(\"div[name='whj_nextPage']\").click((function(){a.get(0).pageText.isResetPage?(a.get(0).pageText.pageSize=a.get(0).pageText.staticP"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "ge=a.get(0).pageText.staticCurrPage-1):a.get(0).pageText.currPage=a.get(0).pageText.currPage-1,f()})),\"whj_hover\"==l&&a.find(\"div[name='whj_nextPage']\").click((function(){a.get(0).pageText.isResetPage?(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize,a.get(0).pageText.currPage=a.get(0).pageText.staticCurrPage+1):a.get(0).pageText.currPage=a.get(0).pageText.currPage+1,f()})),a.find(\"div[name='whj_page']\").length>0&&a.find(\"div[name='whj_page']\").click((function(){$(this).hasClass(\"whj_checked\")||(a.get(0).pageText.isResetPag"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": ".currPage=a.get(0).pageText.currPage+1,f()})),a.find(\"div[name='whj_page']\").length>0&&a.find(\"div[name='whj_page']\").click((function(){$(this).hasClass(\"whj_checked\")||(a.get(0).pageText.isResetPage&&(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize),a.get(0).pageText.currPage=+$(this).data(\"page\"),f())})),a.get(0).pageText.isShowPageSizeOpt&&a.find(\"select[name='whj_pageSize']\").change((function(){var e=+$(this).val();a.get(0).pageText.isResetPage&&$(this).find(\"option[value='\"+a.get(0).pageText.staticPageSize+\"']\").prop("
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "ked\")||(a.get(0).pageText.isResetPage&&(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize),a.get(0).pageText.currPage=+$(this).data(\"page\"),f())})),a.get(0).pageText.isShowPageSizeOpt&&a.find(\"select[name='whj_pageSize']\").change((function(){var e=+$(this).val();a.get(0).pageText.isResetPage&&$(this).find(\"option[value='\"+a.get(0).pageText.staticPageSize+\"']\").prop(\"selected\",!0);var t=parseInt(a.get(0).pageText.totalSize/e);t*e<a.get(0).pageText.totalSize&&t++,a.get(0).pageText.currPage=1,a.get(0).pageText.pageSize=e,a.get("
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "&$(this).find(\"option[value='\"+a.get(0).pageText.staticPageSize+\"']\").prop(\"selected\",!0);var t=parseInt(a.get(0).pageText.totalSize/e);t*e<a.get(0).pageText.totalSize&&t++,a.get(0).pageText.currPage=1,a.get(0).pageText.pageSize=e,a.get(0).pageText.totalPage=t,a.get(0).pageText.isResetPage||x(),f()})),a.get(0).pageText.isShowSkip&&(a.find(\"input[name='whj_toPage']\").on(\"input\",(function(){var e=$(this).val(),t=$(this).val().replace(/\\D/g,\"\");e.length!=t.length&&$(this).val(t)})),a.find(\"div[name='whj_confirm']\").click((function(){var "
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "whj_confirm']\").click((function(){var e=a.find(\"input[name='whj_toPage']\").val();e.length>0&&((e=+e)<1?e=1:e>a.get(0).pageText.totalPage&&(e=a.get(0).pageText.totalPage),a.get(0).pageText.isResetPage&&(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize),a.get(0).pageText.currPage=e,f())}))),a.get(0).pageText.isShowRefresh&&a.find(\"div[name='whj_refresh']\").click((function(){a.get(0).pageText.isResetPage&&(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize,a.get(0).pageText.currPage=a.get(0).pageText.staticCurrPage),f"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "ext.pageSize=a.get(0).pageText.staticPageSize),a.get(0).pageText.currPage=e,f())}))),a.get(0).pageText.isShowRefresh&&a.find(\"div[name='whj_refresh']\").click((function(){a.get(0).pageText.isResetPage&&(a.get(0).pageText.pageSize=a.get(0).pageText.staticPageSize,a.get(0).pageText.currPage=a.get(0).pageText.staticCurrPage),f()}))}function f(){a.get(0).pageText.isResetPage||a.whjPaging(),a.get(0).pageText.callBack(a.get(0).pageText.currPage,a.get(0).pageText.pageSize)}function x(){var e=[],t=a.get(0).pageText.pageSizeOpt;for(var n in t)t"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "geText.staticPageSize,a.get(0).pageText.currPage=a.get(0).pageText.staticCurrPage),f()}))}function f(){a.get(0).pageText.isResetPage||a.whjPaging(),a.get(0).pageText.callBack(a.get(0).pageText.currPage,a.get(0).pageText.pageSize)}function x(){var e=[],t=a.get(0).pageText.pageSizeOpt;for(var n in t)t[n].value==a.get(0).pageText.pageSize?e.push({value:t[n].value,text:t[n].text,selected:!0}):e.push({value:t[n].value,text:t[n].text});a.get(0).pageText.pageSizeOpt=e}}})}},[[\"0UZo\",0,1,2,3,7,10,11,13,14,17,20]]]);"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "et(0).pageText.staticCurrPage),f()}))}function f(){a.get(0).pageText.isResetPage||a.whjPaging(),a.get(0).pageText.callBack(a.get(0).pageText.currPage,a.get(0).pageText.pageSize)}function x(){var e=[],t=a.get(0).pageText.pageSizeOpt;for(var n in t)t[n].value==a.get(0).pageText.pageSize?e.push({value:t[n].value,text:t[n].text,selected:!0}):e.push({value:t[n].value,text:t[n].text});a.get(0).pageText.pageSizeOpt=e}}})}},[[\"0UZo\",0,1,2,3,7,10,11,13,14,17,20]]]);"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "0).pageText.isResetPage||a.whjPaging(),a.get(0).pageText.callBack(a.get(0).pageText.currPage,a.get(0).pageText.pageSize)}function x(){var e=[],t=a.get(0).pageText.pageSizeOpt;for(var n in t)t[n].value==a.get(0).pageText.pageSize?e.push({value:t[n].value,text:t[n].text,selected:!0}):e.push({value:t[n].value,text:t[n].text});a.get(0).pageText.pageSizeOpt=e}}})}},[[\"0UZo\",0,1,2,3,7,10,11,13,14,17,20]]]);"
+        },
+        {
+          "kw": "pageSize",
+          "snippet": "nction x(){var e=[],t=a.get(0).pageText.pageSizeOpt;for(var n in t)t[n].value==a.get(0).pageText.pageSize?e.push({value:t[n].value,text:t[n].text,selected:!0}):e.push({value:t[n].value,text:t[n].text});a.get(0).pageText.pageSizeOpt=e}}})}},[[\"0UZo\",0,1,2,3,7,10,11,13,14,17,20]]]);"
+        }
+      ]
+    }
+  },
+  "probes": [
+    {
+      "params": {
+        "beginDate": "2026-06-01",
+        "endDate": "2026-06-30"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?beginDate=2026-06-01&endDate=2026-06-30",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454205000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "startDate": "2026-06-01",
+        "endDate": "2026-06-30"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?startDate=2026-06-01&endDate=2026-06-30",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454206000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "beginDate": "20260601",
+        "endDate": "20260630"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?beginDate=20260601&endDate=20260630",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454206000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "startTime": "2026-06-01",
+        "endTime": "2026-06-30"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?startTime=2026-06-01&endTime=2026-06-30",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454207000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "month": "2026-06"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?month=2026-06",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454207000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "date": "2026-06-26"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?date=2026-06-26",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454208000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "tradeDate": "2026-06-26"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?tradeDate=2026-06-26",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454209000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "applyDate": "2026-06-26"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?applyDate=2026-06-26",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454209000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "type": "1"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?type=1",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454210000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "type": "0"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?type=0",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454210000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "type": "2"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?type=2",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454211000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "status": "1"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?status=1",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454211000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "listStatus": "1"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?listStatus=1",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454212000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "queryType": "1"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?queryType=1",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454213000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "market": "1"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?market=1",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454213000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "market": "0"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?market=0",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454214000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "beginDate": "2026-06-01",
+        "endDate": "2026-06-30",
+        "pageNum": 1,
+        "pageSize": 50
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?beginDate=2026-06-01&endDate=2026-06-30&pageNum=1&pageSize=50",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454214000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "beginDate": "2026-06-01",
+        "endDate": "2026-06-30",
+        "type": 1
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?beginDate=2026-06-01&endDate=2026-06-30&type=1",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454215000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "pageNum": "1",
+        "pageSize": "30"
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454215000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    },
+    {
+      "params": {
+        "year": 2026,
+        "month": 6
+      },
+      "url": "https://api-hq.chongnengjihua.com/news/api/1/stock/a/ipo/list?year=2026&month=6",
+      "status": 200,
+      "body_head": "{\"code\":20001,\"message\":\"参数非法\",\"data\":null,\"currentTime\":1782454216000}",
+      "code": 20001,
+      "message": "参数非法",
+      "ok": false
+    }
+  ],
+  "page_len": 50568,
+  "chunk_count": 26,
+  "hit": null
+}

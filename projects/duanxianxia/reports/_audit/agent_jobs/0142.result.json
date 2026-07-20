@@ -1,0 +1,19 @@
+{
+  "id": "0142",
+  "script": "scripts/duanxianxia_ltgd_pivot_verify.py",
+  "args": [],
+  "queued_file": "0142_ltgd_pivot_verify_20260704.json",
+  "note": "Item A verify: pit_panel._load_map review.ltgd.range multi-window pivot fix. On the same latest capture (0141: raw 80 / 55 codes, old last-wins lost 25), assert merged==55 codes, total window fields==80 (rows_lost==0), base range_period==shortest available window per code. collapse_fixed must be true.",
+  "worker_time": "2026-07-04T15:20:08+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n \"task\": \"0142_ltgd_pivot_verify\",\n \"dataset\": \"review.ltgd.range\",\n \"captures_root\": \"/home/investmentofficehku/.openclaw/workspace/projects/duanxianxia/captures\",\n \"chosen_capture\": \"2026-07-03/review.ltgd.range/172031.json\",\n \"raw_row_count\": 80,\n \"raw_distinct_codes\": 55,\n \"raw_period_distribution\": {\n  \"5日\": 20,\n  \"10日\": 20,\n  \"20日\": 20,\n  \"50日\": 20\n },\n \"canonical_err\": 0,\n \"merged_code_count\": 55,\n \"total_window_fields\": 80,\n \"rows_lost\": 0,\n \"per_code_window_count_dist\": {\n  \"1\": 37,\n  \"3\": 5,\n  \"4\": 1,\n  \"2\": 12\n },\n \"primary_window_dist\": {\n  \"5d\": 20,\n  \"10d\": 12,\n  \"20d\": 12,\n  \"50d\": 11\n },\n \"base_is_shortest_window\": true,\n \"sample_multiwindow\": {\n  \"605178\": {\n   \"range_windows\": [\n    \"5d\",\n    \"10d\",\n    \"20d\"\n   ],\n   \"name\": \"时空科技\",\n   \"range_return_5d\": 39.0,\n   \"range_rank_5d\": 19.0,\n   \"range_return_10d\": 90.0,\n   \"range_rank_10d\": 1.0,\n   \"range_return_20d\": 91.0,\n   \"range_rank_20d\": 19.0,\n   \"range_windows_n\": 3,\n   \"range_primary_window\": \"5d\",\n   \"range_period\": \"5日\",\n   \"range_return\": 39.0,\n   \"range_rank\": 19.0\n  },\n  \"688596\": {\n   \"range_windows\": [\n    \"5d\",\n    \"10d\",\n    \"20d\"\n   ],\n   \"name\": \"正帆科技\",\n   \"range_return_5d\": 65.0,\n   \"range_rank_5d\": 2.0,\n   \"range_return_10d\": 65.0,\n   \"range_rank_10d\": 7.0,\n   \"range_return_20d\": 103.0,\n   \"range_rank_20d\": 15.0,\n   \"range_windows_n\": 3,\n   \"range_primary_window\": \"5d\",\n   \"range_period\": \"5日\",\n   \"range_return\": 65.0,\n   \"range_rank\": 2.0\n  },\n  \"300873\": {\n   \"range_windows\": [\n    \"5d\",\n    \"10d\",\n    \"20d\"\n   ],\n   \"name\": \"海晨股份\",\n   \"range_return_5d\": 64.0,\n   \"range_rank_5d\": 3.0,\n   \"range_return_10d\": 77.0,\n   \"range_rank_10d\": 4.0,\n   \"range_return_20d\": 108.0,\n   \"range_rank_20d\": 11.0,\n   \"range_windows_n\": 3,\n   \"range_primary_window\": \"5d\",\n   \"range_period\": \"5日\",\n   \"range_return\": 64.0,\n   \"range_rank\": 3.0\n  }\n },\n \"collapse_fixed\": true\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-04T15:20:08+08:00",
+  "ended": "2026-07-04T15:20:09+08:00",
+  "duration_s": 0.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_ltgd_pivot_verify.py"
+  ]
+}

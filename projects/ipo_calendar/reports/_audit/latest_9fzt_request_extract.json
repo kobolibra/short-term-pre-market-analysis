@@ -1,0 +1,450 @@
+{
+  "generated_at": "2026-06-25T03:40:02.056828",
+  "chunks": {
+    "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js": {
+      "ok": true,
+      "status": 200,
+      "len": 47439
+    },
+    "https://stock.9fzt.com/_next/static/chunks/cd592ad928dfdb26299ca34f5f9919693ea0755f.689d45b23d01fd250955.js": {
+      "ok": true,
+      "status": 200,
+      "len": 425360
+    },
+    "https://stock.9fzt.com/_next/static/chunks/6156bbab0d794c3f9f5ca993fbf2cdedbc758d36.e985cfe87ee523bc111b.js": {
+      "ok": true,
+      "status": 200,
+      "len": 17629
+    },
+    "https://stock.9fzt.com/_next/static/chunks/cd82629a7060093aab1c2ea578ef9aabcd3c0df9.8b87cb69d7a14e46c47e.js": {
+      "ok": true,
+      "status": 200,
+      "len": 12817
+    },
+    "https://upload.9fzt.com/production/9fzt-stock-pc-ssr/globalLogin.js": {
+      "ok": false,
+      "status": 404,
+      "len": 410
+    }
+  },
+  "extract": {
+    "https://stock.9fzt.com/_next/static/chunks/pages/dataCenter/stockApply.html-1077f1617483e17c7c17.js": {
+      "ipo/list": [
+        ",\"a\",(function(){return s})),a.d(t,\"b\",(function(){return o})),a.d(t,\"f\",(function(){return c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlo"
+      ],
+      "sign": [
+        "})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Obje",
+        "Domain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{requestKey:\"getFlowSnap\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/history/net/list\",urlConfig:{requestKey:\"getFlowHistory\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return O",
+        "\",apiServer:\"capital\"},params:e,sign:!0})}function s(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/history/net/list\",urlConfig:{requestKey:\"getFlowHistory\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return Object(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Obj",
+        "in\",apiServer:\"capital\"},params:e,sign:!0})}function o(e){return Object(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}funct",
+        "tal\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}function l(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/Getneckstockall\",urlConfig:{requestKey:\"getNeckstockall\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}},rg98:funct"
+      ],
+      "/api/1/stock": [
+        "turn r})),a.d(t,\"a\",(function(){return s})),a.d(t,\"b\",(function(){return o})),a.d(t,\"f\",(function(){return c})),a.d(t,\"e\",(function(){return l}));var n=a(\"DG18\");function i(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/a/ipo/list\",urlConfig:{requestKey:\"getIpoList\",domain:\"apiHqDomain\",apiServer:\"news\"},params:e,sign:!0})}function r(e){return Object(n.default)({method:\"get\",url:\"/api/1/flow/snap/single/info\",urlConfig:{req",
+        "ect(n.default)({method:\"get\",url:\"/api/1/index/flow/min/info\",urlConfig:{requestKey:\"getFlowMinInfo\",domain:\"apiHqDomain\",apiServer:\"capital\"},params:e,sign:!0})}function c(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}function l(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/qu",
+        "hod:\"get\",url:\"/api/1/stock/quotes/getnorthklinehistory\",urlConfig:{requestKey:\"getNorthFlowKline\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}function l(e){return Object(n.default)({method:\"get\",url:\"/api/1/stock/quotes/Getneckstockall\",urlConfig:{requestKey:\"getNeckstockall\",domain:\"hqdomain\",apiServer:\"rjhyGmgQuote\"},params:e,sign:!0})}},rg98:function(e,t,a){\"use strict\";function n(e,t,a,n,i,r,s){try{var o=e[r](s),"
+      ]
+    },
+    "https://stock.9fzt.com/_next/static/chunks/cd592ad928dfdb26299ca34f5f9919693ea0755f.689d45b23d01fd250955.js": {
+      "sign": [
+        "bar\"),J={position:\"absolute\",visibility:z?null:\"hidden\"},Z={position:\"absolute\",borderRadius:99,background:\"var(--rc-virtual-list-scrollbar-bg, rgba(0, 0, 0, 0.5))\",cursor:\"pointer\",userSelect:\"none\"};return p?(Object.assign(J,{height:8,left:0,right:0,bottom:0}),Object.assign(Z,Object(l.a)({height:\"100%\",width:m},R?\"left\":\"right\",B))):(Object.assign(J,Object(l.a)({width:8,top:0,bottom:0},R?\"right\":\"left\",0)),Object.assign(Z,{width:\"100%",
+        "en\"},Z={position:\"absolute\",borderRadius:99,background:\"var(--rc-virtual-list-scrollbar-bg, rgba(0, 0, 0, 0.5))\",cursor:\"pointer\",userSelect:\"none\"};return p?(Object.assign(J,{height:8,left:0,right:0,bottom:0}),Object.assign(Z,Object(l.a)({height:\"100%\",width:m},R?\"left\":\"right\",B))):(Object.assign(J,Object(l.a)({width:8,top:0,bottom:0},R?\"right\":\"left\",0)),Object.assign(Z,{width:\"100%\",height:m,top:B})),v.createElement(\"div\",{ref:D,cla",
+        "st-scrollbar-bg, rgba(0, 0, 0, 0.5))\",cursor:\"pointer\",userSelect:\"none\"};return p?(Object.assign(J,{height:8,left:0,right:0,bottom:0}),Object.assign(Z,Object(l.a)({height:\"100%\",width:m},R?\"left\":\"right\",B))):(Object.assign(J,Object(l.a)({width:8,top:0,bottom:0},R?\"right\":\"left\",0)),Object.assign(Z,{width:\"100%\",height:m,top:B})),v.createElement(\"div\",{ref:D,className:d()(Y,Object(l.a)(Object(l.a)(Object(l.a)({},\"\".concat(Y,\"-horizonta",
+        "return p?(Object.assign(J,{height:8,left:0,right:0,bottom:0}),Object.assign(Z,Object(l.a)({height:\"100%\",width:m},R?\"left\":\"right\",B))):(Object.assign(J,Object(l.a)({width:8,top:0,bottom:0},R?\"right\":\"left\",0)),Object.assign(Z,{width:\"100%\",height:m,top:B})),v.createElement(\"div\",{ref:D,className:d()(Y,Object(l.a)(Object(l.a)(Object(l.a)({},\"\".concat(Y,\"-horizontal\"),p),\"\".concat(Y,\"-vertical\"),!p),\"\".concat(Y,\"-visible\"),z)),style:Obje",
+        "defineProperty(t,\"__esModule\",{value:!0}),t.default=void 0;var r=(0,n(\"q1tI\").createContext)({prefixCls:\"\",firstLevel:!0,inlineCollapsed:!1});t.default=r},bT9E:function(e,t,n){\"use strict\";function r(e,t){var n=Object.assign({},e);return Array.isArray(t)&&t.forEach((function(e){delete n[e]})),n}n.d(t,\"a\",(function(){return r}))},bX4T:function(e,t,n){\"use strict\";n.d(t,\"a\",(function(){return c}));var r=n(\"VTBJ\"),a=\"\".concat(\"accept accep"
+      ],
+      "X-": [
+        "b[1],C=u.useRef({delta:0,x:0}),E=u.useState(!1),w=Object(i.a)(E,2),j=w[0],N=w[1],S=function(){N(!1)},P=function(e){var t,n=(e||(null===(t=window)||void 0===t?void 0:t.event)).buttons;if(j&&0!==n){var r=C.current.x+e.pageX-C.current.x-C.current.delta;r<=0&&(r=0),r+m>=v&&(r=v-m),c({scrollLeft:r/v*(p+2)}),C.current.x=e.pageX}else j&&N(!1)},k=function(){if(l.current){var e=qe(l.current).top,t=e+l.current.offsetHeight,n=s===window?document.d",
+        "r]),p<=v||!m||O.isHiddenScrollBar?null:u.createElement(\"div\",{style:{height:D(),width:v,bottom:d},className:\"\".concat(f,\"-sticky-scroll\")},u.createElement(\"div\",{onMouseDown:function(e){e.persist(),C.current.delta=e.pageX-O.scrollLeft,C.current.x=0,N(!0),e.preventDefault()},ref:h,className:y()(\"\".concat(f,\"-sticky-scroll-bar\"),Object(r.a)({},\"\".concat(f,\"-sticky-scroll-bar-active\"),j)),style:{width:\"\".concat(m,\"px\"),transform:\"translate",
+        "1],S=c.useRef({delta:0,x:0}),P=c.useState(!1),k=(0,i.default)(P,2),M=k[0],_=k[1],I=function(){_(!1)},T=function(e){var t,n=(e||(null===(t=window)||void 0===t?void 0:t.event)).buttons;if(M&&0!==n){var r=S.current.x+e.pageX-S.current.x-S.current.delta;r<=0&&(r=0),r+x>=O&&(r=O-x),m({scrollLeft:r/O*(b+2)}),S.current.x=e.pageX}else M&&_(!1)},R=function(){if(a.current){var e=(0,f.getOffset)(a.current).top,t=e+a.current.offsetHeight,n=y===wind",
+        "||j.isHiddenScrollBar?null:c.createElement(\"div\",{style:{height:(0,d.default)(),width:O,bottom:h},className:\"\".concat(g,\"-sticky-scroll\")},c.createElement(\"div\",{onMouseDown:function(e){e.persist(),S.current.delta=e.pageX-j.scrollLeft,S.current.x=0,_(!0),e.preventDefault()},ref:C,className:(0,s.default)(\"\".concat(g,\"-sticky-scroll-bar\"),(0,o.default)({},\"\".concat(g,\"-sticky-scroll-bar-active\"),M)),style:{width:\"\".concat(x,\"px\"),transfor"
+      ]
+    },
+    "https://stock.9fzt.com/_next/static/chunks/6156bbab0d794c3f9f5ca993fbf2cdedbc758d36.e985cfe87ee523bc111b.js": {
+      "sign": [
+        "(window.webpackJsonp_N_E=window.webpackJsonp_N_E||[]).push([[17],{\"+04X\":function(e,t,n){\"use strict\";Object.defineProperty(t,\"__esModule\",{value:!0}),t.default=function(e,t){var n=Object.assign({},e);Array.isArray(t)&&t.forEach((function(e){delete n[e]}));return n}},\"4Blx\":function(e,t,n){\"use strict\";var r=n(\"284h\").default,a=n(\"TqRt\").default;Object.defineProperty(t,\"__esModule\",{value:!0}),t.convertLega"
+      ]
+    },
+    "https://stock.9fzt.com/_next/static/chunks/cd82629a7060093aab1c2ea578ef9aabcd3c0df9.8b87cb69d7a14e46c47e.js": {}
+  },
+  "probes": [
+    {
+      "url": "https://api.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": null,
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "web",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "wwwgw",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "gw",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "stock",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "hq",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": null,
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "web",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "wwwgw",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "gw",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "stock",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://api.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "hq",
+      "status": 404,
+      "body": "404 page not found\n",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": null,
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "web",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "wwwgw",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "gw",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "stock",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "hq",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": null,
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "web",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "wwwgw",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "gw",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "stock",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://stock.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "hq",
+      "status": 404,
+      "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <title>九方智投-智能补偿</title>\n  <!--[if IE]>\n    ",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": null,
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "web",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "wwwgw",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "gw",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "stock",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "hq",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": null,
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "web",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "wwwgw",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "gw",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "stock",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://hq.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "hq",
+      "status": null,
+      "body": "",
+      "hit": false
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": null,
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359117000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "web",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359117000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "wwwgw",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359118000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "gw",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359118000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "stock",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359118000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "hq",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359118000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": null,
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359119000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "web",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359119000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "wwwgw",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359119000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "gw",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359120000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "stock",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359120000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://api-hq.chongnengjihua.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "hq",
+      "status": 200,
+      "body": "{\"code\":20001,\"currentTime\":1782359120000,\"data\":null,\"message\":\"系统异常\"}",
+      "hit": true
+    },
+    {
+      "url": "https://www.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": null,
+      "status": 404,
+      "body": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n  <title>九方智投</title>\r\n  <script src=\"ht",
+      "hit": false
+    },
+    {
+      "url": "https://www.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "web",
+      "status": 404,
+      "body": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n  <title>九方智投</title>\r\n  <script src=\"ht",
+      "hit": false
+    },
+    {
+      "url": "https://www.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "wwwgw",
+      "status": 404,
+      "body": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n  <title>九方智投</title>\r\n  <script src=\"ht",
+      "hit": false
+    },
+    {
+      "url": "https://www.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "gw",
+      "status": 404,
+      "body": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n  <title>九方智投</title>\r\n  <script src=\"ht",
+      "hit": false
+    },
+    {
+      "url": "https://www.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "stock",
+      "status": 404,
+      "body": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n  <title>九方智投</title>\r\n  <script src=\"ht",
+      "hit": false
+    },
+    {
+      "url": "https://www.9fzt.com/gw/api/1/stock/a/ipo/list?pageNum=1&pageSize=30",
+      "appcode": "hq",
+      "status": 404,
+      "body": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\r\n  <title>九方智投</title>\r\n  <script src=\"ht",
+      "hit": false
+    }
+  ]
+}

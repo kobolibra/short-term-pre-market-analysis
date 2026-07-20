@@ -1,0 +1,12 @@
+{
+  "rec": {
+    "job": "0159_premarket_capture_probe",
+    "generated_at": "2026-07-06T06:13:27",
+    "rc": -1,
+    "report_path": null,
+    "items_summary": [],
+    "stderr_tail": "TimeoutExpired(['python3', 'scripts/duanxianxia_batch.py', 'premarket', '--capture-only', '--json', '--webhook-url', ''], 800)",
+    "stdout_head": ""
+  },
+  "full_report": null
+}

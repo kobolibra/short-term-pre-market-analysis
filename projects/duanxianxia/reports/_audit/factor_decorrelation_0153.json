@@ -1,0 +1,108 @@
+{
+  "job": "0153_factor_decorrelation_interaction",
+  "n_days": 20,
+  "regime_days": {
+    "cold": 17,
+    "cold_to_warming": 3
+  },
+  "edge_score_ic": 0.0636,
+  "marginal_ic": {
+    "auction_amount_pct": 0.0482,
+    "auction_strength": 0.0749,
+    "liquidity": 0.0673,
+    "money": 0.0461,
+    "pressure_score": 0.0558,
+    "weimai_strength": 0.0158,
+    "orderbook": 0.0352
+  },
+  "corr_matrix": {
+    "auction_amount_pct": {
+      "auction_amount_pct": 1.0,
+      "auction_strength": 0.825,
+      "liquidity": 0.795,
+      "money": 0.538,
+      "pressure_score": 0.599,
+      "weimai_strength": 0.33,
+      "orderbook": -0.057
+    },
+    "auction_strength": {
+      "auction_amount_pct": 0.825,
+      "auction_strength": 1.0,
+      "liquidity": 0.814,
+      "money": 0.658,
+      "pressure_score": 0.608,
+      "weimai_strength": 0.241,
+      "orderbook": 0.221
+    },
+    "liquidity": {
+      "auction_amount_pct": 0.795,
+      "auction_strength": 0.814,
+      "liquidity": 1.0,
+      "money": 0.833,
+      "pressure_score": 0.68,
+      "weimai_strength": 0.163,
+      "orderbook": 0.036
+    },
+    "money": {
+      "auction_amount_pct": 0.538,
+      "auction_strength": 0.658,
+      "liquidity": 0.833,
+      "money": 1.0,
+      "pressure_score": 0.665,
+      "weimai_strength": -0.007,
+      "orderbook": 0.104
+    },
+    "pressure_score": {
+      "auction_amount_pct": 0.599,
+      "auction_strength": 0.608,
+      "liquidity": 0.68,
+      "money": 0.665,
+      "pressure_score": 1.0,
+      "weimai_strength": 0.223,
+      "orderbook": 0.117
+    },
+    "weimai_strength": {
+      "auction_amount_pct": 0.33,
+      "auction_strength": 0.241,
+      "liquidity": 0.163,
+      "money": -0.007,
+      "pressure_score": 0.223,
+      "weimai_strength": 1.0,
+      "orderbook": 0.062
+    },
+    "orderbook": {
+      "auction_amount_pct": -0.057,
+      "auction_strength": 0.221,
+      "liquidity": 0.036,
+      "money": 0.104,
+      "pressure_score": 0.117,
+      "weimai_strength": 0.062,
+      "orderbook": 1.0
+    }
+  },
+  "partial_ic_auction_given_liquidity": 0.0378,
+  "interaction_ic": {
+    "auction_x_liquidity": 0.0681,
+    "auction_x_money": 0.0621,
+    "liquidity_x_money": 0.0656
+  },
+  "topdecile_profile": {
+    "auction_amount_pct": 66.05,
+    "auction_strength": 41.37,
+    "liquidity": 88.79,
+    "money": 87.94,
+    "pressure_score": 49.53,
+    "weimai_strength": 19.02,
+    "orderbook": 46.76
+  },
+  "botdecile_profile": {
+    "auction_amount_pct": 39.72,
+    "auction_strength": 8.48,
+    "liquidity": 25.64,
+    "money": 11.59,
+    "pressure_score": 1.54,
+    "weimai_strength": 7.31,
+    "orderbook": 31.24
+  },
+  "topdecile_riskflag_rate": 0.59
+}

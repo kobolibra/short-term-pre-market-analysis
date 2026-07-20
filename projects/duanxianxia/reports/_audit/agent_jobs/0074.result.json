@@ -1,0 +1,19 @@
+{
+  "id": "0074",
+  "script": "scripts/0074_redu_biaosheng_level_vs_delta_v64_20260628.py",
+  "args": [],
+  "queued_file": "0074.json",
+  "note": "level(热度榜) vs delta(飙升榜) interaction groups A/B/C + rank-excess spearman + qiangchou + hot level deciles, premarket only",
+  "worker_time": "2026-06-28T16:50:03+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "============================================================\n热度榜(level) x 飙升榜(delta)  premarket days: 17 QX_med: 27.0\n============================================================\n\n-- group demeaned excess --\n  A: 飙升top10 & 热度top10 (霸榜龙头)                pooled_mean=-0.674 n=  70 | perday_mean=-0.685 ICIR=-0.301 win=35% days=17\n  B: 飙升top10 & NOT 热度top20 (新晋边际)            pooled_mean=5.664 n=  61 | perday_mean=4.146 ICIR=0.324 win=44% days=16\n  C: 热度top10 & NOT 飙升top10 (滞涨大票)            pooled_mean=0.646 n= 100 | perday_mean=0.693 ICIR=0.385 win=71% days=17\n\n-- per-day spearman(rank, excess) [neg=>rank1 best] --\n  飙升榜: mean=0.015 n=17\n  热度榜: mean=-0.023 n=17\n\n-- 飙升top10 x 抢筹 --\n  IN qiangchou : mean=6.885 n=3\n  NOT qiangchou: mean=1.664 n=167\n\n-- 热度榜绝对水平 level --\n  rank1-10  : mean=0.103 n=170\n  rank41-100: mean=0.231 n=1002\n\n[DONE]\n",
+  "stderr_tail": "",
+  "started": "2026-06-28T16:50:03+08:00",
+  "ended": "2026-06-28T16:50:11+08:00",
+  "duration_s": 7.5,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/0074_redu_biaosheng_level_vs_delta_v64_20260628.py"
+  ]
+}

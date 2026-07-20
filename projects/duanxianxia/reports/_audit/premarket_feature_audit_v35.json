@@ -1,0 +1,165 @@
+{
+  "generated_at": "2026-06-27T08:00:27",
+  "job": "0044_premarket_feature_audit_v35",
+  "n_days": 15,
+  "n_samples": 4603,
+  "feature_ic": [
+    {
+      "field": "qiangchou_920_925_rank",
+      "mean_ic": 0.2657,
+      "icir": null,
+      "n_days": 1,
+      "coverage": 0.01
+    },
+    {
+      "field": "auction_amount_wan",
+      "mean_ic": 0.0957,
+      "icir": 0.483,
+      "n_days": 15,
+      "coverage": 0.525
+    },
+    {
+      "field": "seal_to_mcap_ratio",
+      "mean_ic": 0.0506,
+      "icir": 0.116,
+      "n_days": 10,
+      "coverage": 0.03
+    },
+    {
+      "field": "big_order_share",
+      "mean_ic": 0.0409,
+      "icir": 0.26,
+      "n_days": 15,
+      "coverage": 0.27
+    },
+    {
+      "field": "net_inflow_pct",
+      "mean_ic": 0.0387,
+      "icir": 0.333,
+      "n_days": 15,
+      "coverage": 0.464
+    },
+    {
+      "field": "wm_net_pressure",
+      "mean_ic": -0.0191,
+      "icir": -0.183,
+      "n_days": 14,
+      "coverage": 0.46
+    },
+    {
+      "field": "qiangchou_last_second_rank",
+      "mean_ic": -0.0143,
+      "icir": -0.072,
+      "n_days": 13,
+      "coverage": 0.127
+    },
+    {
+      "field": "turnover_intensity",
+      "mean_ic": -0.0132,
+      "icir": -0.072,
+      "n_days": 15,
+      "coverage": 0.143
+    }
+  ],
+  "conditional_ic_by_open": {
+    "auction_amount_wan": {
+      "1_low_open(<0)": {
+        "pooled_spearman": 0.4,
+        "n": 656
+      },
+      "2_flat_open(0-3)": {
+        "pooled_spearman": 0.1393,
+        "n": 1128
+      },
+      "3_high_open(3-7)": {
+        "pooled_spearman": 0.1032,
+        "n": 445
+      },
+      "4_veryhigh_open(>=7)": {
+        "pooled_spearman": -0.1197,
+        "n": 167
+      }
+    },
+    "turnover_intensity": {
+      "1_low_open(<0)": {
+        "pooled_spearman": -0.0562,
+        "n": 217
+      },
+      "2_flat_open(0-3)": {
+        "pooled_spearman": 0.1078,
+        "n": 208
+      },
+      "3_high_open(3-7)": {
+        "pooled_spearman": -0.0436,
+        "n": 136
+      },
+      "4_veryhigh_open(>=7)": {
+        "pooled_spearman": -0.0373,
+        "n": 98
+      }
+    }
+  },
+  "verdict": {
+    "strongest_feature": {
+      "field": "qiangchou_920_925_rank",
+      "mean_ic": 0.2657,
+      "icir": null,
+      "n_days": 1,
+      "coverage": 0.01
+    },
+    "turnover_vs_amt": {
+      "turnover_intensity": {
+        "field": "turnover_intensity",
+        "mean_ic": -0.0132,
+        "icir": -0.072,
+        "n_days": 15,
+        "coverage": 0.143
+      },
+      "auction_amount_wan": {
+        "field": "auction_amount_wan",
+        "mean_ic": 0.0957,
+        "icir": 0.483,
+        "n_days": 15,
+        "coverage": 0.525
+      },
+      "turnover_better": false
+    },
+    "buried_ratios_with_signal": [],
+    "amt_sign_flips_by_open": {
+      "1_low_open(<0)": {
+        "pooled_spearman": 0.4,
+        "n": 656
+      },
+      "2_flat_open(0-3)": {
+        "pooled_spearman": 0.1393,
+        "n": 1128
+      },
+      "3_high_open(3-7)": {
+        "pooled_spearman": 0.1032,
+        "n": 445
+      },
+      "4_veryhigh_open(>=7)": {
+        "pooled_spearman": -0.1197,
+        "n": 167
+      }
+    },
+    "turnover_sign_by_open": {
+      "1_low_open(<0)": {
+        "pooled_spearman": -0.0562,
+        "n": 217
+      },
+      "2_flat_open(0-3)": {
+        "pooled_spearman": 0.1078,
+        "n": 208
+      },
+      "3_high_open(3-7)": {
+        "pooled_spearman": -0.0436,
+        "n": 136
+      },
+      "4_veryhigh_open(>=7)": {
+        "pooled_spearman": -0.0373,
+        "n": 98
+      }
+    }
+  }
+}

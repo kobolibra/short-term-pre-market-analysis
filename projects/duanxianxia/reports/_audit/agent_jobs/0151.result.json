@@ -1,0 +1,19 @@
+{
+  "id": "0151",
+  "script": "scripts/duanxianxia_factor_ic_study.py",
+  "args": [],
+  "queued_file": "0151_factor_ic_study_20260704.json",
+  "note": "Task 0151: full-universe daily cross-sectional factor IC study on existing candidate data (mine what we already have)",
+  "worker_time": "2026-07-04T21:50:02+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "n_days=20 regime_days={'cold': 17, 'cold_to_warming': 3}\nedge_score_ic={'n_days': 20, 'avg_cov': 1.0, 'mean_ic': 0.0639, 'ir': 0.425, 'pos_day_frac': 0.75}\nedge_decile_all=[-0.422, 0.144, 0.196, 0.194, -0.254, -0.084, 0.166, 0.753, 0.58, 1.46]\nedge_decile[cold]=[-0.553, 0.024, 0.086, -0.002, -0.307, -0.233, -0.16, 0.392, 0.371, 1.234]\nedge_decile[cold_to_warming]=[0.32, 0.827, 0.82, 1.303, 0.046, 0.759, 2.014, 2.802, 1.766, 2.739]\nTOP_FACTORS_by_absIC (mean_ic ir posd nd cov factor):\n  +0.0815  ir=0.445  posd=0.65  nd=20  cov=0.57  auction_amount_wan\n  +0.0815  ir=0.445  posd=0.65  nd=20  cov=0.57  auction_detail.auction_amount_wan\n  +0.0749  ir=0.586  posd=0.75  nd=20  cov=1.0  auction_strength\n  +0.0749  ir=0.586  posd=0.75  nd=20  cov=1.0  auction_detail.auction_strength\n  +0.0749  ir=0.586  posd=0.75  nd=20  cov=1.0  auction_detail.auction_strength_v8\n  +0.0709  ir=0.574  posd=0.7  nd=20  cov=1.0  auction_detail.liquidity_multiplier\n  +0.0700  ir=0.487  posd=0.722  nd=18  cov=0.318  auction_detail.vratio_rank\n  +0.0673  ir=0.5  posd=0.75  nd=20  cov=1.0  auction_detail.liquidity_score\n  +0.0639  ir=0.425  posd=0.75  nd=20  cov=1.0  edge_score\n  +0.0639  ir=0.656  posd=0.8  nd=20  cov=1.0  edge_components.main_factor\n  +0.0620  ir=0.41  posd=0.65  nd=20  cov=1.0  edge_components.aux_factor\n  -0.0594  ir=-0.409  posd=0.3  nd=20  cov=1.0  edge_components.risk_penalty\n  -0.0560  ir=-0.544  posd=0.316  nd=19  cov=0.26  auction_detail.fengdan_amount_915_yi\n  +0.0555  ir=0.613  posd=0.737  nd=19  cov=0.264  auction_detail.fengdan_rank\n  +0.0546  ir=0.291  posd=0.65  nd=20  cov=0.454  weimai_detail.super_large_net_inflow_wan\n  +0.0536  ir=0.432  posd=0.7  nd=20  cov=0.569  auction_detail.auction_turnover_pct\n  +0.0516  ir=0.474  posd=0.75  nd=20  cov=1.0  auction_detail.auction_alpha_score\n  -0.0493  ir=-0.562  posd=0.263  nd=19  cov=0.264  auction_detail.fengdan_amount_925_yi\n  +0.0482  ir=0.298  posd=0.556  nd=9  cov=1.0  auction_detail.auction_amount_pct\n  +0.0468  ir=0.431  posd=0.556  nd=18  cov=1.0  auction_detail.auction_amount_multiplier\n  +0.0461  ir=0.432  posd=0.75  nd=20  cov=1.0  auction_detail.money_intent_score\n  +0.0447  ir=0.288  posd=0.55  nd=20  cov=0.261  weimai_detail.big_order_share\n",
+  "stderr_tail": "",
+  "started": "2026-07-04T21:50:02+08:00",
+  "ended": "2026-07-04T21:51:00+08:00",
+  "duration_s": 59.0,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/duanxianxia_factor_ic_study.py"
+  ]
+}

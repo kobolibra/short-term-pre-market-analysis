@@ -1,0 +1,19 @@
+{
+  "id": "daily_2026-07-02_v19_topk_robust",
+  "script": "scripts/v19_topk_robust.py",
+  "args": [],
+  "queued_file": "daily_2026-07-02_v19_topk_robust.json",
+  "note": "daily auto-refresh 2026-07-02",
+  "worker_time": "2026-07-02T02:47:14+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_eligible_days\": 18,\n  \"same_day_excess_decay\": {\n    \"3\": {\n      \"n\": 18,\n      \"mean\": 1.071,\n      \"median\": 1.71,\n      \"win_rate\": 0.667,\n      \"odds\": 1.01,\n      \"p90\": 4.94,\n      \"p10\": -4.47,\n      \"sum\": 19.28\n    },\n    \"5\": {\n      \"n\": 18,\n      \"mean\": 5.139,\n      \"median\": 2.21,\n      \"win_rate\": 0.611,\n      \"odds\": 3.91,\n      \"p90\": 5.84,\n      \"p10\": -3.7,\n      \"sum\": 92.5\n    },\n    \"7\": {\n      \"n\": 18,\n      \"mean\": 3.461,\n      \"median\": 1.869,\n      \"win_rate\": 0.611,\n      \"odds\": 2.99,\n      \"p90\": 5.28,\n      \"p10\": -3.91,\n      \"sum\": 62.29\n    },\n    \"8\": {\n      \"n\": 18,\n      \"mean\": 3.405,\n      \"median\": 1.769,\n      \"win_rate\": 0.667,\n      \"odds\": 2.57,\n      \"p90\": 4.62,\n      \"p10\": -2.47,\n      \"sum\": 61.29\n    },\n    \"10\": {\n      \"n\": 18,\n      \"mean\": 2.884,\n      \"median\": 1.741,\n      \"win_rate\": 0.667,\n      \"odds\": 2.36,\n      \"p90\": 4.5,\n      \"p10\": -2.74,\n      \"sum\": 51.92\n    },\n    \"12\": {\n      \"n\": 18,\n      \"mean\": 1.755,\n      \"median\": 1.953,\n      \"win_rate\": 0.611,\n      \"odds\": 1.37,\n      \"p90\": 4.7,\n      \"p10\": -4.38,\n      \"sum\": 31.59\n    },\n    \"15\": {\n      \"n\": 18,\n      \"mean\": 1.69,\n      \"median\": 1.992,\n      \"win_rate\": 0.611,\n      \"odds\": 1.4,\n      \"p90\": 4.97,\n      \"p10\": -4.35,\n      \"sum\": 30.43\n    }\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-07-02T02:47:16+08:00",
+  "ended": "2026-07-02T03:16:43+08:00",
+  "duration_s": 1766.9,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v19_topk_robust.py"
+  ]
+}

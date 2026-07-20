@@ -1,0 +1,19 @@
+{
+  "id": "daily_2026-06-24_v21_feature_export",
+  "script": "scripts/v21_feature_export.py",
+  "args": [],
+  "queued_file": "daily_2026-06-24_v21_feature_export.json",
+  "note": "daily auto-refresh 2026-06-24",
+  "worker_time": "2026-06-24T00:44:46+08:00",
+  "ok": true,
+  "rc": 0,
+  "stdout_tail": "{\n  \"n_rows\": 3894,\n  \"n_features\": 46,\n  \"top_ic\": [\n    {\n      \"field\": \"qiangchou_920_925_rank\",\n      \"ic_excess\": 0.2657,\n      \"icir_excess\": null,\n      \"ic_hold\": -0.4524,\n      \"icir_hold\": null,\n      \"n_days\": 1\n    },\n    {\n      \"field\": \"deriv.amt_x_auc\",\n      \"ic_excess\": 0.0583,\n      \"icir_excess\": 0.442,\n      \"ic_hold\": 0.0767,\n      \"icir_hold\": 0.733,\n      \"n_days\": 13\n    },\n    {\n      \"field\": \"auction_strength\",\n      \"ic_excess\": 0.0553,\n      \"icir_excess\": 0.412,\n      \"ic_hold\": 0.0765,\n      \"icir_hold\": 0.774,\n      \"n_days\": 13\n    },\n    {\n      \"field\": \"auction_amount_wan\",\n      \"ic_excess\": 0.0545,\n      \"icir_excess\": 0.319,\n      \"ic_hold\": 0.0083,\n      \"icir_hold\": 0.045,\n      \"n_days\": 13\n    },\n    {\n      \"field\": \"liquidity\",\n      \"ic_excess\": 0.0473,\n      \"icir_excess\": 0.37,\n      \"ic_hold\": 0.0653,\n      \"icir_hold\": 0.504,\n      \"n_days\": 13\n    },\n    {\n      \"field\": \"net_pressure\",\n      \"ic_excess\": -0.0444,\n      \"icir_excess\": -0.228,\n      \"ic_hold\": -0.0041,\n      \"icir_hold\": -0.022,\n      \"n_days\": 13\n    }\n  ],\n  \"coverage_labels\": {\n    \"y_excess\": 1.0,\n    \"y_hold\": 0.724,\n    \"y_t1close\": 0.724\n  }\n}\n",
+  "stderr_tail": "",
+  "started": "2026-06-24T00:44:46+08:00",
+  "ended": "2026-06-24T00:45:46+08:00",
+  "duration_s": 59.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v21_feature_export.py"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "daily_2026-07-14_v20_env_probe",
+  "script": "scripts/v20_env_probe.py",
+  "args": [],
+  "queued_file": "daily_2026-07-14_v20_env_probe.json",
+  "note": "daily auto-refresh 2026-07-14",
+  "worker_time": "2026-07-14T03:48:16+08:00",
+  "ok": false,
+  "rc": null,
+  "error": "timeout after 2400s",
+  "stdout_tail": "",
+  "stderr_tail": "",
+  "started": "2026-07-14T03:48:17+08:00",
+  "ended": "2026-07-14T04:28:28+08:00",
+  "duration_s": 2412.8,
+  "cmd": [
+    "python3",
+    "/home/investmentofficehku/.openclaw/workspace/scripts/v20_env_probe.py"
+  ]
+}

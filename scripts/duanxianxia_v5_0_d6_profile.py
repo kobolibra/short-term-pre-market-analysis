@@ -659,18 +659,28 @@ def calculate_profile(
     # 阶段 2: 计算 4 个统计量
     # ========================================================================
 
-    # 收集所有 close 分位数 (None 跳过)
-    close_pcts: List[Tuple[str, float]] = []
+    # 收集分位数用于计算统计量
+    # 关键: 双截面指标用 pre_pct (9:25实时数据), 单截面指标用 close_pct
+    # 因为 pre_pct 才是 T0 交易决策依据, close_pct 是 T-1 历史数据
+    pct_values_for_stats: List[Tuple[str, float]] = []
     for key, ip in profiles.items():
-        if ip.close_pct is not None:
-            close_pcts.append((key, ip.close_pct))
+        if ip.is_dual_section:
+            # 双截面: 优先用 pre_pct, 没有则回退 close_pct
+            if ip.pre_pct is not None:
+                pct_values_for_stats.append((key, ip.pre_pct))
+            elif ip.close_pct is not None:
+                pct_values_for_stats.append((key, ip.close_pct))
+        else:
+            # 单截面: 用 close_pct
+            if ip.close_pct is not None:
+                pct_values_for_stats.append((key, ip.close_pct))
 
-    if close_pcts:
-        pct_values = [v for _, v in close_pcts]
+    if pct_values_for_stats:
+        pct_values = [v for _, v in pct_values_for_stats]
 
         # Bottleneck: 最弱维度
         min_idx = min(range(len(pct_values)), key=lambda i: pct_values[i])
-        bottleneck_name = close_pcts[min_idx][0]
+        bottleneck_name = pct_values_for_stats[min_idx][0]
         bottleneck = pct_values[min_idx]
 
         # Heat: 平均温度

@@ -219,6 +219,16 @@ def build_execution_plan(
     orders: List[ExecutionOrder] = []
     pool_summary: Dict[str, Any] = {}
 
+    # 空仓: position=0 时直接返回, 不列出候选股
+    if profile.position <= 0 or profile.buy_mode == "empty":
+        plan.pool_summary = {
+            "decision": "空仓",
+            "reason": f"瓶颈维度 {profile.bottleneck_name} 分位={profile.bottleneck:.4f}, position=0, 禁止买入",
+        }
+        plan.allocated_position = 0.0
+        plan.warnings.append("空仓: bottleneck=0, 所有仓位归零")
+        return plan
+
     # 建仓顺序: 一字封 → 换手封 → 非板 → 分歧封 (与 v4.2 一致)
     pool_order = [
         PoolType.POOL_YIZI,

@@ -201,7 +201,7 @@ def run_v5_0_pipeline(
     history: Optional[ProfileHistory] = None,
     static_thresholds: Optional[Dict[str, float]] = None,
     top_n_per_pool: int = 3,
-    premarket_auction_cutoff: str = "092900",
+    premarket_auction_cutoff: str = "093000",
     bundle: Optional[PremarketDataBundle] = None,
 ) -> Dict[str, Any]:
     """
@@ -472,7 +472,7 @@ def _build_bundle_from_report(
     items = report.get("items", [])
     if not items:
         return _load_bundle(trade_date, str(project_root),
-                            premarket_auction_cutoff="092900")
+                            premarket_auction_cutoff="093000")
 
     item_map: Dict[str, Dict[str, Any]] = {}
     for item in items:

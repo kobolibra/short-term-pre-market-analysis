@@ -1,0 +1,8 @@
+{
+  "id": "0053_v5_0_premarket_0720_rerun",
+  "script": "scripts/duanxianxia_v5_0_premarket_daily.py",
+  "args": ["--date", "2026-07-20"],
+  "timeout": 2400,
+  "created": "2026-07-20T14:30:00+08:00",
+  "note": "v5.0 重跑 7/20 — 修复后: bottleneck仅诊断, heat驱动position, 池乘子合并双重打折"
+}

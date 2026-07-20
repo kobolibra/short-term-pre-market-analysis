@@ -57,9 +57,10 @@ except Exception as _exc:  # noqa: BLE001 -- hardening must never break capture
 from duanxianxia_premarket_v7_3_runner import build_premarket_analysis_v7_3  # noqa: E402
 from duanxianxia_premarket_v9_runner import build_premarket_analysis_v9  # noqa: E402
 from duanxianxia_v4_2_runner import build_premarket_analysis_v4_2  # noqa: E402
+from duanxianxia_v5_0_runner import build_premarket_analysis_v5_0  # noqa: E402
 
-# Active premarket decision engine. Switch to build_premarket_analysis_v7_3 / v9 to roll back.
-ACTIVE_ENGINE = build_premarket_analysis_v4_2
+# Active premarket decision engine. Switch to v4_2 / v7_3 / v9 to roll back.
+ACTIVE_ENGINE = build_premarket_analysis_v5_0
 
 # Stage 4: monkey-patch
 duanxianxia_batch.build_premarket_analysis = ACTIVE_ENGINE
@@ -95,6 +96,8 @@ def _fallback_reexec() -> None:
         "ACTIVE_ENGINE": ACTIVE_ENGINE,
         "build_premarket_analysis_v7_3": build_premarket_analysis_v7_3,
         "build_premarket_analysis_v9": build_premarket_analysis_v9,
+        "build_premarket_analysis_v4_2": build_premarket_analysis_v4_2,
+        "build_premarket_analysis_v5_0": build_premarket_analysis_v5_0,
     }
     code = compile(src, str(src_path), "exec")
     exec(code, ns)  # noqa: S102 — trusted local source
